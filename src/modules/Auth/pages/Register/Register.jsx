@@ -9,7 +9,7 @@ const Register = () => {
     <>
       {/* register-app works! */}
 
-      <div className="min-h-80 mx-auto max-w-screen-2xl px-2 sm:px-6 lg:px-8">
+      <div className="min-h-80 mx-auto max-w-screen-2xl px-2 sm:px-6 lg:px-8 mb-16">
         <div className="grid grid-cols-12 gap-4 sm:gap-8 mx-auto px-2 sm:px-6 lg:px-8">
           <div className="hidden sm:block sm:col-span-2 lg:col-span-4 text-left">
             <div className="h-48"></div>
@@ -70,12 +70,12 @@ const Register = () => {
                   />
                 </div>
                 <div className="mb-6">
-                    <label
-                      htmlFor="password"
-                      className="block mb-2 font-medium dark:text-white"
-                    >
-                      Password
-                    </label>
+                  <label
+                    htmlFor="password"
+                    className="block mb-2 font-medium dark:text-white"
+                  >
+                    Password
+                  </label>
                   <input
                     type="password"
                     id="password"

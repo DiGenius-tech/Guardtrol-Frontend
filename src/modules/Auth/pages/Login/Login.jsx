@@ -9,7 +9,7 @@ const Login = () => {
     <>
       {/* login-app works! */}
 
-      <div className="min-h-80 mx-auto max-w-screen-2xl px-2 sm:px-6 lg:px-8">
+      <div className="min-h-80 mx-auto max-w-screen-2xl px-2 sm:px-6 lg:px-8 mb-16">
         <div className="grid grid-cols-12 gap-4 sm:gap-8 mx-auto px-2 sm:px-6 lg:px-8">
           <div className="hidden sm:block sm:col-span-2 lg:col-span-4 text-left">
             <div className="h-48"></div>
@@ -37,8 +37,10 @@ const Login = () => {
                   <input
                     type="email"
                     id="email"
+                    name="email"
                     className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 sm:py-4 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500"
                     placeholder="name@guardtrol.com"
+                    autoComplete="email"
                     required
                   />
                 </div>
@@ -60,6 +62,7 @@ const Login = () => {
                   <input
                     type="password"
                     id="password"
+                    name="password"
                     className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 sm:py-4 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500"
                     required
                   />
