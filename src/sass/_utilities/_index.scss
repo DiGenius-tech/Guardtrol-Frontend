@@ -1,0 +1,17 @@
+.horizontal-line-title {
+  display: flex;
+  text-wrap: nowrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  max-width: 80%;
+  margin: 0 auto;
+  &::before,
+  &::after {
+    content: "";
+    display: block;
+    background-color: var(--clr-primary-500);
+    height: 1px;
+    width: 100%;
+  }
+}

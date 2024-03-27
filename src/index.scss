@@ -1,0 +1,12 @@
+
+@use "./sass/main.scss";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+:root {
+  --md-sys-color-primary: #008080;
+  --md-sys-color-secondary: #32256e;
+}
