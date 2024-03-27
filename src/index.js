@@ -6,17 +6,17 @@ import reportWebVitals from './reportWebVitals';
 import {
   createBrowserRouter,
   RouterProvider,
+  Navigate
 } from "react-router-dom";
 import PageNotFound from './PageNotFound/PageNotFound';
 import auth_routes from './modules/Auth/Auth.router';
 import onboarding_routes from './modules/Onboarding/Onboarding.router';
-import MuiTest from './sandbox/MuiTest/MuiTest';
 
 
 const router = createBrowserRouter([
   {
-    path: "sandbox",
-    element: <MuiTest />
+    path: "",
+    Component: () => <Navigate to="/auth" />,
   },
   auth_routes,
   onboarding_routes,
