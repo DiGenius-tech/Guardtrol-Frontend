@@ -11,6 +11,7 @@ import {
 import PageNotFound from './PageNotFound/PageNotFound';
 import auth_routes from './modules/Auth/Auth.router';
 import onboarding_routes from './modules/Onboarding/Onboarding.router';
+import sandbox_routes from './modules/Sandbox/sandbox.router';
 
 
 const router = createBrowserRouter([
@@ -18,6 +19,7 @@ const router = createBrowserRouter([
     path: "",
     Component: () => <Navigate to="/auth" />,
   },
+  sandbox_routes,
   auth_routes,
   onboarding_routes,
   {
