@@ -1,0 +1,12 @@
+#configure-patrol-route-action{
+    background-color: red;
+    >button{
+        background-color: burlywood;
+        &::before{
+            content: url(../../../../images/guardtrol-icon-logo.svg);
+            display: block;
+            height: auth;
+            width: 20px;
+        }
+    }
+}
