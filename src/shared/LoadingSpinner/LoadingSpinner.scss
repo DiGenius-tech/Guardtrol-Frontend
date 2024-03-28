@@ -1,0 +1,25 @@
+#loading-spinner {
+  height: 100vh;
+  width: 100%;
+  // background-color: red;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  .img-container {
+    display: flex;
+    gap: 3px;
+
+    img[alt="Icon"] {
+      animation: spin 2s linear infinite;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+  }
+}
