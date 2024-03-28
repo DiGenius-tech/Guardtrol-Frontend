@@ -1,10 +1,122 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import googleIconImg from "../../../../images/icons/google-social-icon.svg";
 import left_pattern_boxes from "../../../../images/left-pattern-boxes.svg";
 import right_pattern_boxes from "../../../../images/right-pattern-boxes.svg";
+import { AuthContext } from "../../../../shared/Context/AuthContext";
+import useHttpRequest from "../../../../shared/Hooks/HttpRequestHook";
+import { toast } from "react-toastify";
 
 const Register = () => {
+    const auth = useContext(AuthContext)
+    const [validationErrors, setValidationErrors] = useState({});
+    const {isLoading, error , responseData, sendRequest} = useHttpRequest()
+    const [formData, setFormData] = useState({
+        name: '',
+        email: '',
+        phone: '',
+        password: '',
+        password_confirmation: ''
+    });
+
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+        setValidationErrors({ ...validationErrors, [e.target.name]: '' });
+       
+      };
+    
+    
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+      const form = e.currentTarget;
+      const newErrors = {};
+  
+      // Check each input field's validity and set errors accordingly
+      for (const el of form.elements) {
+
+          if (el.nodeName === 'INPUT' && !el.validity.valid) {
+              console.log(el.name)
+              newErrors[el.name] = el.validationMessage;
+          }
+
+            // Add the condition to check if passwords match
+          if (el.name === 'password' && el.value !== formData.password_confirmation) {
+              newErrors['password_confirmation'] = "Passwords don't match";
+          } else if (el.name === 'password_confirmation' && el.value !== formData.password) {
+              newErrors['password_confirmation'] = "Passwords don't match";
+          }
+
+      }
+
+  
+      if (Object.keys(newErrors).length > 0) {
+        // If there are validation errors, update state and stop submission
+        setValidationErrors(newErrors);
+        e.stopPropagation();
+      } else {
+        // Form is valid, handle submission
+        auth.loading(true)
+        try {
+        const data = await sendRequest(
+            "http://localhost:5000/api/users/signup",
+            "POST",
+            JSON.stringify(formData),
+            {
+              "Content-Type" : "application/json",
+              
+            }
+          )
+          
+          
+        if (null != data) {
+          auth.login(data)
+        }
+        } catch (err) {
+          console.log(err)
+          
+        }finally{
+          auth.loading(false)
+        }
+      }
+    };
+
+    useEffect(() => {
+      if (error) {
+        toast.error(error)
+      }
+    }, error)
+
+    const handleSignupSuccess = async (response) => {
+      try {
+        auth.loading(true)
+        const token = response.credential
+        const decodedToken = decodeURIComponent(atob(token.split(".")[1]))
+        const tokenPayload = JSON.parse(decodedToken);
+        console.log(tokenPayload)
+       const data = await sendRequest(
+            "http://localhost:5000/api/users/signupwithgoogle",
+            "POST",
+            JSON.stringify(tokenPayload),
+            {
+              'Content-type': 'application/json'
+            }
+          )
+
+        auth.login(data)
+        
+        //auth.login(data.token, data.userId)
+      } catch (err) {
+        console.log(err)
+      }finally{
+        auth.loading(false)
+      }
+    };
+
+    const handleSignupFailure = (error) => {
+    // Handle failed login
+    console.error('Login failure:', error);
+    };
+
   return (
     <>
       {/* register-app works! */}
@@ -26,7 +138,7 @@ const Register = () => {
             <div className="mt-8"></div>
 
             <div className="block px-4 py-8 sm:p-8 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-              <form>
+              <form method="post" onSubmit={handleSubmit}>
                 <div className="mb-6">
                   <label
                     htmlFor="full_name"
@@ -37,6 +149,9 @@ const Register = () => {
                   <input
                     type="text"
                     id="full_name"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
                     className="border border-gray-300 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 sm:py-4 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500"
                     required
                   />
@@ -51,6 +166,9 @@ const Register = () => {
                   <input
                     type="email"
                     id="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
                     className="border border-gray-300 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 sm:py-4 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500"
                     required
                   />
@@ -65,6 +183,9 @@ const Register = () => {
                   <input
                     type="tel"
                     id="phone_number"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
                     className="border border-gray-300 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 sm:py-4 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500"
                     required
                   />
@@ -79,6 +200,27 @@ const Register = () => {
                   <input
                     type="password"
                     id="password"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    minLength="6"
+                    className="border border-gray-300 text-sm rounded-[10px] focus:ring-green-500 focus:border-green-500 block w-full p-2.5 sm:py-4 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500"
+                    required
+                  />
+                </div>
+                <div className="mb-6">
+                  <label
+                    htmlFor="passwordconfirmation"
+                    className="block mb-2 font-medium dark:text-white"
+                  >
+                    Confirm Password
+                  </label>
+                  <input
+                    type="text"
+                    id="confirmpassword"
+                    name="password_confirmation"
+                    value={formData.password_confirmation}
+                    onChange={handleChange}
                     className="border border-gray-300 text-sm rounded-[10px] focus:ring-green-500 focus:border-green-500 block w-full p-2.5 sm:py-4 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500"
                     required
                   />

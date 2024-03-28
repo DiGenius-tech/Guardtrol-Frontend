@@ -11,6 +11,8 @@ import {
 import PageNotFound from './PageNotFound/PageNotFound';
 import auth_routes from './modules/Auth/Auth.router';
 import onboarding_routes from './modules/Onboarding/Onboarding.router';
+import App from './App';
+import { ToastContainer } from 'react-toastify';
 
 
 const router = createBrowserRouter([
@@ -29,8 +31,9 @@ const router = createBrowserRouter([
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    {/* <App /> */}
-    <RouterProvider router={router} />
+    <ToastContainer />
+    <App />
+    
   </React.StrictMode>
 );
 
