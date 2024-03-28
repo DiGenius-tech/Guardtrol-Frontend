@@ -6,6 +6,7 @@
   --clr-secondary-500: #32256e;
   --clr-secondary-600: #2a1f5c;
   --clr-dark-100: #c1c1c1;
+  --clr-dark-300: #50555E;
   --clr-dark-400: #36454f;
   --clr-dark-450: #1a1c1f;
   --clr-dark-500: #0b0a09;
@@ -19,6 +20,13 @@
   color: var(--clr-dark-100);
 }
 
+.bg-dark-300 {
+  background-color: var(--clr-dark-300);
+}
+
+.text-dark-300 {
+  color: var(--clr-dark-300);
+}
 .bg-dark-400 {
   background-color: var(--clr-dark-400);
 }

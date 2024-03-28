@@ -8,7 +8,7 @@ function TextFieldError() {
           htmlFor="email"
           className="block mb-2 font-medium text-gray-900 dark:text-white"
         >
-          Email address
+          Error Text Field
         </label>
         <input
           type="email"
