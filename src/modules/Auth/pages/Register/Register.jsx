@@ -6,6 +6,7 @@ import right_pattern_boxes from "../../../../images/right-pattern-boxes.svg";
 import { AuthContext } from "../../../../shared/Context/AuthContext";
 import useHttpRequest from "../../../../shared/Hooks/HttpRequestHook";
 import { toast } from "react-toastify";
+import TextFieldError from "../../../Sandbox/TextFieldError/TextFieldError";
 
 const Register = () => {
   const auth = useContext(AuthContext);
@@ -137,26 +138,8 @@ const Register = () => {
 
             <div className="block px-4 py-8 sm:p-8 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
               <form method="post" onSubmit={handleSubmit}>
-
                 {/*  */}
-                <div>
-                  <label
-                    htmlFor="error"
-                    className="block mb-2 text-sm font-medium"
-                  >
-                    Your name
-                  </label>
-                  <input
-                    type="text"
-                    id="error"
-                    className="bg-red-50 border border-red-500 text-red-900 placeholder-red-700 text-sm rounded-lg focus:ring-red-500 dark:bg-gray-700 focus:border-red-500 block w-full p-2.5 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500"
-                    placeholder="Error input"
-                  />
-                  <p className="mt-2 text-sm text-red-600 dark:text-red-500">
-                    <span className="font-medium">Oh, snapp!</span> Some error
-                    message.
-                  </p>
-                </div>
+                <TextFieldError />
                 {/*  */}
 
                 <div className="mb-6">
