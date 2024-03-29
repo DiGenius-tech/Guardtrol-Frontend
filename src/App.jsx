@@ -6,6 +6,7 @@ import { Navigate, RouterProvider, createBrowserRouter } from 'react-router-dom'
 import { useCallback, useEffect, useState } from 'react';
 import { AuthContext } from './shared/Context/AuthContext';
 import sandbox_routes from './modules/Sandbox/sandbox.router';
+import LoadingSpinner from './shared/LoadingSpinner/LoadingSpinner';
 
 function App() {
   const [token, setToken] = useState(false)
@@ -59,6 +60,7 @@ function App() {
 ]); 
 
  return (
+  
   <AuthContext.Provider value={{
       isLoggedIn: !!token,
       user: user,
@@ -68,6 +70,7 @@ function App() {
       loading: loading,
       isloading: isLoading
   }} >
+    {isLoading && <LoadingSpinner/>} 
     <RouterProvider router={router} />
   </AuthContext.Provider>
    
