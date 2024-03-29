@@ -13,6 +13,7 @@ import auth_routes from './modules/Auth/Auth.router';
 import onboarding_routes from './modules/Onboarding/Onboarding.router';
 import App from './App';
 import { ToastContainer } from 'react-toastify';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
 
 const router = createBrowserRouter([
@@ -31,9 +32,10 @@ const router = createBrowserRouter([
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
+    <GoogleOAuthProvider clientId='833868102703-2pvqeh24n83ls5mltkfvllq9g6v4s4us.apps.googleusercontent.com'>
     <ToastContainer />
     <App />
-    
+    </GoogleOAuthProvider>
   </React.StrictMode>
 );
 

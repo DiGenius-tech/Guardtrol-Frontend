@@ -6,6 +6,7 @@ import right_pattern_boxes from "../../../../images/right-pattern-boxes.svg";
 import { AuthContext } from "../../../../shared/Context/AuthContext";
 import useHttpRequest from "../../../../shared/Hooks/HttpRequestHook";
 import { toast } from "react-toastify";
+import { useGoogleLogin, useGoogleOneTapLogin } from "@react-oauth/google";
 
 const Register = () => {
     const auth = useContext(AuthContext)
@@ -86,17 +87,22 @@ const Register = () => {
       }
     }, error)
 
+    const signUp = useGoogleLogin  ({
+      onSuccess: response => handleSignupSuccess(response)
+    })
+
     const handleSignupSuccess = async (response) => {
       try {
         auth.loading(true)
-        const token = response.credential
-        const decodedToken = decodeURIComponent(atob(token.split(".")[1]))
-        const tokenPayload = JSON.parse(decodedToken);
-        console.log(tokenPayload)
+        const accessToken = response.access_token
+
+        const userData = await getUserInfo(accessToken)
+        
+        console.log(userData)
        const data = await sendRequest(
             "http://localhost:5000/api/users/signupwithgoogle",
             "POST",
-            JSON.stringify(tokenPayload),
+            JSON.stringify(userData),
             {
               'Content-type': 'application/json'
             }
@@ -111,6 +117,22 @@ const Register = () => {
         auth.loading(false)
       }
     };
+
+    const getUserInfo = async (accessToken) => {
+      try {
+        const response = await sendRequest(
+          "https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=" + accessToken,
+          "GET",
+          null,
+          {}
+        );
+        return response;
+      } catch (error) {
+        console.error("Error fetching user info: ", error);
+        toast.error(error);
+      }
+    };
+    
 
     const handleSignupFailure = (error) => {
     // Handle failed login
@@ -239,7 +261,8 @@ const Register = () => {
             </p>
 
             <Link
-              to=""
+              to="#"
+              onClick={() => signUp()}
               className="mb-4 block w-full border border-primary-500 text-dark bg-white focus:ring-1 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm w-full px-5 py-2.5 sm:py-3 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
             >
               <span className="sm:text-lg flex items-center justify-center gap-2">
