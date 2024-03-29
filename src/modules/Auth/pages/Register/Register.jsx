@@ -7,6 +7,7 @@ import { AuthContext } from "../../../../shared/Context/AuthContext";
 import useHttpRequest from "../../../../shared/Hooks/HttpRequestHook";
 import { toast } from "react-toastify";
 import TextFieldError from "../../../Sandbox/TextFieldError/TextFieldError";
+import { useGoogleLogin } from "@react-oauth/google";
 
 const Register = () => {
   const auth = useContext(AuthContext);
@@ -92,14 +93,15 @@ const Register = () => {
     const handleSignupSuccess = async (response) => {
       try {
         auth.loading(true)
-        const token = response.credential
-        const decodedToken = decodeURIComponent(atob(token.split(".")[1]))
-        const tokenPayload = JSON.parse(decodedToken);
-        console.log(tokenPayload)
+        const accessToken = response.access_token
+
+        const userData = await getUserInfo(accessToken)
+        
+        console.log(userData)
        const data = await sendRequest(
             "http://localhost:5000/api/users/signupwithgoogle",
             "POST",
-            JSON.stringify(tokenPayload),
+            JSON.stringify(userData),
             {
               'Content-type': 'application/json'
             }
