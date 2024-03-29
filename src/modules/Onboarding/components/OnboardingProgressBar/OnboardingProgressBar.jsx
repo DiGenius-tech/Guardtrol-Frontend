@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./OnboardingProgressBar.scss";
 import { Link, useLocation } from "react-router-dom";
+import OnboardingTestNavigation from "../../../Sandbox/OnboardingTestNavigation/OnboardingTestNavigation";
 
 const list = [
   {
@@ -33,7 +34,6 @@ const OnboardingProgressBar = () => {
   const location = useLocation();
   const [stageProgressClass, setstageProgressClass] = useState("stage-2");
   const [stages, setStages] = useState([...list]);
-  const [count, setCount] = useState(0);
 
   const completeProcess = () => {
     for (let i = 0; i < list.length; i++) {
@@ -114,9 +114,6 @@ const OnboardingProgressBar = () => {
     <>
       {/* onboarding-progress-bar-app works! */}
 
-      <p className="text-red-400 font-bold text-center text-2">
-        {location.pathname}
-      </p>
       <div className="onboarding-progress-bar-alt | mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
         <div className={`bar ${stageProgressClass}`}></div>
         <ul className="onboarding-progress passed">
@@ -124,11 +121,10 @@ const OnboardingProgressBar = () => {
             return (
               <li
                 key={stage.title}
-                className={`font-semibold ${
-                  stage.passed
-                    ? "passed text-secondary-500"
-                    : "text-secondary-50"
-                }; 
+                className={`font-semibold ${stage.passed
+                  ? "passed text-secondary-500"
+                  : "text-secondary-50"
+                  }; 
                         `}
               >
                 <p className="hidden sm:block mt-1">{stage.title}</p>
@@ -142,26 +138,7 @@ const OnboardingProgressBar = () => {
           })}
         </p>
 
-        <div className="border rounded-lg p-4 border-primary my-4 shadow-sm">
-          <div className="bg-primary-50 mt-6 rounded p-2">
-            <Link to={"/onboarding/membership"}>membership</Link> |{" "}
-            <Link to={"/onboarding/configure-beats"}>configure-beats</Link> |{" "}
-            <Link to={"/onboarding/onboard-guard"}>onboard-guard</Link> |{" "}
-            <Link to={"/onboarding/assign-beats"}>assign-beats</Link>
-          </div>
-
-          <button onClick={() => setCount((init) => init + 1)}>{count}</button>
-
-          <p className="text-center pt-4">
-            <button
-              onClick={completeProcess}
-              type="submit"
-              className="text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
-            >
-              Complete Process
-            </button>
-          </p>
-        </div>
+        {/* <OnboardingTestNavigation completeProcess={completeProcess} location={location} /> */}
       </div>
     </>
   );

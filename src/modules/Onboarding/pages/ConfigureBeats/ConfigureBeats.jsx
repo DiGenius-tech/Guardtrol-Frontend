@@ -3,10 +3,11 @@ import QRGenerator from "./QRGenerator/QRGenerator";
 // import QRCode from "react-qr-code";
 import PointModal from "./PointModal/PointModal";
 import "./ConfigureBeats.scss";
+import PatrolRouteSelectionForMobile from "./PatrolRouteSelectionForMobile/PatrolRouteSelectionForMobile";
 
 const ConfigureBeats = () => {
   const [text, setText] = useState("default text for QRCode");
-  const [saveBeatData] = useState(true);
+  const [saveBeatData] = useState(false);
 
   const handleChange = (event) => {
     setText(event.target.value);
@@ -152,17 +153,10 @@ const ConfigureBeats = () => {
           </div>
 
           {/* Patrol route selection for mobile */}
-          <div id="configure-patrol-route-action">
-            <button type="button" className="flex items-start gap-2 w-full my-16">
-              <span>
-                <span className="flex flex-col justify-center items-start">
-                  <span className="flex w-full font-semibold">Patrol route</span>
-                  <span className="flex w-full text-dark-300 mt-1">Configure the patrol route</span>
-                </span></span>
-            </button>
-          </div>
+          <PatrolRouteSelectionForMobile />
 
-          <p className="horizontal-line-title fw-medium my-8 text-center">
+
+          <p className="horizontal-line-title fw-medium my-4 text-center">
             Or you can
           </p>
 
