@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import googleIconImg from "../../../../images/icons/google-social-icon.svg";
 import left_pattern_boxes from "../../../../images/left-pattern-boxes.svg";
 import right_pattern_boxes from "../../../../images/right-pattern-boxes.svg";
-import TextFieldError from "../../../Sandbox/TextFieldError/TextFieldError";
 
 const Login = () => {
   return (
@@ -29,7 +28,7 @@ const Login = () => {
             <div className="block px-4 py-8 sm:p-8 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
               <form>
                 {/*  */}
-                <TextFieldError />
+              
                 {/*  */}
                 <div className="mb-6">
                   <label

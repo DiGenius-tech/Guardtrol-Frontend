@@ -6,7 +6,7 @@ import right_pattern_boxes from "../../../../images/right-pattern-boxes.svg";
 import { AuthContext } from "../../../../shared/Context/AuthContext";
 import useHttpRequest from "../../../../shared/Hooks/HttpRequestHook";
 import { toast } from "react-toastify";
-import TextFieldError from "../../../Sandbox/TextFieldError/TextFieldError";
+import TextInputField from "../../../Sandbox/InputField/TextInputField";
 import { useGoogleLogin } from "@react-oauth/google";
 
 const Register = () => {
@@ -160,97 +160,66 @@ const Register = () => {
 
             <div className="block px-4 py-8 sm:p-8 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
               <form method="post" onSubmit={handleSubmit}>
-                {/*  */}
-                <TextFieldError />
-                {/*  */}
+               
 
-                <div className="mb-6">
-                  <label
-                    htmlFor="full_name"
-                    className="block mb-2 font-medium dark:text-white"
-                  >
-                    Full name
-                  </label>
-                  <input
-                    type="text"
-                    id="full_name"
-                    name="name"
-                    error="true"
-                    value={formData.name}
-                    onChange={handleChange}
-                    className="border border-gray-300 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 sm:py-4 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500"
-                    required
-                  />
-                </div>
-                <div className="mb-6">
-                  <label
-                    htmlFor="email"
-                    className="block mb-2 font-medium dark:text-white"
-                  >
-                    Email address
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    className="border border-gray-300 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 sm:py-4 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500"
-                    required
-                  />
-                </div>
-                <div className="mb-6">
-                  <label
-                    htmlFor="phone_number"
-                    className="block mb-2 font-medium dark:text-white"
-                  >
-                    Phone number
-                  </label>
-                  <input
-                    type="tel"
-                    id="phone_number"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    className="border border-gray-300 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 sm:py-4 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500"
-                    required
-                  />
-                </div>
-                <div className="mb-6">
-                  <label
-                    htmlFor="password"
-                    className="block mb-2 font-medium dark:text-white"
-                  >
-                    Password
-                  </label>
-                  <input
-                    type="password"
-                    id="password"
-                    name="password"
-                    value={formData.password}
-                    onChange={handleChange}
-                    minLength="6"
-                    className="border border-gray-300 text-sm rounded-[10px] focus:ring-green-500 focus:border-green-500 block w-full p-2.5 sm:py-4 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500"
-                    required
-                  />
-                </div>
-                <div className="mb-6">
-                  <label
-                    htmlFor="passwordconfirmation"
-                    className="block mb-2 font-medium dark:text-white"
-                  >
-                    Confirm Password
-                  </label>
-                  <input
-                    type="text"
-                    id="confirmpassword"
-                    name="password_confirmation"
-                    value={formData.password_confirmation}
-                    onChange={handleChange}
-                    className="border border-gray-300 text-sm rounded-[10px] focus:ring-green-500 focus:border-green-500 block w-full p-2.5 sm:py-4 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500"
-                    required
-                  />
-                </div>
+                <TextInputField 
+                  label="Full Name"
+                  name="name"
+                  type="text"
+                  placeholder="full name"
+                  id="name"
+                  error={validationErrors['name']}
+                  onChange={handleChange}
+                  required="required"
+                  value={formData.name}
+                />
+                
+                <TextInputField 
+                  label="Email Address"
+                  name="email"
+                  type="email"
+                  placeholder="email address"
+                  id="email"
+                  error={validationErrors['email']}
+                  onChange={handleChange}
+                  required="required"
+                  value={formData.email}
+                />
+                <TextInputField 
+                  label="Phone Number"
+                  name="phone"
+                  type="number"
+                  placeholder="phone number"
+                  id="phone"
+                  error={validationErrors['phone']}
+                  onChange={handleChange}
+                  required="required"
+                  value={formData.phone}
+                />
+                
+                <TextInputField 
+                  label="Password"
+                  name="password"
+                  type="password"
+                  placeholder="enter password"
+                  id="password"
+                  error={validationErrors['password']}
+                  onChange={handleChange}
+                  required="required"
+                  value={formData.password}
+                />
+                
+                <TextInputField 
+                  label="Confirm Password"
+                  name="password_confirmation"
+                  type="text"
+                  placeholder="confirm password"
+                  id="password_confirmation"
+                  error={validationErrors['password_confirmation']}
+                  onChange={handleChange}
+                  required="required"
+                  value={formData.password_confirmation}
+                />
                 <button
                   type="submit"
                   className="text-white bg-primary-500 hover:bg-primary-600 focus:ring-1 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm w-full px-5 py-2.5 sm:py-3 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
