@@ -1,0 +1,27 @@
+#configure-patrol-route-action {
+  > button {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    > span {
+      display: flex;
+      gap: 0.8em;
+      &::before {
+        content: url(../../../../images/icons/icon-calendar-black.svg);
+        display: block;
+        height: auth;
+        width: 20px;
+      }
+    }
+    &::after {
+      content: "";
+      background-image: url(../../../../images/icons/icon-angle-arrow-right-blue.svg);
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      display: block;
+      width: 15px;
+      height: 15px;
+    }
+  }
+}

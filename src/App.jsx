@@ -5,6 +5,7 @@ import "./App.scss";
 import { Navigate, RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { useCallback, useEffect, useState } from 'react';
 import { AuthContext } from './shared/Context/AuthContext';
+import sandbox_routes from './modules/Sandbox/sandbox.router';
 
 function App() {
   const [token, setToken] = useState(false)
@@ -48,6 +49,7 @@ function App() {
     path: "",
     Component: () => <Navigate to="/auth" />,
   },
+  sandbox_routes,
   auth_routes,
   onboarding_routes,
   {
