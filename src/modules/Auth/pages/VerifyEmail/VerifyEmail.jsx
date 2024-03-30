@@ -10,8 +10,9 @@ import { toast } from "react-toastify";
 
 function VerifyEmail() {
   const auth = useContext(AuthContext);
+  const {user} = useContext(AuthContext)
   const navigate = useNavigate()
-  const {verified, setVerified} = useState(false)
+  const [verified, setVerified] = useState(false)
   const [validationErrors, setValidationErrors] = useState({});
   const { isLoading, error, responseData, sendRequest } = useHttpRequest();
   const [formData, setFormData] = useState({
@@ -19,24 +20,30 @@ function VerifyEmail() {
    
   });
 
-  const checkIfVerified = async () => {
+  const checkIfVerified = async (props) => {
     const data = await sendRequest(
-      `http://localhost:5000/api/users/${auth.user.userid}/checkverifyemail`,
+      `http://localhost:5000/api/users/${props.userid}/checkverifyemail`,
       "get",
       null,
       {
         "Content-Type": "application/json",
-        Authorization : 'Bearer ' + auth.user.token 
+        Authorization : 'Bearer ' + props.token 
       }
     )
 
-    // if (data.isverified) {
-    //     setVerified(true)
-    //     toast('already verified')
-    // }
+    if (data.isverified) {
+        setVerified(true)
+        toast('already verified')
+    }
 }
 
 
+useEffect(() => {
+  if(null != user.token){
+    //console.log(user)
+    checkIfVerified(user)
+  }
+},[user.token])
 
 
 

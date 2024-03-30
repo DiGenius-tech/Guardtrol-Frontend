@@ -21,8 +21,8 @@ const AuthToolbar = () => {
                                     || location.pathname === '/auth/register/'
                                     || location.pathname === '/auth/forgot-password'
                                     || location.pathname === '/auth/forgot-password/'
-                                    || location.pathname === '/auth/set-new-password'
-                                    || location.pathname === '/auth/set-new-password/'
+                                    || location.pathname === '/auth/set-new-password/:token'
+                                    || location.pathname === '/auth/verify-email'
                                 ) ? 'hidden' : 'rounded-md py-2 text-sm font-medium text-primary-500'}`}>Create An Account</NavLink>
                             <NavLink to="/auth/login"
                                 className={`${(location.pathname === '/auth/login'
