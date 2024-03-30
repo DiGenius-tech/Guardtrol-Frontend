@@ -90,6 +90,12 @@ const OnboardingProgressBar = () => {
         case "/onboarding/onboard-guard/":
           setstageProgressClass("stage-3");
           break;
+        case "/onboarding/onboard-guard/add-guard":
+          setstageProgressClass("stage-3");
+          break;
+        case "/onboarding/onboard-guard/add-guard/":
+          setstageProgressClass("stage-3");
+          break;
         case "/onboarding/assign-beats":
           setstageProgressClass("stage-4");
           break;
