@@ -5,6 +5,11 @@
         border-left: 6px solid transparent;
         border-right: 6px solid transparent;
         border-bottom: 12px solid var(--clr-secondary-500); /* Change color as desired */
-        transform: rotate(-90deg);
+        &:not(.sm-scrn) {
+            transform: rotate(-90deg);
+        }
+    }
+
+    .sm-scrn {
     }
 }
