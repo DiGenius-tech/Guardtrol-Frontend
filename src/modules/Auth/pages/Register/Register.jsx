@@ -72,9 +72,12 @@ const Register = () => {
         );
 
         if (null != data) {
-          auth.login(data);
-          navigate('../verify-email', {replace: true})
-          window.location.reload();
+          if(auth.login(data)){
+            navigate('../verify-email', {replace: true}) //should be dashboard
+            window.location.reload();
+           }
+          // navigate('../verify-email', {replace: true})
+          // window.location.reload();
           
         }
       } catch (err) {
@@ -89,7 +92,7 @@ const Register = () => {
       if (error) {
         toast.error(error)
       }
-    }, [error])
+    }, [error]) 
 
     const signUp = useGoogleLogin  ({
       onSuccess: response => handleSignupSuccess(response)
@@ -111,12 +114,14 @@ const Register = () => {
               'Content-type': 'application/json'
             }
           )
-
-        auth.login(data)
-
-        navigate('../verify-email', {replace: true}) //should be dashboard
-        
-
+          if (null != data) {  
+            if(auth.login(data)){
+              toast("Signup Successful")
+              navigate('../dashboard', {replace: true}) //should be dashboard
+              window.location.reload();
+              
+           }
+          }
         
         //auth.login(data.token, data.userId)
       } catch (err) {
