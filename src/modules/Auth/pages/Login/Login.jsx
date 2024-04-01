@@ -9,7 +9,7 @@ import TextInputField from "../../../Sandbox/InputField/TextInputField";
 import RegularButton from "../../../Sandbox/Buttons/RegularButton";
 import { useGoogleLogin } from "@react-oauth/google";
 import { toast } from "react-toastify";
-import TextInputFieldFlexLabel from "../../../Sandbox/InputField/TextInputFieldFlexLabel";
+import TextInputFieldGroup from "../../../Sandbox/InputField/TextInputFieldGroup";
 
 const Login = () => {
   const auth = useContext(AuthContext);
@@ -161,7 +161,7 @@ const Login = () => {
                 {/*  */}
 
                 {/*  */}
-                <TextInputFieldFlexLabel
+                <TextInputField
                   label="Email Address"
                   name="email"
                   type="email"
@@ -172,7 +172,7 @@ const Login = () => {
                   required="required"
                   value={formData.email}
                 />
-                <TextInputFieldFlexLabel
+                <TextInputFieldGroup
                   label="Password"
                   name="password"
                   type="password"
@@ -182,10 +182,10 @@ const Login = () => {
                   onChange={handleChange}
                   required="required"
                   value={formData.password}
+                  passwordToggler={true}
                   link_text={
                     { text: "I forgot my password", link: true }
-                  }
-                />
+                  } />
                 <RegularButton
                   text="Log In"
                 />
