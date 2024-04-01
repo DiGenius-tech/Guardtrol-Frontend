@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Link, useNavigate  } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import googleIconImg from "../../../../images/icons/google-social-icon.svg";
 import left_pattern_boxes from "../../../../images/left-pattern-boxes.svg";
 import right_pattern_boxes from "../../../../images/right-pattern-boxes.svg";
@@ -9,6 +9,7 @@ import { toast } from "react-toastify";
 import TextInputField from "../../../Sandbox/InputField/TextInputField";
 import RegularButton from "../../../Sandbox/Buttons/RegularButton";
 import { useGoogleLogin } from "@react-oauth/google";
+import TextInputFieldGroup from "../../../Sandbox/InputField/TextInputFieldGroup";
 
 const Register = () => {
   const auth = useContext(AuthContext);
@@ -72,13 +73,13 @@ const Register = () => {
         );
 
         if (null != data) {
-          if(auth.login(data)){
-            navigate('../verify-email', {replace: true}) //should be dashboard
+          if (auth.login(data)) {
+            navigate('../verify-email', { replace: true }) //should be dashboard
             window.location.reload();
-           }
+          }
           // navigate('../verify-email', {replace: true})
           // window.location.reload();
-          
+
         }
       } catch (err) {
         console.log(err);
@@ -88,64 +89,64 @@ const Register = () => {
     }
   };
 
-    useEffect(() => {
-      if (error) {
-        toast.error(error)
+  useEffect(() => {
+    if (error) {
+      toast.error(error)
+    }
+  }, [error])
+
+  const signUp = useGoogleLogin({
+    onSuccess: response => handleSignupSuccess(response)
+  })
+
+  const handleSignupSuccess = async (response) => {
+    try {
+      auth.loading(true)
+      const accessToken = response.access_token
+
+      const userData = await getUserInfo(accessToken)
+
+      console.log(userData)
+      const data = await sendRequest(
+        "http://localhost:5000/api/users/signupwithgoogle",
+        "POST",
+        JSON.stringify(userData),
+        {
+          'Content-type': 'application/json'
+        }
+      )
+      if (null != data) {
+        if (auth.login(data)) {
+          toast("Signup Successful")
+          navigate('../dashboard', { replace: true }) //should be dashboard
+          window.location.reload();
+
+        }
       }
-    }, [error]) 
 
-    const signUp = useGoogleLogin  ({
-      onSuccess: response => handleSignupSuccess(response)
-    })
+      //auth.login(data.token, data.userId)
+    } catch (err) {
+      console.log(err)
+    } finally {
+      auth.loading(false)
+    }
+  };
 
-    const handleSignupSuccess = async (response) => {
-      try {
-        auth.loading(true)
-        const accessToken = response.access_token
+  const getUserInfo = async (accessToken) => {
+    try {
+      const response = await sendRequest(
+        "https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=" + accessToken,
+        "GET",
+        null,
+        {}
+      );
+      return response;
+    } catch (error) {
+      console.error("Error fetching user info: ", error);
+      toast.error(error);
+    }
+  };
 
-        const userData = await getUserInfo(accessToken)
-        
-        console.log(userData)
-       const data = await sendRequest(
-            "http://localhost:5000/api/users/signupwithgoogle",
-            "POST",
-            JSON.stringify(userData),
-            {
-              'Content-type': 'application/json'
-            }
-          )
-          if (null != data) {  
-            if(auth.login(data)){
-              toast("Signup Successful")
-              navigate('../dashboard', {replace: true}) //should be dashboard
-              window.location.reload();
-              
-           }
-          }
-        
-        //auth.login(data.token, data.userId)
-      } catch (err) {
-        console.log(err)
-      }finally{
-        auth.loading(false)
-      }
-    };
-
-    const getUserInfo = async (accessToken) => {
-      try {
-        const response = await sendRequest(
-          "https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=" + accessToken,
-          "GET",
-          null,
-          {}
-        );
-        return response;
-      } catch (error) {
-        console.error("Error fetching user info: ", error);
-        toast.error(error);
-      }
-    };
-    
 
   const handleSignupFailure = (error) => {
     // Handle failed login
@@ -174,44 +175,44 @@ const Register = () => {
 
             <div className="block px-4 py-8 sm:p-8 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
               <form method="post" onSubmit={handleSubmit}>
-               
 
-                <TextInputField 
+
+                <TextInputField
                   label="Full Name"
                   name="name"
                   type="text"
-                  placeholder="full name"
+                  placeholder="Full Name"
                   id="name"
                   error={validationErrors['name']}
                   onChange={handleChange}
                   required="required"
                   value={formData.name}
                 />
-                
-                <TextInputField 
+
+                <TextInputField
                   label="Email Address"
                   name="email"
                   type="email"
-                  placeholder="email address"
+                  placeholder="Email Address"
                   id="email"
                   error={validationErrors['email']}
                   onChange={handleChange}
                   required="required"
                   value={formData.email}
                 />
-                <TextInputField 
+                <TextInputField
                   label="Phone Number"
                   name="phone"
                   type="number"
-                  placeholder="phone number"
+                  placeholder="Phone Number"
                   id="phone"
                   error={validationErrors['phone']}
                   onChange={handleChange}
                   required="required"
                   value={formData.phone}
                 />
-                
-                <TextInputField 
+
+                {/* <TextInputField 
                   label="Password"
                   name="password"
                   type="password"
@@ -221,22 +222,36 @@ const Register = () => {
                   onChange={handleChange}
                   required="required"
                   value={formData.password}
+                  passwordToggler={true}
                 />
-                
-                <TextInputField 
+                 */}
+                <TextInputFieldGroup
+                  label="Password"
+                  name="password"
+                  type="password"
+                  placeholder="Password"
+                  id="password"
+                  error={validationErrors['password']}
+                  onChange={handleChange}
+                  required="required"
+                  value={formData.password}
+                  passwordToggler={true} />
+
+                <TextInputField
                   label="Confirm Password"
                   name="password_confirmation"
-                  type="text"
-                  placeholder="confirm password"
+                  type="password"
+                  placeholder="Confirm Password"
                   id="password_confirmation"
                   error={validationErrors['password_confirmation']}
                   onChange={handleChange}
                   required="required"
                   value={formData.password_confirmation}
+                  passwordToggler={true}
                 />
-                <RegularButton 
+                <RegularButton
                   text="Create An Account"
-                 />
+                />
               </form>
             </div>
 
@@ -247,7 +262,7 @@ const Register = () => {
             <Link
               to="#"
               onClick={() => signUp()}
-              className="mb-4 block w-full border border-primary-500 text-dark bg-white focus:ring-1 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm w-full px-5 py-2.5 sm:py-3 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+              className="mb-4 block w-full border border-primary-500 text-dark bg-white focus:ring-1 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 sm:py-3 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
             >
               <span className="sm:text-lg flex items-center justify-center gap-2">
                 <img src={googleIconImg} alt="Sign Up With Google" />
