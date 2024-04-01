@@ -53,7 +53,6 @@ const TextInputFieldFlexLabel = props => {
           required={props.required ? true : false}
           value={props.value}
           onChange={props.onChange}
-
         />
         {props.error && (
           <p className="mt-2 text-sm text-red-600 dark:text-red-500">

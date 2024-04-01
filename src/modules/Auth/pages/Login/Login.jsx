@@ -10,6 +10,7 @@ import RegularButton from "../../../Sandbox/Buttons/RegularButton";
 import { useGoogleLogin } from "@react-oauth/google";
 import { toast } from "react-toastify";
 import TextInputFieldFlexLabel from "../../../Sandbox/InputField/TextInputFieldFlexLabel";
+import TextInputFieldGroup from "../../../Sandbox/InputField/TextInputFieldGroup";
 
 const Login = () => {
   const auth = useContext(AuthContext);
@@ -161,7 +162,7 @@ const Login = () => {
                 {/*  */}
 
                 {/*  */}
-                <TextInputFieldFlexLabel
+                <TextInputField
                   label="Email Address"
                   name="email"
                   type="email"
@@ -172,7 +173,7 @@ const Login = () => {
                   required="required"
                   value={formData.email}
                 />
-                <TextInputFieldFlexLabel
+                {/* <TextInputFieldFlexLabel
                   label="Password"
                   name="password"
                   type="password"
@@ -185,7 +186,37 @@ const Login = () => {
                   link_text={
                     { text: "I forgot my password", link: true }
                   }
-                />
+                /> */}
+                {/*  */}
+                <TextInputField
+                  label="Password"
+                  name="password"
+                  type="password"
+                  placeholder=""
+                  id="password"
+                  error={validationErrors['password']}
+                  onChange={handleChange}
+                  required="required"
+                  value={formData.password}
+                  passwordToggler={true}
+                  link_text={
+                    { text: "I forgot my password", link: true }
+                  } />
+                {/*  */}
+                <TextInputFieldGroup
+                  label="Password2"
+                  name="password2"
+                  type="password"
+                  placeholder=""
+                  id="password2"
+                  error={validationErrors['password2']}
+                  onChange={handleChange}
+                  required="required"
+                  value={formData.password}
+                  passwordToggler={true}
+                  link_text={
+                    { text: "I forgot my password", link: true }
+                  } />
                 <RegularButton
                   text="Log In"
                 />
