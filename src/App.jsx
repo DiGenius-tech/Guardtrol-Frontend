@@ -2,7 +2,7 @@ import PageNotFound from './PageNotFound/PageNotFound';
 import auth_routes from './modules/Auth/Auth.routes';
 import onboarding_routes from './modules/Onboarding/Onboarding.routes';
 import "./App.scss";
-import { Navigate, RouterProvider, createBrowserRouter } from 'react-router-dom';
+import { Navigate, RouterProvider, createBrowserRouter, useNavigate } from 'react-router-dom';
 import { useCallback, useEffect, useState } from 'react';
 import { AuthContext } from './shared/Context/AuthContext';
 import sandbox_routes from './modules/Sandbox/sandbox.routes';
@@ -19,6 +19,8 @@ function App() {
     setUser(data)
 
     localStorage.setItem('userData', JSON.stringify(data))
+
+    return true
 
   }, [])
   const loading = useCallback((load) => {
