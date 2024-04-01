@@ -165,7 +165,7 @@ const Login = () => {
                   label="Email Address"
                   name="email"
                   type="email"
-                  placeholder="example@example.com"
+                  placeholder="Example@example.com"
                   id="email"
                   error={validationErrors['email']}
                   onChange={handleChange}

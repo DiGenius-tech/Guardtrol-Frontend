@@ -180,7 +180,7 @@ const Register = () => {
                   label="Full Name"
                   name="name"
                   type="text"
-                  placeholder="full name"
+                  placeholder="Full Name"
                   id="name"
                   error={validationErrors['name']}
                   onChange={handleChange}
@@ -192,7 +192,7 @@ const Register = () => {
                   label="Email Address"
                   name="email"
                   type="email"
-                  placeholder="email address"
+                  placeholder="Email Address"
                   id="email"
                   error={validationErrors['email']}
                   onChange={handleChange}
@@ -203,7 +203,7 @@ const Register = () => {
                   label="Phone Number"
                   name="phone"
                   type="number"
-                  placeholder="phone number"
+                  placeholder="Phone Number"
                   id="phone"
                   error={validationErrors['phone']}
                   onChange={handleChange}
@@ -215,7 +215,7 @@ const Register = () => {
                   label="Password"
                   name="password"
                   type="password"
-                  placeholder="enter password"
+                  placeholder="Enter Password"
                   id="password"
                   error={validationErrors['password']}
                   onChange={handleChange}
@@ -226,8 +226,8 @@ const Register = () => {
                 <TextInputField 
                   label="Confirm Password"
                   name="password_confirmation"
-                  type="text"
-                  placeholder="confirm password"
+                  type="password"
+                  placeholder="Confirm Password"
                   id="password_confirmation"
                   error={validationErrors['password_confirmation']}
                   onChange={handleChange}
