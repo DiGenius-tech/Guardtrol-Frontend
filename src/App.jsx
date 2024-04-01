@@ -72,7 +72,7 @@ function App() {
       loading: loading,
       isloading: isLoading
   }} >
-    {isLoading && <LoadingSpinner/>} 
+    {isLoading && <LoadingSpinner/>}
     <RouterProvider router={router} />
   </AuthContext.Provider>
    
