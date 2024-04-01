@@ -4,7 +4,11 @@ import { Link } from "react-router-dom";
 const TextInputFieldGroup = props => {
   const [isText, setIsText] = useState(false)
   const toggle_input_type = () => {
-    setIsText(!isText)
+    if (props.type === "password") {
+      setIsText(!isText)
+    } else {
+      setIsText(!isText)
+    }
   }
   return (
     <>
@@ -15,7 +19,7 @@ const TextInputFieldGroup = props => {
           props.link_text ?
             (<div className="flex items-center justify-between mb-2">
               <label
-                htmlFor={props.label}
+                htmlFor={props.id}
                 className="block mb-2 font-medium text-gray-900 dark:text-white"
               >
                 {props.label}
@@ -32,7 +36,7 @@ const TextInputFieldGroup = props => {
               }
             </div>) :
             (<label
-              htmlFor={props.label}
+              htmlFor={props.id}
               className="block mb-2 font-medium text-gray-900 dark:text-white"
             >
               {props.label}

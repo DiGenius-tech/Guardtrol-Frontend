@@ -173,43 +173,13 @@ const Login = () => {
                   required="required"
                   value={formData.email}
                 />
-                {/* <TextInputFieldFlexLabel
-                  label="Password"
-                  name="password"
-                  type="password"
-                  placeholder=""
-                  id="password"
-                  error={validationErrors['password']}
-                  onChange={handleChange}
-                  required="required"
-                  value={formData.password}
-                  link_text={
-                    { text: "I forgot my password", link: true }
-                  }
-                /> */}
-                {/*  */}
-                <TextInputField
-                  label="Password"
-                  name="password"
-                  type="password"
-                  placeholder=""
-                  id="password"
-                  error={validationErrors['password']}
-                  onChange={handleChange}
-                  required="required"
-                  value={formData.password}
-                  passwordToggler={true}
-                  link_text={
-                    { text: "I forgot my password", link: true }
-                  } />
-                {/*  */}
                 <TextInputFieldGroup
-                  label="Password2"
-                  name="password2"
+                  label="Password"
+                  name="password"
                   type="password"
                   placeholder=""
-                  id="password2"
-                  error={validationErrors['password2']}
+                  id="password"
+                  error={validationErrors['password']}
                   onChange={handleChange}
                   required="required"
                   value={formData.password}

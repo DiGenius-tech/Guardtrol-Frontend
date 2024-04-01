@@ -40,11 +40,6 @@ const TextInputField = props => {
               {props.label}
             </label>)
         }
-
-
-
-
-
         
         <input
           type={props.type}
