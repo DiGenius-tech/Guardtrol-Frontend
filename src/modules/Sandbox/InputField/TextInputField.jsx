@@ -24,7 +24,7 @@ const TextInputField = props => {
           dark:focus:ring-green-500`):(`border border-gray-300 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 sm:py-4 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500`)}
           placeholder={props.placeholder}
           autoComplete="off"
-          required= {props.required ? "true": "false"}
+          required= {props.required ? true: false}
           value={props.value}
           onChange={props.onChange}
 

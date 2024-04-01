@@ -9,6 +9,7 @@ import TextInputField from "../../../Sandbox/InputField/TextInputField";
 import RegularButton from "../../../Sandbox/Buttons/RegularButton";
 import { useGoogleLogin } from "@react-oauth/google";
 import { toast } from "react-toastify";
+import TextInputFieldFlexLabel from "../../../Sandbox/InputField/TextInputFieldFlexLabel";
 
 const Login = () => {
   const auth = useContext(AuthContext);
@@ -37,7 +38,7 @@ const Login = () => {
         newErrors[el.name] = el.validationMessage;
       }
 
-      
+
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -59,9 +60,9 @@ const Login = () => {
 
         if (null != data) {
           auth.login(data);
-          navigate('/dashboard', {replace: true})
+          navigate('/dashboard', { replace: true })
           window.location.reload();
-          
+
         }
       } catch (err) {
         console.log(err);
@@ -71,65 +72,65 @@ const Login = () => {
     }
   };
 
-    useEffect(() => {
-      if (error) {
-        toast.error(error)
-      }
-    }, [error])
+  useEffect(() => {
+    if (error) {
+      toast.error(error)
+    }
+  }, [error])
 
-    const signIn = useGoogleLogin  ({
-      onSuccess: response => handleSignInSuccess(response)
-    })
+  const signIn = useGoogleLogin({
+    onSuccess: response => handleSignInSuccess(response)
+  })
 
-    const handleSignInSuccess = async (response) => {
-      try {
-        auth.loading(true)
-        const accessToken = response.access_token
+  const handleSignInSuccess = async (response) => {
+    try {
+      auth.loading(true)
+      const accessToken = response.access_token
 
-        const userData = await getUserInfo(accessToken)
-        
-        console.log(userData)
-       const data = await sendRequest(
-            "http://localhost:5000/api/users/signinwithgoogle",
-            "POST",
-            JSON.stringify(userData),
-            {
-              'Content-type': 'application/json'
-            }
-          )
-      if (null != data) {    
-        if(auth.login(data)){
-         navigate('/dashboard', {replace: true}) //should be dashboard
-         window.location.reload();
+      const userData = await getUserInfo(accessToken)
+
+      console.log(userData)
+      const data = await sendRequest(
+        "http://localhost:5000/api/users/signinwithgoogle",
+        "POST",
+        JSON.stringify(userData),
+        {
+          'Content-type': 'application/json'
+        }
+      )
+      if (null != data) {
+        if (auth.login(data)) {
+          navigate('/dashboard', { replace: true }) //should be dashboard
+          window.location.reload();
         }
       }
 
-        
 
-        
-        //auth.login(data.token, data.userId)
-      } catch (err) {
-        console.log(err)
-      }finally{
-        auth.loading(false)
-      }
-    };
 
-    const getUserInfo = async (accessToken) => {
-      try {
-        const response = await sendRequest(
-          "https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=" + accessToken,
-          "GET",
-          null,
-          {}
-        );
-        return response;
-      } catch (error) {
-        console.error("Error fetching user info: ", error);
-        toast.error(error);
-      }
-    };
-    
+
+      //auth.login(data.token, data.userId)
+    } catch (err) {
+      console.log(err)
+    } finally {
+      auth.loading(false)
+    }
+  };
+
+  const getUserInfo = async (accessToken) => {
+    try {
+      const response = await sendRequest(
+        "https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=" + accessToken,
+        "GET",
+        null,
+        {}
+      );
+      return response;
+    } catch (error) {
+      console.error("Error fetching user info: ", error);
+      toast.error(error);
+    }
+  };
+
 
   const handleSignInFailure = (error) => {
     // Handle failed login
@@ -158,9 +159,9 @@ const Login = () => {
             <div className="block px-4 py-8 sm:p-8 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
               <form method="post" onSubmit={handleSubmit}>
                 {/*  */}
-              
+
                 {/*  */}
-                <TextInputField 
+                <TextInputFieldFlexLabel
                   label="Email Address"
                   name="email"
                   type="email"
@@ -171,7 +172,7 @@ const Login = () => {
                   required="required"
                   value={formData.email}
                 />
-                <TextInputField 
+                <TextInputFieldFlexLabel
                   label="Password"
                   name="password"
                   type="password"
@@ -181,8 +182,11 @@ const Login = () => {
                   onChange={handleChange}
                   required="required"
                   value={formData.password}
+                  link_text={
+                    { text: "I forgot my password", link: true }
+                  }
                 />
-                <RegularButton 
+                <RegularButton
                   text="Log In"
                 />
               </form>
