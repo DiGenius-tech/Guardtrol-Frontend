@@ -3,6 +3,7 @@ import Login from './pages/Login/Login';
 import Register from './pages/Register/Register';
 import ForgotPassword from './pages/ForgotPassword/ForgotPassword';
 import SetNewPassword from "./pages/SetNewPassword/SetNewPassword";
+import VerifyEmail from "./pages/VerifyEmail/VerifyEmail";
 
 const auth_routes = {
     path: "/auth",
@@ -23,8 +24,12 @@ const auth_routes = {
             element: <ForgotPassword />
         }
         , {
-            path: "set-new-password",
+            path: "set-new-password/:token",
             element: <SetNewPassword />
+        },
+        {
+            path: "verify-email",
+            element: <VerifyEmail />
         }
     ]
 }

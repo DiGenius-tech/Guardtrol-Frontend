@@ -1,11 +1,12 @@
 import PageNotFound from './PageNotFound/PageNotFound';
-import auth_routes from './modules/Auth/Auth.router';
-import onboarding_routes from './modules/Onboarding/Onboarding.router';
+import auth_routes from './modules/Auth/Auth.routes';
+import onboarding_routes from './modules/Onboarding/Onboarding.routes';
 import "./App.scss";
-import { Navigate, RouterProvider, createBrowserRouter } from 'react-router-dom';
+import { Navigate, RouterProvider, createBrowserRouter, useNavigate } from 'react-router-dom';
 import { useCallback, useEffect, useState } from 'react';
 import { AuthContext } from './shared/Context/AuthContext';
-import sandbox_routes from './modules/Sandbox/sandbox.router';
+import sandbox_routes from './modules/Sandbox/sandbox.routes';
+import LoadingSpinner from './shared/LoadingSpinner/LoadingSpinner';
 
 function App() {
   const [token, setToken] = useState(false)
@@ -18,6 +19,8 @@ function App() {
     setUser(data)
 
     localStorage.setItem('userData', JSON.stringify(data))
+
+    return true
 
   }, [])
   const loading = useCallback((load) => {
@@ -59,6 +62,7 @@ function App() {
 ]); 
 
  return (
+  
   <AuthContext.Provider value={{
       isLoggedIn: !!token,
       user: user,
@@ -68,6 +72,7 @@ function App() {
       loading: loading,
       isloading: isLoading
   }} >
+    {isLoading && <LoadingSpinner/>} 
     <RouterProvider router={router} />
   </AuthContext.Provider>
    

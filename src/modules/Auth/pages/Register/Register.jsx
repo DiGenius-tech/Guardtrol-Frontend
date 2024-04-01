@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate  } from "react-router-dom";
 import googleIconImg from "../../../../images/icons/google-social-icon.svg";
 import left_pattern_boxes from "../../../../images/left-pattern-boxes.svg";
 import right_pattern_boxes from "../../../../images/right-pattern-boxes.svg";
@@ -7,10 +7,12 @@ import { AuthContext } from "../../../../shared/Context/AuthContext";
 import useHttpRequest from "../../../../shared/Hooks/HttpRequestHook";
 import { toast } from "react-toastify";
 import TextInputField from "../../../Sandbox/InputField/TextInputField";
+import RegularButton from "../../../Sandbox/Buttons/RegularButton";
 import { useGoogleLogin } from "@react-oauth/google";
 
 const Register = () => {
   const auth = useContext(AuthContext);
+  const navigate = useNavigate()
   const [validationErrors, setValidationErrors] = useState({});
   const { isLoading, error, responseData, sendRequest } = useHttpRequest();
   const [formData, setFormData] = useState({
@@ -70,7 +72,13 @@ const Register = () => {
         );
 
         if (null != data) {
-          auth.login(data);
+          if(auth.login(data)){
+            navigate('../verify-email', {replace: true}) //should be dashboard
+            window.location.reload();
+           }
+          // navigate('../verify-email', {replace: true})
+          // window.location.reload();
+          
         }
       } catch (err) {
         console.log(err);
@@ -84,7 +92,7 @@ const Register = () => {
       if (error) {
         toast.error(error)
       }
-    }, error)
+    }, [error]) 
 
     const signUp = useGoogleLogin  ({
       onSuccess: response => handleSignupSuccess(response)
@@ -106,8 +114,14 @@ const Register = () => {
               'Content-type': 'application/json'
             }
           )
-
-        auth.login(data)
+          if (null != data) {  
+            if(auth.login(data)){
+              toast("Signup Successful")
+              navigate('../dashboard', {replace: true}) //should be dashboard
+              window.location.reload();
+              
+           }
+          }
         
         //auth.login(data.token, data.userId)
       } catch (err) {
@@ -220,14 +234,9 @@ const Register = () => {
                   required="required"
                   value={formData.password_confirmation}
                 />
-                <button
-                  type="submit"
-                  className="text-white bg-primary-500 hover:bg-primary-600 focus:ring-1 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm w-full px-5 py-2.5 sm:py-3 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
-                >
-                  <span className="text-base sm:text-lg">
-                    Create An Account
-                  </span>
-                </button>
+                <RegularButton 
+                  text="Create An Account"
+                 />
               </form>
             </div>
 

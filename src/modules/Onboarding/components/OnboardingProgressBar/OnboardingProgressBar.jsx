@@ -90,6 +90,12 @@ const OnboardingProgressBar = () => {
         case "/onboarding/onboard-guard/":
           setstageProgressClass("stage-3");
           break;
+        case "/onboarding/onboard-guard/add-guard":
+          setstageProgressClass("stage-3");
+          break;
+        case "/onboarding/onboard-guard/add-guard/":
+          setstageProgressClass("stage-3");
+          break;
         case "/onboarding/assign-beats":
           setstageProgressClass("stage-4");
           break;
@@ -114,7 +120,7 @@ const OnboardingProgressBar = () => {
     <>
       {/* onboarding-progress-bar-app works! */}
 
-      <div className="onboarding-progress-bar-alt | mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
+      <div className="onboarding-progress-bar-alt | mx-auto max-w-7xl px-2 sm:px-6 lg:px-8 mb-4">
         <div className={`bar ${stageProgressClass}`}></div>
         <ul className="onboarding-progress passed">
           {stages.map((stage, i) => {

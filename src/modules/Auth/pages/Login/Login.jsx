@@ -1,10 +1,140 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useContext, useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import googleIconImg from "../../../../images/icons/google-social-icon.svg";
 import left_pattern_boxes from "../../../../images/left-pattern-boxes.svg";
 import right_pattern_boxes from "../../../../images/right-pattern-boxes.svg";
+import { AuthContext } from "../../../../shared/Context/AuthContext";
+import useHttpRequest from "../../../../shared/Hooks/HttpRequestHook";
+import TextInputField from "../../../Sandbox/InputField/TextInputField";
+import RegularButton from "../../../Sandbox/Buttons/RegularButton";
+import { useGoogleLogin } from "@react-oauth/google";
+import { toast } from "react-toastify";
 
 const Login = () => {
+  const auth = useContext(AuthContext);
+  const navigate = useNavigate()
+  const [validationErrors, setValidationErrors] = useState({});
+  const { isLoading, error, responseData, sendRequest } = useHttpRequest();
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setValidationErrors({ ...validationErrors, [e.target.name]: "" });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const form = e.currentTarget;
+    const newErrors = {};
+
+    // Check each input field's validity and set errors accordingly
+    for (const el of form.elements) {
+      if (el.nodeName === "INPUT" && !el.validity.valid) {
+        console.log(el.name);
+        newErrors[el.name] = el.validationMessage;
+      }
+
+      
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      // If there are validation errors, update state and stop submission
+      setValidationErrors(newErrors);
+      e.stopPropagation();
+    } else {
+      // Form is valid, handle submission
+      auth.loading(true);
+      try {
+        const data = await sendRequest(
+          "http://localhost:5000/api/users/signin",
+          "POST",
+          JSON.stringify(formData),
+          {
+            "Content-Type": "application/json"
+          }
+        );
+
+        if (null != data) {
+          auth.login(data);
+          navigate('/dashboard', {replace: true})
+          window.location.reload();
+          
+        }
+      } catch (err) {
+        console.log(err);
+      } finally {
+        auth.loading(false);
+      }
+    }
+  };
+
+    useEffect(() => {
+      if (error) {
+        toast.error(error)
+      }
+    }, [error])
+
+    const signIn = useGoogleLogin  ({
+      onSuccess: response => handleSignInSuccess(response)
+    })
+
+    const handleSignInSuccess = async (response) => {
+      try {
+        auth.loading(true)
+        const accessToken = response.access_token
+
+        const userData = await getUserInfo(accessToken)
+        
+        console.log(userData)
+       const data = await sendRequest(
+            "http://localhost:5000/api/users/signinwithgoogle",
+            "POST",
+            JSON.stringify(userData),
+            {
+              'Content-type': 'application/json'
+            }
+          )
+      if (null != data) {    
+        if(auth.login(data)){
+         navigate('/dashboard', {replace: true}) //should be dashboard
+         window.location.reload();
+        }
+      }
+
+        
+
+        
+        //auth.login(data.token, data.userId)
+      } catch (err) {
+        console.log(err)
+      }finally{
+        auth.loading(false)
+      }
+    };
+
+    const getUserInfo = async (accessToken) => {
+      try {
+        const response = await sendRequest(
+          "https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=" + accessToken,
+          "GET",
+          null,
+          {}
+        );
+        return response;
+      } catch (error) {
+        console.error("Error fetching user info: ", error);
+        toast.error(error);
+      }
+    };
+    
+
+  const handleSignInFailure = (error) => {
+    // Handle failed login
+    console.error("Login failure:", error);
+  };
   return (
     <>
       {/* login-app works! */}
@@ -26,56 +156,35 @@ const Login = () => {
             <div className="mt-8"></div>
 
             <div className="block px-4 py-8 sm:p-8 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-              <form>
+              <form method="post" onSubmit={handleSubmit}>
                 {/*  */}
               
                 {/*  */}
-                <div className="mb-6">
-                  <label
-                    htmlFor="email"
-                    className="block mb-2 font-medium text-gray-900 dark:text-white"
-                  >
-                    Email address
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 sm:py-4 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500"
-                    placeholder="name@guardtrol.com"
-                    autoComplete="email"
-                    required
-                  />
-                </div>
-                <div className="mb-6">
-                  <div className="flex items-center justify-between mb-2">
-                    <label
-                      htmlFor="password"
-                      className="block font-medium text-gray-900 dark:text-white"
-                    >
-                      Password
-                    </label>
-                    <Link
-                      to="/auth/forgot-password"
-                      className="text-primary-500 font-medium"
-                    >
-                      I forgot my password
-                    </Link>
-                  </div>
-                  <input
-                    type="password"
-                    id="password"
-                    name="password"
-                    className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 sm:py-4 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500"
-                    required
-                  />
-                </div>
-                <button
-                  type="submit"
-                  className="text-white bg-primary-500 hover:bg-primary-600 focus:ring-1 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm w-full px-5 py-2.5 sm:py-3 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
-                >
-                  <span className="text-base sm:text-lg">Log In</span>
-                </button>
+                <TextInputField 
+                  label="Email Address"
+                  name="email"
+                  type="email"
+                  placeholder="example@example.com"
+                  id="email"
+                  error={validationErrors['email']}
+                  onChange={handleChange}
+                  required="required"
+                  value={formData.email}
+                />
+                <TextInputField 
+                  label="Password"
+                  name="password"
+                  type="password"
+                  placeholder=""
+                  id="password"
+                  error={validationErrors['password']}
+                  onChange={handleChange}
+                  required="required"
+                  value={formData.password}
+                />
+                <RegularButton 
+                  text="Log In"
+                />
               </form>
             </div>
 
@@ -84,7 +193,8 @@ const Login = () => {
             </p>
 
             <Link
-              to=""
+              to="#"
+              onClick={() => signIn()}
               className="mb-4 block w-full border border-primary-500 text-dark bg-white focus:ring-1 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm w-full px-5 py-2.5 sm:py-3 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
             >
               <span className="sm:text-lg flex items-center justify-center gap-2">

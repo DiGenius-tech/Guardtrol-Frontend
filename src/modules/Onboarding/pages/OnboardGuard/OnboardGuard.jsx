@@ -1,11 +1,24 @@
-import React from 'react';
+import React from "react";
+import { Outlet } from "react-router-dom";
+import "./OnboardGuard.scss";
 
 const OnboardGuard = () => {
-    return (
-        <div>
-            onboard-guard-app works!
-        </div>
-    );
-}
+  return (
+    <div id="onboard-guard">
+      {/* onboard-guard-app works! */}
+
+      <h1 className="font-bold text-center text-2xl text-dark-450">
+        Onboard guard
+      </h1>
+      <p className="text-center mx-auto max-w-[400px] text-dark-400">
+        This is just a subtext to support the topic above
+      </p>
+      <div className="mt-8"></div>
+
+      <Outlet />
+      {/*  */}
+    </div>
+  );
+};
 
 export default OnboardGuard;

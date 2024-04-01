@@ -1,7 +1,93 @@
+import { useParams } from "react-router-dom";
 import left_pattern_boxes from "../../../../images/left-pattern-boxes.svg";
 import right_pattern_boxes from "../../../../images/right-pattern-boxes.svg";
+import { toast } from "react-toastify";
+import { Link, useNavigate } from "react-router-dom";
+import useHttpRequest from "../../../../shared/Hooks/HttpRequestHook";
+import TextInputField from "../../../Sandbox/InputField/TextInputField";
+import RegularButton from "../../../Sandbox/Buttons/RegularButton";
+import { AuthContext } from "../../../../shared/Context/AuthContext";
+import { useContext, useEffect, useState } from "react";
 
 function SetNewPassword() {
+  const {token} = useParams()
+  const auth = useContext(AuthContext)
+  const navigate = useNavigate()
+  const [passwordChanged, setPasswordChanged] = useState(false)
+  const [validationErrors, setValidationErrors] = useState({});
+  const { isLoading, error, responseData, sendRequest } = useHttpRequest();
+  const [formData, setFormData] = useState({
+    password: "",
+    password_confirmation: "",
+    resetToken: token
+  });
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setValidationErrors({ ...validationErrors, [e.target.name]: "" });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const form = e.currentTarget;
+    const newErrors = {};
+
+    // Check each input field's validity and set errors accordingly
+    for (const el of form.elements) {
+      if (el.nodeName === "INPUT" && !el.validity.valid) {
+        console.log(el.name);
+        newErrors[el.name] = el.validationMessage;
+      }
+
+      // Add the condition to check if passwords match
+      if (
+        el.name === "password" &&
+        el.value !== formData.password_confirmation
+      ) {
+        newErrors["password_confirmation"] = "Passwords don't match";
+      } else if (
+        el.name === "password_confirmation" &&
+        el.value !== formData.password
+      ) {
+        newErrors["password_confirmation"] = "Passwords don't match";
+      }
+
+    if (Object.keys(newErrors).length > 0) {
+      // If there are validation errors, update state and stop submission
+      setValidationErrors(newErrors);
+      e.stopPropagation();
+    } else {
+      // Form is valid, handle submission
+      auth.loading(true);
+      try {
+        const data = await sendRequest(
+          `http://localhost:5000/api/users/resetpassword`,
+          "PATCH",
+          JSON.stringify(formData),
+          {
+            "Content-Type": "application/json", 
+          }
+        );
+
+        if (null != data) {
+          toast(data.message)
+          setPasswordChanged(true)
+        }
+      } catch (err) {
+        console.log(err);
+      } finally {
+        auth.loading(false);
+      }
+    }
+  }
+}
+
+useEffect(() => {
+    if (error) {
+      toast.error(error)
+    }
+  }, [error])
+
   return (
     <>
       {/* set-new-password-app woks! */}
@@ -14,7 +100,23 @@ function SetNewPassword() {
               <img src={left_pattern_boxes} alt="" />
             </div>
           </div>
-          <div className="col-span-12 sm:col-span-6 lg:col-span-4">
+          {passwordChanged? (
+            <div className="col-span-12 sm:col-span-6 lg:col-span-4">
+            <div className="mt-16"></div>
+            <h1 className="font-bold text-2xl tracking-wide text-center">
+              Password Changed
+            </h1>
+            <p className="text-center">
+              Your password was changed successfully Hurray!!!
+            </p><br />
+            <center>
+              <Link to={'/auth/login'} className="text-primary-500 font-medium">Continue To Login</Link>
+            </center>
+
+            <div className="mt-8"></div>
+          </div>
+          ):(
+            <div className="col-span-12 sm:col-span-6 lg:col-span-4">
             <div className="mt-16"></div>
             <h1 className="font-bold text-2xl tracking-wide text-center">
               Set New Password
@@ -23,48 +125,34 @@ function SetNewPassword() {
             <div className="mt-8"></div>
 
             <div className="block px-4 py-8 sm:p-8 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-              <form>
-                <div className="mb-6">
-                  <div className="flex items-center justify-between mb-2">
-                    <label
-                      htmlFor="password"
-                      className="block font-medium text-gray-900 dark:text-white"
-                    >
-                      Enter new password
-                    </label>
-                  </div>
-                  <input
+              <form method="post" onSubmit={handleSubmit}>
+              <TextInputField 
+                    label="Password"
+                    name="password"
                     type="password"
+                    placeholder=""
                     id="password"
-                    className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 sm:py-4 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500"
-                    required
-                  />
-                </div>
-                <div className="mb-6">
-                  <div className="flex items-center justify-between mb-2">
-                    <label
-                      htmlFor="confirm_password"
-                      className="block font-medium text-gray-900 dark:text-white"
-                    >
-                      Confirm password
-                    </label>
-                  </div>
-                  <input
-                    type="password"
-                    id="confirm_password"
-                    className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 sm:py-4 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500"
-                    required
-                  />
-                </div>
-                <button
-                  type="submit"
-                  className="text-white bg-primary-500 hover:bg-primary-600 focus:ring-1 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm w-full px-5 py-2.5 sm:py-3 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
-                >
-                  <span className="text-base sm:text-lg">Update password</span>
-                </button>
+                    error={validationErrors['password']}
+                    onChange={handleChange}
+                    required="required"
+                    value={formData.password}
+                />
+                <TextInputField 
+                    label="Password Confirmation"
+                    name="password_confirmation"
+                    type="text"
+                    placeholder=""
+                    id="password_confirmation"
+                    error={validationErrors['password_confirmation']}
+                    onChange={handleChange}
+                    required="required"
+                    value={formData.password_confirmation}
+                />
+                <RegularButton text="Update password" />
               </form>
             </div>
           </div>
+          )}
           <div className="hidden sm:block sm:col-span-2 lg:col-span-4 text-right">
             <div className="h-48 hidden lg:block"></div>
             <div className="h-full flex items-end justify-end">

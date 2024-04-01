@@ -1,0 +1,15 @@
+#onboard-guard {
+    .tip {
+        width: 0;
+        height: 0;
+        border-left: 6px solid transparent;
+        border-right: 6px solid transparent;
+        border-bottom: 12px solid var(--clr-secondary-500); /* Change color as desired */
+        &:not(.sm-scrn) {
+            transform: rotate(-90deg);
+        }
+    }
+
+    .sm-scrn {
+    }
+}
