@@ -2,10 +2,10 @@ import { Badge, Card, Dropdown } from "flowbite-react";
 import icon_menu_dots from "../../../../../../images/icons/icon-menu-dots.svg";
 import icon_guard_avatar from "../../../../../../images/icons/icon-guard-avatar.svg";
 
-function Guard({ guard, Status }) {
+function Guard({ guard, Status, handle_edit_guard }) {
   const handle_status = (guard) => {
     switch (guard.status) {
-      case 0:
+      case 1:
         return (
           <Badge
             color="success"
@@ -15,7 +15,7 @@ function Guard({ guard, Status }) {
           </Badge>
         );
         break;
-      case 1:
+      case 0:
         return (
           <Badge
             color="warning"
@@ -60,7 +60,9 @@ function Guard({ guard, Status }) {
                 </button>
               )}
             >
-              <Dropdown.Item>Edit</Dropdown.Item>
+              <Dropdown.Item onClick={() => handle_edit_guard(guard)}>
+                Edit
+              </Dropdown.Item>
               <Dropdown.Item>Remove</Dropdown.Item>
             </Dropdown>
           </div>
