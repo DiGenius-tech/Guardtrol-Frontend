@@ -25,3 +25,9 @@ yarn-error.log*
 
 # personal
 /Trash/src/sandbox
+/src/email-templates/node_modules/
+/src/email-templates/input.css
+/src/email-templates/output.css
+/src/email-templates/package-lock.json
+/src/email-templates/package.json
+/src/email-templates/tailwind.config.js
