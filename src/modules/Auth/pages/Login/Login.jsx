@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import googleIconImg from "../../../../images/icons/google-social-icon.svg";
 import left_pattern_boxes from "../../../../images/left-pattern-boxes.svg";
@@ -13,13 +13,23 @@ import TextInputFieldGroup from "../../../Sandbox/InputField/TextInputFieldGroup
 
 const Login = () => {
   const auth = useContext(AuthContext);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [validationErrors, setValidationErrors] = useState({});
   const { isLoading, error, responseData, sendRequest } = useHttpRequest();
   const [formData, setFormData] = useState({
     email: "",
-    password: "",
+    password: ""
   });
+
+  /**toggle password field type */
+  const password_field_ref = useRef();
+  const [password_type, setPassword_type] = useState("password");
+
+  const toggle_pwd_type = () => {
+    password_type === "password"
+      ? setPassword_type("text")
+      : setPassword_type("password");
+  };
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -37,8 +47,6 @@ const Login = () => {
         console.log(el.name);
         newErrors[el.name] = el.validationMessage;
       }
-
-
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -60,9 +68,8 @@ const Login = () => {
 
         if (null != data) {
           auth.login(data);
-          navigate('/dashboard', { replace: true })
+          navigate("/dashboard", { replace: true });
           window.location.reload();
-
         }
       } catch (err) {
         console.log(err);
@@ -74,52 +81,50 @@ const Login = () => {
 
   useEffect(() => {
     if (error) {
-      toast.error(error)
+      toast.error(error);
     }
-  }, [error])
+  }, [error]);
 
   const signIn = useGoogleLogin({
-    onSuccess: response => handleSignInSuccess(response)
-  })
+    onSuccess: (response) => handleSignInSuccess(response)
+  });
 
   const handleSignInSuccess = async (response) => {
     try {
-      auth.loading(true)
-      const accessToken = response.access_token
+      auth.loading(true);
+      const accessToken = response.access_token;
 
-      const userData = await getUserInfo(accessToken)
+      const userData = await getUserInfo(accessToken);
 
-      console.log(userData)
+      console.log(userData);
       const data = await sendRequest(
         "http://localhost:5000/api/users/signinwithgoogle",
         "POST",
         JSON.stringify(userData),
         {
-          'Content-type': 'application/json'
+          "Content-type": "application/json"
         }
-      )
+      );
       if (null != data) {
         if (auth.login(data)) {
-          navigate('/dashboard', { replace: true }) //should be dashboard
+          navigate("/dashboard", { replace: true }); //should be dashboard
           window.location.reload();
         }
       }
 
-
-
-
       //auth.login(data.token, data.userId)
     } catch (err) {
-      console.log(err)
+      console.log(err);
     } finally {
-      auth.loading(false)
+      auth.loading(false);
     }
   };
 
   const getUserInfo = async (accessToken) => {
     try {
       const response = await sendRequest(
-        "https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=" + accessToken,
+        "https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=" +
+          accessToken,
         "GET",
         null,
         {}
@@ -130,7 +135,6 @@ const Login = () => {
       toast.error(error);
     }
   };
-
 
   const handleSignInFailure = (error) => {
     // Handle failed login
@@ -167,28 +171,32 @@ const Login = () => {
                   type="email"
                   placeholder="Example@example.com"
                   id="email"
-                  error={validationErrors['email']}
+                  error={validationErrors["email"]}
                   onChange={handleChange}
                   required="required"
                   value={formData.email}
                 />
-                <TextInputFieldGroup
+
+                <TextInputField
                   label="Password"
                   name="password"
                   type="password"
                   placeholder=""
                   id="password"
-                  error={validationErrors['password']}
+                  error={validationErrors["password"]}
                   onChange={handleChange}
                   required="required"
                   value={formData.password}
                   passwordToggler={true}
-                  link_text={
-                    { text: "I forgot my password", link: true }
-                  } />
-                <RegularButton
-                  text="Log In"
+                  link_text={{ text: "I forgot my password", link: true }}
+                  //
+                  password_field_ref={password_field_ref}
+                  password_type={password_type}
+                  setPassword_type={setPassword_type}
+                  toggle_pwd_type={toggle_pwd_type}
                 />
+                
+                <RegularButton text="Log In" />
               </form>
             </div>
 
