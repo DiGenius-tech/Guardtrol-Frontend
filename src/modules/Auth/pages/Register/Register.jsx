@@ -9,7 +9,6 @@ import { toast } from "react-toastify";
 import TextInputField from "../../../Sandbox/InputField/TextInputField";
 import RegularButton from "../../../Sandbox/Buttons/RegularButton";
 import { useGoogleLogin } from "@react-oauth/google";
-import TextInputFieldGroup from "../../../Sandbox/InputField/TextInputFieldGroup";
 
 const Register = () => {
   const auth = useContext(AuthContext);
@@ -240,17 +239,6 @@ const Register = () => {
                   toggle_pwd_type={toggle_pwd_type}
                 />
                 
-                {/* <TextInputFieldGroup
-                  label="Password"
-                  name="password"
-                  type="password"
-                  placeholder="Password"
-                  id="password"
-                  error={validationErrors['password']}
-                  onChange={handleChange}
-                  required="required"
-                  value={formData.password}
-                  passwordToggler={true} /> */}
 
                 <TextInputField
                   label="Confirm Password"
@@ -262,7 +250,6 @@ const Register = () => {
                   onChange={handleChange}
                   required="required"
                   value={formData.password_confirmation}
-                  // passwordToggler={true}
                 />
                 <RegularButton
                   text="Create An Account"
