@@ -33,37 +33,49 @@ const TextInputField = (props) => {
               </Link>
             )}
           </div>
+          // semibold_label
         ) : (
           <label
             htmlFor={props.id}
-            className="block mb-2 font-medium text-gray-900 dark:text-white cursor-pointer"
+            className={
+              (props.semibold_label ? `font-semibold ` : null) +
+              `block mb-2 font-medium text-gray-900 dark:text-white cursor-pointer`}
           >
             {props.label}
           </label>
         )}
 
         {!props.passwordToggler ? (
-          <input
-            type={props.password_type}
-            id={props.id}
-            name={props.name}
-            className={
-              props.error
-                ? `border bg-red-50 border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500
+          <>
+            <input
+              type={props.password_type}
+              id={props.id}
+              name={props.name}
+              className={
+                (props.placeholder_right ? `placeholder:text-end ` : "") +
+                  (props.error
+                  ? `border bg-red-50 border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500
           text-sm rounded-lg block w-full p-2.5 sm:py-4 
           dark:bg-gray-700 
           dark:border-red-500 
           dark:placeholder-gray-400 
           dark:text-red 
           dark:focus:ring-green-500`
-                : `border border-gray-300 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 sm:py-4 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500`
+                  : `border border-gray-300 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 sm:py-4 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500`
+              )}
+              placeholder={props.placeholder}
+              autoComplete="off"
+              required={props.required ? true : false}
+              value={props.value}
+              onChange={props.onChange}
+            />
+            {
+              props.muted_aside_text ? <span className="text-sm text-[#656B76]">
+                {props.muted_aside_text}
+              </span> : null
             }
-            placeholder={props.placeholder}
-            autoComplete="off"
-            required={props.required ? true : false}
-            value={props.value}
-            onChange={props.onChange}
-          />
+
+          </>
         ) : (
           <div className="relative w-full">
             <button

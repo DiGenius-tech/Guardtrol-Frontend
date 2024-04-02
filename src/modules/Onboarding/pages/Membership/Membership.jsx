@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import TextInputField from "../../../Sandbox/InputField/TextInputField";
 
 const Membership = () => {
     const membership_card_data = [
@@ -36,35 +37,25 @@ const Membership = () => {
             <div className="mx-auto max-w-[500px] my-16">
                 <form>
                     <div className="mb-6">
-                        <label
-                            htmlFor="number-of-beats"
-                            className="block mb-2 font-semibold dark:text-white"
-                        >
-                            How many beats?
-                        </label>
-                        <input
+                        <TextInputField
+                            label="How many beats?"
+                            semibold_label={true}
+                            name="name"
                             type="text"
                             id="number-of-beats"
-                            className="border border-gray-300 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 sm:py-4 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500"
-                            required
+                            required="required"
+                            muted_aside_text="Maximum of 5 guard per beat"
                         />
-                        <span className="text-sm text-[#656B76]">
-                            Maximum of 5 guard per beat
-                        </span>
                     </div>
                     <div className="mb-6">
-                        <label
-                            htmlFor="number-of-extra-guard"
-                            className="block mb-2 font-semibold dark:text-white"
-                        >
-                            How many extra guard
-                        </label>
-                        <input
+                        <TextInputField
+                            label="How many extra guard?"
+                            placeholder="₦2,000 per guard"
+                            semibold_label={true}
                             type="text"
                             id="number-of-extra-guard"
-                            placeholder="₦2,000 per guard"
-                            className="placeholder:text-end border border-gray-300 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 sm:py-4 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500"
-                            required
+                            required="required"
+                            placeholder_right={true}
                         />
                     </div>
                     <div className="mb-6">
@@ -113,9 +104,9 @@ const Membership = () => {
                         className="text-white bg-primary-500 hover:bg-primary-600 focus:ring-1 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm w-full px-5 py-2.5 sm:py-3 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
                     >
                         <span className="text-base sm:text-lg">Continue
-                        {
-                            selectedPlan ? ` (${selectedPlan.readable})` : null
-                        }
+                            {
+                                selectedPlan ? ` (${selectedPlan.readable})` : null
+                            }
                         </span>
                     </button>
                 </form>
