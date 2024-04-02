@@ -126,6 +126,7 @@ const ConfigureBeats = () => {
               Continue To Onboard Guards
             </span>
           </button>
+
         </form>
       </div>
 

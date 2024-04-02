@@ -3,9 +3,894 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Email | Veriy account</title>
-    <link rel="stylesheet" href="./stylesheets/output.css" />
-    <link rel="stylesheet" href="./stylesheets/main.css" />
+    <title>Email | Reset password</title>
+
+    <style>
+      /*
+! tailwindcss v3.4.3 | MIT License | https://tailwindcss.com
+*/
+
+      /*
+1. Prevent padding and border from affecting element width. (https://github.com/mozdevs/cssremedy/issues/4)
+2. Allow adding a border to an element by just adding a border-width. (https://github.com/tailwindcss/tailwindcss/pull/116)
+*/
+
+      *,
+      ::before,
+      ::after {
+        box-sizing: border-box;
+        /* 1 */
+        border-width: 0;
+        /* 2 */
+        border-style: solid;
+        /* 2 */
+        border-color: currentColor;
+        /* 2 */
+      }
+
+      ::before,
+      ::after {
+        --tw-content: "";
+      }
+
+      /*
+1. Use a consistent sensible line-height in all browsers.
+2. Prevent adjustments of font size after orientation changes in iOS.
+3. Use a more readable tab size.
+4. Use the user's configured `sans` font-family by default.
+5. Use the user's configured `sans` font-feature-settings by default.
+6. Use the user's configured `sans` font-variation-settings by default.
+7. Disable tap highlights on iOS
+*/
+
+      html,
+      :host {
+        line-height: 1.5;
+        /* 1 */
+        -webkit-text-size-adjust: 100%;
+        /* 2 */
+        /* 3 */
+        tab-size: 4;
+        /* 3 */
+        font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
+          "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+        /* 4 */
+        font-feature-settings: normal;
+        /* 5 */
+        font-variation-settings: normal;
+        /* 6 */
+        -webkit-tap-highlight-color: transparent;
+        /* 7 */
+      }
+
+      /*
+1. Remove the margin in all browsers.
+2. Inherit line-height from `html` so users can set them as a class directly on the `html` element.
+*/
+
+      body {
+        margin: 0;
+        /* 1 */
+        line-height: inherit;
+        /* 2 */
+      }
+
+      /*
+1. Add the correct height in Firefox.
+2. Correct the inheritance of border color in Firefox. (https://bugzilla.mozilla.org/show_bug.cgi?id=190655)
+3. Ensure horizontal rules are visible by default.
+*/
+
+      hr {
+        height: 0;
+        /* 1 */
+        color: inherit;
+        /* 2 */
+        border-top-width: 1px;
+        /* 3 */
+      }
+
+      /*
+Add the correct text decoration in Chrome, Edge, and Safari.
+*/
+
+      abbr:where([title]) {
+        -webkit-text-decoration: underline dotted;
+        text-decoration: underline dotted;
+      }
+
+      /*
+Remove the default font size and weight for headings.
+*/
+
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        font-size: inherit;
+        font-weight: inherit;
+      }
+
+      /*
+Reset links to optimize for opt-in styling instead of opt-out.
+*/
+
+      a {
+        color: inherit;
+        text-decoration: inherit;
+      }
+
+      /*
+Add the correct font weight in Edge and Safari.
+*/
+
+      b,
+      strong {
+        font-weight: bolder;
+      }
+
+      /*
+1. Use the user's configured `mono` font-family by default.
+2. Use the user's configured `mono` font-feature-settings by default.
+3. Use the user's configured `mono` font-variation-settings by default.
+4. Correct the odd `em` font sizing in all browsers.
+*/
+
+      code,
+      kbd,
+      samp,
+      pre {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+          "Liberation Mono", "Courier New", monospace;
+        /* 1 */
+        font-feature-settings: normal;
+        /* 2 */
+        font-variation-settings: normal;
+        /* 3 */
+        font-size: 1em;
+        /* 4 */
+      }
+
+      /*
+Add the correct font size in all browsers.
+*/
+
+      small {
+        font-size: 80%;
+      }
+
+      /*
+Prevent `sub` and `sup` elements from affecting the line height in all browsers.
+*/
+
+      sub,
+      sup {
+        font-size: 75%;
+        line-height: 0;
+        position: relative;
+        vertical-align: baseline;
+      }
+
+      sub {
+        bottom: -0.25em;
+      }
+
+      sup {
+        top: -0.5em;
+      }
+
+      /*
+1. Remove text indentation from table contents in Chrome and Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=999088, https://bugs.webkit.org/show_bug.cgi?id=201297)
+2. Correct table border color inheritance in all Chrome and Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=935729, https://bugs.webkit.org/show_bug.cgi?id=195016)
+3. Remove gaps between table borders by default.
+*/
+
+      table {
+        text-indent: 0;
+        /* 1 */
+        border-color: inherit;
+        /* 2 */
+        border-collapse: collapse;
+        /* 3 */
+      }
+
+      /*
+1. Change the font styles in all browsers.
+2. Remove the margin in Firefox and Safari.
+3. Remove default padding in all browsers.
+*/
+
+      button,
+      input,
+      optgroup,
+      select,
+      textarea {
+        font-family: inherit;
+        /* 1 */
+        font-feature-settings: inherit;
+        /* 1 */
+        font-variation-settings: inherit;
+        /* 1 */
+        font-size: 100%;
+        /* 1 */
+        font-weight: inherit;
+        /* 1 */
+        line-height: inherit;
+        /* 1 */
+        letter-spacing: inherit;
+        /* 1 */
+        color: inherit;
+        /* 1 */
+        margin: 0;
+        /* 2 */
+        padding: 0;
+        /* 3 */
+      }
+
+      /*
+Remove the inheritance of text transform in Edge and Firefox.
+*/
+
+      button,
+      select {
+        text-transform: none;
+      }
+
+      /*
+1. Correct the inability to style clickable types in iOS and Safari.
+2. Remove default button styles.
+*/
+
+      button,
+      input:where([type="button"]),
+      input:where([type="reset"]),
+      input:where([type="submit"]) {
+        -webkit-appearance: button;
+        /* 1 */
+        background-color: transparent;
+        /* 2 */
+        background-image: none;
+        /* 2 */
+      }
+
+      /*
+Use the modern Firefox focus style for all focusable elements.
+*/
+
+      :-moz-focusring {
+        outline: auto;
+      }
+
+      /*
+Remove the additional `:invalid` styles in Firefox. (https://github.com/mozilla/gecko-dev/blob/2f9eacd9d3d995c937b4251a5557d95d494c9be1/layout/style/res/forms.css#L728-L737)
+*/
+
+      :-moz-ui-invalid {
+        box-shadow: none;
+      }
+
+      /*
+Add the correct vertical alignment in Chrome and Firefox.
+*/
+
+      progress {
+        vertical-align: baseline;
+      }
+
+      /*
+Correct the cursor style of increment and decrement buttons in Safari.
+*/
+
+      ::-webkit-inner-spin-button,
+      ::-webkit-outer-spin-button {
+        height: auto;
+      }
+
+      /*
+1. Correct the odd appearance in Chrome and Safari.
+2. Correct the outline style in Safari.
+*/
+
+      [type="search"] {
+        -webkit-appearance: textfield;
+        /* 1 */
+        outline-offset: -2px;
+        /* 2 */
+      }
+
+      /*
+Remove the inner padding in Chrome and Safari on macOS.
+*/
+
+      ::-webkit-search-decoration {
+        -webkit-appearance: none;
+      }
+
+      /*
+1. Correct the inability to style clickable types in iOS and Safari.
+2. Change font properties to `inherit` in Safari.
+*/
+
+      ::-webkit-file-upload-button {
+        -webkit-appearance: button;
+        /* 1 */
+        font: inherit;
+        /* 2 */
+      }
+
+      /*
+Add the correct display in Chrome and Safari.
+*/
+
+      summary {
+        display: list-item;
+      }
+
+      /*
+Removes the default spacing and border for appropriate elements.
+*/
+
+      blockquote,
+      dl,
+      dd,
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6,
+      hr,
+      figure,
+      p,
+      pre {
+        margin: 0;
+      }
+
+      fieldset {
+        margin: 0;
+        padding: 0;
+      }
+
+      legend {
+        padding: 0;
+      }
+
+      ol,
+      ul,
+      menu {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      /*
+Reset default styling for dialogs.
+*/
+
+      dialog {
+        padding: 0;
+      }
+
+      /*
+Prevent resizing textareas horizontally by default.
+*/
+
+      textarea {
+        resize: vertical;
+      }
+
+      /*
+1. Reset the default placeholder opacity in Firefox. (https://github.com/tailwindlabs/tailwindcss/issues/3300)
+2. Set the default placeholder color to the user's configured gray 400 color.
+*/
+
+      input::placeholder,
+      textarea::placeholder {
+        opacity: 1;
+        /* 1 */
+        color: #9ca3af;
+        /* 2 */
+      }
+
+      /*
+Set the default cursor for buttons.
+*/
+
+      button,
+      [role="button"] {
+        cursor: pointer;
+      }
+
+      /*
+Make sure disabled buttons don't get the pointer cursor.
+*/
+
+      :disabled {
+        cursor: default;
+      }
+
+      /*
+1. Make replaced elements `display: block` by default. (https://github.com/mozdevs/cssremedy/issues/14)
+2. Add `vertical-align: middle` to align replaced elements more sensibly by default. (https://github.com/jensimmons/cssremedy/issues/14#issuecomment-634934210)
+   This can trigger a poorly considered lint error in some tools but is included by design.
+*/
+
+      img,
+      svg,
+      video,
+      canvas,
+      audio,
+      iframe,
+      embed,
+      object {
+        display: block;
+        /* 1 */
+        vertical-align: middle;
+        /* 2 */
+      }
+
+      /*
+Constrain images and videos to the parent width and preserve their intrinsic aspect ratio. (https://github.com/mozdevs/cssremedy/issues/14)
+*/
+
+      img,
+      video {
+        max-width: 100%;
+        height: auto;
+      }
+
+      /* Make elements with the HTML hidden attribute stay hidden by default */
+
+      [hidden] {
+        display: none;
+      }
+
+      *,
+      ::before,
+      ::after {
+        --tw-border-spacing-x: 0;
+        --tw-border-spacing-y: 0;
+        --tw-translate-x: 0;
+        --tw-translate-y: 0;
+        --tw-rotate: 0;
+        --tw-skew-x: 0;
+        --tw-skew-y: 0;
+        --tw-scale-x: 1;
+        --tw-scale-y: 1;
+        --tw-pan-x: ;
+        --tw-pan-y: ;
+        --tw-pinch-zoom: ;
+        --tw-scroll-snap-strictness: proximity;
+        --tw-gradient-from-position: ;
+        --tw-gradient-via-position: ;
+        --tw-gradient-to-position: ;
+        --tw-ordinal: ;
+        --tw-slashed-zero: ;
+        --tw-numeric-figure: ;
+        --tw-numeric-spacing: ;
+        --tw-numeric-fraction: ;
+        --tw-ring-inset: ;
+        --tw-ring-offset-width: 0px;
+        --tw-ring-offset-color: #fff;
+        --tw-ring-color: rgb(59 130 246 / 0.5);
+        --tw-ring-offset-shadow: 0 0 #0000;
+        --tw-ring-shadow: 0 0 #0000;
+        --tw-shadow: 0 0 #0000;
+        --tw-shadow-colored: 0 0 #0000;
+        --tw-blur: ;
+        --tw-brightness: ;
+        --tw-contrast: ;
+        --tw-grayscale: ;
+        --tw-hue-rotate: ;
+        --tw-invert: ;
+        --tw-saturate: ;
+        --tw-sepia: ;
+        --tw-drop-shadow: ;
+        --tw-backdrop-blur: ;
+        --tw-backdrop-brightness: ;
+        --tw-backdrop-contrast: ;
+        --tw-backdrop-grayscale: ;
+        --tw-backdrop-hue-rotate: ;
+        --tw-backdrop-invert: ;
+        --tw-backdrop-opacity: ;
+        --tw-backdrop-saturate: ;
+        --tw-backdrop-sepia: ;
+        --tw-contain-size: ;
+        --tw-contain-layout: ;
+        --tw-contain-paint: ;
+        --tw-contain-style: ;
+      }
+
+      ::backdrop {
+        --tw-border-spacing-x: 0;
+        --tw-border-spacing-y: 0;
+        --tw-translate-x: 0;
+        --tw-translate-y: 0;
+        --tw-rotate: 0;
+        --tw-skew-x: 0;
+        --tw-skew-y: 0;
+        --tw-scale-x: 1;
+        --tw-scale-y: 1;
+        --tw-pan-x: ;
+        --tw-pan-y: ;
+        --tw-pinch-zoom: ;
+        --tw-scroll-snap-strictness: proximity;
+        --tw-gradient-from-position: ;
+        --tw-gradient-via-position: ;
+        --tw-gradient-to-position: ;
+        --tw-ordinal: ;
+        --tw-slashed-zero: ;
+        --tw-numeric-figure: ;
+        --tw-numeric-spacing: ;
+        --tw-numeric-fraction: ;
+        --tw-ring-inset: ;
+        --tw-ring-offset-width: 0px;
+        --tw-ring-offset-color: #fff;
+        --tw-ring-color: rgb(59 130 246 / 0.5);
+        --tw-ring-offset-shadow: 0 0 #0000;
+        --tw-ring-shadow: 0 0 #0000;
+        --tw-shadow: 0 0 #0000;
+        --tw-shadow-colored: 0 0 #0000;
+        --tw-blur: ;
+        --tw-brightness: ;
+        --tw-contrast: ;
+        --tw-grayscale: ;
+        --tw-hue-rotate: ;
+        --tw-invert: ;
+        --tw-saturate: ;
+        --tw-sepia: ;
+        --tw-drop-shadow: ;
+        --tw-backdrop-blur: ;
+        --tw-backdrop-brightness: ;
+        --tw-backdrop-contrast: ;
+        --tw-backdrop-grayscale: ;
+        --tw-backdrop-hue-rotate: ;
+        --tw-backdrop-invert: ;
+        --tw-backdrop-opacity: ;
+        --tw-backdrop-saturate: ;
+        --tw-backdrop-sepia: ;
+        --tw-contain-size: ;
+        --tw-contain-layout: ;
+        --tw-contain-paint: ;
+        --tw-contain-style: ;
+      }
+
+      .visible {
+        visibility: visible;
+      }
+
+      .collapse {
+        visibility: collapse;
+      }
+
+      .relative {
+        position: relative;
+      }
+
+      .my-8 {
+        margin-top: 2rem;
+        margin-bottom: 2rem;
+      }
+
+      .mb-2 {
+        margin-bottom: 0.5rem;
+      }
+
+      .mb-6 {
+        margin-bottom: 1.5rem;
+      }
+
+      .mb-8 {
+        margin-bottom: 2rem;
+      }
+
+      .me-2 {
+        margin-inline-end: 0.5rem;
+      }
+
+      .block {
+        display: block;
+      }
+
+      .inline-block {
+        display: inline-block;
+      }
+
+      .flex {
+        display: flex;
+      }
+
+      .table {
+        display: table;
+      }
+
+      .contents {
+        display: contents;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      .w-full {
+        width: 100%;
+      }
+
+      .border-collapse {
+        border-collapse: collapse;
+      }
+
+      .transform {
+        transform: translate(var(--tw-translate-x), var(--tw-translate-y))
+          rotate(var(--tw-rotate)) skewX(var(--tw-skew-x))
+          skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x))
+          scaleY(var(--tw-scale-y));
+      }
+
+      .resize {
+        resize: both;
+      }
+
+      .items-center {
+        align-items: center;
+      }
+
+      .gap-2 {
+        gap: 0.5rem;
+      }
+
+      .gap-4 {
+        gap: 1rem;
+      }
+
+      .border {
+        border-width: 1px;
+      }
+
+      .bg-primary-200 {
+        --tw-bg-opacity: 1;
+        background-color: rgb(204 230 230 / var(--tw-bg-opacity));
+      }
+
+      .bg-primary-50 {
+        --tw-bg-opacity: 1;
+        background-color: rgb(247 249 252 / var(--tw-bg-opacity));
+      }
+
+      .bg-primary-500 {
+        --tw-bg-opacity: 1;
+        background-color: rgb(0 128 128 / var(--tw-bg-opacity));
+      }
+
+      .p-4 {
+        padding: 1rem;
+      }
+
+      .p-8 {
+        padding: 2rem;
+      }
+
+      .px-4 {
+        padding-left: 1rem;
+        padding-right: 1rem;
+      }
+
+      .px-5 {
+        padding-left: 1.25rem;
+        padding-right: 1.25rem;
+      }
+
+      .px-8 {
+        padding-left: 2rem;
+        padding-right: 2rem;
+      }
+
+      .py-2 {
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+      }
+
+      .py-2\.5 {
+        padding-top: 0.625rem;
+        padding-bottom: 0.625rem;
+      }
+
+      .px-16 {
+        padding-left: 4rem;
+        padding-right: 4rem;
+      }
+
+      .px-12 {
+        padding-left: 3rem;
+        padding-right: 3rem;
+      }
+
+      .px-10 {
+        padding-left: 2.5rem;
+        padding-right: 2.5rem;
+      }
+
+      .pb-4 {
+        padding-bottom: 1rem;
+      }
+
+      .pb-8 {
+        padding-bottom: 2rem;
+      }
+
+      .pt-2 {
+        padding-top: 0.5rem;
+      }
+
+      .pt-3 {
+        padding-top: 0.75rem;
+      }
+
+      .pt-4 {
+        padding-top: 1rem;
+      }
+
+      .pt-6 {
+        padding-top: 1.5rem;
+      }
+
+      .pt-8 {
+        padding-top: 2rem;
+      }
+
+      .text-lg {
+        font-size: 1.125rem;
+        line-height: 1.75rem;
+      }
+
+      .text-sm {
+        font-size: 0.875rem;
+        line-height: 1.25rem;
+      }
+
+      .text-xs {
+        font-size: 0.75rem;
+        line-height: 1rem;
+      }
+
+      .font-bold {
+        font-weight: 700;
+      }
+
+      .font-medium {
+        font-weight: 500;
+      }
+
+      .font-semibold {
+        font-weight: 600;
+      }
+
+      .text-primary-500 {
+        --tw-text-opacity: 1;
+        color: rgb(0 128 128 / var(--tw-text-opacity));
+      }
+
+      .text-white {
+        --tw-text-opacity: 1;
+        color: rgb(255 255 255 / var(--tw-text-opacity));
+      }
+
+      .underline {
+        text-decoration-line: underline;
+      }
+
+      .outline {
+        outline-style: solid;
+      }
+
+      .focus\:outline-none:focus {
+        outline: 2px solid transparent;
+        outline-offset: 2px;
+      }
+
+      .focus\:ring-4:focus {
+        --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0
+          var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+        --tw-ring-shadow: var(--tw-ring-inset) 0 0 0
+          calc(4px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+        box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow),
+          var(--tw-shadow, 0 0 #0000);
+      }
+
+      @media (min-width: 640px) {
+        .sm\:p-8 {
+          padding: 2rem;
+        }
+
+        .sm\:px-8 {
+          padding-left: 2rem;
+          padding-right: 2rem;
+        }
+
+        .sm\:pb-8 {
+          padding-bottom: 2rem;
+        }
+
+        .sm\:pt-6 {
+          padding-top: 1.5rem;
+        }
+
+        .sm\:pt-8 {
+          padding-top: 2rem;
+        }
+      }
+
+      /**/
+
+      @import url(https://db.onlinewebfonts.com/c/8611cf274fd66935b8f771ac84029521?family=Matter+SQ+Regular);
+
+      @font-face {
+        font-family: "Matter SQ Regular";
+        src: url("https://db.onlinewebfonts.com/t/8611cf274fd66935b8f771ac84029521.eot");
+        src: url("https://db.onlinewebfonts.com/t/8611cf274fd66935b8f771ac84029521.eot?#iefix")
+            format("embedded-opentype"),
+          url("https://db.onlinewebfonts.com/t/8611cf274fd66935b8f771ac84029521.woff2")
+            format("woff2"),
+          url("https://db.onlinewebfonts.com/t/8611cf274fd66935b8f771ac84029521.woff")
+            format("woff"),
+          url("https://db.onlinewebfonts.com/t/8611cf274fd66935b8f771ac84029521.ttf")
+            format("truetype"),
+          url("https://db.onlinewebfonts.com/t/8611cf274fd66935b8f771ac84029521.svg#Matter SQ Regular")
+            format("svg");
+      }
+
+      :root {
+        /*COLORS*/
+        --clr-primary-50: #f7f9fc;
+        --clr-primary-200: #cce6e6;
+        --clr-primary-500: #008080;
+        --clr-dark-500: #000000;
+
+        /* FONT FAMILY */
+        --ff-headline: "Matter SQ Regular";
+        --ff-primary: "Matter SQ Regular";
+        --ff-secondary: "Matter SQ Regular";
+        --ff-primary-inverse: "Open Sans", sans-serif;
+        --ff-secondary-inverse: "Roboto", sans-serif;
+        --ff-body: var(--ff-primary);
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        font-size: 15px;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        font-family: var(--ff-body);
+        font-weight: 400;
+        color: var(--clr-dark-500);
+      }
+
+      html *:focus,
+      body *:focus {
+        box-shadow: none;
+        outline: 0;
+      }
+
+      .email-container {
+        --max-width: 600px;
+        --padding: 1rem;
+        width: min(var(--max-width), 100% - (var(--padding) * 2));
+        margin-inline: auto;
+      }
+    </style>
+
+    <style></style>
   </head>
   <body>
     <div class="email-container my-8">
@@ -13,8 +898,44 @@
         <thead>
           <tr>
             <td class="bg-primary-50 p-4 sm:p-8">
-              <div class="brand-logo">
-                <img src="./assets/images/brand-logo.svg" alt="Guardtrol" />
+              <div class="brand-logo" aria-label="Guardtrol">
+                <!-- <img src="./assets/images/brand-logo.svg" alt="Guardtrol" /> -->
+
+                <svg
+                  width="120"
+                  height="24"
+                  viewBox="0 0 120 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <g clip-path="url(#clip0_254_6631)">
+                    <path
+                      fill-rule="evenodd"
+                      clip-rule="evenodd"
+                      d="M0.875326 2.89019L3.86618 2.0025L10.8406 0.000244141L20.6318 2.874L21.137 8.18047L17.9844 8.21247L17.5564 5.22015L10.9766 3.21765L3.70094 5.18343L3.46174 7.05677C2.6708 13.2518 3.70451 17.1566 10.4738 20.3151L15.7353 16.661L15.304 20.938L10.4728 24.0003C2.71076 19.5048 -2.0612 16.9205 0.875326 2.89031V2.89019Z"
+                      fill="#282829"
+                    />
+                    <path
+                      fill-rule="evenodd"
+                      clip-rule="evenodd"
+                      d="M11.5596 9.33442L21.2801 9.30469L21.3739 11.8867C20.6558 15.8451 18.8712 18.3761 15.8908 20.6535C17.0779 18.1616 17.8994 14.619 18.1305 11.9094L11.7552 11.9537C12.2424 11.7369 12.5822 11.2479 12.5822 10.6789C12.5822 10.037 12.1486 9.49582 11.5596 9.33442Z"
+                      fill="#282829"
+                    />
+                    <path
+                      d="M10.4234 12.0727C11.1904 12.0727 11.8121 11.4488 11.8121 10.6791C11.8121 9.90946 11.1904 9.28552 10.4234 9.28552C9.65642 9.28552 9.03467 9.90946 9.03467 10.6791C9.03467 11.4488 9.65642 12.0727 10.4234 12.0727Z"
+                      fill="#282829"
+                    />
+                    <path
+                      d="M34.4136 5.79203C29.8377 5.79203 27.293 8.32435 27.293 13.5029C27.293 18.6587 29.8143 21.1909 34.4136 21.1909H36.8416C40.3669 21.1909 41.7443 19.0693 41.7443 16.3774C41.7443 13.7082 40.3669 12.02 37.5653 12.02H33.7832V14.3698H37.2852C38.5693 14.3698 39.2229 15.0998 39.2229 16.3318C39.2229 17.5865 38.5693 18.499 37.0284 18.499H34.4136C31.3553 18.499 30.0479 17.0161 30.0479 13.5029C30.0479 9.96689 31.3786 8.48403 34.4136 8.48403H40.9039V5.79209H34.4136L34.4136 5.79203ZM41.9893 9.14552V16.4458C41.9893 19.229 43.8103 21.1909 47.3356 21.1909H49.6235C53.1488 21.1909 54.9698 19.229 54.9698 16.4458V9.14552H52.5418V16.3545C52.5418 17.7689 51.4913 18.8412 49.5301 18.8412H47.5224C45.5613 18.8412 44.4873 17.7689 44.4873 16.3545V9.14552H41.9893ZM56.242 9.14552V11.4725H63.6194C64.9735 11.4725 65.5104 12.2025 65.5104 13.1378V14.0503H59.6506C56.6155 14.0503 55.4949 15.3278 55.4949 17.5179C55.4949 19.7992 56.709 21.1909 59.6272 21.1909H65.3938C67.4716 21.1909 67.9385 20.5064 67.9385 18.7726V13.115C67.9385 10.8337 66.7245 9.14546 63.6428 9.14546H56.242V9.14552ZM64.8334 18.8412H59.6506C58.4132 18.8412 57.923 18.2708 57.923 17.381C57.923 16.4913 58.3899 15.9667 59.6973 15.9667H65.5105V18.2251C65.5105 18.6586 65.3237 18.8411 64.8335 18.8411L64.8334 18.8412ZM72.0589 9.14552C69.6309 9.14552 68.7204 10.2405 68.7204 12.6588V21.1909H71.1951V13.0238C71.1951 11.9744 71.6854 11.4725 72.7827 11.4725H77.125V9.14559H72.0589V9.14552ZM87.0588 3.92133V9.14552H81.6191C78.3273 9.14552 76.2728 11.1075 76.2728 15.1682C76.2728 19.2289 78.3273 21.1909 81.6191 21.1909H85.0277C87.9693 21.1909 89.5568 19.5027 89.5568 16.0351V3.92126H87.0588V3.92133ZM84.3039 18.8412H81.8526C79.7281 18.8412 78.7709 17.7689 78.7709 15.1682C78.7709 12.5675 79.7281 11.4725 81.8526 11.4725H87.0588V15.9211C87.0588 17.9742 86.2884 18.8412 84.304 18.8412H84.3039ZM89.1481 9.14552V11.4725H90.8291V17.0389C90.8291 20.1871 91.9263 21.1909 94.4711 21.1909H96.6889V18.978H94.9847C93.8174 18.978 93.3272 18.5218 93.3272 17.1758V11.4725H96.7357V9.14559H93.3272V6.29396H90.8291V9.14559H89.1481V9.14552ZM99.7588 9.14552C97.3308 9.14552 96.4203 10.2405 96.4203 12.6588V21.1909H98.895V13.0238C98.895 11.9744 99.3853 11.4725 100.483 11.4725H104.825V9.14559H99.7588V9.14552ZM109.319 9.14552C106.027 9.14552 103.973 11.1075 103.973 15.1682C103.973 19.2289 106.027 21.1909 109.319 21.1909H111.91C115.179 21.1909 117.257 19.2289 117.257 15.1682C117.257 11.1075 115.179 9.14552 111.91 9.14552H109.319ZM111.677 11.4725C113.801 11.4725 114.759 12.5675 114.759 15.1682C114.759 17.7689 113.801 18.8412 111.677 18.8412H109.552C107.405 18.8412 106.471 17.7689 106.471 15.1682C106.471 12.5675 107.405 11.4725 109.552 11.4725H111.677ZM117.525 3.92133V21.1909H120V3.92133H117.525Z"
+                      fill="#282829"
+                    />
+                  </g>
+                  <defs>
+                    <clipPath id="clip0_254_6631">
+                      <rect width="120" height="24" fill="white" />
+                    </clipPath>
+                  </defs>
+                </svg>
               </div>
             </td>
           </tr>
