@@ -1,6 +1,21 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
+import useHttpRequest from "../../../../../shared/Hooks/HttpRequestHook";
+import TextInputField from "../../../../Sandbox/InputField/TextInputField";
 
 function UpdateGuard({ selectedGuard }) {
+  const [validationErrors, setValidationErrors] = useState({});
+  const { isLoading, error, responseData, sendRequest } = useHttpRequest();
+  const [formData, setFormData] = useState({
+    full_name: "",
+    phone: ""
+  });
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setValidationErrors({ ...validationErrors, [e.target.name]: "" });
+  };
+
   console.log(selectedGuard);
 
   const set_name = (e) => {
@@ -34,6 +49,17 @@ function UpdateGuard({ selectedGuard }) {
               required
               value={selectedGuard.name}
               onChange={set_name}
+            />
+            <TextInputField
+              label="Full Name"
+              name="full_name"
+              type="text"
+              placeholder="Full Name"
+              id="full_name"
+              error={validationErrors["full_name"]}
+              onChange={handleChange}
+              required="required"
+              value={formData.phone}
             />
           </div>
           <div className="mb-6">
