@@ -187,7 +187,7 @@ const Login = () => {
                   required="required"
                   value={formData.password}
                   passwordToggler={true}
-                  link_text={{ text: "I forgot my password", link: true }}
+                  link_text={{ text: "I Forgot My Password", link: true }}
                   //
                   password_field_ref={password_field_ref}
                   password_type={password_type}
