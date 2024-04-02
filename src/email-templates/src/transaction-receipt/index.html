@@ -5,6 +5,73 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Email | Transaction receipt</title>
     <style>
+      @import url(https://db.onlinewebfonts.com/c/8611cf274fd66935b8f771ac84029521?family=Matter+SQ+Regular);
+
+      @font-face {
+        font-family: "Matter SQ Regular";
+        src: url("https://db.onlinewebfonts.com/t/8611cf274fd66935b8f771ac84029521.eot");
+        src: url("https://db.onlinewebfonts.com/t/8611cf274fd66935b8f771ac84029521.eot?#iefix")
+            format("embedded-opentype"),
+          url("https://db.onlinewebfonts.com/t/8611cf274fd66935b8f771ac84029521.woff2")
+            format("woff2"),
+          url("https://db.onlinewebfonts.com/t/8611cf274fd66935b8f771ac84029521.woff")
+            format("woff"),
+          url("https://db.onlinewebfonts.com/t/8611cf274fd66935b8f771ac84029521.ttf")
+            format("truetype"),
+          url("https://db.onlinewebfonts.com/t/8611cf274fd66935b8f771ac84029521.svg#Matter SQ Regular")
+            format("svg");
+      }
+
+      :root {
+        /*COLORS*/
+        --clr-primary-50: #f7f9fc;
+        --clr-primary-200: #cce6e6;
+        --clr-primary-500: #008080;
+        --clr-dark-500: #000000;
+
+        /* FONT FAMILY */
+        --ff-headline: "Matter SQ Regular";
+        --ff-primary: "Matter SQ Regular";
+        --ff-secondary: "Matter SQ Regular";
+        --ff-primary-inverse: "Open Sans", sans-serif;
+        --ff-secondary-inverse: "Roboto", sans-serif;
+        --ff-body: var(--ff-primary);
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        font-size: 15px;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        font-family: var(--ff-body);
+        font-weight: 400;
+        color: var(--clr-dark-500);
+      }
+
+      html *:focus,
+      body *:focus {
+        box-shadow: none;
+        outline: 0;
+      }
+
+      .email-container {
+        --max-width: 600px;
+        --padding: 1rem;
+        width: min(var(--max-width), 100% - (var(--padding) * 2));
+        margin-inline: auto;
+      }
+
+      /**/
+
       /*
 ! tailwindcss v3.4.3 | MIT License | https://tailwindcss.com
 */
@@ -822,70 +889,6 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
       }
 
       /**/
-      @import url(https://db.onlinewebfonts.com/c/8611cf274fd66935b8f771ac84029521?family=Matter+SQ+Regular);
-
-      @font-face {
-        font-family: "Matter SQ Regular";
-        src: url("https://db.onlinewebfonts.com/t/8611cf274fd66935b8f771ac84029521.eot");
-        src: url("https://db.onlinewebfonts.com/t/8611cf274fd66935b8f771ac84029521.eot?#iefix")
-            format("embedded-opentype"),
-          url("https://db.onlinewebfonts.com/t/8611cf274fd66935b8f771ac84029521.woff2")
-            format("woff2"),
-          url("https://db.onlinewebfonts.com/t/8611cf274fd66935b8f771ac84029521.woff")
-            format("woff"),
-          url("https://db.onlinewebfonts.com/t/8611cf274fd66935b8f771ac84029521.ttf")
-            format("truetype"),
-          url("https://db.onlinewebfonts.com/t/8611cf274fd66935b8f771ac84029521.svg#Matter SQ Regular")
-            format("svg");
-      }
-
-      :root {
-        /*COLORS*/
-        --clr-primary-50: #f7f9fc;
-        --clr-primary-200: #cce6e6;
-        --clr-primary-500: #008080;
-        --clr-dark-500: #000000;
-
-        /* FONT FAMILY */
-        --ff-headline: "Matter SQ Regular";
-        --ff-primary: "Matter SQ Regular";
-        --ff-secondary: "Matter SQ Regular";
-        --ff-primary-inverse: "Open Sans", sans-serif;
-        --ff-secondary-inverse: "Roboto", sans-serif;
-        --ff-body: var(--ff-primary);
-      }
-
-      html {
-        scroll-behavior: smooth;
-      }
-
-      * {
-        box-sizing: border-box;
-      }
-
-      html,
-      body {
-        font-size: 15px;
-        width: 100%;
-        margin: 0;
-        padding: 0;
-        font-family: var(--ff-body);
-        font-weight: 400;
-        color: var(--clr-dark-500);
-      }
-
-      html *:focus,
-      body *:focus {
-        box-shadow: none;
-        outline: 0;
-      }
-
-      .email-container {
-        --max-width: 600px;
-        --padding: 1rem;
-        width: min(var(--max-width), 100% - (var(--padding) * 2));
-        margin-inline: auto;
-      }
     </style>
   </head>
   <body>
