@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import googleIconImg from "../../../../images/icons/google-social-icon.svg";
 import left_pattern_boxes from "../../../../images/left-pattern-boxes.svg";
@@ -9,7 +9,6 @@ import { toast } from "react-toastify";
 import TextInputField from "../../../Sandbox/InputField/TextInputField";
 import RegularButton from "../../../Sandbox/Buttons/RegularButton";
 import { useGoogleLogin } from "@react-oauth/google";
-import TextInputFieldGroup from "../../../Sandbox/InputField/TextInputFieldGroup";
 
 const Register = () => {
   const auth = useContext(AuthContext);
@@ -23,6 +22,16 @@ const Register = () => {
     password: "",
     password_confirmation: ""
   });
+
+  /**toggle password field type */
+  const password_field_ref = useRef();
+  const [password_type, setPassword_type] = useState("password");
+  
+  const toggle_pwd_type = () => {
+    password_type === "password"
+      ? setPassword_type("text")
+      : setPassword_type("password");
+  };
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -212,7 +221,7 @@ const Register = () => {
                   value={formData.phone}
                 />
 
-                {/* <TextInputField 
+                <TextInputField 
                   label="Password"
                   name="password"
                   type="password"
@@ -223,19 +232,13 @@ const Register = () => {
                   required="required"
                   value={formData.password}
                   passwordToggler={true}
+                  // 
+                  password_field_ref={password_field_ref}
+                  password_type={password_type}
+                  setPassword_type={setPassword_type}
+                  toggle_pwd_type={toggle_pwd_type}
                 />
-                 */}
-                <TextInputFieldGroup
-                  label="Password"
-                  name="password"
-                  type="password"
-                  placeholder="Password"
-                  id="password"
-                  error={validationErrors['password']}
-                  onChange={handleChange}
-                  required="required"
-                  value={formData.password}
-                  passwordToggler={true} />
+                
 
                 <TextInputField
                   label="Confirm Password"
@@ -247,7 +250,6 @@ const Register = () => {
                   onChange={handleChange}
                   required="required"
                   value={formData.password_confirmation}
-                  passwordToggler={true}
                 />
                 <RegularButton
                   text="Create An Account"

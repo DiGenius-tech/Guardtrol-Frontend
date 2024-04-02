@@ -4,6 +4,7 @@ import QRGenerator from "./QRGenerator/QRGenerator";
 import PointModal from "./PointModal/PointModal";
 import "./ConfigureBeats.scss";
 import PatrolRouteSelectionForMobile from "./PatrolRouteSelectionForMobile/PatrolRouteSelectionForMobile";
+import TextInputField from "../../../Sandbox/InputField/TextInputField";
 
 const ConfigureBeats = () => {
   const [text, setText] = useState("default text for QRCode");
@@ -33,17 +34,12 @@ const ConfigureBeats = () => {
       <div className="hidden sm:block mx-auto max-w-[500px] my-16">
         <form>
           <div className="mb-6">
-            <label
-              htmlFor="name-of-beat"
-              className="block mb-2 font-semibold dark:text-white"
-            >
-              Name of beat
-            </label>
-            <input
-              type="text"
-              id="name-of-beat"
-              className="border-gray-300 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 sm:py-4 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500"
-              required
+            <TextInputField
+                label="Name of beat"
+                semibold_label={true}
+                type="text"
+                id="name-of-beat"
+                required="required"
             />
           </div>
 
