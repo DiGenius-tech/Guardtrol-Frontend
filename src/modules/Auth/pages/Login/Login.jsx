@@ -184,7 +184,7 @@ const Login = () => {
                   value={formData.password}
                   passwordToggler={true}
                   link_text={
-                    { text: "I forgot my password", link: true }
+                    { text: "I Forgot My Password", link: true }
                   } />
                 <RegularButton
                   text="Log In"
