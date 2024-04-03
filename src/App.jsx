@@ -3,13 +3,13 @@ import auth_routes from './modules/Auth/Auth.routes';
 import onboarding_routes from './modules/Onboarding/Onboarding.routes';
 import "./App.scss";
 import { Navigate, RouterProvider, createBrowserRouter, useNavigate } from 'react-router-dom';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { AuthContext } from './shared/Context/AuthContext';
 import sandbox_routes from './modules/Sandbox/sandbox.routes';
 import LoadingSpinner from './shared/LoadingSpinner/LoadingSpinner';
 
 function App() {
-  const [token, setToken] = useState(false)
+  const [token, setToken] = useState(null)
   const [user, setUser] = useState([null])
   const [isLoading, setIsLoading] = useState(true)
 
@@ -17,7 +17,8 @@ function App() {
   const login = useCallback((data) => {
     setToken(data.token)
     setUser(data)
-
+    
+  
     localStorage.setItem('userData', JSON.stringify(data))
 
     return true
@@ -39,27 +40,27 @@ function App() {
     const savedData = JSON.parse(localStorage.getItem('userData'))
 
     if (savedData && savedData.token) {
-      login(savedData)
       
+      login(savedData)
     }
 
     loading(false)
 
  }, [login, loading])
-
- const router = createBrowserRouter([
+ 
+ const router =  createBrowserRouter([
   {
     path: "",
-    Component: () => <Navigate to="/auth" />,
+    Component: () => <Navigate to={token ? "/onboarding" : "/auth"} />,
   },
   sandbox_routes,
-  auth_routes,
   onboarding_routes,
+  auth_routes ,
   {
     path: "*",
     element: <PageNotFound />,
   },
-]); 
+])
 
  return (
   

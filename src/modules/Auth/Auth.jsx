@@ -1,8 +1,19 @@
-import React from 'react';
-import { Outlet } from 'react-router-dom';
+import React, { useContext, useEffect } from 'react';
+import { Outlet, useNavigate } from 'react-router-dom';
 import AuthToolbar from './components/AuthToolbar/AuthToolbar';
+import { AuthContext } from '../../shared/Context/AuthContext';
 
 const Auth = () => {
+    const auth = useContext(AuthContext)
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        if(null != auth.isLoggedIn){
+        if (auth.isLoggedIn) {
+            navigate('/onboarding')
+        } 
+    }
+    }, [auth.isLoggedIn])
     return (
         <>
             <div className='min-h-screen'>
