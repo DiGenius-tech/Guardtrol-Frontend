@@ -7,7 +7,6 @@ const Onboarding = () => {
     return (
         <>
             {/* onboarding-app works! */}
-
             <OnboardingToolbar />
             <OnboardingProgressBar />
             <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">

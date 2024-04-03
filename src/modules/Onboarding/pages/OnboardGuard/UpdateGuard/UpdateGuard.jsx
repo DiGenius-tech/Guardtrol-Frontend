@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import useHttpRequest from "../../../../../shared/Hooks/HttpRequestHook";
 import TextInputField from "../../../../Sandbox/InputField/TextInputField";
+import RegularButton from "../../../../Sandbox/Buttons/RegularButton";
 
 function UpdateGuard({ selectedGuard }) {
   const [validationErrors, setValidationErrors] = useState({});
@@ -83,12 +84,7 @@ function UpdateGuard({ selectedGuard }) {
           </div>
           <div className="">
             <div className="relative">
-              <button
-                type="submit"
-                className="text-white bg-primary-500 hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 font-medium rounded-full text-sm px-8 py-2.5 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
-              >
-                Update
-              </button>
+              <RegularButton text="Update" rounded="full" width="auto" padding="px-8 py-2.5" textSize="sm" />
             </div>
           </div>
         </form>

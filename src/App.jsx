@@ -7,6 +7,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { AuthContext } from './shared/Context/AuthContext';
 import sandbox_routes from './modules/Sandbox/sandbox.routes';
 import LoadingSpinner from './shared/LoadingSpinner/LoadingSpinner';
+import patrol_route_configuration from './modules/PatrolRouteConfiguration/patrol-route-configuration.routes';
 
 function App() {
   const [token, setToken] = useState(false)
@@ -55,6 +56,7 @@ function App() {
   sandbox_routes,
   auth_routes,
   onboarding_routes,
+  patrol_route_configuration,
   {
     path: "*",
     element: <PageNotFound />,

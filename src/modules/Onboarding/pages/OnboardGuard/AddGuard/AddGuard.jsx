@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import TextInputField from "../../../../Sandbox/InputField/TextInputField";
 import useHttpRequest from "../../../../../shared/Hooks/HttpRequestHook";
+import RegularButton from "../../../../Sandbox/Buttons/RegularButton";
 
 function AddGuard() {
   const [isGotIt, setIsGotIt] = useState(false);
@@ -57,13 +58,8 @@ function AddGuard() {
           </div>
           <div className="">
             <div className="relative">
-              <button
-                type="submit"
-                className="text-white bg-primary-500 hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 font-medium rounded-full text-sm px-8 py-2.5 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
-              >
-                Save
-              </button>
-              
+              <RegularButton text="Save" rounded="full" width="auto" padding="px-8 py-2.5" textSize="sm" />
+
               {/* static tooltip */}
               {!isGotIt ? (
                 <div className="mt-2 sm:mt-0 absolute sm:top-0 sm:left-24 ms-2">
