@@ -1,26 +1,137 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import TextInputField from "../../../Sandbox/InputField/TextInputField";
 import RegularButton from "../../../Sandbox/Buttons/RegularButton";
+import { toast } from "react-toastify";
+import useHttpRequest from "../../../../shared/Hooks/HttpRequestHook";
+import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../../../../shared/Context/AuthContext";
 
 const Membership = () => {
+  const auth = useContext(AuthContext);
+  const navigate = useNavigate()
+  const [validationErrors, setValidationErrors] = useState({});
+  const { isLoading, error, responseData, sendRequest } = useHttpRequest();
+  const [selectedPlan, setSelectedPlan] = useState(null);
+  const [planFormData, setPlanFormData] = useState({
+    numberofbeats: 1,
+    extraguards:0,
+  });
+
+  useEffect(() => {
+    const selectedPlan = JSON.parse(localStorage.getItem('selectedPlan'))
+
+    if (selectedPlan && selectedPlan.amount) {
+      
+      setSelectedPlan(selectedPlan)
+      setPlanFormData({'numberofbeats':parseInt(selectedPlan.numberofbeats), 
+      'extraguards':parseInt(selectedPlan.extraguards)})
+    }
+
+    auth.loading(false)
+
+ }, [auth.loading, setSelectedPlan, setPlanFormData])
+  const handleChange = (e) => {
+    setPlanFormData({ ...planFormData, [e.target.name]: e.target.value });
+    setValidationErrors({ ...validationErrors, [e.target.name]: "" });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const form = e.currentTarget;
+    const newErrors = {};
+
+    // Check each input field's validity and set errors accordingly
+    for (const el of form.elements) {
+      if (el.nodeName === "INPUT" && !el.validity.valid) {
+        console.log(el.name);
+        newErrors[el.name] = el.validationMessage;
+      }
+
+      if (
+        el.name === "numberofbeats" &&
+        el.value < 1
+      ) {
+        newErrors["numberofbeats"] = "Can't Have Less Than 1 Beat";
+      } else if (
+        el.name === "numberofbeats" &&
+        el.value > 10
+      ) {
+        newErrors["numberofbeats"] = "Can't Have More Than 10 Beats";
+      }
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      // If there are validation errors, update state and stop submission
+      setValidationErrors(newErrors);
+      e.stopPropagation();
+    } else {
+      // Form is valid, handle submission
+      //auth.loading(true);
+      // try {
+      //   const data = await sendRequest(
+      //     "http://localhost:5000/api/users/signup",
+      //     "POST",
+      //     JSON.stringify(formData),
+      //     {
+      //       "Content-Type": "application/json"
+      //     }
+      //   );
+ 
+      //   if (null != data) {
+      //     if (auth.login(data)) {
+      //       navigate('../verify-email', { replace: true }) //should be dashboard
+      //       window.location.reload();
+      //     }
+      //     // navigate('../verify-email', {replace: true})
+      //     // window.location.reload();
+
+      //   }
+      // } catch (err) {
+      //   console.log(err);
+      // } finally {
+      //   auth.loading(false);
+      // }
+      if (null == selectedPlan) {
+        toast.error("Please Select A Plan That Works For You")
+        return
+      }
+
+
+      localStorage.setItem('selectedPlan', JSON.stringify(selectedPlan));
+      localStorage.setItem('onBoardingLevel', 0)
+    }
+  };
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error)
+    }
+  }, [error])
+
   const membership_card_data = [
     {
-      title: "₦26K",
-      body_list: ["₦20,000 p/m", "3 guards x ₦2000"],
+      title: `₦${planFormData.numberofbeats*10000 + planFormData.extraguards*2000}`,
+      body_list: [`₦${planFormData.numberofbeats*10000} P/M`, `${planFormData.extraguards} Extraguards x ₦2000`],
       footer: "This should just give a summary of the benefits",
-      type: "per_month",
-      readable: "₦20,000 per month"
+      type: "monthly",
+      amount:(planFormData.numberofbeats*10000 + planFormData.extraguards*2000),
+      readable: `₦${(planFormData.numberofbeats*10000 + planFormData.extraguards*2000)} per month`,
+      numberofbeats: planFormData.numberofbeats,
+      extraguards: planFormData.extraguards,
     },
     {
-      title: "₦100K",
-      body_list: ["₦100,000 p/y", "3 guards x ₦2000"],
+      title: `₦${(planFormData.numberofbeats*10000 + planFormData.extraguards*2000)* 12 * 0.8}`,
+      body_list: [`₦${planFormData.numberofbeats*10000 *12 * .8} P/Y`, `${planFormData.extraguards} Extraguards x ₦20000`],
       footer: "This should just give a summary of the benefits",
-      type: "per_year",
-      readable: "₦100,000 per year"
+      type: "yearly",
+      amount:(planFormData.numberofbeats*10000 + planFormData.extraguards*2000)* 12 * 0.8,
+      readable: `₦${(planFormData.numberofbeats*10000 + planFormData.extraguards*2000)* 12 * 0.8} per year`,
+      numberofbeats: planFormData.numberofbeats,
+      extraguards: planFormData.extraguards,
     }
   ];
 
-  const [selectedPlan, setSelectedPlan] = useState(null);
+
 
   const onSelectPlan = (e) => {
     setSelectedPlan(JSON.parse(e.target.value));
@@ -38,15 +149,19 @@ const Membership = () => {
       </p>
 
       <div className="mx-auto max-w-[500px] my-16">
-        <form>
+        <form onSubmit={handleSubmit} method="post">
           <div className="mb-6">
             <TextInputField
               label="How many beats?"
               semibold_label={true}
               type="text"
-              id="number-of-beats"
+              id="numberofbeats"
               required="required"
               muted_aside_text="Maximum of 5 guard per beat"
+              name= "numberofbeats"
+              value={planFormData.numberofbeats}
+              onChange={handleChange}
+              error={validationErrors['numberofbeats']}
             />
           </div>
           <div className="mb-6">
@@ -58,6 +173,10 @@ const Membership = () => {
               id="number-of-extra-guard"
               required="required"
               placeholder_right={true}
+              name= "extraguards"
+              value={planFormData.extraguards}
+              onChange={handleChange}
+              error={validationErrors['extraguards']}
             />
           </div>
           <div className="mb-6">
@@ -73,6 +192,7 @@ const Membership = () => {
                       <input
                         type="radio"
                         name="plan-option"
+                       
                         id={data.type}
                         value={JSON.stringify(data)}
                         onChange={(e) => onSelectPlan(e)}

@@ -2,7 +2,7 @@ import { Badge, Button, Card, Flowbite } from 'flowbite-react';
 import React, { useState } from 'react';
 import handClickImage from "../../images/handclick-featured-image.svg";
 import RegularButton from '../Sandbox/Buttons/RegularButton';
-import { customTheme } from '../../flowbite-theme.ts';
+// import { customTheme } from '../../flowbite-theme.ts';
 // lorem348
 const patro_points = [
     {
@@ -67,21 +67,15 @@ const PatrolRouteConfiguration = () => {
                                 // let {image} = `url('${point.image}')`;
                                 console.log("image: ", image)
                                 return <li className="min-w-[90px] sm:min-w-[130px]" key={i}>
-
-                                    {/* <div className={`point-card | h-32 relative w-full rounded-md overflow-hidden bg-[url('https://images.pexels.com/photos/280229/pexels-photo-280229.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1')] bg-center bg-no-repeat`}> */}
                                     <div className={
-                                        //  bg-[url(` + {image} + `)]
                                         `point-card | h-32 relative w-full rounded-md overflow-hidden bg-center bg-no-repeat bg-cover`}>
-                                    {/* <div className={`point-card | h-32 relative w-full rounded-md overflow-hidden bg-[url('${image}')] bg-center bg-no-repeat bg-cover`}> */}
                                         <span className='absolute top-1 left-1'>
-                                            <Flowbite theme={{ theme: customTheme }}>
+                                            {/* <Flowbite theme={{ theme: customTheme }}> */}
                                                 <Badge color="dark_transparent_badge">{i + 1}</Badge>
-                                            </Flowbite>
+                                            {/* </Flowbite> */}
                                         </span>
-                                        {/* <span className='number | absolute top-1 left-1 bg-black text-white rounded-full h-1 w-1'>{i + 1}</span> */}
-                                        {/* <img src={`https://images.pexels.com/photos/280229/pexels-photo-280229.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1`} alt="" /> */}
+                                        <img src={`https://images.pexels.com/photos/280229/pexels-photo-280229.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1`} alt="" />
 
-                                        {/* <img src={point.image} alt="" /> */}
                                     </div>
                                 </li>
                             })}
