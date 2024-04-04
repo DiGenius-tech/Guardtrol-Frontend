@@ -203,7 +203,7 @@ const Membership = () => {
                                                 text-white"
                         >
                           <div className="mb-10 sm:mb-12">
-                            <h2 className="text-xl sm:text-4xl my-8 sm:my-10 font-semibold ff-primary-inverse">
+                            <h2 className="text-xl sm:text-4xl my-8 sm:my-10 font-semibold">
                               {data.title}
                             </h2>
                             <ul className="text-sm">

@@ -36,11 +36,10 @@ const TextInputField = (props) => {
             )}
           </div>
         ) : (
-          // semibold_label
           <label
             htmlFor={props.id}
             className={
-              (props.semibold_label ? `font-semibold ` : null) +
+              (props.semibold_label ? `font-semibold ` : "") +
               `block mb-2 font-medium text-gray-900 dark:text-white cursor-pointer`
             }
           >

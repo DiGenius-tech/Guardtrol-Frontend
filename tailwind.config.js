@@ -26,7 +26,7 @@ module.exports = {
       'warning': {
         100: "#FEFCE8",
         500: "#EAB308",
-      }
+      },
     }
   },
   fontFamily: {

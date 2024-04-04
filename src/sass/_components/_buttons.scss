@@ -1,0 +1,14 @@
+.btn-icon {
+  display: flex;
+  max-width: 30px;
+  &::before {
+    content: "";
+    display: block;
+    width: 30px;
+    height: 30px;
+    background-image: url(../../images/icons/icon-arrow-left2.svg);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+}
