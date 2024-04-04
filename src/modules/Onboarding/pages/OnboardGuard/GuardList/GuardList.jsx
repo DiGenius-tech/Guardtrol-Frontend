@@ -54,7 +54,7 @@ function GuardList() {
                 <li key={guard.id}>
                   <Guard
                     guard={guard}
-                    Status={Status}
+                    status={Status}
                     handle_edit_guard={handle_edit_guard}
                   />
                 </li>

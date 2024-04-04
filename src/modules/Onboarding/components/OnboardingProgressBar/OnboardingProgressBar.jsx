@@ -84,6 +84,12 @@ const OnboardingProgressBar = () => {
         case "/onboarding/configure-beats/":
           setstageProgressClass("stage-2");
           break;
+        case "/onboarding/configure-beats/add-beat":
+          setstageProgressClass("stage-2");
+          break;
+        case "/onboarding/configure-beats/add-beat/":
+          setstageProgressClass("stage-2");
+          break;
         case "/onboarding/onboard-guard":
           setstageProgressClass("stage-3");
           break;
@@ -144,7 +150,7 @@ const OnboardingProgressBar = () => {
           })}
         </p>
 
-        <OnboardingTestNavigation completeProcess={completeProcess} location={location} />
+        {/* <OnboardingTestNavigation completeProcess={completeProcess} location={location} /> */}
       </div>
     </>
   );

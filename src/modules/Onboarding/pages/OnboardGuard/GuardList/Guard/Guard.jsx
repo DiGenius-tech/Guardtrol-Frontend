@@ -2,9 +2,9 @@ import { Badge, Card, Dropdown } from "flowbite-react";
 import icon_menu_dots from "../../../../../../images/icons/icon-menu-dots.svg";
 import icon_guard_avatar from "../../../../../../images/icons/icon-guard-avatar.svg";
 
-function Guard({ guard, Status, handle_edit_guard }) {
+function Guard({ guard, status, handle_edit_guard }) {
   const handle_status = (guard) => {
-    switch (guard.status) {
+    switch (guard?.status) {
       case 1:
         return (
           <Badge
@@ -42,10 +42,10 @@ function Guard({ guard, Status, handle_edit_guard }) {
           <div className="col-span-9">
             <div>{handle_status(guard)}</div>
             <p className="text-dark-450 font-semibold text-sm">
-              {guard.name}
+              {guard?.name}
               <br />
               <span className="font-normal text-dark-200">
-                {guard.phone_number}
+                {guard?.phone_number}
               </span>
             </p>
           </div>
