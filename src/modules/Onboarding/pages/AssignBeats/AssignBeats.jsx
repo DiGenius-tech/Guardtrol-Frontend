@@ -11,7 +11,12 @@ const beatList = [
   {
     id: 2,
     title: "Second floor"
-  }
+  },
+  {
+    id: 3,
+    title: "Third floor"
+  },
+
 ];
 
 const guardList = [
@@ -79,11 +84,15 @@ const AssignBeats = () => {
               semibold_label={true}
               handleChangeOption={handleBeatSelection}
               optionList={beatList}
+              multipleSelect={true}
             />
           </div>
 
           <div className="mb-6">
             <SelectField
+              multiSelect={
+                beatList.length >= 10 ? beatList.length - 5 : beatList.length
+              }
               id="guard"
               label="Select guard"
               semibold_label={true}

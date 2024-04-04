@@ -9,11 +9,11 @@ const Onboarding = () => {
     const navigate = useNavigate()
 
     useEffect(() => {
-        if(null != auth.isLoggedIn){
-        if (!auth.isLoggedIn) {
-            navigate('/auth')
-        } 
-    }
+        if (null != auth.isLoggedIn) {
+            if (!auth.isLoggedIn) {
+                // navigate('/auth')
+            }
+        }
     }, [auth.isLoggedIn])
     return (
         <>
