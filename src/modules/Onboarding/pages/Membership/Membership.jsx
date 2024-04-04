@@ -151,9 +151,10 @@ const Membership = () => {
   };
 
   const config = {
+
     public_key: 'FLWPUBK-a1be03107079ab0523984695c59cbbed-X',
     tx_ref: Date.now(),
-    amount: selectedPlan.amount,
+    amount: selectedPlan && selectedPlan.amount ? selectedPlan.amount : 0,
     currency: 'NGN',
     payment_options: 'card,mobilemoney,ussd',
     customer: {
@@ -270,6 +271,7 @@ const Membership = () => {
 
       {/* Render the modal */}
       {isModalOpen && (
+        
         <div className="fixed z-10 inset-0 overflow-y-auto">
           <div className="flex items-center justify-center min-h-screen">
             <div className="fixed inset-0 transition-opacity" aria-hidden="true">
