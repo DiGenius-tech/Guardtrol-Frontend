@@ -6,9 +6,11 @@ import "./ConfigureBeats.scss";
 import PatrolRouteSelectionForMobile from "./PatrolRouteSelectionForMobile/PatrolRouteSelectionForMobile";
 import TextInputField from "../../../Sandbox/InputField/TextInputField";
 import RegularButton from "../../../Sandbox/Buttons/RegularButton";
+import { useLocation } from "react-router-dom";
 
 const ConfigureBeats = () => {
-  const [text, setText] = useState("default text for QRCode");
+  const location = useLocation()
+  const [text, setText] = useState(window.location.origin + location.pathname);
   const [saveBeatData] = useState(false);
 
   const handleChange = (event) => {

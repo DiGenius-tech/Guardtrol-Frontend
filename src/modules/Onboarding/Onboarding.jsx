@@ -1,9 +1,20 @@
-import React from 'react';
+import React, { useContext, useEffect } from 'react';
 import OnboardingToolbar from './components/OnboardingToolbar/OnboardingToolbar';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 import OnboardingProgressBar from './components/OnboardingProgressBar/OnboardingProgressBar';
+import { AuthContext } from '../../shared/Context/AuthContext';
 
 const Onboarding = () => {
+    const auth = useContext(AuthContext)
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        if(null != auth.isLoggedIn){
+        if (!auth.isLoggedIn) {
+            navigate('/auth')
+        } 
+    }
+    }, [auth.isLoggedIn])
     return (
         <>
             {/* onboarding-app works! */}
