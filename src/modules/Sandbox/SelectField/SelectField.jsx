@@ -13,6 +13,7 @@ function SelectField(props) {
         {props.label}
       </label>
       <select
+        multiple={props?.multiple}
         size={props?.multiSelect ? props?.multiSelect : 0}
         onChange={(e) => props.handleChangeOption(e)}
         id={props.id}

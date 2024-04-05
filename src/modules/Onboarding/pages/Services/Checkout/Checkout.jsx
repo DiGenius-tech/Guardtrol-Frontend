@@ -10,6 +10,10 @@ const PaymentOption = {
 }
 
 const Checkout = () => {
+
+    const handleCheck = () => {
+
+    }
     return (
         <div>
             {/* checkout-app works! */}
@@ -27,7 +31,7 @@ const Checkout = () => {
                         <legend className="mb-4 font-semibold text-xl">Select Methods</legend>
                         <ul className='payment-options | flex flex-col gap-4'>
                             <li>
-                                <input type="radio" name="payment_option" id="flutterwave" value={PaymentOption.FIRST} checked/>
+                                <input onChange={handleCheck} type="radio" name="payment_option" id="flutterwave" value={PaymentOption.FIRST} checked />
                                 <label htmlFor="flutterwave" className='cursor-pointer block'>
                                     {/* Flutterwave */}
                                     <div className="max-w-32" aria-label='Flutterwave'>
@@ -35,9 +39,9 @@ const Checkout = () => {
                                     </div>
                                 </label>
                             </li>
-                            
+
                             <li>
-                                <input type="radio" name="payment_option" id="paystack" value={PaymentOption.SECOND} />
+                                <input onChange={handleCheck} type="radio" name="payment_option" id="paystack" value={PaymentOption.SECOND} />
                                 <label htmlFor="paystack" className='cursor-pointer block'>
                                     {/* Paystack */}
                                     <div className="max-w-32" aria-label='Paystack'>

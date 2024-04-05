@@ -11,7 +11,7 @@ const PaymentFailure = () => {
                 <div className="min-h-96 flex place-content-center flex-col">
 
 
-                    <div class="cancel-icon | hide relative inline-flex mx-auto mb-12">
+                    <div className="cancel-icon | hide relative inline-flex mx-auto mb-12">
                         {/* <!-- cancel circle --> */}
                         <div>
                             <svg width="110" height="109" viewBox="0 0 110 109" fill="none" xmlns="http://www.w3.org/2000/svg">
