@@ -1,27 +1,52 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import useHttpRequest from "../../../../../shared/Hooks/HttpRequestHook";
 import TextInputField from "../../../../Sandbox/InputField/TextInputField";
 import RegularButton from "../../../../Sandbox/Buttons/RegularButton";
 import TextareaField from "../../../../Sandbox/TextareaField/TextareaField";
 import HistoryButton from "../../../../Sandbox/Buttons/HistoryButton";
+import { useNavigate } from "react-router";
+import { SubscriptionContext } from "../../../../../shared/Context/SubscriptionContext";
+import AlertDialog from "../../../../../shared/Dialog/AlertDialog";
 
 function AddBeat() {
   const [validationErrors, setValidationErrors] = useState({});
+  const navigate = useNavigate()
+  const sub = useContext(SubscriptionContext)
+  const [open, setOpen] = useState(false);
   const { isLoading, error, responseData, sendRequest } = useHttpRequest();
-  const [formData, setFormData] = useState({
+  const [beat, setBeat] = useState({
     beat_name: "",
-    description: ""
+    description: "my location"
   });
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setBeat({ ...beat, [e.target.name]: e.target.value });
     setValidationErrors({ ...validationErrors, [e.target.name]: "" });
   };
+
+  const saveBeat = async(e) => {
+    e.preventDefault();
+    if (beat.beat_name === "" || beat.beat_name.length < 3) {
+      setValidationErrors({ ...validationErrors, beat_name: "Use A Valid Beat Name" });
+    } else {
+      const existingBeats = JSON.parse(localStorage.getItem("beats")) || [];
+      if(existingBeats.length === sub.maxBeat){
+        setOpen(true)
+        return
+      }
+      const updatedBeats = [...existingBeats, beat];
+      localStorage.setItem("beats", JSON.stringify(updatedBeats));
+      
+      navigate("../")
+    }
+      
+    
+  }
   return (
     <>
       {/* add-beat-app works! */}
       <div className="max-w-md mx-auto block px-4 py-8 sm:p-8 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-        <form>
+        <form method="post" onSubmit={saveBeat}>
           <div className="mb-6">
             <TextInputField
               label="Beat Name"
@@ -32,7 +57,7 @@ function AddBeat() {
               error={validationErrors["beat_name"]}
               onChange={handleChange}
               required="required"
-              value={formData.phone}
+              value={beat.beat_name}
               semibold_label={true}
             />
           </div>
@@ -61,6 +86,14 @@ function AddBeat() {
           </div>
         </form>
       </div>
+      <AlertDialog 
+        open={open}
+        title="OOPS!! You've Ran Out Of Beats"
+        description="Would You Like To Subscribe For Another Beat ?"
+        setOpen={setOpen}
+        actionText="Subscribe"
+        action={() => {}}
+      />
     </>
   );
 }

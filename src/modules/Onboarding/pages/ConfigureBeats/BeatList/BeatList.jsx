@@ -1,26 +1,21 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useCallback, useContext, useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import Beat from "./Beat/Beat";
 import EditBeat from "../EditBeat/EditBeat";
+import RegularButton from "../../../../Sandbox/Buttons/RegularButton";
+import useHttpRequest from "../../../../../shared/Hooks/HttpRequestHook";
+import { AuthContext } from "../../../../../shared/Context/AuthContext";
+import { toast } from "react-toastify";
 
-const guardList = [
-  {
-    id: 1,
-    name: "Laborum possimus voluptatum",
-    description:
-      "Reiciendis at aperiam repellat sunt illum autem non laborum possimus voluptatum distinctio optio, libero quo hic quos veniam."
-  },
-  {
-    id: 2,
-    name: "Repudiandae ipsam libero deserunt",
-    description:
-      "Vero commodi ea laboriosam voluptas enim temporibus nostrum, repudiandae ipsam libero deserunt velit porro quaerat autem"
-  }
-];
 
 function BeatList() {
   const [isEdit, setIsEdit] = useState(false);
+  const auth = useContext(AuthContext)
+  const navigate = useNavigate()
+  const { isLoading, error, responseData, sendRequest } = useHttpRequest();
   const [selectedBeat, setSelectedBeat] = useState(null);
+  const [isBeatsLoaded, setIsBeatsLoaded] = useState(false);
+  const [beats, setBeats] = useState([])
 
   const handle_edit_beat = (guard) => {
     if (guard) {
@@ -29,23 +24,77 @@ function BeatList() {
     }
   };
 
+  const addBeat = useCallback((beat, index) => {
+    
+    beats[index] = beat;
+    setBeats(beats);
+    //setBeats((prevBeats) => [...prevBeats, beat]);
+   
+  }, [beats, setBeats]);
+
+  useEffect(() => {
+    const savedBeats = localStorage.getItem("beats");
+    
+    if (savedBeats) {
+      const parsedBeats = JSON.parse(savedBeats);
+      if (!isBeatsLoaded) {
+        setIsBeatsLoaded(true);
+        parsedBeats.forEach( addBeat);
+      }
+      
+    }
+
+     
+  }, [isBeatsLoaded]);
+
+
   const cancelEdit = ()=>{
     setIsEdit(false);
   }
+
+  const saveBeat = async (beats) => {
+    if (beats == [] || beats.lenght < 1) {
+      toast.info("Add at Least One Beat To Continue")
+      return
+    }
+    auth.loading(true)
+    const data = await sendRequest(
+      `http://localhost:5000/api/beat/addbeats/${auth.user.userid}`,
+      'POST',
+      JSON.stringify(beats),
+      {
+        "Content-Type": "application/json",
+        'Authorization': `Bearer ${auth.token}`,
+      }
+    )
+
+    if(data){
+      localStorage.removeItem('beats')
+      localStorage.setItem("onBoardingLevel", 2)
+      navigate("/onboarding/onboard-guard")
+      window.location.reload()
+    }
+  }
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error)
+    }
+  }, [error])
   return (
     <>
       {/* beat-list-app works! */}
       <div className="max-w-md mx-auto block mb-20 sm:mb-16">
         {isEdit ? (
           <div className="mb-8">
-            <EditBeat selectedBeat={selectedBeat} cancelEdit={cancelEdit} />
+            <EditBeat selectedBeat={selectedBeat} setBeats={setBeats} cancelEdit={cancelEdit} />
           </div>
         ) : (
           <>
             <ul className="mb-4 flex flex-col gap-4">
-              {guardList.map((guard) => (
-                <li key={guard.id}>
-                  <Beat guard={guard} handle_edit_beat={handle_edit_beat} />
+              {beats.map((guard) => (
+                <li key={guard.beat_name}>
+                  <Beat guard={guard} setBeats={setBeats} handle_edit_beat={handle_edit_beat} />
                 </li>
               ))}
             </ul>
@@ -53,16 +102,13 @@ function BeatList() {
               to="add-beat"
               className="text-primary-500 font-semibold text-sm"
             >
-              + Onboard Another Beat
+              + Add New Beat
             </Link>
 
             <div className="my-8"></div>
-            <Link
-              to=""
-              className="block w-full text-white bg-primary-500 hover:bg-primary-600 focus:ring-1 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-base w-full px-5 py-2.5 sm:py-3 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
-            >
-              Continue To Assign Beats
-            </Link>
+            <RegularButton text="Continue To On-Board Guards" onClick={() => saveBeat(beats)} />
+              
+            
           </>
         )}
       </div>

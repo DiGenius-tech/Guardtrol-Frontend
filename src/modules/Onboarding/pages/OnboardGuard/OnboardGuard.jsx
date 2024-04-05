@@ -11,7 +11,7 @@ const OnboardGuard = () => {
         Onboard guard
       </h1>
       <p className="text-center mx-auto max-w-[400px] text-dark-400">
-        This is just a subtext to support the topic above
+        Add At Least One Guard To Continue
       </p>
       <div className="mt-8"></div>
 

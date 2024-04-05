@@ -7,13 +7,6 @@ const Auth = () => {
     const auth = useContext(AuthContext)
     const navigate = useNavigate()
 
-    useEffect(() => {
-        if(null != auth.isLoggedIn){
-        if (auth.isLoggedIn) {
-            navigate('/onboarding')
-        } 
-    }
-    }, [auth.isLoggedIn])
     return (
         <>
             <div className='min-h-screen'>

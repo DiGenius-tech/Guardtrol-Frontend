@@ -22,6 +22,8 @@ const RegularButton = (props) => {
       font-medium text-center dark:bg-green-600 dark:hover:bg-green-700
       dark:focus:ring-green-800`}
       disabled={isloading}
+
+      onClick={props.onClick||null}
     >
         {isloading ? "Please Wait" : props.text}
     </button>
