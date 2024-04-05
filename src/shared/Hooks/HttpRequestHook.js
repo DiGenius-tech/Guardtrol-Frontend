@@ -38,6 +38,8 @@ const useHttpRequest = () => {
        return data
     } catch (err) {
       return setError(err.message || 'Something went wrong!');
+    }finally{
+      auth.loading(false)
     }
     
   };

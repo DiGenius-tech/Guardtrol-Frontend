@@ -9,6 +9,7 @@ import RegularButton from "../../../Sandbox/Buttons/RegularButton";
 import { useLocation } from "react-router-dom";
 import QRHandler from "./QRHandler/QRHandler";
 import { Outlet } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const ConfigureBeats = () => {
   const location = useLocation()
@@ -19,6 +20,7 @@ const ConfigureBeats = () => {
     setText(event.target.value);
   };
 
+  
   return (
     <>
       {/* configure-beats-app works! */}
@@ -27,7 +29,7 @@ const ConfigureBeats = () => {
         Configure Beat
       </h1>
       <p className="text-center mx-auto max-w-[400px] text-dark-400">
-        This is just a subtext to support the topic above
+        Add at least one Beat to Continue
       </p>
       <div className="mt-8"></div>
 

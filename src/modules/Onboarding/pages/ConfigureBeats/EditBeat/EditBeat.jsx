@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
-import useHttpRequest from "../../../../../shared/Hooks/HttpRequestHook";
 import TextInputField from "../../../../Sandbox/InputField/TextInputField";
 import RegularButton from "../../../../Sandbox/Buttons/RegularButton";
-import { Label, Textarea } from "flowbite-react";
 import TextareaField from "../../../../Sandbox/TextareaField/TextareaField";
+import { useNavigate } from "react-router";
+import { toast } from "react-toastify";
 
 function EditBeat(props) {
   const [validationErrors, setValidationErrors] = useState({});
-  const { isLoading, error, responseData, sendRequest } = useHttpRequest();
+  const [preBeat, setPreBeat] = useState('')
+  const navigate = useNavigate()
   const [formData, setFormData] = useState({
     beat_name: "",
     description: ""
@@ -20,15 +21,43 @@ function EditBeat(props) {
 
   useEffect(() => {
     setFormData({
-      beat_name: props.selectedBeat.name,
+      beat_name: props.selectedBeat.beat_name,
       description: props.selectedBeat.description
     });
+    setPreBeat(props.selectedBeat.beat_name)
   }, []);
+
+  const save = async (e) => {
+    e.preventDefault();
+
+    if (formData.beat_name === "" || formData.beat_name.length < 3) {
+      setValidationErrors({ ...validationErrors, beat_name: "Use A Valid Beat Name" });
+    } else {
+      const beats = JSON.parse(localStorage.getItem('beats')) || [];
+      const index = beats.findIndex(beat => beat.beat_name === preBeat);
+
+      if (index !== -1) { // Check if the beat is found
+        
+        beats[index].beat_name = formData.beat_name; 
+        beats[index].description = formData.description
+
+        localStorage.setItem('beats', JSON.stringify(beats));
+        props.setBeats(beats)
+        props.cancelEdit()
+      } else {
+        toast.error('Beat not found');
+      }
+
+      
+      
+    }
+      
+  }
   return (
     <>
       {/* add-beat-app works! */}
       <div className="max-w-md mx-auto block px-4 py-8 sm:p-8 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-        <form>
+        <form method="post" onSubmit={save}>
           <div className="mb-6">
             <TextInputField
               label="Beat Name"
