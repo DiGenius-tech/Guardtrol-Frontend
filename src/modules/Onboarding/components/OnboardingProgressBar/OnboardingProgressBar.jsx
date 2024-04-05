@@ -75,21 +75,60 @@ const OnboardingProgressBar = () => {
         case "/onboarding/":
           setstageProgressClass("stage-1");
           break;
+        // 
         case "/onboarding/membership":
           setstageProgressClass("stage-1");
           break;
+        case "/onboarding/membership/":
+          setstageProgressClass("stage-1");
+          break;
+        case "/onboarding/membership/shop":
+          setstageProgressClass("stage-1");
+          break;
+        case "/onboarding/membership/shop/":
+          setstageProgressClass("stage-1");
+          break;
+        case "/onboarding/membership/checkout":
+          setstageProgressClass("stage-1");
+          break;
+        case "/onboarding/membership/checkout/":
+          setstageProgressClass("stage-1");
+          break;
+        // 
+        // 
+        case "/onboarding/services":
+          setstageProgressClass("stage-1");
+          break;
+        case "/onboarding/services/":
+          setstageProgressClass("stage-1");
+          break;
+        case "/onboarding/services/shop":
+          setstageProgressClass("stage-1");
+          break;
+        case "/onboarding/services/shop/":
+          setstageProgressClass("stage-1");
+          break;
+        case "/onboarding/services/checkout":
+          setstageProgressClass("stage-1");
+          break;
+        case "/onboarding/services/checkout/":
+          setstageProgressClass("stage-1");
+          break;
+        // 
         case "/onboarding/configure-beats":
           setstageProgressClass("stage-2");
           break;
         case "/onboarding/configure-beats/":
           setstageProgressClass("stage-2");
           break;
+        // 
         case "/onboarding/configure-beats/add-beat":
           setstageProgressClass("stage-2");
           break;
         case "/onboarding/configure-beats/add-beat/":
           setstageProgressClass("stage-2");
           break;
+        // 
         case "/onboarding/onboard-guard":
           setstageProgressClass("stage-3");
           break;
