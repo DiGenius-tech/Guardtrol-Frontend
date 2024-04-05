@@ -1,10 +1,12 @@
 import Checkout from "./Checkout/Checkout";
-import Membership from "./Membership";
+import PaymentFailure from "./PaymentFailure/PaymentFailure";
+import PaymentSuccess from "./PaymentSuccess/PaymentSuccess";
+import Services from "./Services";
 import Shop from "./Shop/Shop";
 
-const membership_routes = {
-    path: "membership",
-    element: <Membership />,
+const services_routes = {
+    path: "services",
+    element: <Services />,
     children: [
         {
             path: "",
@@ -18,11 +20,19 @@ const membership_routes = {
             path: "checkout",
             element: <Checkout />
         },
+        {
+            path: "successful",
+            element: <PaymentSuccess />
+        },
+        {
+            path: "failed",
+            element: <PaymentFailure />
+        },
     ]
 }
-const membership_routes_empt = {
-    path: "membership",
-    element: <Membership />,
+const services_routes_empt = {
+    path: "services",
+    element: <Services />,
     children: [
         {
             path: "",
@@ -39,4 +49,4 @@ const membership_routes_empt = {
     ]
 }
 
-export default {membership_routes, membership_routes_empt};
+export default { services_routes, services_routes_empt };

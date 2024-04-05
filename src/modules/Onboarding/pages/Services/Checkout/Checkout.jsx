@@ -2,7 +2,6 @@ import React from 'react';
 import flutterwave_seeklogo from "../../../../../images/flutterwave-seeklogo.svg"
 import paystack_seeklogo from "../../../../../images/paystack-seeklogo.svg"
 import RegularButton from '../../../../Sandbox/Buttons/RegularButton';
-import { Label, Radio } from 'flowbite-react';
 import "./Checkout.scss";
 
 const PaymentOption = {
@@ -28,7 +27,7 @@ const Checkout = () => {
                         <legend className="mb-4 font-semibold text-xl">Select Methods</legend>
                         <ul className='payment-options | flex flex-col gap-4'>
                             <li>
-                                <input type="radio" name="payment_option" id="flutterwave" value={PaymentOption.FIRST} />
+                                <input type="radio" name="payment_option" id="flutterwave" value={PaymentOption.FIRST} checked/>
                                 <label htmlFor="flutterwave" className='cursor-pointer block'>
                                     {/* Flutterwave */}
                                     <div className="max-w-32" aria-label='Flutterwave'>

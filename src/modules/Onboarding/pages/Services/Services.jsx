@@ -1,13 +1,13 @@
 
 import { Outlet } from "react-router-dom";
 
-const Membership = () => {
+const Services = () => {
   return (
     <>
-      {/* membership-app works */}
+      {/* services-app works */}
       <Outlet/>
     </>
   );
 };
 
-export default Membership;
+export default Services;

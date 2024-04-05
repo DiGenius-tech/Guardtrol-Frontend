@@ -1,0 +1,24 @@
+.tick-icon {
+  &.hide {
+    .tick-animate-wrap {
+      &::after {
+        width: 100%;
+        transform: scaleX(1);
+      }
+    }
+  }
+  .tick-animate-wrap {
+    &::after {
+      content: "";
+      display: block;
+      background-color: white;
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 100%;
+      transform: scaleX(0);
+      transform-origin: right;
+      transition: all 1s;
+    }
+  }
+}
