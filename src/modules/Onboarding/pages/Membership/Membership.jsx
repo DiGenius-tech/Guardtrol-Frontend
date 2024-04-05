@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import useHttpRequest from "../../../../shared/Hooks/HttpRequestHook";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../../../shared/Context/AuthContext";
+import { FlutterWaveButton, closePaymentModal } from 'flutterwave-react-v3';
 
 const Membership = () => {
   const auth = useContext(AuthContext);
@@ -16,12 +17,12 @@ const Membership = () => {
     numberofbeats: 1,
     extraguards:0,
   });
+  const [isModalOpen, setIsModalOpen] = useState(false); // State variable to control modal visibility
 
   useEffect(() => {
     const selectedPlan = JSON.parse(localStorage.getItem('selectedPlan'))
 
     if (selectedPlan && selectedPlan.amount) {
-      
       setSelectedPlan(selectedPlan)
       setPlanFormData({'numberofbeats':parseInt(selectedPlan.numberofbeats), 
       'extraguards':parseInt(selectedPlan.extraguards)})
@@ -30,6 +31,7 @@ const Membership = () => {
     auth.loading(false)
 
  }, [auth.loading, setSelectedPlan, setPlanFormData])
+
   const handleChange = (e) => {
     setPlanFormData({ ...planFormData, [e.target.name]: e.target.value });
     setValidationErrors({ ...validationErrors, [e.target.name]: "" });
@@ -96,9 +98,11 @@ const Membership = () => {
         return
       }
 
-
       localStorage.setItem('selectedPlan', JSON.stringify(selectedPlan));
       localStorage.setItem('onBoardingLevel', 0)
+
+      // Open the modal after form submission
+      setIsModalOpen(true);
     }
   };
 
@@ -131,25 +135,60 @@ const Membership = () => {
     }
   ];
 
-
-
   const onSelectPlan = (e) => {
     setSelectedPlan(JSON.parse(e.target.value));
   };
 
+  // Function to handle modal close
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
+  // Function to handle button click in the modal
+  const handleModalButtonClick = () => {
+    // Add your logic here for the button click inside the modal
+    console.log("Modal button clicked");
+  };
+
+  const config = {
+
+    public_key: 'FLWPUBK-a1be03107079ab0523984695c59cbbed-X',
+    tx_ref: Date.now(),
+    amount: selectedPlan && selectedPlan.amount ? selectedPlan.amount : 0,
+    currency: 'NGN',
+    payment_options: 'card,mobilemoney,ussd',
+    customer: {
+      email: auth.user.email,
+      phone_number: auth.user.phone,
+      name: auth.user.name,
+    },
+    customizations: {
+      title: 'Alphatrol',
+      description: 'Guardtrol Subscription',
+      logo: 'https://alphatrol.com/wp-content/uploads/2022/09/alphatrol-logo-black.png',
+    },
+  };
+
+  const fwConfig = {
+    ...config,
+    text: 'Pay with Flutterwave!',
+    callback: (response) => {
+       console.log(response);
+      closePaymentModal() // this will close the modal programmatically
+    },
+    onClose: () => {},
+  };
+
   return (
     <>
-      {/* membership-app works */}
-      <h1 className="font-bold text-center text-2xl text-dark-450">
-        Membership
-      </h1>
-      <p className="text-sm text-center mx-auto max-w-[400px] text-dark-400">
-        The subscription goes towards getting access to the security software to
-        help manage your security personel
-      </p>
+      <div className="container mx-auto">
+        <h1 className="font-bold text-center text-2xl text-dark-450 mb-4">Membership</h1>
+        <p className="text-sm text-center max-w-[400px] text-dark-400 mb-8">
+          The subscription goes towards getting access to the security software to
+          help manage your security personnel
+        </p>
 
-      <div className="mx-auto max-w-[500px] my-16">
-        <form onSubmit={handleSubmit} method="post">
+        <form onSubmit={handleSubmit} method="post" className="mb-8">
           <div className="mb-6">
             <TextInputField
               label="How many beats?"
@@ -192,15 +231,13 @@ const Membership = () => {
                       <input
                         type="radio"
                         name="plan-option"
-                       
                         id={data.type}
                         value={JSON.stringify(data)}
                         onChange={(e) => onSelectPlan(e)}
                       />
                       <label htmlFor={data.type}>
                         <span
-                          className="plan-option-card | cursor-pointer flex flex-col items-center max-w-sm p-4 sm:p-6 rounded-lg shadow dark:bg-gray-800 dark:hover:bg-gray-700
-                                                text-white"
+                          className="plan-option-card cursor-pointer flex flex-col items-center max-w-sm p-4 sm:p-6 rounded-lg shadow dark:bg-gray-800 dark:hover:bg-gray-700 text-white"
                         >
                           <div className="mb-10 sm:mb-12">
                             <h2 className="text-xl sm:text-4xl my-8 sm:my-10 font-semibold">
@@ -231,6 +268,37 @@ const Membership = () => {
           />
         </form>
       </div>
+
+      {/* Render the modal */}
+      {isModalOpen && (
+        
+        <div className="fixed z-10 inset-0 overflow-y-auto">
+          <div className="flex items-center justify-center min-h-screen">
+            <div className="fixed inset-0 transition-opacity" aria-hidden="true">
+              <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
+            </div>
+            <div className="relative bg-white p-8 rounded-lg shadow-xl max-w-md">
+              <button className="absolute top-0 right-0 m-4 text-gray-600 hover:text-gray-800" onClick={handleCloseModal}>
+                <svg className="w-6 h-6 fill-current" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                  <path d="M18.707 5.293a1 1 0 0 0-1.414 0L12 10.586 7.707 6.293a1 1 0 1 0-1.414 1.414L10.586 12l-4.293 4.293a1 1 0 1 0 1.414 1.414L12 13.414l4.293 4.293a1 1 0 1 0 1.414-1.414L13.414 12l4.293-4.293a1 1 0 0 0 0-1.414z"/>
+                </svg>
+              </button>
+              <h2 className="text-2xl font-bold mb-4">Select a payment option</h2>
+              <div>
+                {/* Display selected plan and other form data */}
+                <p>Selected Plan: {selectedPlan?.title}</p>
+                <p>Number of Beats: {planFormData.numberofbeats}</p>
+                <p>Number of Extra Guards: {planFormData.extraguards}</p>
+                {/* Add more summary details as needed */}
+              </div>
+              {/* Button inside the modal */}
+              <button className="mt-4 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 focus:outline-none focus:ring focus:ring-blue-200" onClick={handleModalButtonClick}>
+              <FlutterWaveButton {...fwConfig} />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };
