@@ -1,35 +1,19 @@
 import Onboarding from "./Onboarding";
 import AssignBeats from "./pages/AssignBeats/AssignBeats";
-import ConfigureBeats from "./pages/ConfigureBeats/ConfigureBeats";
 import configure_beats_routes from "./pages/ConfigureBeats/ConfigureBeats.routes";
-import Membership from "./pages/Membership/Membership";
-import OnboardGuard from "./pages/OnboardGuard/OnboardGuard";
+import membershipRoutes from "./pages/Membership/Membership.routes";
 import onboard_guard_routes from "./pages/OnboardGuard/OnboardGuard.routes";
+
+const { membership_routes, membership_routes_empt } = membershipRoutes
 
 const onboarding_routes = {
     path: "/onboarding",
     element: <Onboarding />,
     children: [
-        {
-            path: "",
-            element: <Membership />
-        },
-        {
-            path: "membership",
-            element: <Membership />
-        },
-        // {
-        //     path: "configure-beats",
-        //     element: <ConfigureBeats />
-        // },
+        membership_routes_empt,
+        membership_routes,
         configure_beats_routes,
-
-        // {
-        //     path: "onboard-guard",
-        //     element: <OnboardGuard />
-        // }, 
         onboard_guard_routes,
-
         {
             path: "assign-beats",
             element: <AssignBeats />

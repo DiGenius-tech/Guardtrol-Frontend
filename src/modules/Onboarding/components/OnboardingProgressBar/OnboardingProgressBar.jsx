@@ -78,6 +78,21 @@ const OnboardingProgressBar = () => {
         case "/onboarding/membership":
           setstageProgressClass("stage-1");
           break;
+        case "/onboarding/membership/":
+          setstageProgressClass("stage-1");
+          break;
+        case "/onboarding/membership/shop":
+          setstageProgressClass("stage-1");
+          break;
+        case "/onboarding/membership/shop/":
+          setstageProgressClass("stage-1");
+          break;
+        case "/onboarding/membership/checkout":
+          setstageProgressClass("stage-1");
+          break;
+        case "/onboarding/membership/checkout/":
+          setstageProgressClass("stage-1");
+          break;
         case "/onboarding/configure-beats":
           setstageProgressClass("stage-2");
           break;

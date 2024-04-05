@@ -91,7 +91,8 @@ const AssignBeats = () => {
           <div className="mb-6">
             <SelectField
               multiSelect={
-                beatList.length >= 10 ? beatList.length - 5 : beatList.length
+                2
+                // beatList.length >= 10 ? beatList.length - 5 : beatList.length
               }
               id="guard"
               label="Select guard"
