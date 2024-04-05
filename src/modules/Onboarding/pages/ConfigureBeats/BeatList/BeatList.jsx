@@ -70,8 +70,9 @@ function BeatList() {
 
     if(data){
       localStorage.removeItem('beats')
-      localStorage.setItem("onBoardingLevel", 1)
+      localStorage.setItem("onBoardingLevel", 2)
       navigate("/onboarding/onboard-guard")
+      window.location.reload()
     }
   }
 

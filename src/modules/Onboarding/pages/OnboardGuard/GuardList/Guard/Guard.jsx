@@ -1,8 +1,12 @@
 import { Badge, Card, Dropdown } from "flowbite-react";
 import icon_menu_dots from "../../../../../../images/icons/icon-menu-dots.svg";
 import icon_guard_avatar from "../../../../../../images/icons/icon-guard-avatar.svg";
+import { useState } from "react";
+import { toast } from "react-toastify";
+import AlertDialog from "../../../../../../shared/Dialog/AlertDialog";
 
-function Guard({ guard, status, handle_edit_guard }) {
+function Guard({setGuards, guard, status, handle_edit_guard }) {
+  const [open, setOpen] = useState(false);
   const handle_status = (guard) => {
     switch (guard?.status) {
       case 1:
@@ -30,6 +34,23 @@ function Guard({ guard, status, handle_edit_guard }) {
     }
   };
 
+  const deleteGuard = (guardName) => {
+    const guards = JSON.parse(localStorage.getItem('guards')) || [];
+    const index = guards.findIndex(guard => guard.full_name === guardName);
+
+    if (index !== -1) { // Check if the beat is found
+      
+      const newGuards = guards.filter((guard, i) => i!== index);
+
+      setGuards(newGuards);
+
+      const savedGuards = JSON.stringify(newGuards);
+      localStorage.setItem("guards", savedGuards);
+
+    } else {
+       toast.error('Guard not found');
+    }
+}
   return (
     <>
       {/* Guard-app works! */}
@@ -42,10 +63,10 @@ function Guard({ guard, status, handle_edit_guard }) {
           <div className="col-span-9">
             <div>{handle_status(guard)}</div>
             <p className="text-dark-450 font-semibold text-sm">
-              {guard?.name}
+              {guard?.full_name}
               <br />
               <span className="font-normal text-dark-200">
-                {guard?.phone_number}
+                {guard?.phone}
               </span>
             </p>
           </div>
@@ -63,11 +84,20 @@ function Guard({ guard, status, handle_edit_guard }) {
               <Dropdown.Item onClick={() => handle_edit_guard(guard)}>
                 Edit
               </Dropdown.Item>
-              <Dropdown.Item>Remove</Dropdown.Item>
+              <Dropdown.Item onClick={()=> setOpen(true)}>Remove</Dropdown.Item>
             </Dropdown>
           </div>
         </div>
       </Card>
+
+      <AlertDialog 
+        open={open}
+        title="Delete Guard ?"
+        description="Are You Sure You Want To Delete This Guard ?, You won't Be Able To Revert This Action"
+        setOpen={setOpen}
+        actionText="Delete"
+        action={() => deleteGuard(guard?.full_name)}
+      />
     </>
   );
 }

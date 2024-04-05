@@ -1,4 +1,4 @@
-import PrivateRoute from "../../shared/PrivateRoute";
+import PrivateRoute from "../../shared/RouteGuard/PrivateRoute";
 import Onboarding from "./Onboarding";
 import AssignBeats from "./pages/AssignBeats/AssignBeats";
 import ConfigureBeats from "./pages/ConfigureBeats/ConfigureBeats";
@@ -9,7 +9,7 @@ import onboard_guard_routes from "./pages/OnboardGuard/OnboardGuard.routes";
 
 const onboarding_routes = {
     path: "/onboarding",
-    element: <PrivateRoute component={Onboarding} />,
+    element: <PrivateRoute component={Onboarding} onboarding={true} />,
     children: [
         {
             path: "",

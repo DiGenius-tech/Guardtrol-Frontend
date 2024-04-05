@@ -99,7 +99,7 @@ const Membership = () => {
       }
 
       localStorage.setItem('selectedPlan', JSON.stringify(selectedPlan));
-      localStorage.setItem('onBoardingLevel', 0)
+      localStorage.setItem('onBoardingLevel', 1)
 
       // Open the modal after form submission
       setIsModalOpen(true);
@@ -181,14 +181,14 @@ const Membership = () => {
 
   return (
     <>
-      <div className="container mx-auto">
-        <h1 className="font-bold text-center text-2xl text-dark-450 mb-4">Membership</h1>
-        <p className="text-sm text-center max-w-[400px] text-dark-400 mb-8">
+        <h1 className="font-bold text-center text-2xl text-dark-450">Membership</h1>
+        <p className="text-sm text-center mx-auto max-w-[400px] text-dark-400">
           The subscription goes towards getting access to the security software to
           help manage your security personnel
         </p>
 
-        <form onSubmit={handleSubmit} method="post" className="mb-8">
+        <div className="mx-auto max-w-[500px] my-16">
+        <form onSubmit={handleSubmit} method="post">
           <div className="mb-6">
             <TextInputField
               label="How many beats?"
@@ -237,7 +237,8 @@ const Membership = () => {
                       />
                       <label htmlFor={data.type}>
                         <span
-                          className="plan-option-card cursor-pointer flex flex-col items-center max-w-sm p-4 sm:p-6 rounded-lg shadow dark:bg-gray-800 dark:hover:bg-gray-700 text-white"
+                          className="plan-option-card | cursor-pointer flex flex-col items-center max-w-sm p-4 sm:p-6 rounded-lg shadow dark:bg-gray-800 dark:hover:bg-gray-700
+                          text-white"
                         >
                           <div className="mb-10 sm:mb-12">
                             <h2 className="text-xl sm:text-4xl my-8 sm:my-10 font-semibold">

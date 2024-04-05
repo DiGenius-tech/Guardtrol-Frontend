@@ -1,91 +1,105 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import useHttpRequest from "../../../../../shared/Hooks/HttpRequestHook";
 import TextInputField from "../../../../Sandbox/InputField/TextInputField";
 import RegularButton from "../../../../Sandbox/Buttons/RegularButton";
+import { toast } from "react-toastify";
 
-function UpdateGuard({ selectedGuard }) {
+function UpdateGuard(props) {
   const [validationErrors, setValidationErrors] = useState({});
   const { isLoading, error, responseData, sendRequest } = useHttpRequest();
+  const [preGuard, setPreGuard] = useState("")
   const [formData, setFormData] = useState({
     full_name: "",
     phone: ""
   });
-
+ 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     setValidationErrors({ ...validationErrors, [e.target.name]: "" });
   };
 
-  console.log(selectedGuard);
+  useEffect(() => {
+    setFormData({
+      full_name: props.selectedGuard.full_name,
+      phone: props.selectedGuard.phone
+    });
+    setPreGuard(props.selectedGuard.full_name)
+  }, []);
 
-  const set_name = (e) => {
-    console.log(e.target.value);
-  };
-  const set_number = (e) => {
-    console.log(e.target.value);
-  };
+  const save = async (e) => {
+    e.preventDefault();
+
+    if (formData.full_name === "" || formData.full_name.length < 3) {
+      setValidationErrors({ ...validationErrors, full_name: "Use A Valid Guard Name" });
+      return
+    } 
+    if(formData.phone === "" || formData.phone.length < 8){
+      setValidationErrors({ ...validationErrors, phone: "Enter A Valid Phone Number" });
+      return
+    }
+
+      const guards = JSON.parse(localStorage.getItem('guards')) || [];
+      const index = guards.findIndex(guard => guard.full_name === preGuard);
+
+      if (index !== -1) { // Check if the beat is found
+        
+        guards[index].full_name = formData.full_name; 
+        guards[index].phone = formData.phone
+
+        localStorage.setItem('guards', JSON.stringify(guards));
+        props.setGuards(guards)
+        props.cancelEdit()
+      } else {
+        toast.error('Guard not found');
+      }
+
+      
+      
+    
+      
+  }
   return (
     <>
       {/* update-guard-app works! */}
 
       <div className="max-w-md mx-auto block px-4 py-8 sm:p-8 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-        <form>
+        <form method="post" onSubmit={save}>
           {/*  */}
 
           {/*  */}
           <div className="mb-6">
-            <label
-              htmlFor="full_name"
-              className="block mb-2 font-medium text-gray-900 dark:text-white"
-            >
-              Full Name
-            </label>
-            <input
-              type="text"
-              id="full_name"
-              name="full_name"
-              className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 sm:py-3.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500"
-              autoComplete="full_name"
-              required
-              value={selectedGuard.name}
-              onChange={set_name}
-            />
             <TextInputField
               label="Full Name"
-              name="full_name"
               type="text"
-              placeholder="Full Name"
               id="full_name"
+              name="full_name"
+              required="required"
               error={validationErrors["full_name"]}
+              value={formData.full_name}
+              onChange={handleChange}
+            />
+            <TextInputField
+              label="Phone Number"
+              name="phone"
+              type="number"
+              placeholder="Phone Number"
+              id="phone"
+              error={validationErrors["phone"]}
               onChange={handleChange}
               required="required"
               value={formData.phone}
             />
           </div>
-          <div className="mb-6">
-            <div className="flex items-center justify-between mb-2">
-              <label
-                htmlFor="phone_number"
-                className="block font-medium text-gray-900 dark:text-white"
-              >
-                Phone Number
-              </label>
-            </div>
-            <input
-              type="tel"
-              id="phone_number"
-              name="phone_number"
-              className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 sm:py-3.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500"
-              required
-              value={selectedGuard.phone_number}
-              onChange={set_number}
-            />
-          </div>
+          
           <div className="">
-            <div className="relative">
+            <div className="flex items-center justify-between">
               <RegularButton text="Update" rounded="full" width="auto" padding="px-8 py-2.5" textSize="sm" />
+              <button type="button" onClick={props.cancelEdit}>
+                Cancel
+              </button>
             </div>
+
           </div>
         </form>
       </div>

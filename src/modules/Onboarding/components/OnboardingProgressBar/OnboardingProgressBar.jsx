@@ -150,7 +150,7 @@ const OnboardingProgressBar = () => {
           })}
         </p>
 
-        {/* <OnboardingTestNavigation completeProcess={completeProcess} location={location} /> */}
+        <OnboardingTestNavigation completeProcess={completeProcess} location={location} />
       </div>
     </>
   );

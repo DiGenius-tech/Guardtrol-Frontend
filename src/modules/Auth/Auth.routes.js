@@ -4,10 +4,11 @@ import Register from './pages/Register/Register';
 import ForgotPassword from './pages/ForgotPassword/ForgotPassword';
 import SetNewPassword from "./pages/SetNewPassword/SetNewPassword";
 import VerifyEmail from "./pages/VerifyEmail/VerifyEmail";
+import AuthRouteGuard from "../../shared/RouteGuard/AuthRouteGuard";
 
 const auth_routes = {
     path: "/auth",
-    element: <Auth />,
+    element: <AuthRouteGuard component={Auth} />,
     children: [
         {
             path: "",
