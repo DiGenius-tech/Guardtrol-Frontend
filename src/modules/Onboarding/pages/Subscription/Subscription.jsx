@@ -1,13 +1,13 @@
 
 import { Outlet } from "react-router-dom";
 
-const Services = () => {
+const Subscription = () => {
   return (
     <>
-      {/* services-app works */}
+      {/* subscription-app works */}
       <Outlet/>
     </>
   );
 };
 
-export default Services;
+export default Subscription;
