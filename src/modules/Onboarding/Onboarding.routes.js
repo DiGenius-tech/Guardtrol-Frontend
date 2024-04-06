@@ -10,6 +10,7 @@ import Checkout from "./pages/Subscription/Checkout/Checkout";
 import PaymentSuccess from "./pages/Subscription/PaymentSuccess/PaymentSuccess";
 import PaymentFailure from "./pages/Subscription/PaymentFailure/PaymentFailure";
 import Subscription from "./pages/Subscription/Subscription";
+import assign_beats_routes from "./pages/AssignBeats/AssignBeats.routes";
 
 const { subscription_routes, subscription_routes_empt } = subscriptionRoutes
 
@@ -21,10 +22,7 @@ const onboarding_routes = {
         subscription_routes,
         configure_beats_routes,
         onboard_guard_routes,
-        {
-            path: "assign-beats",
-            element: <AssignBeats />
-        }
+        assign_beats_routes
     ]
 }
 

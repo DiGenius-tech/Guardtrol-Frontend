@@ -7,15 +7,14 @@ import useHttpRequest from "../../../../../shared/Hooks/HttpRequestHook";
 import { AuthContext } from "../../../../../shared/Context/AuthContext";
 import { toast } from "react-toastify";
 
-
 function BeatList() {
   const [isEdit, setIsEdit] = useState(false);
-  const auth = useContext(AuthContext)
-  const navigate = useNavigate()
+  const auth = useContext(AuthContext);
+  const navigate = useNavigate();
   const { isLoading, error, responseData, sendRequest } = useHttpRequest();
   const [selectedBeat, setSelectedBeat] = useState(null);
   const [isBeatsLoaded, setIsBeatsLoaded] = useState(false);
-  const [beats, setBeats] = useState([])
+  const [beats, setBeats] = useState([]);
 
   const handle_edit_beat = (guard) => {
     if (guard) {
@@ -24,77 +23,85 @@ function BeatList() {
     }
   };
 
-  const addBeat = useCallback((beat, index) => {
-    
-    beats[index] = beat;
-    setBeats(beats);
-    //setBeats((prevBeats) => [...prevBeats, beat]);
-   
-  }, [beats, setBeats]);
+  const addBeat = useCallback(
+    (beat, index) => {
+      beats[index] = beat;
+      setBeats(beats);
+      //setBeats((prevBeats) => [...prevBeats, beat]);
+    },
+    [beats, setBeats]
+  );
 
   useEffect(() => {
     const savedBeats = localStorage.getItem("beats");
-    
+
     if (savedBeats) {
       const parsedBeats = JSON.parse(savedBeats);
       if (!isBeatsLoaded) {
         setIsBeatsLoaded(true);
-        parsedBeats.forEach( addBeat);
+        parsedBeats.forEach(addBeat);
       }
-      
     }
-
-     
   }, [isBeatsLoaded]);
 
-
-  const cancelEdit = ()=>{
+  const cancelEdit = () => {
     setIsEdit(false);
-  }
+  };
 
   const saveBeat = async (beats) => {
-    if (beats == [] || beats.lenght < 1) {
-      toast.info("Add at Least One Beat To Continue")
-      return
+    // if (beats == [] || beats.lenght < 1) { //wrong condition
+    //}
+
+    if (!beats.length) {
+      toast.info("Add at Least One Beat To Continue");
+      return;
     }
-    auth.loading(true)
+    auth.loading(true);
     const data = await sendRequest(
       `http://localhost:5000/api/beat/addbeats/${auth.user.userid}`,
-      'POST',
+      "POST",
       JSON.stringify(beats),
       {
         "Content-Type": "application/json",
-        'Authorization': `Bearer ${auth.token}`,
+        Authorization: `Bearer ${auth.token}`
       }
-    )
+    );
 
-    if(data){
-      localStorage.removeItem('beats')
-      localStorage.setItem("onBoardingLevel", 2)
-      navigate("/onboarding/onboard-guard")
-      window.location.reload()
+    if (data) {
+      localStorage.removeItem("beats");
+      localStorage.setItem("onBoardingLevel", 2);
+      navigate("/onboarding/onboard-guard");
+      window.location.reload();
     }
-  }
+  };
 
   useEffect(() => {
     if (error) {
-      toast.error(error)
+      toast.error(error);
     }
-  }, [error])
+  }, [error]);
   return (
     <>
       {/* beat-list-app works! */}
       <div className="max-w-md mx-auto block mb-20 sm:mb-16">
         {isEdit ? (
           <div className="mb-8">
-            <EditBeat selectedBeat={selectedBeat} setBeats={setBeats} cancelEdit={cancelEdit} />
+            <EditBeat
+              selectedBeat={selectedBeat}
+              setBeats={setBeats}
+              cancelEdit={cancelEdit}
+            />
           </div>
         ) : (
           <>
             <ul className="mb-4 flex flex-col gap-4">
               {beats.map((guard) => (
                 <li key={guard.beat_name}>
-                  <Beat guard={guard} setBeats={setBeats} handle_edit_beat={handle_edit_beat} />
+                  <Beat
+                    guard={guard}
+                    setBeats={setBeats}
+                    handle_edit_beat={handle_edit_beat}
+                  />
                 </li>
               ))}
             </ul>
@@ -106,9 +113,10 @@ function BeatList() {
             </Link>
 
             <div className="my-8"></div>
-            <RegularButton text="Continue To On-Board Guards" onClick={() => saveBeat(beats)} />
-              
-            
+            <RegularButton
+              text="Continue To On-Board Guards"
+              onClick={() => saveBeat(beats)}
+            />
           </>
         )}
       </div>
