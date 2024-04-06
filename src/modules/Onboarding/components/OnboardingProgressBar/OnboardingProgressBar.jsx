@@ -147,6 +147,9 @@ const OnboardingProgressBar = () => {
         case "/onboarding/assign-beats/":
           setstageProgressClass("stage-4");
           break;
+        case "/onboarding/assign-beats/assign-new-beat":
+          setstageProgressClass("stage-4");
+          break;
 
         default:
           setstageProgressClass("stage-1");

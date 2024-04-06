@@ -4,13 +4,15 @@ import icon_location_marker from "../../../../../../images/icons/icon-location-m
 import icon_building_regular from "../../../../../../images/icons/icon-building-regular.svg";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { randomHexColor } from "../../../../../../shared/functions/random-hex-color";
 
 function AssignedBeat(props) {
-  function randomHexColor() {
-    var color = "#" + Math.floor(Math.random() * 16777215).toString(16); // Random value between 0 and FFFFFF
 
-    return color;
-  }
+  // function randomHexColor() {
+  //   var color = "#" + Math.floor(Math.random() * 16777215).toString(16); // Random value between 0 and FFFFFF
+
+  //   return color;
+  // }
 
   useEffect(() => {}, []);
 
@@ -46,7 +48,7 @@ function AssignedBeat(props) {
                           color: "white"
                         }}
                         className={
-                          "h-7 w-7 rounded-full overflow-hidden border border-2 flex items-center justify-center"
+                          "h-7 w-7 rounded-full overflow-hidden border-2 flex items-center justify-center"
                         }
                       >
                         {guard.profile_image ? (

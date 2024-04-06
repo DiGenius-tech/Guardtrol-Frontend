@@ -3,7 +3,8 @@ import { Link } from "react-router-dom";
 import RegularButton from "../../../../Sandbox/Buttons/RegularButton";
 import Beat from "../../ConfigureBeats/BeatList/Beat/Beat";
 import AssignedBeat from "./AssignedBeat/AssignedBeat";
-import { Button } from "flowbite-react";
+import { Button, ListGroup, Modal } from "flowbite-react";
+import { randomHexColor } from "../../../../../shared/functions/random-hex-color";
 
 const guardList = [
   {
@@ -107,6 +108,7 @@ function AssignedBeatList() {
   const [assignedBeatList, setAssignedBeatList] = useState([]);
   const [isEdit, setIsEdit] = useState(false);
   const [openModal, setOpenModal] = useState(false);
+  const [selectedAssignedBeat, setSelectedAssignedBeat] = useState(null);
 
   const handle_edit_beat = (guard) => {
     if (guard) {
@@ -120,7 +122,9 @@ function AssignedBeatList() {
   };
 
   const select_assigned_beat = (data) => {
+    console.log("clicked!")
     setOpenModal(true);
+    setSelectedAssignedBeat(data)
     // alert(JSON.stringify(data));
   };
 
@@ -173,10 +177,10 @@ function AssignedBeatList() {
             <div className="my-8"></div>
             <RegularButton
               text="Continue To On-Board Guards"
-              //   onClick={() => saveBeat(beats)}
+            //   onClick={() => saveBeat(beats)}
             />
 
-            <Modal modalState={openModal, setOpenModal} />
+            <Dialog openModal={openModal} setOpenModal={setOpenModal} selectedAssignedBeat={selectedAssignedBeat} />
           </>
         )}
       </div>
@@ -184,39 +188,67 @@ function AssignedBeatList() {
   );
 }
 
-const Modal = (props) => {
+const Dialog = (props) => {
+  console.log("selectedAssignedBeat!!!: ", props.selectedAssignedBeat)
+  const { beat, frequency, guardList } = props.selectedAssignedBeat ? props.selectedAssignedBeat : {
+    beat: {}, frequency: "", guardList: []
+  };
   return (
     <Modal
-      show={props.modalState.openModal}
-      onClose={() => props.modalState.setOpenModal(false)}
+      show={props.openModal}
+      size={'4xl'}
+      onClose={() => props.setOpenModal(false)}
     >
-      <Modal.Header>Terms of Service</Modal.Header>
+      <Modal.Header>{beat?.title}</Modal.Header>
       <Modal.Body>
         <div className="space-y-6">
           <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-            With less than a month to go before the European Union enacts new
-            consumer privacy laws for its citizens, companies around the world
-            are updating their terms of service agreements to comply.
+            {beat?.description}
           </p>
-          <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-            The European Union’s General Data Protection Regulation (G.D.P.R.)
-            goes into effect on May 25 and is meant to ensure a common set of
-            data rights in the European Union. It requires organizations to
-            notify users as soon as possible of high-risk data breaches that
-            could personally affect them.
-          </p>
+          <section>
+            <h2 className="font-bold text-md mb-2">Guards</h2>
+            <ListGroup className="">
+              {
+                guardList.length ? guardList.map((guard) => {
+                  return <ListGroup.Item>
+                    <div className="flex items-center gap-2">
+
+                      <div
+                        style={{
+                          backgroundColor: randomHexColor(),
+                          color: "white"
+                        }}
+                        className={
+                          "h-7 w-7 rounded-full overflow-hidden border-2 flex items-center justify-center"
+                        }
+                      >
+                        {guard.profile_image ? (
+                          <img src={guard.profile_image} alt="profile image" />
+                        ) : (
+                          <p className="m-0 font-semibold">
+                            {guard.name.slice(0, 1).toUpperCase()}
+                          </p>
+                        )}
+                      </div>
+
+                      <span className="text-xs">{guard.name.toUpperCase()}</span>
+                    </div>
+                  </ListGroup.Item>
+                }) : ""
+              }
+            </ListGroup>
+          </section>
+
+          <section>
+            <h3 className="font-bold text-md mb-2">Frequency</h3>
+            <p className="first-letter:uppercase">{frequency}</p>
+          </section>
         </div>
       </Modal.Body>
       <Modal.Footer>
-        <Button onClick={() => props.modalState.setOpenModal(false)}>
-          I accept
-        </Button>
-        <Button
-          color="gray"
-          onClick={() => props.modalState.setOpenModal(false)}
-        >
-          Decline
-        </Button>
+        <button className="text-red-400">
+          Delete
+        </button>
       </Modal.Footer>
     </Modal>
   );
