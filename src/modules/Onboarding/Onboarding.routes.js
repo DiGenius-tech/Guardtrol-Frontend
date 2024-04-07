@@ -11,6 +11,7 @@ import PaymentSuccess from "./pages/Subscription/PaymentSuccess/PaymentSuccess";
 import PaymentFailure from "./pages/Subscription/PaymentFailure/PaymentFailure";
 import Subscription from "./pages/Subscription/Subscription";
 import assign_beats_routes from "./pages/AssignBeats/AssignBeats.routes";
+import OnboardingComplete from "./pages/Complete/CompleteOnboarding";
 
 const { subscription_routes, subscription_routes_empt } = subscriptionRoutes
 
@@ -18,6 +19,10 @@ const onboarding_routes = {
     path: "/onboarding",
     element: <PrivateRoute component={Onboarding} onboarding={true} />,
     children: [
+        {
+            path: "/onboarding/complete",
+            element: <OnboardingComplete />,
+        },
         subscription_routes_empt,
         subscription_routes,
         configure_beats_routes,

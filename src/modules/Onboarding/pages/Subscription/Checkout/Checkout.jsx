@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import flutterwave_seeklogo from "../../../../../images/flutterwave-seeklogo.svg"
 import paystack_seeklogo from "../../../../../images/paystack-seeklogo.svg"
 import RegularButton from '../../../../Sandbox/Buttons/RegularButton';
+import { useNavigate, useLocation } from "react-router-dom";
 import "./Checkout.scss";
+import { AuthContext } from '../../../../../shared/Context/AuthContext';
+import { formatNumberWithCommas } from '../../../../../shared/functions/random-hex-color';
 
 const PaymentOption = {
     FIRST: "flutterwave",
@@ -10,9 +13,36 @@ const PaymentOption = {
 }
 
 const Checkout = () => {
+    const auth = useContext(AuthContext)
+    const [selectedPlan, setSelectedPlan] = useState(null)
+    const navigate = useNavigate()
 
+    useEffect(() => {
+        const selectedPlan = JSON.parse(localStorage.getItem('selectedPlan'))
+    
+        if (selectedPlan && selectedPlan.amount) {
+          setSelectedPlan(selectedPlan)
+          
+        }
+    
+        auth.loading(false)
+    
+     }, [auth.loading, setSelectedPlan])
     const handleCheck = () => {
 
+    }
+
+    const pay = async (e) => {
+        e.preventDefault()
+
+
+
+
+
+
+
+        localStorage.setItem('onBoardingLevel', 1) //this should be after a successful payment
+        navigate("/onboarding/configure-beats")
     }
     return (
         <div>
@@ -26,7 +56,7 @@ const Checkout = () => {
                 help manage your security personel
             </p>
             <div className="mx-auto max-w-[500px] my-16">
-                <form>
+                <form method='post' onSubmit={pay}>
                     <fieldset className="flex flex-col gap-4 mb-4">
                         <legend className="mb-4 font-semibold text-xl">Select Methods</legend>
                         <ul className='payment-options | flex flex-col gap-4'>
@@ -52,7 +82,7 @@ const Checkout = () => {
                         </ul>
                     </fieldset>
 
-                    <RegularButton text="Pay Now" backgroundColor="#FB9129" />
+                    <RegularButton text={`Pay ₦${selectedPlan?formatNumberWithCommas(selectedPlan.amount):0} Now`} backgroundColor="#FB9129" />
                 </form>
             </div>
         </div>

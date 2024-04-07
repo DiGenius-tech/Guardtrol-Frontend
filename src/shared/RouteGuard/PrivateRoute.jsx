@@ -7,8 +7,8 @@ const PrivateRoute = ({ component: Component, onboarding = false, ...rest }) => 
   const [onboardingRoute, setOnboardingRoute] = useState("/onboarding/membership")
   const location = useLocation()
 
-  const subRoutes = ["add-beat", "add-guard",
-  "checkout", "shop", "successful", "failed"
+  const subRoutes = ["add-beat", "add-guard", 
+  "checkout", "shop", "successful", "failed", "assign-new-beat"
   ]
   useEffect(() => {
     const storedIsLoggedIn = localStorage.getItem('userData');
@@ -30,6 +30,9 @@ const PrivateRoute = ({ component: Component, onboarding = false, ...rest }) => 
       case "3":
         setOnboardingRoute("/onboarding/assign-beats")
         break;
+      case "4":
+        setOnboardingRoute("/onboarding/complete")
+        break;
       default:
         setOnboardingRoute("/onboarding/membership")
         break;
@@ -38,11 +41,11 @@ const PrivateRoute = ({ component: Component, onboarding = false, ...rest }) => 
   }, []);
 
   if (!isLoggedIn) {
-    // return <Navigate to="/auth" state={{ from: location }} replace />;
+     return <Navigate to="/auth" state={{ from: location }} replace />;
   }
 
   if (onboarding && location.pathname !== onboardingRoute && !subRoutes.some(item => location.pathname.includes(item))) {
-    // return <Navigate to={onboardingRoute} />;
+     return <Navigate to={onboardingRoute} />;
   }
 
   return <Component {...rest} />;

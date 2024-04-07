@@ -29,19 +29,19 @@ function AssignedBeat(props) {
             </div>
             <div className="col-span-9">
               <h3 className="text-dark-450 font-semibold text-base">
-                {props?.assigned_beat?.beat.title}
+                {props?.assigned_beat?.name}
                 {/* Commodi eligendi iste, quo quasi voluptatibus */}
               </h3>
               <p className="text-sm text-gray-400">
-                {props?.assigned_beat?.beat.description}
+                {props?.assigned_beat?.description}
                 {/* Lorem ipsum dolor, sit amet consectetur adipisicing elit.
                 Voluptatem fuga delectus expedita... */}
               </p>
               <div className="my-1.5"></div>
               <ul className="flex items-center ms-1.5">
-                {props?.assigned_beat?.guardList.map((guard) => {
+                {props?.assigned_beat?.guards.length>0? props?.assigned_beat?.guards.map((guard) => {
                   return (
-                    <li key={guard.id} className="-ms-1.5">
+                    <li key={guard._id} className="-ms-1.5">
                       <div
                         style={{
                           backgroundColor: randomHexColor(),
@@ -61,7 +61,10 @@ function AssignedBeat(props) {
                       </div>
                     </li>
                   );
-                })}
+                }): 
+                <li className="-ms-1.5">
+                  No Guards Assigned Yet
+                </li>}
               </ul>
             </div>
           </div>

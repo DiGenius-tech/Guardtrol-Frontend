@@ -1,68 +1,139 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Link, Outlet } from "react-router-dom";
 import SelectField from "../../../../Sandbox/SelectField/SelectField";
 import RegularButton from "../../../../Sandbox/Buttons/RegularButton";
+import useHttpRequest from "../../../../../shared/Hooks/HttpRequestHook";
+import { useNavigate, useLocation } from "react-router-dom";
+import { AuthContext } from "../../../../../shared/Context/AuthContext";
+import { toast } from "react-toastify";
+import MultiSelectField from "../../../../Sandbox/SelectField/MultiSelectField";
 
 
-const beatList = [
-    {
-      id: 1,
-      title: "First floor"
-    },
-    {
-      id: 2,
-      title: "Second floor"
-    },
-    {
-      id: 3,
-      title: "Third floor"
-    }
-  ];
-  
-  const guardList = [
-    {
-      id: 1,
-      title: "Adewale Quadri",
-      phone_number: "0803892890",
-      status: 0
-    },
-    {
-      id: 2,
-      title: "Abisola Josiah",
-      phone_number: "0807800822",
-      status: 1
-    }
-  ];
-  const frequencyList = [
-    {
-      id: 1,
-      title: "Every 30 mins"
-    },
-    {
-      id: 2,
-      title: "Every 60 mins"
-    }
-  ];
-  
   
   function AssignNewBeat() {
-    const initialBeatState = beatList[0];
-    const initialGuardState = guardList[0];
-    const initialFrequencyState = frequencyList[0];
-    const [beat, setBeat] = useState(initialBeatState);
-    const [guard, setGuard] = useState(initialGuardState);
+    const navigate = useNavigate()
+    const auth = useContext(AuthContext)
+    const { isLoading, error, responseData, sendRequest } = useHttpRequest();
+    const [initialBeatState, setInitialBeatState] = useState([]);
+    const [initialGuardState, setInitialGuardState] = useState([]);
+    const initialFrequencyState = useState([]);
+    const [beat, setBeat] = useState(initialBeatState[0]);
+    const [guard, setGuard] = useState([]);
     const [frequency, setFrequency] = useState(initialFrequencyState);
+    
     const handleBeatSelection = (e) => {
+      
       setBeat(JSON.parse(e.target.value));
+      
     };
   
     const handleGuardSelection = (e) => {
-      setGuard(JSON.parse(e.target.value));
+      console.log(e.target.value)
+      setGuard([...guard, JSON.parse(e.target.value)]);
     };
   
     const handleFrequencySelection = (e) => {
       setFrequency(JSON.parse(e.target.value));
     };
+
+    useEffect(() => {
+      auth.loading(true)
+      const getBeats = async () => {
+        const data = await sendRequest(
+          `http://localhost:5000/api/beat/getbeats/${auth.user.userid}`,
+          "GET",
+          null,
+          {
+            "Content-Type": "application/json",
+            'Authorization': `Bearer ${auth.token}`,
+          }
+        )
+        if(!!data._id){
+          setInitialBeatState(data.beats);
+          setInitialGuardState(data.guards)
+          console.log(data.beats)
+        }else{  
+          toast.error("Failed To Fetch Beats")
+        }
+      }
+      auth.token && getBeats();
+      //setBeats(guardList);
+      
+    }, [auth.token, auth.user.userid]);
+
+    const checkIfGuardIsAssigned = (guard) => {
+      auth.loading(true);
+      let isGuardAssigned = {status: false, message:""};
+      
+      initialBeatState.forEach((beat) => {
+        if (beat.guards.some((assignedGuard) => assignedGuard._id === guard._id)) {
+           auth.loading(false);
+          const message  = (`${guard.name} has already been assigned to ${beat.name}`);
+          isGuardAssigned = {status: true, message: message};
+          //throw new Error(`${guard.name} has already been assigned to ${beat.name}`);
+        }
+      });
+      
+      auth.loading(false);
+      return isGuardAssigned;
+    };
+    
+
+    const save = async (e) => {
+      e.preventDefault()
+      if (!beat) {
+        toast.info('Select a Beat to Assign Guards')
+        return
+      }
+      if (guard.length<1) {
+        toast.info('Select Guards to be Assigned to Beats')
+        return
+      }
+      const check = guard.map((item)=> {
+       return checkIfGuardIsAssigned(item)
+      })
+      const c = check.some((value) => {
+       if(value.status){
+        toast.warning(value.message)
+        return true
+       }
+       
+         
+      })
+
+      if(c)return
+
+      console.log(check)
+
+      auth.loading(true)
+      const formData = {'beat': beat, 'guards': guard}
+      
+      
+      const data = await sendRequest(
+        `http://localhost:5000/api/guard/assignbeat/${auth.user.userid}`,
+          "POST",
+          JSON.stringify(formData),
+          {
+            "Content-Type": "application/json",
+            'Authorization': `Bearer ${auth.token}`,
+          }
+      )
+
+      if(data){
+        navigate('/onboarding/assign-beats')
+        window.location.reload()
+      }
+      
+
+
+      
+    }
+
+    useEffect(() => {
+      if (error) {
+        toast.error(error)
+      }
+    }, [error])
   return (
     <>
       {/* assign-new-beat-app works! */}
@@ -71,48 +142,57 @@ const beatList = [
         Assign Beats
       </h1>
       <p className="text-center mx-auto max-w-[400px] text-dark-400">
-        This is just a subtext to support the topic above
+        Select A beat And Guards To be Assigned(You Can Select Multiple Guards)
       </p>
 
       <div className="max-w-md mx-auto block px-4 py-8 sm:p-8 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700 my-16">
-        <form>
+        <form onSubmit={save}>
           {/*  */}
           <div className="mb-6">
             <SelectField
+              value={beat}
+              name="beat"
               id="beat"
               label="Select beat"
               semibold_label={true}
               handleChangeOption={handleBeatSelection}
-              optionList={beatList}
-              multipleSelect={true}
+              optionList={initialBeatState}
+              multipleSelect={false}
             />
           </div>
 
           <div className="mb-6">
-            <SelectField
+            <MultiSelectField
+            selectedOptions={guard}
+            setSelectedOptions={setGuard}
+              value={guard}
+              name="guard"
               multiple={true}
               multiSelect={
-                beatList.length >= 10 ? beatList.length - 5 : beatList.length
+                initialBeatState.length >= 10 ? initialBeatState.length - 5 : initialBeatState.length
               }
               id="guard"
+              multipleSelect={true}
               label="Select guard"
               semibold_label={true}
               handleChangeOption={handleGuardSelection}
-              optionList={guardList}
+              optionList={initialGuardState}
             />
           </div>
 
-          <div className="mb-6">
+          {/* <div className="mb-6">
             <SelectField
+              value={frequency}
+              name="frequency"
               id="frequency"
               label="Select frequency"
               semibold_label={true}
               handleChangeOption={handleFrequencySelection}
-              optionList={frequencyList}
+              optionList={initialFrequencyState}
             />
-          </div>
+          </div> */}
 
-          <RegularButton text="Finish Onboarding" />
+          <RegularButton text="Save Changes" />
         </form>
       </div>
     </>

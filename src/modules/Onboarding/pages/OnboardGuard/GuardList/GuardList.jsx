@@ -55,7 +55,7 @@ function GuardList() {
   }, [isGuardsLoaded]);
 
   const saveGuard = async (guards) => {
-    if (guards == [] || guards.lenght < 1) {
+    if (guards == [] || guards.length < 1) {
       toast.info("Add at Least One Guard To Continue")
       return
     }

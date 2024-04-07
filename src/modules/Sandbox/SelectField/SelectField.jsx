@@ -13,16 +13,22 @@ function SelectField(props) {
         {props.label}
       </label>
       <select
+     
+        name={props.name}
         multiple={props?.multiple}
         size={props?.multiSelect ? props?.multiSelect : 0}
         onChange={(e) => props.handleChangeOption(e)}
         id={props.id}
         className="cursor-pointer border border-gray-300 text-gray-900 text-sm sm:text-base rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 sm:py-4 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500"
       >
-        {props.optionList?.map((route) => {
+         <option disabled>
+              {`Select  ${props.name}`}
+          </option>
+        {props.optionList.length>0 &&props.optionList?.map((route, index) => {
+          
           return (
-            <option value={JSON.stringify(route)} key={route.id}>
-              {route.title}
+            <option value={JSON.stringify(route)} key={route.id} >
+              {route.name}
             </option>
           );
         })}

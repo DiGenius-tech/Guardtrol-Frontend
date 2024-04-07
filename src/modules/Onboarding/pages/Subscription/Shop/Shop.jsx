@@ -3,13 +3,15 @@ import TextInputField from "../../../../Sandbox/InputField/TextInputField";
 import RegularButton from "../../../../Sandbox/Buttons/RegularButton";
 import { toast } from "react-toastify";
 import useHttpRequest from "../../../../../shared/Hooks/HttpRequestHook";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { AuthContext } from "../../../../../shared/Context/AuthContext";
 import { FlutterWaveButton, closePaymentModal } from 'flutterwave-react-v3';
+import { formatNumberWithCommas } from "../../../../../shared/functions/random-hex-color";
 
 const Shop = () => {
   const auth = useContext(AuthContext);
   const navigate = useNavigate()
+  const location = useLocation()
   const [validationErrors, setValidationErrors] = useState({});
   const { isLoading, error, responseData, sendRequest } = useHttpRequest();
   const [selectedPlan, setSelectedPlan] = useState(null);
@@ -67,42 +69,19 @@ const Shop = () => {
       setValidationErrors(newErrors);
       e.stopPropagation();
     } else {
-      // Form is valid, handle submission
-      //auth.loading(true);
-      // try {
-      //   const data = await sendRequest(
-      //     "http://localhost:5000/api/users/signup",
-      //     "POST",
-      //     JSON.stringify(formData),
-      //     {
-      //       "Content-Type": "application/json"
-      //     }
-      //   );
- 
-      //   if (null != data) {
-      //     if (auth.login(data)) {
-      //       navigate('../verify-email', { replace: true }) //should be dashboard
-      //       window.location.reload();
-      //     }
-      //     // navigate('../verify-email', {replace: true})
-      //     // window.location.reload();
-
-      //   }
-      // } catch (err) {
-      //   console.log(err);
-      // } finally {
-      //   auth.loading(false);
-      // }
+      
       if (null == selectedPlan) {
         toast.error("Please Select A Plan That Works For You")
         return
       }
-
+      selectedPlan.amount = selectedPlan.numberofbeats * 10000 + selectedPlan.extraguards*2000
       localStorage.setItem('selectedPlan', JSON.stringify(selectedPlan));
-      localStorage.setItem('onBoardingLevel', 1)
+      
 
       // Open the modal after form submission
-      setIsModalOpen(true);
+      //setIsModalOpen(true); no longer needed
+
+      navigate("/onboarding/membership/checkout");
     }
   };
 
@@ -114,22 +93,22 @@ const Shop = () => {
 
   const membership_card_data = [
     {
-      title: `₦${planFormData.numberofbeats*10000 + planFormData.extraguards*2000}`,
-      body_list: [`₦${planFormData.numberofbeats*10000} P/M`, `${planFormData.extraguards} Extraguards x ₦2000`],
-      footer: "This should just give a summary of the benefits",
+      title: `₦${formatNumberWithCommas(planFormData.numberofbeats*10000 + planFormData.extraguards*2000)}`,
+      body_list: [`₦${formatNumberWithCommas(planFormData.numberofbeats*10000)} P/M`, `${planFormData.extraguards} Extra Guards x ₦2,000`],
+      footer: "Lets Get you started with the Basic Plan",
       type: "monthly",
       amount:(planFormData.numberofbeats*10000 + planFormData.extraguards*2000),
-      readable: `₦${(planFormData.numberofbeats*10000 + planFormData.extraguards*2000)} per month`,
+      readable: `₦${formatNumberWithCommas(planFormData.numberofbeats*10000 + planFormData.extraguards*2000)} per month`,
       numberofbeats: planFormData.numberofbeats,
       extraguards: planFormData.extraguards,
     },
     {
-      title: `₦${(planFormData.numberofbeats*10000 + planFormData.extraguards*2000)* 12 * 0.8}`,
-      body_list: [`₦${planFormData.numberofbeats*10000 *12 * .8} P/Y`, `${planFormData.extraguards} Extraguards x ₦20000`],
-      footer: "This should just give a summary of the benefits",
+      title: `₦${formatNumberWithCommas((planFormData.numberofbeats*10000 + planFormData.extraguards*2000)* 12 * 0.8)}`,
+      body_list: [`₦${formatNumberWithCommas(planFormData.numberofbeats*10000 *12 * .8)} P/Y`, `${planFormData.extraguards} Extra Guards x ₦20,000`],
+      footer: "20% Discount when you select this Plan",
       type: "yearly",
       amount:(planFormData.numberofbeats*10000 + planFormData.extraguards*2000)* 12 * 0.8,
-      readable: `₦${(planFormData.numberofbeats*10000 + planFormData.extraguards*2000)* 12 * 0.8} per year`,
+      readable: `₦${formatNumberWithCommas((planFormData.numberofbeats*10000 + planFormData.extraguards*2000)* 12 * 0.8)} per year`,
       numberofbeats: planFormData.numberofbeats,
       extraguards: planFormData.extraguards,
     }
@@ -264,7 +243,10 @@ const Shop = () => {
 
           <RegularButton
             text={
-              "Continue" + (selectedPlan ? ` (${selectedPlan.readable})` : "")
+              "Continue To Pay ₦" + (selectedPlan ? `${formatNumberWithCommas(membership_card_data.filter((data) => {
+              return (data.type == selectedPlan.type)
+               
+              })[0].amount)}` : "")
             }
           />
         </form>
