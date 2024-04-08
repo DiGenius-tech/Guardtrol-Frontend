@@ -1,0 +1,32 @@
+.activities {
+  li {
+    margin-bottom: 10px;
+
+    .dot {
+      width: 10px;
+      min-width: 10px;
+      height: 10px;
+      min-height: 10px;
+      background-color: var(--clr-primary-500);
+      border-radius: 50%;
+      z-index: 1;
+    }
+
+    &:not(:last-child) {
+      .dot-wrap {
+        position: relative;
+        &::after {
+          content: "";
+          display: block;
+          position: absolute;
+          height: 100%;
+          width: 1px;
+          background-color: #eceef4;
+          left: 25px;
+          transform: translateX(-50%);
+          z-index: 0;
+        }
+      }
+    }
+  }
+}
