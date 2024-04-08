@@ -41,7 +41,7 @@ const PrivateRoute = ({ component: Component, onboarding = false, ...rest }) => 
   }, []);
 
   if (!isLoggedIn) {
-     return <Navigate to="/auth" state={{ from: location }} replace />;
+    //  return <Navigate to="/auth" state={{ from: location }} replace />;
   }
 
   if (onboarding && location.pathname !== onboardingRoute && !subRoutes.some(item => location.pathname.includes(item))) {

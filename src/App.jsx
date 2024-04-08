@@ -9,6 +9,7 @@ import sandbox_routes from './modules/Sandbox/sandbox.routes';
 import LoadingSpinner from './shared/LoadingSpinner/LoadingSpinner';
 import patrol_route_configuration from './modules/PatrolRouteConfiguration/patrol-route-configuration.routes';
 import PrivateRoute from './shared/RouteGuard/PrivateRoute';
+import client_routes from './modules/Client/client.routes';
 
 function App() {
   const [token, setToken] = useState(null)
@@ -58,6 +59,7 @@ function App() {
   },
   sandbox_routes,
   onboarding_routes,
+  client_routes,
   patrol_route_configuration,
   auth_routes ,
   {
