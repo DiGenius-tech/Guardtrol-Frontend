@@ -23,23 +23,7 @@ const ClientToolbar = () => {
                         <div className="flex flex-col justify-center sm:items-stretch sm:justify-start py-4">
                             <h1 className='font-semibold'>Onboarding</h1>
                         </div>
-                        <div className="absolute inset-y-0 right-0 items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0 hidden sm:flex">
-
-                            {/* <Flowbite theme={{ theme: customTheme }}>
-                                <Dropdown label="Dropdown button" dismissOnClick={false} dark>
-                                    <Dropdown.Item>Dashboard</Dropdown.Item>
-                                    <Dropdown.Item>Settings</Dropdown.Item>
-                                    <Dropdown.Item>Earnings</Dropdown.Item>
-                                    <Dropdown.Item>Sign out</Dropdown.Item>
-                                </Dropdown>
-                            </Flowbite> */}
-                            <Dropdown label="Dropdown button" dismissOnClick={false} style={{color: 'red', backgroundColor: '#32256E',
-                        color: 'white', outline: 'none'}}>
-                                <Dropdown.Item>Dashboard</Dropdown.Item>
-                                <Dropdown.Item>Settings</Dropdown.Item>
-                                <Dropdown.Item>Earnings</Dropdown.Item>
-                                <Dropdown.Item>Sign out</Dropdown.Item>
-                            </Dropdown>
+                        <div className="absolute inset-y-0 right-0 items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0 flex">
                             {/* <!-- Profile dropdown --> */}
                             <div className="relative ml-3">
                                 <div>
@@ -49,17 +33,6 @@ const ClientToolbar = () => {
                                         <img className="h-8 w-8 rounded-full" src={auth.user.image || null} alt="" />
                                     </button>
                                 </div>
-
-                                {/* <!--
-                                Dropdown menu, show/hide based on menu state.
-
-                                Entering: "transition ease-out duration-100"
-                                From: "transform opacity-0 scale-95"
-                                To: "transform opacity-100 scale-100"
-                                Leaving: "transition ease-in duration-75"
-                                From: "transform opacity-100 scale-100"
-                                To: "transform opacity-0 scale-95"
-          --> */}
                                 {/* <div className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button" tabIndex="-1"> */}
                                 <div className={isProfileDropdownOpened ? `absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none` : 'hidden'} role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button" tabIndex="-1">
                                     {/* <!-- Active: "bg-gray-100", Not Active: "" --> */}
