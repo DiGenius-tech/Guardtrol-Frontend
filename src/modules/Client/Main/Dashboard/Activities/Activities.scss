@@ -30,3 +30,22 @@
     }
   }
 }
+
+.clocked-in {
+  border: 1px solid #05acfa;
+  background-color: #a9e3fd;
+}
+
+.clocked-out {
+  background-color: #d6d3e2;
+  color: #4A557D;
+}
+.break {
+  background-color: #fef6e3;
+  .title {
+    color: #23283b;
+  }
+  .body {
+    color: #4a557d;
+  }
+}
