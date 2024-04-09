@@ -19,7 +19,7 @@ const ClientSidebar = () => {
                 <Sidebar aria-label="Sidebar with multi-level dropdown example">
                     <Sidebar.Items>
                         <Sidebar.ItemGroup>
-                            <Sidebar.Item href="/clients/dashboard" icon={HiChartPie}>
+                            <Sidebar.Item href="/client/dashboard" icon={HiChartPie}>
                                 Dashboard
                             </Sidebar.Item>
                             {/* <Sidebar.Collapse
@@ -36,7 +36,7 @@ const ClientSidebar = () => {
                                     <Sidebar.Item href="#">Refunds</Sidebar.Item>
                                     <Sidebar.Item href="#">Shipping</Sidebar.Item>
                                 </Sidebar.Collapse> */}
-                            <Sidebar.Item href="/clients/history" icon={HiClipboardList}>
+                            <Sidebar.Item href="/client/history" icon={HiClipboardList}>
                                 History
                             </Sidebar.Item>
                             <Sidebar.Item href="#" icon={HiUser}>
