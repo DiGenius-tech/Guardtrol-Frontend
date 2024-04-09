@@ -15,15 +15,14 @@ const ClientSidebar = () => {
     return (
         <>
             {/* client-sidebar-app works! */}
-            {/* <div className="sidebar"> */}
-                <Flowbite theme={{ theme: customTheme }}>
-                    <Sidebar aria-label="Sidebar with multi-level dropdown example">
-                        <Sidebar.Items>
-                            <Sidebar.ItemGroup>
-                                <Sidebar.Item href="#" icon={HiChartPie}>
-                                    Dashboard
-                                </Sidebar.Item>
-                                {/* <Sidebar.Collapse
+            <Flowbite theme={{ theme: customTheme }}>
+                <Sidebar aria-label="Sidebar with multi-level dropdown example">
+                    <Sidebar.Items>
+                        <Sidebar.ItemGroup>
+                            <Sidebar.Item href="#" icon={HiChartPie}>
+                                Dashboard
+                            </Sidebar.Item>
+                            {/* <Sidebar.Collapse
                                     icon={HiShoppingBag}
                                     label="E-commerce"
                                     renderChevronIcon={(theme, open) => {
@@ -37,23 +36,22 @@ const ClientSidebar = () => {
                                     <Sidebar.Item href="#">Refunds</Sidebar.Item>
                                     <Sidebar.Item href="#">Shipping</Sidebar.Item>
                                 </Sidebar.Collapse> */}
-                                <Sidebar.Item href="#" icon={HiClipboardList}>
-                                    History
-                                </Sidebar.Item>
-                                <Sidebar.Item href="#" icon={HiUser}>
-                                    Gaurds
-                                </Sidebar.Item>
-                                <Sidebar.Item href="#" icon={HiHome}>
-                                    Beats
-                                </Sidebar.Item>
-                                <Sidebar.Item href="#" icon={HiOutlineCog}>
-                                    Settings
-                                </Sidebar.Item>
-                            </Sidebar.ItemGroup>
-                        </Sidebar.Items>
-                    </Sidebar>
-                </Flowbite>
-            {/* </div> */}
+                            <Sidebar.Item href="#" icon={HiClipboardList}>
+                                History
+                            </Sidebar.Item>
+                            <Sidebar.Item href="#" icon={HiUser}>
+                                Gaurds
+                            </Sidebar.Item>
+                            <Sidebar.Item href="#" icon={HiHome}>
+                                Beats
+                            </Sidebar.Item>
+                            <Sidebar.Item href="#" icon={HiOutlineCog}>
+                                Settings
+                            </Sidebar.Item>
+                        </Sidebar.ItemGroup>
+                    </Sidebar.Items>
+                </Sidebar>
+            </Flowbite>
         </>
     );
 }

@@ -54,7 +54,8 @@ export const customTheme: CustomFlowbiteTheme = {
         "on": "w-16",
         "off": "w-full"
       },
-      "inner": "h-full overflow-y-auto overflow-x-hidden rounded bg-white-50 px-1 py-4 bg-white dark:bg-gray-800"
+      // "inner": "fixed top-0 bottom-0 left-0 right-0 w-3/2 sm:w-full bg-red z-10 sm:relative | h-full overflow-y-auto overflow-x-hidden rounded bg-white-50 px-1 py-4 bg-white dark:bg-gray-800"
+      "inner": "w-full bg-red z-10 sm:relative | h-full overflow-y-auto overflow-x-hidden px-1 py-4 bg-white dark:bg-gray-800"
     },
     "collapse": {
       "button": "group flex w-full items-center rounded-lg p-2 text-base font-normal text-gray-900 transition duration-75 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700",
