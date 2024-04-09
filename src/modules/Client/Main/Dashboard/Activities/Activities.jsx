@@ -39,16 +39,16 @@ const Activities = () => {
       <ul className="activities | text-sm">
         {activityList.map((activity) => {
           return (
-            <li key={activity.id}>
+            <li key={activity.id} className="horizontal-liner">
               <div className="activity">
                 <div className="grid grid-cols-12">
-                  <div className="col-span-3 p-[15px]">
+                  <div className="col-span-12 md:col-span-3 md:p-[15px]">
                     <div className="text-sm font-semibold">{activity.time}</div>
                   </div>
-                  <div className="dot-wrap | col-span-2 p-[20px]">
+                  <div className="hidden md:block dot-wrap | col-span-2 p-[20px]">
                     <div className="dot"></div>
                   </div>
-                  <div className="col-span-7">
+                  <div className="col-span-12 md:col-span-7">
                     <div className="body">
                       {/* <div className="p-4 mb-2 text-sm text-blue-800 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400" role="alert"> */}
                       <div

@@ -27,6 +27,10 @@ module.exports = {
         100: "#FEFCE8",
         500: "#EAB308",
       },
+      'dark': {
+        50: "#dadada",
+        100: "#c1c1c1",
+      },
     }
   },
   fontFamily: {
