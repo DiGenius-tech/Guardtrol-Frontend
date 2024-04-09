@@ -25,7 +25,7 @@ const Client = () => {
                 <div className='grid grid-cols-12 sm:h-full'>
                     <div className="col-span-12 md:col-span-2">
                         {
-                            isOpenSidenav ? <div onClick={handleOpenSidenav} className="sm:hidden backdrop-brightness-50 fixed top-0 bottom-0 left-0 right-0"></div> : ""
+                            isOpenSidenav ? <div onClick={handleOpenSidenav} className="sm:hidden z-10 backdrop-brightness-50 fixed top-0 bottom-0 left-0 right-0"></div> : ""
                         }
                         <div className=
                             {(isOpenSidenav ? "-left-0 md:left-0 transition ease-out duration-100 " : "left-full md:left-0 transition ease-in duration-75 ") + "sidebar | h-full fixed md:relative top-0 bottom-0 w-3/4 md:w-full pt-4 z-40 bg-white"}

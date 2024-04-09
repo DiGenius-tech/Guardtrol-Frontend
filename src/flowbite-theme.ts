@@ -130,8 +130,8 @@ export const customTheme: CustomFlowbiteTheme = {
   table: {
     "root": {
       "base": "w-full text-left text-sm text-gray-500 dark:text-gray-400",
-      "shadow": "absolute left-0 top-0 -z-10 h-full w-full rounded-lg bg-white drop-shadow-md dark:bg-black",
-      "wrapper": "relative"
+      "shadow": "absolute left-0 top-0 -z-10 h-full w-full rounded-lg bg-white sm:drop-shadow-md dark:bg-black",
+      "wrapper": "relative z-0"
     },
     "body": {
       "base": "group/body text-sm",
