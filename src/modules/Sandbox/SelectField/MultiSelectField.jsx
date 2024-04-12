@@ -31,7 +31,7 @@ function MultiSelectField(props) {
       >
         {props.label}
       </label>
-      <div className="relative">
+      <div className="relative" onClick={toggleDropdown}>
         <div className="flex items-center justify-between w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 cursor-pointer border border-gray-300 text-gray-900 text-sm sm:text-base rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 sm:py-4 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500">
           <div className="flex flex-wrap flex-grow overflow-hidden">
             {props.selectedOptions && props.selectedOptions.map((option) => (

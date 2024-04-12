@@ -48,7 +48,7 @@ import MultiSelectField from "../../../../Sandbox/SelectField/MultiSelectField";
             'Authorization': `Bearer ${auth.token}`,
           }
         )
-        if(!!data._id){
+        if(!!data){
           setInitialBeatState(data.beats);
           setInitialGuardState(data.guards)
           console.log(data.beats)

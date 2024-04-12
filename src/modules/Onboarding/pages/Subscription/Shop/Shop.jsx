@@ -7,9 +7,11 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { AuthContext } from "../../../../../shared/Context/AuthContext";
 import { FlutterWaveButton, closePaymentModal } from 'flutterwave-react-v3';
 import { formatNumberWithCommas } from "../../../../../shared/functions/random-hex-color";
+import { SubscriptionContext } from "../../../../../shared/Context/SubscriptionContext";
 
 const Shop = () => {
   const auth = useContext(AuthContext);
+  const sub = useContext(SubscriptionContext)
   const navigate = useNavigate()
   const location = useLocation()
   const [validationErrors, setValidationErrors] = useState({});
@@ -21,13 +23,52 @@ const Shop = () => {
   });
   const [isModalOpen, setIsModalOpen] = useState(false); // State variable to control modal visibility
 
-  useEffect(() => {
-    const selectedPlan = JSON.parse(localStorage.getItem('selectedPlan'))
+  useEffect(()=>{
+    if(auth.token){
+      auth.loading(true)
+      const data = sendRequest(
+          `http://localhost:5000/api/users/getuser/${auth.user.userid}`,
+          'GET',
+          null,
+          {
+            "Content-Type": "application/json",
+            'Authorization': `Bearer ${auth.token}`,
+          }
+        ).then((response) => {
+          if (response?.subscriptions.length > 0) {
+            localStorage.setItem("onBoardingLevel",1)
+            
+            if (response.beats.length > 0) {
+              localStorage.setItem("onBoardingLevel",2)
 
-    if (selectedPlan && selectedPlan.amount) {
-      setSelectedPlan(selectedPlan)
-      setPlanFormData({'numberofbeats':parseInt(selectedPlan.numberofbeats), 
-      'extraguards':parseInt(selectedPlan.extraguards)})
+              if (response.guards.length > 0) {
+                localStorage.setItem("onBoardingLevel",3)
+
+                if (response.beats.some(beat => beat.guards.length > 0)) {
+                  localStorage.setItem("onBoardingLevel", 4)
+                }
+              }
+              
+
+            }
+            window.location.reload()
+          }
+          
+          
+          
+        })
+    
+       
+    }
+  },[auth.token])
+
+  useEffect(() => {
+    const plan = JSON.parse(localStorage.getItem('selectedPlan'))
+
+    if (plan && plan.amount) {
+      setSelectedPlan(plan)
+      setPlanFormData({numberofbeats:plan.numberofbeats, 
+      extraguards:plan.extraguards})
     }
 
     auth.loading(false)
@@ -62,6 +103,18 @@ const Shop = () => {
       ) {
         newErrors["numberofbeats"] = "Can't Have More Than 10 Beats";
       }
+
+      if (
+        el.name === "extraguards" &&
+        el.value < 0
+      ) {
+        newErrors["extraguards"] = "Can't Have Less Than 0 Extra Guards";
+      } else if (
+        el.name === "extraguards" &&
+        el.value > 10
+      ) {
+        newErrors["extraguards"] = "Can't Have More Than 10 Extra Guards";
+      }
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -74,7 +127,13 @@ const Shop = () => {
         toast.error("Please Select A Plan That Works For You")
         return
       }
+      selectedPlan.numberofbeats = planFormData.numberofbeats
+      selectedPlan.extraguards = planFormData.extraguards
       selectedPlan.amount = selectedPlan.numberofbeats * 10000 + selectedPlan.extraguards*2000
+      if (selectedPlan.type === 'yearly') {
+       
+        selectedPlan.amount = (selectedPlan.numberofbeats * 10000 + selectedPlan.extraguards*2000)*12*0.8
+      }
       localStorage.setItem('selectedPlan', JSON.stringify(selectedPlan));
       
 
@@ -99,23 +158,25 @@ const Shop = () => {
       type: "monthly",
       amount:(planFormData.numberofbeats*10000 + planFormData.extraguards*2000),
       readable: `₦${formatNumberWithCommas(planFormData.numberofbeats*10000 + planFormData.extraguards*2000)} per month`,
-      numberofbeats: planFormData.numberofbeats,
-      extraguards: planFormData.extraguards,
+      numberofbeats: parseInt(planFormData.numberofbeats),
+      extraguards: parseInt(planFormData.extraguards),
     },
     {
       title: `₦${formatNumberWithCommas((planFormData.numberofbeats*10000 + planFormData.extraguards*2000)* 12 * 0.8)}`,
       body_list: [`₦${formatNumberWithCommas(planFormData.numberofbeats*10000 *12 * .8)} P/Y`, `${planFormData.extraguards} Extra Guards x ₦20,000`],
       footer: "20% Discount when you select this Plan",
       type: "yearly",
-      amount:(planFormData.numberofbeats*10000 + planFormData.extraguards*2000)* 12 * 0.8,
+      amount:((planFormData.numberofbeats*10000 + planFormData.extraguards*2000)* 12 * 0.8),
       readable: `₦${formatNumberWithCommas((planFormData.numberofbeats*10000 + planFormData.extraguards*2000)* 12 * 0.8)} per year`,
-      numberofbeats: planFormData.numberofbeats,
-      extraguards: planFormData.extraguards,
+      numberofbeats: parseInt(planFormData.numberofbeats),
+      extraguards: parseInt(planFormData.extraguards),
     }
   ];
 
   const onSelectPlan = (e) => {
+    localStorage.setItem('selectedPlan', e.target.value);
     setSelectedPlan(JSON.parse(e.target.value));
+    console.log(selectedPlan)
   };
 
   // Function to handle modal close
@@ -172,7 +233,7 @@ const Shop = () => {
             <TextInputField
               label="How many beats?"
               semibold_label={true}
-              type="text"
+              type="number"
               id="numberofbeats"
               required="required"
               muted_aside_text="Maximum of 5 guard per beat"
@@ -187,7 +248,7 @@ const Shop = () => {
               label="How many extra guard?"
               placeholder="₦2,000 per guard"
               semibold_label={true}
-              type="text"
+              type="number"
               id="number-of-extra-guard"
               required="required"
               placeholder_right={true}
@@ -246,7 +307,7 @@ const Shop = () => {
               "Continue To Pay ₦" + (selectedPlan ? `${formatNumberWithCommas(membership_card_data.filter((data) => {
               return (data.type == selectedPlan.type)
                
-              })[0].amount)}` : "")
+              })[0].amount)}` : "0")
             }
           />
         </form>

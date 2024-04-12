@@ -127,7 +127,7 @@ const Register = () => {
       if (null != data) {
         if (auth.login(data)) {
           toast("Signup Successful")
-          navigate('../dashboard', { replace: true }) //should be dashboard
+          navigate('/client/dashboard', { replace: true }) //should be dashboard
           window.location.reload();
 
         }
