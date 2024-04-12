@@ -33,7 +33,7 @@ const Patrols = () => {
             <Table>
               <Table.Head>
                 <Table.HeadCell>Guard name</Table.HeadCell>
-                <Table.HeadCell className="hidden sm:hidden">Time</Table.HeadCell>
+                <Table.HeadCell className="hidden sm:block">Time</Table.HeadCell>
                 <Table.HeadCell>Status</Table.HeadCell>
                 <Table.HeadCell>
                   <span className="sr-only"></span>
@@ -53,7 +53,7 @@ const Patrols = () => {
                           </p>
                         </div>
                       </Table.Cell>
-                      <Table.Cell className="hidden sm:hidden">{patrol.time}</Table.Cell>
+                      <Table.Cell className="hidden sm:block">{patrol.time}</Table.Cell>
                       <Table.Cell>
                         {patrol.isCompleted ? (
                           <span className="text-green-400">Completed</span>
@@ -61,7 +61,7 @@ const Patrols = () => {
                           <span className="text-red-400">Not completed</span>
                         )}
                       </Table.Cell>
-                      <Table.Cell className="hidden sm:hidden">
+                      <Table.Cell className="hidden sm:block">
                         <a
                           href="#"
                           className="font-medium text-primary-500 hover:underline dark:text-cyan-500"
