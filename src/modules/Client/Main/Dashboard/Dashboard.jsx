@@ -2,12 +2,18 @@ import { Card, Label, Select } from "flowbite-react";
 import React from "react";
 import Activities from "./Activities/Activities";
 import Patrols from "./Patrols/Patrols";
+import "./Dashboard.scss";
+import { Link, Outlet } from "react-router-dom";
+import MobileDisplay from "./MobileDisplay/MobileDisplay";
 
 const Dashboard = () => {
   return (
     <>
       {/* dashboard-app works! */}
-      <div className="grid grid-cols-12 gap-4">
+      <div className="md:hidden">
+        <MobileDisplay />
+      </div>
+      <div className="hidden md:grid grid-cols-12 gap-4">
         <div className="col-span-12 lg:col-span-5">
           <Card>
             <h1 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">

@@ -11,20 +11,23 @@
       border-radius: 50%;
       z-index: 1;
     }
-
-    &:not(:last-child) {
-      .dot-wrap {
-        position: relative;
-        &::after {
-          content: "";
-          display: block;
-          position: absolute;
-          height: 100%;
-          width: 1px;
-          background-color: #eceef4;
-          left: 25px;
-          transform: translateX(-50%);
-          z-index: 0;
+    &.horizontal-liner {
+      &:not(:last-child) {
+        @media (min-width: 768px) {
+          .dot-wrap {
+            position: relative;
+            &::after {
+              content: "";
+              display: block;
+              position: absolute;
+              height: 100%;
+              width: 1px;
+              background-color: #eceef4;
+              left: 25px;
+              transform: translateX(-50%);
+              z-index: 0;
+            }
+          }
         }
       }
     }
@@ -38,7 +41,7 @@
 
 .clocked-out {
   background-color: #d6d3e2;
-  color: #4A557D;
+  color: #4a557d;
 }
 .break {
   background-color: #fef6e3;

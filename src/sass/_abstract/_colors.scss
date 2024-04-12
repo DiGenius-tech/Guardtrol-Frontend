@@ -5,8 +5,10 @@
   --clr-secondary-400: #544986;
   --clr-secondary-500: #32256e;
   --clr-secondary-600: #2a1f5c;
+  --clr-dark-50: #dadada;
   --clr-dark-100: #c1c1c1;
   --clr-dark-200: #9ba2a7;
+  --clr-dark-250: #79716b;
   --clr-dark-300: #50555e;
   --clr-dark-400: #36454f;
   --clr-dark-450: #1a1c1f;
@@ -20,6 +22,13 @@
 
 .text-dark-100 {
   color: var(--clr-dark-100);
+}
+.bg-dark-50 {
+  background-color: var(--clr-dark-50);
+}
+
+.text-dark-50 {
+  color: var(--clr-dark-50);
 }
 .bg-dark-200 {
   background-color: var(--clr-dark-200);

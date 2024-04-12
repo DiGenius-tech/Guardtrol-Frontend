@@ -5,7 +5,9 @@ const Main = () => {
     return (
         <>
             {/* main-app works! */}
-            <Outlet />
+            <div className="bg-[#faffff] min-h-screen p-2 sm:p-4">
+                <Outlet />
+            </div>
         </>
     );
 }
