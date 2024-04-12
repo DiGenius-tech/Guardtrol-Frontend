@@ -167,14 +167,14 @@ export const customTheme: CustomFlowbiteTheme = {
           "default": {
             "base": "rounded-t-lg",
             "active": {
-              "on": "bg-gray-100 text-cyan-600 dark:bg-gray-800 dark:text-cyan-500 font-bold",
+              "on": "bg-gray-100 text-cyan-600 dark:bg-gray-800 dark:text-cyan-500",
               "off": "text-gray-500 hover:bg-gray-50 hover:text-gray-600 dark:text-gray-400 dark:hover:bg-gray-800  dark:hover:text-gray-300"
             }
           },
           "underline": {
             "base": "rounded-t-lg",
             "active": {
-              "on": "active rounded-t-lg border-b-2 border-cyan-600 text-cyan-600 dark:border-cyan-500 dark:text-cyan-500",
+              "on": "active rounded-t-lg border-b-2 border-cyan-600 text-cyan-600 dark:border-cyan-500 dark:text-cyan-500 font-semibold",
               "off": "border-b-2 border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-300"
             }
           },
