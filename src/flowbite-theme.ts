@@ -154,20 +154,20 @@ export const customTheme: CustomFlowbiteTheme = {
   tabs: {
     "base": "flex flex-col gap-2",
     "tablist": {
-      "base": "flex text-center",
+      "base": "flex text-center overflow-auto remove-scrollbar",
       "styles": {
         "default": "flex-wrap border-b border-gray-200 dark:border-gray-700",
-        "underline": "-mb-px flex-wrap border-b border-gray-200 dark:border-gray-700",
+        "underline": "-mb-px flex-nowrap border-b border-gray-200 dark:border-gray-700 text-[#7B828E]",
         "pills": "flex-wrap space-x-2 text-sm font-medium text-gray-500 dark:text-gray-400",
         "fullWidth": "grid w-full grid-flow-col divide-x divide-gray-200 rounded-none text-sm font-medium shadow dark:divide-gray-700 dark:text-gray-400"
       },
       "tabitem": {
-        "base": "flex items-center justify-center rounded-t-lg p-4 text-sm font-medium first:ml-0 disabled:cursor-not-allowed disabled:text-gray-400 disabled:dark:text-gray-500",
+        "base": "whitespace-nowrap flex items-center justify-center rounded-t-lg p-4 text-sm font-medium first:ml-0 disabled:cursor-not-allowed disabled:text-gray-400 disabled:dark:text-gray-500",
         "styles": {
           "default": {
             "base": "rounded-t-lg",
             "active": {
-              "on": "bg-gray-100 text-cyan-600 dark:bg-gray-800 dark:text-cyan-500",
+              "on": "bg-gray-100 text-cyan-600 dark:bg-gray-800 dark:text-cyan-500 font-bold",
               "off": "text-gray-500 hover:bg-gray-50 hover:text-gray-600 dark:text-gray-400 dark:hover:bg-gray-800  dark:hover:text-gray-300"
             }
           },

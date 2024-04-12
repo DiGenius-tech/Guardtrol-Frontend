@@ -30,6 +30,7 @@ module.exports = {
       'dark': {
         50: "#dadada",
         100: "#c1c1c1",
+        250: " #79716b",
       },
     }
   },
