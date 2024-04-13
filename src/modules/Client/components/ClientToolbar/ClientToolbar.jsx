@@ -1,15 +1,44 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../../../../shared/Context/AuthContext';
 import { Dropdown, Flowbite } from 'flowbite-react';
 import { customTheme } from '../../../../flowbite-theme';
 // import {brandLogo} from "../../../../images/brand-logo.svg";
 import brandLogo from "../../../../images/brand-logo.svg";
 import { HiMenu } from 'react-icons/hi';
+import { useLocation } from 'react-router-dom';
+
+
+
+const modules = {
+    dashboard: {
+        name: "dashboard",
+        pathname: "/client" || "/client/" || "/client/dashboard" || "/client/dashboard/"
+    },
+    history: {
+        title: "history",
+        pathname: "/client/history" || "/client/history/"
+    },
+    guard: {
+        title: "guard",
+        pathname: "/client/guard" || "/client/guard/"
+    },
+    beats: {
+        title: "beats",
+        pathname: "/client/beats" || "/client/beats/"
+    },
+    settings: {
+        title: "settings",
+        pathname: "/client/settings" || "/client/settings/"
+    }
+}
+console.log("modules: ", modules)
 
 const ClientToolbar = (props) => {
     const auth = useContext(AuthContext)
     const [isProfileDropdownOpened, setIsProfileDropdownOpened] = useState(false)
     const [isMobileProfileDropdownOpened, setIsMobileProfileDropdownOpened] = useState(false)
+    const [moduleTitle, setModuleTitle] = useState("");
+    let location = useLocation();
 
     const handleProfileDropdownToggle = () => {
         setIsProfileDropdownOpened(!isProfileDropdownOpened)
@@ -18,6 +47,33 @@ const ClientToolbar = (props) => {
     const handleMobileProfileDropdownToggle = () => {
         setIsMobileProfileDropdownOpened(!isMobileProfileDropdownOpened)
     }
+
+    useEffect(() => {
+
+        switch (location.pathname) {
+            case modules.dashboard.pathname:
+                setModuleTitle(modules.dashboard.title)
+                break;
+            case modules.history.pathname:
+                setModuleTitle(modules.history.title)
+                break;
+            case modules.guard.pathname:
+                setModuleTitle(modules.guard.title)
+                break;
+            case modules.beats.pathname:
+                setModuleTitle(modules.beats.title)
+                break;
+            case modules.settings.pathname:
+                setModuleTitle(modules.settings.title)
+                break;
+
+            default:
+                break;
+        }
+        return () => {
+
+        };
+    }, []);
     return (
         <>
             {/* clientToolbar-app works! */}
@@ -80,7 +136,7 @@ const ClientToolbar = (props) => {
                         </div>
                         <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
                             <div className="flex flex-shrink-0 items-center">
-                                <h1 className='font-bold text-xl sm:text-2xl'>Guard</h1>
+                                <h1 className='font-bold text-xl sm:text-2xl'>{moduleTitle}</h1>
                             </div>
                             <div className="hidden sm:ml-6 sm:block">
                                 <div className="flex space-x-4">
