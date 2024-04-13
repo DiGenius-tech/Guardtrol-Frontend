@@ -19,7 +19,7 @@ const PrivateRoute = ({ component: Component, onboarding = false, ...rest }) => 
     const storedIsLoggedIn = localStorage.getItem('userData');
     const savedUser = JSON.parse(storedIsLoggedIn)
     setIsLoggedIn(!!storedIsLoggedIn);
-    console.log(savedUser.onboardingcomplete)
+    console.log(savedUser?.onboardingcomplete)
     setOnboardingComplete(savedUser?.onboardingcomplete || false)
     setIsLoading(false)
 
@@ -54,15 +54,15 @@ const PrivateRoute = ({ component: Component, onboarding = false, ...rest }) => 
     return <LoadingSpinner></LoadingSpinner>
   }
   if (!isLoggedIn) {
-      return <Navigate to="/auth" state={{ from: location }} replace />;
+      // return <Navigate to="/auth" state={{ from: location }} replace />;
   }
 
   if (onboarding && location.pathname !== onboardingRoute && !subRoutes.some(item => location.pathname.includes(item))) {
-    return <Navigate to={onboardingRoute} />;
+    // return <Navigate to={onboardingRoute} />;
   }
   
   if(!onboardingComplete && !subRoutes2.some(item => location.pathname.includes(item))){
-    return <Navigate to={"/onboarding"}  state={{from:"/"}} replace/>
+    // return <Navigate to={"/onboarding"}  state={{from:"/"}} replace/>
   }
 
   return <Component {...rest} />;

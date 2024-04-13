@@ -2,3 +2,27 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
 }
+.tab {
+    &.flex-tabs {
+        div[role="tablist"] {
+            button {
+                &:focus {
+                    box-shadow: none;
+                }
+            }
+        }
+    }
+
+    &.flex-tab-nowrap {
+        div[role="tablist"] {
+            display: flex;
+            flex-wrap: nowrap !important;
+            overflow-x: auto;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+            button{
+                text-wrap: nowrap;
+            }
+        }
+    }
+}
