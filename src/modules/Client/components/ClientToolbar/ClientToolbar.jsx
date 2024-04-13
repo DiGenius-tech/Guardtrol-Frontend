@@ -6,32 +6,8 @@ import { customTheme } from '../../../../flowbite-theme';
 import brandLogo from "../../../../images/brand-logo.svg";
 import { HiMenu } from 'react-icons/hi';
 import { useLocation } from 'react-router-dom';
+import { clientModuleList } from "../../client.module-list"
 
-
-
-const modules = {
-    dashboard: {
-        name: "dashboard",
-        pathname: "/client" || "/client/" || "/client/dashboard" || "/client/dashboard/"
-    },
-    history: {
-        title: "history",
-        pathname: "/client/history" || "/client/history/"
-    },
-    guard: {
-        title: "guard",
-        pathname: "/client/guard" || "/client/guard/"
-    },
-    beats: {
-        title: "beats",
-        pathname: "/client/beats" || "/client/beats/"
-    },
-    settings: {
-        title: "settings",
-        pathname: "/client/settings" || "/client/settings/"
-    }
-}
-console.log("modules: ", modules)
 
 const ClientToolbar = (props) => {
     const auth = useContext(AuthContext)
@@ -49,31 +25,21 @@ const ClientToolbar = (props) => {
     }
 
     useEffect(() => {
-
-        switch (location.pathname) {
-            case modules.dashboard.pathname:
-                setModuleTitle(modules.dashboard.title)
-                break;
-            case modules.history.pathname:
-                setModuleTitle(modules.history.title)
-                break;
-            case modules.guard.pathname:
-                setModuleTitle(modules.guard.title)
-                break;
-            case modules.beats.pathname:
-                setModuleTitle(modules.beats.title)
-                break;
-            case modules.settings.pathname:
-                setModuleTitle(modules.settings.title)
-                break;
-
-            default:
-                break;
-        }
+        if (clientModuleList.dashboard.pathnames.includes(location.pathname))
+            (setModuleTitle(clientModuleList.dashboard.title));
+        if (clientModuleList.history.pathnames.includes(location.pathname))
+            (setModuleTitle(clientModuleList.history.title));
+        if (clientModuleList.guard.pathnames.includes(location.pathname))
+            (setModuleTitle(clientModuleList.guard.title));
+        if (clientModuleList.beats.pathnames.includes(location.pathname))
+            (setModuleTitle(clientModuleList.beats.title));
+        if (clientModuleList.settings.pathnames.includes(location.pathname))
+            (setModuleTitle(clientModuleList.settings.title));
         return () => {
 
         };
-    }, []);
+    }, [location]);
+
     return (
         <>
             {/* clientToolbar-app works! */}
@@ -136,7 +102,7 @@ const ClientToolbar = (props) => {
                         </div>
                         <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
                             <div className="flex flex-shrink-0 items-center">
-                                <h1 className='font-bold text-xl sm:text-2xl'>{moduleTitle}</h1>
+                                <h1 className='font-bold text-xl sm:text-2xl first-letter:uppercase'>{moduleTitle}</h1>
                             </div>
                             <div className="hidden sm:ml-6 sm:block">
                                 <div className="flex space-x-4">

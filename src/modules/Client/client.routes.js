@@ -2,6 +2,7 @@ import LoadingSpinner from "../../shared/LoadingSpinner/LoadingSpinner";
 import Client from "./Client";
 import dashboardRoutes from "./Main/Dashboard/dashboard.routes";
 import historyRoutes from "./Main/History/history.routes";
+import patrolGuardRoutes from "./Main/PatrolGuard/patrol-guard.routes";
 const {
     dashboard_routes,
     dashboard_routes_empt
@@ -10,6 +11,10 @@ const {
     history_routes,
     history_routes_empt
 } = historyRoutes
+const {
+    patrol_guard_routes,
+    patrol_guard_routes_empt
+} = patrolGuardRoutes
 
 
 const client_routes = {
@@ -20,6 +25,8 @@ const client_routes = {
         dashboard_routes,
         history_routes_empt,
         history_routes,
+        patrol_guard_routes,
+        patrol_guard_routes_empt,
         {
             path: "loading-spinner",
             element: <LoadingSpinner />
