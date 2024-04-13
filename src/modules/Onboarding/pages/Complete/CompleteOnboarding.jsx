@@ -64,7 +64,7 @@ const OnboardingComplete = () => {
 
                     <p className="text-lg font-bold text-center">WellDone!</p>
                     <div className="my-4"></div>
-                    <Link to="/dashboard" className='text-center font-semibold text-primary-500'>Proceed to Dashboard</Link>
+                    <Link to="/client/dashboard" className='text-center font-semibold text-primary-500'>Proceed to Dashboard</Link>
                 </div>
             </div>
         </div>

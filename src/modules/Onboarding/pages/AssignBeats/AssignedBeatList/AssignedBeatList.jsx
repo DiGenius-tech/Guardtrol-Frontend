@@ -153,7 +153,7 @@ function AssignedBeatList() {
           'Authorization': `Bearer ${auth.token}`,
         }
       )
-      if(!!data._id){
+      if(!!data){
         setAssignedBeatList(data.beats);
         console.log(data.beats)
       }else{  
@@ -166,7 +166,7 @@ function AssignedBeatList() {
   }, [auth.token, auth.user.userid]);
 
 
-  const finish = () => {
+  const finish = async () => {
     const check = assignedBeatList.some((beat) => {
       return beat.guards.length > 0
     })
@@ -175,9 +175,24 @@ function AssignedBeatList() {
     toast.info("Assign at Least One Guard to a Beat to Continue")
     return
    }
-   localStorage.setItem("onBoardingLevel", 4)
-   navigate("/onboarding/complete")
-   window.location.reload()
+
+   const data = await sendRequest(
+    `http://localhost:5000/api/users/finishonboarding/${auth.user.userid}`,
+    "PATCH",
+    null,
+    {
+      "Content-Type": "application/json",
+      'Authorization': `Bearer ${auth.token}`,
+    }
+  )
+  if(!data){
+    toast.error("An Error Occured")
+   return
+  }
+  auth.login(data)
+  localStorage.setItem("onBoardingLevel", 4)
+  navigate("/onboarding/complete")
+  window.location.reload()
   }
 
   const deleteGuard = async (beat) => {

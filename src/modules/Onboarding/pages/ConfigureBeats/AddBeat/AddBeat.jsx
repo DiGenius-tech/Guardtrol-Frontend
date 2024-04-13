@@ -30,7 +30,10 @@ function AddBeat() {
       setValidationErrors({ ...validationErrors, beat_name: "Use A Valid Beat Name" });
     } else {
       const existingBeats = JSON.parse(localStorage.getItem("beats")) || [];
-      if(existingBeats.length === sub.maxBeat){
+      console.log(existingBeats.length)
+      console.log(sub)
+
+      if(existingBeats.length === sub.currentSubscription?.maxbeats){
         setOpen(true)
         return
       }

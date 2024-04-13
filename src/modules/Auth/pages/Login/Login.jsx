@@ -67,7 +67,7 @@ const Login = () => {
 
         if (null != data) {
           auth.login(data);
-          navigate("/dashboard", { replace: true });
+          navigate("/client/dashboard", { replace: true });
           window.location.reload();
         }
       } catch (err) {
@@ -106,7 +106,7 @@ const Login = () => {
       );
       if (null != data) {
         if (auth.login(data)) {
-          navigate("/dashboard", { replace: true }); //should be dashboard
+          navigate("/client/dashboard", { replace: true }); //should be dashboard
           window.location.reload();
         }
       }

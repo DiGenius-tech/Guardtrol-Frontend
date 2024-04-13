@@ -1,11 +1,22 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import "./PaymentSuccess.scss";
 import { Link } from 'react-router-dom';
+import { useNavigate, useLocation } from "react-router-dom";
 
 
 const PaymentSuccess = () => {
     const tick_icon_ref = useRef();
+    const [hasPayed, setHasPayed] = useState(false)
+    const navigate = useNavigate()
 
+    useEffect(() => {
+        const payed = localStorage.getItem("paymentComplete") || false
+        setHasPayed(payed)
+
+        if (!payed) {
+            navigate("/onboarding/membership")
+        }
+    },)
 
     useEffect(() => {
         // console.log(tick_icon_ref)

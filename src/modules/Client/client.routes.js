@@ -1,4 +1,5 @@
 import LoadingSpinner from "../../shared/LoadingSpinner/LoadingSpinner";
+import PrivateRoute from "../../shared/RouteGuard/PrivateRoute";
 import Client from "./Client";
 import dashboardRoutes from "./Main/Dashboard/dashboard.routes";
 import historyRoutes from "./Main/History/history.routes";
@@ -19,7 +20,7 @@ const {
 
 const client_routes = {
     path: "/client",
-    element: <Client />,
+    element: <PrivateRoute component={Client} />,
     children: [
         dashboard_routes_empt,
         dashboard_routes,
