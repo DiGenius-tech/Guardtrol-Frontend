@@ -1,10 +1,9 @@
-import { Dropdown } from "flowbite-react";
-import { patrol_guards } from "../../patrol-guard-list";
+import { Card, Dropdown } from "flowbite-react";
 
-function PatrolGuardListMobileView(props) {
+function SentRequestMobileView(props) {
   return (
     <>
-      {/* patrol-guard-list-mobile-view-app works! */}
+      {/* sent-request-mobile-view-app works! */}
 
       <div className="relative overflow-x-auto">
         <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -22,7 +21,7 @@ function PatrolGuardListMobileView(props) {
             </tr>
           </thead>
           <tbody>
-            {patrol_guards?.map((guard) => {
+            {props.sentRequestList?.map((guard) => {
               return (
                 <tr key={guard.id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                   <th
@@ -43,21 +42,6 @@ function PatrolGuardListMobileView(props) {
                     <div className="flex items-center gap-2">
                       <div className="flex flex-col items-end">
                         <div>{guard.phone}</div>
-                        <div>
-                          {guard.dutyStatus === props.duty_status.OFF_DUTY ? (
-                            <span className="text-yellow-300 font-semibold">
-                              Off duty
-                            </span>
-                          ) : guard.dutyStatus === props.duty_status.ON_DUTY ? (
-                            <span className="text-green-300 font-semibold">
-                              On duty
-                            </span>
-                          ) : (
-                            <span className="text-gray-300 font-semibold">
-                              Removed
-                            </span>
-                          )}
-                        </div>
                       </div>
                       <div>
                         <Dropdown
@@ -88,4 +72,4 @@ function PatrolGuardListMobileView(props) {
   );
 }
 
-export default PatrolGuardListMobileView;
+export default SentRequestMobileView;

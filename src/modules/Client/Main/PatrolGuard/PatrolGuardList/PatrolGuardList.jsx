@@ -14,17 +14,21 @@ function PatrolGuardList() {
     <>
       {/* patrol-guard-list-app works! */}
 
-      <Card>
+      <div className="hidden sm:block">
+        <Card>
+          <PatrolGuardListDesktopView
+            duty_status={duty_status}
+            icon_menu_dots={icon_menu_dots}
+          />
+        </Card>
+      </div>
+
+      <div className="sm:hidden rounded-lg bg-white p-2">
         <PatrolGuardListMobileView
           duty_status={duty_status}
           icon_menu_dots={icon_menu_dots}
         />
-
-        <PatrolGuardListDesktopView
-          duty_status={duty_status}
-          icon_menu_dots={icon_menu_dots}
-        />
-      </Card>
+      </div>
     </>
   );
 }

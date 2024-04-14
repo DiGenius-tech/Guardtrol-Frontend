@@ -29,7 +29,7 @@ const ClockIn = () => {
     <>
       {/* clock-in-app works! */}
 
-      <div className="max-w-[200px]">
+      <div className="hidden sm:block max-w-[200px]">
         <Select id="dates" required>
           <option value={""} defaultValue>
             Today
@@ -38,49 +38,34 @@ const ClockIn = () => {
         </Select>
       </div>
       <div className="my-4"></div>
-      <Card>
+
+      <div className="hidden sm:block">
+        <Card>
+          {patrols.length ? (
+            <div className="overflow-auto">
+              <Table>
+                <Table.Head>
+                  <Table.HeadCell>Guard name</Table.HeadCell>
+                  <Table.HeadCell className="hidden sm:block">
+                    Time
+                  </Table.HeadCell>
+                </Table.Head>
+                <TableBody patrols={patrols} />
+              </Table>
+            </div>
+          ) : (
+            <p className="text-primary-500 font-semibold text-center sm:text-left">
+              No Patrol
+            </p>
+          )}
+        </Card>
+      </div>
+
+      <div className="sm:hidden rounded-lg bg-white p-2">
         {patrols.length ? (
           <div className="overflow-auto">
             <Table>
-              <Table.Head>
-                <Table.HeadCell>Guard name</Table.HeadCell>
-                <Table.HeadCell className="hidden sm:block">
-                  Time
-                </Table.HeadCell>
-              </Table.Head>
-              <Table.Body className="divide-y">
-                {patrols.map((patrol) => {
-                  return (
-                    <Table.Row
-                      className="bg-white dark:border-gray-700 dark:bg-gray-800"
-                      key={patrol.id}
-                    >
-                      <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
-                        <div className="flex items-center gap-4">
-                          <div className="h-8 w-8 rounded-full overflow-hidden">
-                            <img src={patrol.guard.profileImage} alt={""} />
-                          </div>
-                          <p>
-                            {patrol.guard.name}
-                            <br />
-                            <span className="text-dark-250">
-                              {" "}
-                              {patrol.guard.email}
-                            </span>
-                            <span className="block sm:hidden">
-                              {" "}
-                              {patrol.time}
-                            </span>
-                          </p>
-                        </div>
-                      </Table.Cell>
-                      <Table.Cell className="hidden sm:block">
-                        {patrol.time}
-                      </Table.Cell>
-                    </Table.Row>
-                  );
-                })}
-              </Table.Body>
+              <TableBody patrols={patrols} />
             </Table>
           </div>
         ) : (
@@ -88,7 +73,41 @@ const ClockIn = () => {
             No Patrol
           </p>
         )}
-      </Card>
+      </div>
+    </>
+  );
+};
+
+const TableBody = (props) => {
+  return (
+    <>
+      {/* table-body-app works! */}
+
+      <Table.Body className="divide-y">
+        {props?.patrols.map((patrol) => {
+          return (
+            <Table.Row
+              className="bg-white dark:border-gray-700 dark:bg-gray-800"
+              key={patrol.id}
+            >
+              <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+                <div className="flex items-center gap-4">
+                  <div className="h-8 w-8 rounded-full overflow-hidden">
+                    <img src={patrol.guard.profileImage} alt={""} />
+                  </div>
+                  <p>
+                    {patrol.guard.name}
+                    <br />
+                    <span className="text-dark-250"> {patrol.guard.email}</span>
+                    <span className="block sm:hidden"> {patrol.time}</span>
+                  </p>
+                </div>
+              </Table.Cell>
+              <Table.Cell className="hidden sm:block">{patrol.time}</Table.Cell>
+            </Table.Row>
+          );
+        })}
+      </Table.Body>
     </>
   );
 };

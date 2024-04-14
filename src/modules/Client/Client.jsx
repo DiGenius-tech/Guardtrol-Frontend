@@ -1,59 +1,72 @@
-import React, { useState } from 'react';
-import ClientToolbar from './components/ClientToolbar/ClientToolbar';
-import ClientSidebar from './components/ClientSidebar/ClientSidebar';
-import Main from './Main/Main';
-import { Outlet } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import ClientToolbar from "./components/ClientToolbar/ClientToolbar";
+import ClientSidebar from "./components/ClientSidebar/ClientSidebar";
+import Main from "./Main/Main";
+import { Outlet, useLocation } from "react-router-dom";
 import brandLogo from "../../images/brand-logo.svg";
 import "./Client.scss";
-import { HiX } from 'react-icons/hi';
+import { HiX } from "react-icons/hi";
 
 const Client = () => {
-    const [isOpenSidenav, setIsOpenSidenav] = useState(false);
+  const [isOpenSidenav, setIsOpenSidenav] = useState(false);
+  let location = useLocation();
+  const handleOpenSidenav = () => {
+    setIsOpenSidenav(!isOpenSidenav);
+  };
 
-    const handleOpenSidenav = () => {
-        setIsOpenSidenav(!isOpenSidenav)
-    }
+  useEffect(() => {
+    setIsOpenSidenav(false);
+  }, [location]);
 
-    return (
-        <>
-            {/* client-app works! */}
+  return (
+    <>
+      {/* client-app works! */}
 
-            <div className="layout">
-                <div className='sticky top-0 left-0 right-0 z-40'>
-                    <ClientToolbar handleOpenSidenav={handleOpenSidenav} isOpenSidenav={isOpenSidenav} />
+      <div className="layout">
+        <div className="sticky top-0 left-0 right-0 z-40">
+          <ClientToolbar
+            handleOpenSidenav={handleOpenSidenav}
+            isOpenSidenav={isOpenSidenav}
+          />
+        </div>
+        <div className="grid grid-cols-12 sm:h-full">
+          <div className="col-span-12 md:col-span-2">
+            {isOpenSidenav ? (
+              <div
+                onClick={handleOpenSidenav}
+                className="sm:hidden z-10 backdrop-brightness-50 fixed top-0 bottom-0 left-0 right-0"
+              ></div>
+            ) : (
+              ""
+            )}
+            <div
+              className={
+                (isOpenSidenav
+                  ? "-left-0 md:left-0 transition ease-out duration-100 "
+                  : "left-full md:left-0 transition ease-in duration-75 ") +
+                "sidebar | h-full fixed md:relative top-0 bottom-0 w-3/4 md:w-full pt-4 z-40 bg-white"
+              }
+            >
+              <div className="md:hidden px-4 py-2 flex items-center justify-between">
+                <div className="w-28">
+                  <img src={brandLogo} alt="Guardtrol" />
                 </div>
-                <div className='grid grid-cols-12 sm:h-full'>
-                    <div className="col-span-12 md:col-span-2">
-                        {
-                            isOpenSidenav ? <div onClick={handleOpenSidenav} className="sm:hidden z-10 backdrop-brightness-50 fixed top-0 bottom-0 left-0 right-0"></div> : ""
-                        }
-                        <div className=
-                            {(isOpenSidenav ? "-left-0 md:left-0 transition ease-out duration-100 " : "left-full md:left-0 transition ease-in duration-75 ") + "sidebar | h-full fixed md:relative top-0 bottom-0 w-3/4 md:w-full pt-4 z-40 bg-white"}
-                        >
-                            <div className='md:hidden px-4 py-2 flex items-center justify-between'>
-                                <div className='w-28'>
-                                    <img src={brandLogo} alt="Guardtrol" />
-                                </div>
-                                <button onClick={handleOpenSidenav}>
-                                    <HiX />
-                                </button>
-                            </div>
-                            <ClientSidebar />
-                        </div>
-                    </div>
-                    <div className="col-span-12 md:col-span-10">
-                        <div className="main p-2 sm:p-4">
-                            <Main />
-                        </div>
-                    </div>
-                </div>
+                <button onClick={handleOpenSidenav}>
+                  <HiX />
+                </button>
+              </div>
+              <ClientSidebar />
             </div>
+          </div>
+          <div className="col-span-12 md:col-span-10">
+            <div className="main p-2 sm:p-4">
+              <Main />
+            </div>
+          </div>
+        </div>
+      </div>
 
-
-
-
-
-            {/* <div className='sticky top-0 left-0 right-0 z-40'>
+      {/* <div className='sticky top-0 left-0 right-0 z-40'>
                 <ClientToolbar />
             </div>
             <div className='min-h-screen bg-[#faffff] grid grid-cols-12 gap-2'>
@@ -68,9 +81,8 @@ const Client = () => {
                 </div>
 
             </div> */}
-        </>
-    );
-}
-
+    </>
+  );
+};
 
 export default Client;
