@@ -6,8 +6,6 @@ import SentRequest from "./SentRequest/SentRequest";
 
 const PatrolGuard = () => {
   const [sentRequestCount, setSentRequestCount] = useState(0);
-  //   const sentRequest = "Sent requests" + sentRequestCount;
-  console.log("sentRequestCount: ", sentRequestCount);
 
   const handleSentRequestTitle = () => {
     return (
@@ -27,7 +25,10 @@ const PatrolGuard = () => {
             <PatrolGuardList />
           </Tabs.Item>
           <Tabs.Item title={handleSentRequestTitle()}>
-            <SentRequest />
+            <SentRequest
+              sentRequestCount={sentRequestCount}
+              setSentRequestCount={setSentRequestCount}
+            />
           </Tabs.Item>
         </Tabs>
       </div>
