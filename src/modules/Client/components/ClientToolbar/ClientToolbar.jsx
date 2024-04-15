@@ -1,15 +1,20 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '../../../../shared/Context/AuthContext';
 import { Dropdown, Flowbite } from 'flowbite-react';
 import { customTheme } from '../../../../flowbite-theme';
 // import {brandLogo} from "../../../../images/brand-logo.svg";
 import brandLogo from "../../../../images/brand-logo.svg";
 import { HiMenu } from 'react-icons/hi';
+import { useLocation } from 'react-router-dom';
+import { clientModuleList } from "../../client.module-list"
+
 
 const ClientToolbar = (props) => {
     const auth = useContext(AuthContext)
     const [isProfileDropdownOpened, setIsProfileDropdownOpened] = useState(false)
     const [isMobileProfileDropdownOpened, setIsMobileProfileDropdownOpened] = useState(false)
+    const [moduleTitle, setModuleTitle] = useState("");
+    let location = useLocation();
 
     const handleProfileDropdownToggle = () => {
         setIsProfileDropdownOpened(!isProfileDropdownOpened)
@@ -18,6 +23,23 @@ const ClientToolbar = (props) => {
     const handleMobileProfileDropdownToggle = () => {
         setIsMobileProfileDropdownOpened(!isMobileProfileDropdownOpened)
     }
+
+    useEffect(() => {
+        if (clientModuleList.dashboard.pathnames.includes(location.pathname))
+            (setModuleTitle(clientModuleList.dashboard.title));
+        if (clientModuleList.history.pathnames.includes(location.pathname))
+            (setModuleTitle(clientModuleList.history.title));
+        if (clientModuleList.guard.pathnames.includes(location.pathname))
+            (setModuleTitle(clientModuleList.guard.title));
+        if (clientModuleList.beats.pathnames.includes(location.pathname))
+            (setModuleTitle(clientModuleList.beats.title));
+        if (clientModuleList.settings.pathnames.includes(location.pathname))
+            (setModuleTitle(clientModuleList.settings.title));
+        return () => {
+
+        };
+    }, [location]);
+
     return (
         <>
             {/* clientToolbar-app works! */}
@@ -80,7 +102,7 @@ const ClientToolbar = (props) => {
                         </div>
                         <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
                             <div className="flex flex-shrink-0 items-center">
-                                <h1 className='font-bold text-xl sm:text-2xl'>Guard</h1>
+                                <h1 className='font-bold text-xl sm:text-2xl first-letter:uppercase'>{moduleTitle}</h1>
                             </div>
                             <div className="hidden sm:ml-6 sm:block">
                                 <div className="flex space-x-4">

@@ -7,51 +7,50 @@ import {
     HiOutlineCog,
     HiUser,
 } from "react-icons/hi";
-import { twMerge } from "tailwind-merge";
 import { customTheme } from '../../../../flowbite-theme';
+import { Link } from 'react-router-dom';
 
 
 const ClientSidebar = () => {
     return (
         <>
             {/* client-sidebar-app works! */}
-            <Flowbite theme={{ theme: customTheme }}>
-                <Sidebar aria-label="Sidebar with multi-level dropdown example">
-                    <Sidebar.Items>
-                        <Sidebar.ItemGroup>
-                            <Sidebar.Item href="/client" icon={HiChartPie}>
-                                Dashboard
-                            </Sidebar.Item>
-                            {/* <Sidebar.Collapse
-                                    icon={HiShoppingBag}
-                                    label="E-commerce"
-                                    renderChevronIcon={(theme, open) => {
-                                        const IconComponent = open ? HiOutlineMinusSm : HiOutlinePlusSm;
-
-                                        return <IconComponent aria-hidden className={twMerge(theme.label.icon.open[open ? 'on' : 'off'])} />;
-                                    }}
-                                >
-                                    <Sidebar.Item href="#">Products</Sidebar.Item>
-                                    <Sidebar.Item href="#">Sales</Sidebar.Item>
-                                    <Sidebar.Item href="#">Refunds</Sidebar.Item>
-                                    <Sidebar.Item href="#">Shipping</Sidebar.Item>
-                                </Sidebar.Collapse> */}
-                            <Sidebar.Item href="/client/history" icon={HiClipboardList}>
-                                History
-                            </Sidebar.Item>
-                            <Sidebar.Item href="#" icon={HiUser}>
-                                Gaurds
-                            </Sidebar.Item>
-                            <Sidebar.Item href="#" icon={HiHome}>
-                                Beats
-                            </Sidebar.Item>
-                            <Sidebar.Item href="#" icon={HiOutlineCog}>
-                                Settings
-                            </Sidebar.Item>
-                        </Sidebar.ItemGroup>
-                    </Sidebar.Items>
-                </Sidebar>
-            </Flowbite>
+            <aside aria-label="Sidebar">
+                <div className="h-full pl-1 pr-2 py-4 overflow-y-auto dark:bg-gray-800">
+                    <ul className="space-y-2 font-medium">
+                        <li>
+                            <Link to="/client" className="flex items-center p-2 text-dark-260 rounded-r-full dark:text-white hover:bg-primary-50 dark:hover:bg-primary-400 group">
+                                <HiChartPie fontSize={'1.5rem'} />
+                                <span className="flex items-center ms-3 h-5 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white">Dashboard</span>
+                            </Link>
+                        </li>
+                        <li>
+                            <Link to="/client/history" className="flex items-center p-2 text-dark-260 rounded-r-full dark:text-white hover:bg-primary-50 dark:hover:bg-primary-400 group">
+                                <HiClipboardList fontSize={'1.5rem'} />
+                                <span className="flex items-center ms-3 h-5 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white">History</span>
+                            </Link>
+                        </li>
+                        <li>
+                            <Link to="/client/patrol-guard" className="flex items-center p-2 text-dark-260 rounded-r-full dark:text-white hover:bg-primary-50 dark:hover:bg-primary-400 group">
+                                <HiUser fontSize={'1.5rem'} />
+                                <span className="flex items-center ms-3 h-5 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white">Guards</span>
+                            </Link>
+                        </li>
+                        <li>
+                            <Link to="/client/beats" className="flex items-center p-2 text-dark-260 rounded-r-full dark:text-white hover:bg-primary-50 dark:hover:bg-primary-400 group">
+                                <HiHome fontSize={'1.5rem'} />
+                                <span className="flex items-center ms-3 h-5 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white">Beats</span>
+                            </Link>
+                        </li>
+                        <li>
+                            <Link to="/client/settings" className="flex items-center p-2 text-dark-260 rounded-r-full dark:text-white hover:bg-primary-50 dark:hover:bg-primary-400 group">
+                                <HiOutlineCog fontSize={'1.5rem'} />
+                                <span className="flex items-center ms-3 h-5 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white">Settings</span>
+                            </Link>
+                        </li>
+                    </ul>
+                </div>
+            </aside>
         </>
     );
 }
