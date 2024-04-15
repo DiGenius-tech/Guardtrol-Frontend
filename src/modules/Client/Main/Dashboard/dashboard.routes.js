@@ -1,10 +1,11 @@
+import PrivateRoute from "../../../../shared/RouteGuard/PrivateRoute";
 import Activities from "./Activities/Activities";
 import Dashboard from "./Dashboard";
 import Patrols from "./Patrols/Patrols";
 
 const dashboard_routes = {
     path: "dashboard",
-    element: <Dashboard />,
+    element: <PrivateRoute component={Dashboard} />,
     children: [
         {
             path: "",

@@ -7,7 +7,7 @@ const AuthRouteGuard = ({ component: Component, ...rest }) => {
 
   useEffect(() => {
     const storedIsLoggedIn = localStorage.getItem('userData');
-    console.log(!!storedIsLoggedIn)
+  
     setIsLoggedIn(!!storedIsLoggedIn); 
 
    // console.log(isLoggedIn)

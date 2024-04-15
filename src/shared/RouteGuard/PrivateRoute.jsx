@@ -21,7 +21,7 @@ const PrivateRoute = ({ component: Component, onboarding = false, ...rest }) => 
     setIsLoggedIn(!!storedIsLoggedIn);
     console.log(savedUser?.onboardingcomplete)
     setOnboardingComplete(savedUser?.onboardingcomplete)
-    setIsLoading(false)
+    
 
 
 
@@ -47,22 +47,22 @@ const PrivateRoute = ({ component: Component, onboarding = false, ...rest }) => 
         setOnboardingRoute("/onboarding/membership")
         break;
     }
-
+    setIsLoading(false)
   }, []);
 
   if (isLoading) {
     return <LoadingSpinner></LoadingSpinner>
   }
   if (!isLoggedIn) {
-      // return <Navigate to="/auth" state={{ from: location }} replace />;
+       return <Navigate to="/auth" state={{ from: location }} replace />;
   }
 
   if (onboarding && location.pathname !== onboardingRoute && !subRoutes.some(item => location.pathname.includes(item))) {
-    // return <Navigate to={onboardingRoute} />;
+     return <Navigate to={onboardingRoute} />;
   }
   
   if(!onboardingComplete && !subRoutes2.some(item => location.pathname.includes(item))){
-    // return <Navigate to={"/onboarding"}  state={{from:"/"}} replace/>
+     return <Navigate to={"/onboarding"}  state={{from:"/"}} replace/>
   }
 
   return <Component {...rest} />;
