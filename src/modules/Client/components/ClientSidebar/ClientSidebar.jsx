@@ -1,5 +1,5 @@
 import { Flowbite, Sidebar } from 'flowbite-react';
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
     HiChartPie,
     HiClipboardList,
@@ -8,10 +8,17 @@ import {
     HiUser,
 } from "react-icons/hi";
 import { customTheme } from '../../../../flowbite-theme';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 
 const ClientSidebar = () => {
+    const location = useLocation();
+    const dashboard = ["/client", "/client/"];
+    const history = ["/client/history", "/client/history/"];
+    const patrol_guard = ["/client/patrol-guard", "/client/patrol-guard/"];
+    const beats = ["/client/beats", "/client/beats/", "/client/beats/configure-beat", "/client/beats/configure-beat/"];
+    const settings = ["/client/settings"];
+
     return (
         <>
             {/* client-sidebar-app works! */}
@@ -19,31 +26,46 @@ const ClientSidebar = () => {
                 <div className="h-full pl-1 pr-2 py-4 overflow-y-auto dark:bg-gray-800">
                     <ul className="space-y-2 font-medium">
                         <li>
-                            <Link to="/client" className="flex items-center p-2 text-dark-260 rounded-r-full dark:text-white hover:bg-primary-50 dark:hover:bg-primary-400 group">
+                            <Link to={dashboard[0]} className={
+                                (dashboard.includes(location.pathname) ? `bg-primary-50 ` : ``)
+                                +
+                                `flex items-center p-2 text-dark-260 rounded-r-full dark:text-white hover:bg-primary-50 dark:hover:bg-primary-400 group`}>
                                 <HiChartPie fontSize={'1.5rem'} />
                                 <span className="flex items-center ms-3 h-5 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white">Dashboard</span>
                             </Link>
                         </li>
                         <li>
-                            <Link to="/client/history" className="flex items-center p-2 text-dark-260 rounded-r-full dark:text-white hover:bg-primary-50 dark:hover:bg-primary-400 group">
+                            <Link to={history[0]} className={
+                                (history.includes(location.pathname) ? `bg-primary-50 ` : ``)
+                                +
+                                `flex items-center p-2 text-dark-260 rounded-r-full dark:text-white hover:bg-primary-50 dark:hover:bg-primary-400 group`}>
                                 <HiClipboardList fontSize={'1.5rem'} />
                                 <span className="flex items-center ms-3 h-5 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white">History</span>
                             </Link>
                         </li>
                         <li>
-                            <Link to="/client/patrol-guard" className="flex items-center p-2 text-dark-260 rounded-r-full dark:text-white hover:bg-primary-50 dark:hover:bg-primary-400 group">
+                            <Link to={patrol_guard[0]} className={
+                                (patrol_guard.includes(location.pathname) ? `bg-primary-50 ` : ``)
+                                +
+                                `flex items-center p-2 text-dark-260 rounded-r-full dark:text-white hover:bg-primary-50 dark:hover:bg-primary-400 group`}>
                                 <HiUser fontSize={'1.5rem'} />
                                 <span className="flex items-center ms-3 h-5 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white">Guards</span>
                             </Link>
                         </li>
                         <li>
-                            <Link to="/client/beats" className="flex items-center p-2 text-dark-260 rounded-r-full dark:text-white hover:bg-primary-50 dark:hover:bg-primary-400 group">
+                            <Link to={beats[0]} className={
+                                (beats.includes(location.pathname) ? `bg-primary-50 ` : ``)
+                                +
+                                `flex items-center p-2 text-dark-260 rounded-r-full dark:text-white hover:bg-primary-50 dark:hover:bg-primary-400 group`}>
                                 <HiHome fontSize={'1.5rem'} />
                                 <span className="flex items-center ms-3 h-5 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white">Beats</span>
                             </Link>
                         </li>
                         <li>
-                            <Link to="/client/settings" className="flex items-center p-2 text-dark-260 rounded-r-full dark:text-white hover:bg-primary-50 dark:hover:bg-primary-400 group">
+                            <Link to={settings[0]} className={
+                                (settings.includes(location.pathname) ? `bg-primary-50 ` : ``)
+                                +
+                                `flex items-center p-2 text-dark-260 rounded-r-full dark:text-white hover:bg-primary-50 dark:hover:bg-primary-400 group`}>
                                 <HiOutlineCog fontSize={'1.5rem'} />
                                 <span className="flex items-center ms-3 h-5 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white">Settings</span>
                             </Link>

@@ -49,61 +49,61 @@ const PatrolRouteConfiguration = () => {
             <h1 className="ms-4 font-bold text-center text-xl text-dark-450">
               Patrol route configuration
             </h1>
+          </div>
 
-            <div className="my-8 sm:my-16"></div>
-            <button className="block w-full">
-              <Card href="#" className="py-2">
-                <div className="flex items-center justify-center">
-                  <img src={handClickImage} alt="Click" />
-                </div>
-                <p className="text-primary-500 font-bold text-xl text-center max-w-48 mx-auto">
-                  Click here to add another patrol point
-                </p>
-              </Card>
-            </button>
+          <div className="my-8 sm:my-16"></div>
+          <button className="block w-full">
+            <Card href="#" className="py-2">
+              <div className="flex items-center justify-center">
+                <img src={handClickImage} alt="Click" />
+              </div>
+              <p className="text-primary-500 font-bold text-xl text-center max-w-48 mx-auto">
+                Click here to add another patrol point
+              </p>
+            </Card>
+          </button>
 
-            <div className="my-32"></div>
+          <div className="my-32"></div>
 
-            <ul className="flex flex-nowrap gap-2 overflow-scroll">
-              {patrolPoints.map((pt, i) => {
-                console.log("pt: ", pt);
-                const { image, id } = pt;
-                // let {image} = `url('${point.image}')`;
-                console.log("image: ", image);
-                return (
-                  <li className="min-w-[90px] sm:min-w-[130px]" key={id}>
-                    <div
-                      className={
-                        "bg-[url('" +
-                        image +
-                        "')] " +
-                        `point-card | h-32 relative w-full rounded-md overflow-hidden bg-center bg-no-repeat bg-cover`
-                      }
-                    >
-                      <span className="absolute top-1 left-1">
-                        <Flowbite theme={{ theme: customTheme }}>
-                          <Badge color="dark_transparent_badge">{i + 1}</Badge>
-                        </Flowbite>
-                      </span>
-                      <p>Hello</p>
-                      {/* <img
+          <ul className="flex flex-nowrap gap-2 overflow-scroll">
+            {patrolPoints.map((pt, i) => {
+              console.log("pt: ", pt);
+              const { image, id } = pt;
+              // let {image} = `url('${point.image}')`;
+              console.log("image: ", image);
+              return (
+                <li className="min-w-[90px] sm:min-w-[130px]" key={id}>
+                  <div
+                    className={
+                      "bg-[url('" +
+                      image +
+                      "')] " +
+                      `point-card | h-32 relative w-full rounded-md overflow-hidden bg-center bg-no-repeat bg-cover`
+                    }
+                  >
+                    <span className="absolute top-1 left-1">
+                      <Flowbite theme={{ theme: customTheme }}>
+                        <Badge color="dark_transparent_badge">{i + 1}</Badge>
+                      </Flowbite>
+                    </span>
+                    <p>Hello</p>
+                    {/* <img
                         src={`https://images.pexels.com/photos/280229/pexels-photo-280229.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1`}
                         alt=""
                       /> */}
-                      {/* <img
+                    {/* <img
                         src={image}
                         alt=""
                         className="w-auto"
                       /> */}
-                    </div>
-                  </li>
-                );
-              })}
-            </ul>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
 
-            <div className="my-8"></div>
-            <RegularButton text="Submit" />
-          </div>
+          <div className="my-8"></div>
+          <RegularButton text="Submit" />
         </div>
       </div>
     </>
