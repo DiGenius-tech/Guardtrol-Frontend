@@ -41,7 +41,7 @@ function AddGuard() {
     }
 
       const existingGuards = JSON.parse(localStorage.getItem("guards")) || [];
-      if(existingGuards.length === (sub.maxBeat*5 + sub.extraGuards)){
+      if(existingGuards.length === (sub.currentSubscription?.maxbeats*5 + sub.currentSubscription?.maxextraguards)){
         setOpen(true)
         return
       }
