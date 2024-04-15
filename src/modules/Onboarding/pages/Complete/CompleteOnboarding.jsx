@@ -1,10 +1,13 @@
 import React, { useEffect, useRef } from 'react';
 import "../Subscription/PaymentSuccess/PaymentSuccess.scss";
 import { Link } from 'react-router-dom';
+import RegularButton from '../../../Sandbox/Buttons/RegularButton';
+import { useNavigate, useLocation } from "react-router-dom";
 
 
 const OnboardingComplete = () => {
     const tick_icon_ref = useRef();
+    const navigate = useNavigate()
 
 
     useEffect(() => {
@@ -64,7 +67,9 @@ const OnboardingComplete = () => {
 
                     <p className="text-lg font-bold text-center">WellDone!</p>
                     <div className="my-4"></div>
-                    <Link to="/client/dashboard" className='text-center font-semibold text-primary-500'>Proceed to Dashboard</Link>
+                    <RegularButton text={"Proceed to Dashboard"} onClick={()=> {
+                        navigate("/client/dashboard")
+                    }} />
                 </div>
             </div>
         </div>

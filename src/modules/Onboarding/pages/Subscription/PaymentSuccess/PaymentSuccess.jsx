@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import "./PaymentSuccess.scss";
 import { Link } from 'react-router-dom';
 import { useNavigate, useLocation } from "react-router-dom";
+import RegularButton from '../../../../Sandbox/Buttons/RegularButton';
 
 
 const PaymentSuccess = () => {
@@ -76,7 +77,10 @@ const PaymentSuccess = () => {
 
                     <p className="text-lg font-bold text-center">Thank You!</p>
                     <div className="my-4"></div>
-                    <Link to="/onboarding/configure-beats" className='text-center font-semibold text-primary-500'>Proceed to Configure Beats</Link>
+                   
+                    <RegularButton text={"Continue to Configure Beats"} onClick={()=> {
+                        navigate("/onboarding/configure-beats")
+                    }} />
                 </div>
             </div>
         </div>

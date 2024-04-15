@@ -6,7 +6,7 @@ import LoadingSpinner from "../LoadingSpinner/LoadingSpinner";
 const PrivateRoute = ({ component: Component, onboarding = false, ...rest }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
-  const [onboardingComplete, setOnboardingComplete] = useState(null)
+  const [onboardingComplete, setOnboardingComplete] = useState(false)
   const [onboardingRoute, setOnboardingRoute] = useState("/onboarding/membership")
   const location = useLocation()
 
@@ -19,8 +19,8 @@ const PrivateRoute = ({ component: Component, onboarding = false, ...rest }) => 
     const storedIsLoggedIn = localStorage.getItem('userData');
     const savedUser = JSON.parse(storedIsLoggedIn)
     setIsLoggedIn(!!storedIsLoggedIn);
-    console.log(savedUser.onboardingcomplete)
-    setOnboardingComplete(savedUser?.onboardingcomplete || false)
+    console.log(savedUser?.onboardingcomplete)
+    setOnboardingComplete(savedUser?.onboardingcomplete)
     setIsLoading(false)
 
 

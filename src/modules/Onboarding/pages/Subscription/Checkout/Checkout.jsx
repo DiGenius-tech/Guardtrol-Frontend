@@ -171,7 +171,7 @@ const Checkout = () => {
             <div className="mx-auto max-w-[500px] my-16">
                 <form method='post' onSubmit={pay}>
                     <fieldset className="flex flex-col gap-4 mb-4">
-                        <legend className="mb-4 font-semibold text-xl">Select Methods</legend>
+                        <legend className="mb-4 font-semibold text-xl">Select Payment Method</legend>
                         <ul className='payment-options | flex flex-col gap-4'>
                             <li onClick={() => handleCheck(PaymentOption.FIRST)}>
                                 <input type="radio" name="payment_option" id="flutterwave" value={paymentMethod} checked />

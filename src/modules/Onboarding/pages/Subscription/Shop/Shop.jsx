@@ -153,7 +153,7 @@ const Shop = () => {
   const membership_card_data = [
     {
       title: `₦${formatNumberWithCommas(planFormData.numberofbeats*10000 + planFormData.extraguards*2000)}`,
-      body_list: [`₦${formatNumberWithCommas(planFormData.numberofbeats*10000)} P/M`, `${planFormData.extraguards} Extra Guards x ₦2,000`],
+      body_list: [`₦${formatNumberWithCommas(planFormData.numberofbeats*10000)} per month`, `${planFormData.extraguards} Extra Guards x ₦2,000`],
       footer: "Lets Get you started with the Basic Plan",
       type: "monthly",
       amount:(planFormData.numberofbeats*10000 + planFormData.extraguards*2000),
@@ -163,7 +163,7 @@ const Shop = () => {
     },
     {
       title: `₦${formatNumberWithCommas((planFormData.numberofbeats*10000 + planFormData.extraguards*2000)* 12 * 0.8)}`,
-      body_list: [`₦${formatNumberWithCommas(planFormData.numberofbeats*10000 *12 * .8)} P/Y`, `${planFormData.extraguards} Extra Guards x ₦20,000`],
+      body_list: [`₦${formatNumberWithCommas(planFormData.numberofbeats*10000 *12 * .8)} per year`, `${planFormData.extraguards} Extra Guards x ₦20,000`],
       footer: "20% Discount when you select this Plan",
       type: "yearly",
       amount:((planFormData.numberofbeats*10000 + planFormData.extraguards*2000)* 12 * 0.8),

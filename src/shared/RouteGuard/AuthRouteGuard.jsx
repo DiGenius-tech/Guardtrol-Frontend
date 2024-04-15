@@ -10,14 +10,14 @@ const AuthRouteGuard = ({ component: Component, ...rest }) => {
     console.log(!!storedIsLoggedIn)
     setIsLoggedIn(!!storedIsLoggedIn); 
 
-    console.log(isLoggedIn)
+   // console.log(isLoggedIn)
   }, []);
   const location = useLocation();
-  console.log(isLoggedIn)
+  //console.log(isLoggedIn)
   return !isLoggedIn ? (
     <Component {...rest} />
   ) : (
-    <Navigate to="/onBoarding" state={{ from: location }} replace />
+    <Navigate to="/client" state={{ from: location }} replace />
   );
 };
 
