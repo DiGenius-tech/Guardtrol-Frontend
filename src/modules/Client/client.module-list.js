@@ -10,7 +10,7 @@ exports.clientModuleList = {
         pathnames: ["/client/history", "/client/history/"]
     },
     guard: {
-        title: "guard",
+        title: "guards",
         pathnames: ["/client/patrol-guard", "/client/patrol-guard/"]
     },
     beats: {
