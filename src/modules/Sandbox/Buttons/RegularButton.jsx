@@ -6,7 +6,7 @@ const RegularButton = (props) => {
 
   return (
     <button
-      type="submit"
+      type={props.type}
       // className="text-white bg-primary-500 hover:bg-primary-600
       // focus:ring-1 focus:outline-none focus:ring-green-300
       // font-medium rounded-lg text-sm w-full px-5 py-2.5 sm:py-3
