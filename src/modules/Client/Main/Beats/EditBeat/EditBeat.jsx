@@ -1,39 +1,113 @@
-import { Button, Modal } from "flowbite-react";
-import { useState } from "react";
+import { Modal } from "flowbite-react";
+import { useContext, useEffect, useState } from "react";
+import RegularButton from "../../../../Sandbox/Buttons/RegularButton";
+import TextareaField from "../../../../Sandbox/TextareaField/TextareaField";
+import TextInputField from "../../../../Sandbox/InputField/TextInputField";
+import useHttpRequest from "../../../../../shared/Hooks/HttpRequestHook";
+import { SubscriptionContext } from "../../../../../shared/Context/SubscriptionContext";
 
-function EditBeat() {
-    const [openModal, setOpenModal] = useState(true);
-    return ( 
-        <>
-        edit-beat-app works!
+function EditBeat(props) {
+  const [validationErrors, setValidationErrors] = useState({});
+  const sub = useContext(SubscriptionContext);
+  const [open, setOpen] = useState(false);
+  const { isLoading, error, responseData, sendRequest } = useHttpRequest();
+  const [beat, setBeat] = useState({
+    beat_name: "",
+    address: "",
+    description: ""
+  });
 
+  const handleChange = (e) => {
+    setBeat({ ...beat, [e.target.name]: e.target.value });
+    setValidationErrors({ ...validationErrors, [e.target.name]: "" });
+  };
 
-        
-      <Button onClick={() => setOpenModal(true)}>Toggle modal</Button>
-      <Modal show={openModal} onClose={() => setOpenModal(false)}>
-        <Modal.Header>Terms of Service</Modal.Header>
+  const saveBeat = async (e) => {
+    e.preventDefault();
+  };
+
+  useEffect(() => {
+    // console.log("useEffect: ", props.beatToEdit)
+    if (props.beatToEdit) {
+      setBeat({
+        beat_name: props.beatToEdit?.title,
+        address: props.beatToEdit?.address,
+        description: props.beatToEdit?.description
+      })
+    }
+    return () => {
+
+    };
+  }, [props.beatToEdit]);
+  return (
+    <>
+      {/* edit-beat-app works! */}
+
+      <Modal show={props.openModal} onClose={() => props.setOpenModal(false)}>
+        <Modal.Header>Edit beat</Modal.Header>
         <Modal.Body>
           <div className="space-y-6">
-            <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-              With less than a month to go before the European Union enacts new consumer privacy laws for its citizens,
-              companies around the world are updating their terms of service agreements to comply.
-            </p>
-            <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-              The European Union’s General Data Protection Regulation (G.D.P.R.) goes into effect on May 25 and is meant
-              to ensure a common set of data rights in the European Union. It requires organizations to notify users as
-              soon as possible of high-risk data breaches that could personally affect them.
-            </p>
+            {/* {props.beatToEdit?.title} */}
+
+            <form method="post" onSubmit={saveBeat}>
+              <div className="mb-6">
+                <TextInputField
+                  label="Beat Name"
+                  name="beat_name"
+                  type="text"
+                  placeholder="Beat Name"
+                  id="beat_name"
+                  error={validationErrors["beat_name"]}
+                  onChange={handleChange}
+                  required="required"
+                  value={beat.beat_name}
+                  semibold_label={true}
+                />
+              </div>
+              <div className="mb-6">
+                <TextInputField
+                  label="Address"
+                  name="address"
+                  type="text"
+                  placeholder="Beat Address"
+                  id="address"
+                  error={validationErrors["address"]}
+                  onChange={handleChange}
+                  required="required"
+                  value={beat.address}
+                  semibold_label={true}
+                />
+              </div>
+              <div className="mb-6">
+                <div className="mb-2 block">
+                  <TextareaField
+                    label="Description"
+                    id="beat_description"
+                    placeholder="Leave a description..."
+                    semibold_label={true}
+                    value={beat.description}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+              <div className="">
+                <div className="flex items-center justify-between">
+                  <RegularButton
+                    text="Update Beat"
+                    rounded="full"
+                    width="auto"
+                    padding="px-8 py-2.5"
+                    textSize="sm"
+                  />
+                  <button type="button" onClick={() => props.setOpenModal(false)}>Cancel</button>
+                </div>
+              </div>
+            </form>
           </div>
         </Modal.Body>
-        <Modal.Footer>
-          <Button onClick={() => setOpenModal(false)}>I accept</Button>
-          <Button color="gray" onClick={() => setOpenModal(false)}>
-            Decline
-          </Button>
-        </Modal.Footer>
       </Modal>
-        </>
-     );
+    </>
+  );
 }
 
 export default EditBeat;

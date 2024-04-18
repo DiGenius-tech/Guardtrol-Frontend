@@ -2,6 +2,12 @@ import { Dropdown } from "flowbite-react";
 import EditBeat from "../EditBeat/EditBeat";
 
 function BeatsDesktopView(props) {
+
+  const sendBeatToUpdate = (beat) => {
+    console.log("beat: ", beat)
+    props.setOpenModal(true)
+    props.setBeatToEdit(beat)
+  }
   return (
     <>
       {/* beats-desktop-view-app works! */}
@@ -81,7 +87,7 @@ function BeatsDesktopView(props) {
                         </button>
                       )}
                     >
-                      <Dropdown.Item href="#">Edit beat</Dropdown.Item>
+                      <Dropdown.Item onClick={() => sendBeatToUpdate(beat)}>Edit beat</Dropdown.Item>
                       <Dropdown.Item>Deactivate beat</Dropdown.Item>
                     </Dropdown>
                   </td>
@@ -91,9 +97,6 @@ function BeatsDesktopView(props) {
           </tbody>
         </table>
       </div>
-
-
-      <EditBeat/>
     </>
   );
 }
