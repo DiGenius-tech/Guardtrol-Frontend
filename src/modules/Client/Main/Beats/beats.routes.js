@@ -1,6 +1,7 @@
 import BeatList from "./BeatList/BeatList";
 import Beats from "./Beats";
-import ConfigureBeat from "./ConfigureBeat/ConfigureBeat";
+import AddBeat from "./AddBeat/AddBeat";
+import BeatDetails from "./BeatDetails/BeatDetails";
 
 const beats_routes = {
     path: "beats",
@@ -15,8 +16,12 @@ const beats_routes = {
             element: <BeatList/>
         },
         {
-            path: "configure-beat",
-            element: <ConfigureBeat/>
+            path: "add",
+            element: <AddBeat/>
+        },
+        {
+            path: "details/:id",
+            element: <BeatDetails/>
         }
     ]
 

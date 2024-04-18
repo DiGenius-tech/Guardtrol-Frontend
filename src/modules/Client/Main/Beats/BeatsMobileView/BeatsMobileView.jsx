@@ -1,4 +1,5 @@
 import { Dropdown } from "flowbite-react";
+import EditBeat from "../EditBeat/EditBeat";
 
 function BeatsMobileView(props) {
   return (
