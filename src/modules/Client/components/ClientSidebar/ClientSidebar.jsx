@@ -8,16 +8,28 @@ import {
     HiUser,
 } from "react-icons/hi";
 import { customTheme } from '../../../../flowbite-theme';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 
 
 const ClientSidebar = () => {
     const location = useLocation();
+
+    let use_params = useParams()
+    /**QUERIES */
+    const use_params_keys = []
+    for (const key in use_params) {
+        if (Object.hasOwnProperty.call(use_params, key)) {
+            use_params_keys.push(key)
+        }
+    }
+
+    /**URLS */
     const dashboard = ["/client", "/client/"];
     const history = ["/client/history", "/client/history/"];
     const patrol_guard = ["/client/patrol-guard", "/client/patrol-guard/"];
     const beats = ["/client/beats", "/client/beats/", "/client/beats/configure-beat", "/client/beats/configure-beat/"];
     const settings = ["/client/settings"];
+
 
     return (
         <>
@@ -45,7 +57,7 @@ const ClientSidebar = () => {
                         </li>
                         <li>
                             <Link to={patrol_guard[0]} className={
-                                (patrol_guard.includes(location.pathname) ? `bg-primary-50 ` : ``)
+                                (patrol_guard.includes(location.pathname) || use_params_keys.includes("guardId") ? `bg-primary-50 ` : ``)
                                 +
                                 `flex items-center p-2 text-dark-260 rounded-r-full dark:text-white hover:bg-primary-50 dark:hover:bg-primary-400 group`}>
                                 <HiUser fontSize={'1.5rem'} />
@@ -54,7 +66,7 @@ const ClientSidebar = () => {
                         </li>
                         <li>
                             <Link to={beats[0]} className={
-                                (beats.includes(location.pathname) ? `bg-primary-50 ` : ``)
+                                (beats.includes(location.pathname) || use_params_keys.includes("beatId") ? `bg-primary-50 ` : ``)
                                 +
                                 `flex items-center p-2 text-dark-260 rounded-r-full dark:text-white hover:bg-primary-50 dark:hover:bg-primary-400 group`}>
                                 <HiHome fontSize={'1.5rem'} />

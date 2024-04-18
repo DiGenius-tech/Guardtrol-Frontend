@@ -1,5 +1,6 @@
 import { Dropdown } from "flowbite-react";
 import { patrol_guards } from "../../patrol-guard-list";
+import { Link } from "react-router-dom";
 
 function PatrolGuardListMobileView(props) {
   const sendGuardToEdit = (data) => {
@@ -39,7 +40,11 @@ function PatrolGuardListMobileView(props) {
                   </th>
                   <td className="p-2">
                     <div>
-                      <div>{guard.name}</div>
+                      <div>
+                        <Link to={`details/${guard.id}`}>
+                          {guard.name}
+                        </Link>
+                      </div>
                       <small className="text-dark-250">{guard.email}</small>
                     </div>
                   </td>

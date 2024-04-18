@@ -1,5 +1,6 @@
 import { Dropdown } from "flowbite-react";
 import EditBeat from "../EditBeat/EditBeat";
+import { Link } from "react-router-dom";
 
 function BeatsDesktopView(props) {
 
@@ -59,7 +60,11 @@ function BeatsDesktopView(props) {
                     scope="row"
                     className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                   >
-                    {beat.title}
+                    <Link
+                      to={`details/${beat.id}`}
+                    >
+                      {beat.title}
+                    </Link>
                   </th>
                   <td className="px-6 py-4">
                     {beat.numberOfGuards}&nbsp;guard

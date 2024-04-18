@@ -1,9 +1,19 @@
 import PatrolGuard from "./PatrolGuard";
+import PatrolGuardDetails from "./PatrolGuardDetails/PatrolGuardDetails";
+import PatrolGuardList from "./PatrolGuardList/PatrolGuardList";
 
 const patrol_guard_routes = {
     path: "patrol-guard",
     element: <PatrolGuard />,
     children: [
+        {
+            path: "",
+            element: <PatrolGuardList />,
+        },
+        {
+            path: "details/:guardId",
+            element: <PatrolGuardDetails />
+        }
     ]
 
 }
