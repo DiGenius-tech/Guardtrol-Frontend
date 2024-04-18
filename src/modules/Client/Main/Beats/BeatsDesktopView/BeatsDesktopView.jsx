@@ -1,4 +1,5 @@
 import { Dropdown } from "flowbite-react";
+import EditBeat from "../EditBeat/EditBeat";
 
 function BeatsDesktopView(props) {
   return (
@@ -90,6 +91,9 @@ function BeatsDesktopView(props) {
           </tbody>
         </table>
       </div>
+
+
+      <EditBeat/>
     </>
   );
 }

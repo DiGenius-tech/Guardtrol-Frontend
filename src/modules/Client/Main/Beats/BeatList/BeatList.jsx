@@ -12,7 +12,7 @@ const BeatList = () => {
             {/* beat-list-app works! */}
 
             <div className="fixed z-10 bottom-8 right-4">
-                <Link to={"/onboarding/configure-beats/"} className="ml-auto border bg-secondary-500 h-12 w-12 p-2 flex items-center justify-center text-lg font-bold rounded-full text-white shadow-md">
+                <Link to={"add"} className="ml-auto border bg-secondary-500 h-12 w-12 p-2 flex items-center justify-center text-lg font-bold rounded-full text-white shadow-md">
                     +
                 </Link>
             </div>
