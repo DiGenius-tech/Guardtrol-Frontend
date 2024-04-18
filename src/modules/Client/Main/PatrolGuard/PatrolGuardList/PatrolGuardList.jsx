@@ -9,7 +9,7 @@ const duty_status = {
   ON_DUTY: 1
 };
 
-function PatrolGuardList() {
+function PatrolGuardList(props) {
   return (
     <>
       {/* patrol-guard-list-app works! */}
@@ -19,6 +19,7 @@ function PatrolGuardList() {
           <PatrolGuardListDesktopView
             duty_status={duty_status}
             icon_menu_dots={icon_menu_dots}
+            setGuardToEdit={props.setGuardToEdit}
           />
         </Card>
       </div>
@@ -27,6 +28,7 @@ function PatrolGuardList() {
         <PatrolGuardListMobileView
           duty_status={duty_status}
           icon_menu_dots={icon_menu_dots}
+          setGuardToEdit={props.setGuardToEdit}
         />
       </div>
     </>
