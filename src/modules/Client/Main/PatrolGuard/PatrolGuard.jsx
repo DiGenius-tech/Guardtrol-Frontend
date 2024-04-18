@@ -1,10 +1,13 @@
 import { Badge, Tabs } from "flowbite-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./PatrolGuard.scss";
 import PatrolGuardList from "./PatrolGuardList/PatrolGuardList";
 import SentRequest from "./SentRequest/SentRequest";
+import EditGuard from "./EditGuard/EditGuard";
 
 const PatrolGuard = () => {
+  const [guardToEdit, setGuardToEdit] = useState(null)
+
   const [sentRequestCount, setSentRequestCount] = useState(0);
   const [guardCount, setGuardCount] = useState(0);
   const handleSentRequestTitle = () => {
@@ -24,6 +27,11 @@ const PatrolGuard = () => {
       </span>
     );
   };
+
+  useEffect(() => {
+    console.log("guardToEdit: ", guardToEdit)
+  }, [guardToEdit])
+
   return (
     <>
       {/* patrol-guard-app works! */}
@@ -32,7 +40,9 @@ const PatrolGuard = () => {
         <Tabs aria-label="Tabs with underline" style="underline">
           <Tabs.Item active title={handleGuardTitle()}>
             <PatrolGuardList 
-            setGuardCount={setGuardCount}/>
+            setGuardCount={setGuardCount}
+            setGuardToEdit={setGuardToEdit}
+            />
           </Tabs.Item>
           <Tabs.Item title={handleSentRequestTitle()}>
             <SentRequest
@@ -43,9 +53,9 @@ const PatrolGuard = () => {
         </Tabs>
       </div>
 
-      {/* <button onClick={() => setSentRequestCount((init) => init + 1)}>
-        Click me!
-      </button> */}
+
+      <EditGuard
+        guardToEdit={guardToEdit} setGuardToEdit={setGuardToEdit} />
     </>
   );
 };

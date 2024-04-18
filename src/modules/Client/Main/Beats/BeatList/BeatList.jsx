@@ -8,6 +8,7 @@ import { Link } from 'react-router-dom';
 import { toast } from "react-toastify";
 import useHttpRequest from '../../../../../shared/Hooks/HttpRequestHook';
 import { AuthContext } from '../../../../../shared/Context/AuthContext';
+import EditBeat from '../EditBeat/EditBeat';
 
 const BeatList = () => {
   const auth = useContext(AuthContext)
@@ -43,18 +44,29 @@ const BeatList = () => {
       toast.error(error)
     }
   }, [error])
+    const [openModal, setOpenModal] = useState(false);
+    const [beatToEdit, setBeatToEdit] = useState(null);
+
+    const handleUpdateBeat = (Beat) => {
+        console.log("Beat: ", Beat)
+    }
     return (
         <>
             {/* beat-list-app works! */}
 
             <div className="fixed z-10 bottom-8 right-4">
-                <Link to={"/onboarding/configure-beats/"} className="ml-auto border bg-secondary-500 h-12 w-12 p-2 flex items-center justify-center text-lg font-bold rounded-full text-white shadow-md">
+                <Link to={"add"} className="ml-auto border bg-secondary-500 h-12 w-12 p-2 flex items-center justify-center text-lg font-bold rounded-full text-white shadow-md">
                     +
                 </Link>
             </div>
             <div className="hidden sm:block">
                 <Card>
-                    <BeatsDesktopView beatList={beats} icon_menu_dots={icon_menu_dots} 
+                    <BeatsDesktopView beatList={beat_list} icon_menu_dots={icon_menu_dots}
+                        openModal={openModal}
+                        setOpenModal={setOpenModal}
+                        beatToEdit={beatToEdit}
+                        setBeatToEdit={setBeatToEdit}
+                        handleUpdateBeat={handleUpdateBeat}
                         setSelectedBeat={setSelectedBeat}
                         setOpen={setOpen}
                     />
@@ -62,12 +74,27 @@ const BeatList = () => {
             </div>
 
             <div className="sm:hidden">
-                <BeatsMobileView beatList={beats} icon_menu_dots={icon_menu_dots}
+                <BeatsMobileView beatList={beat_list} icon_menu_dots={icon_menu_dots}
+                    openModal={openModal}
+                    setOpenModal={setOpenModal}
+                    beatToEdit={beatToEdit}
+                    setBeatToEdit={setBeatToEdit}
+                    handleUpdateBeat={handleUpdateBeat}
                     setSelectedBeat={setSelectedBeat}
                     setOpen={setOpen}
-                
                 />
             </div>
+
+
+
+
+            <EditBeat
+                openModal={openModal}
+                setOpenModal={setOpenModal}
+                beatToEdit={beatToEdit}
+                setBeatToEdit={setBeatToEdit}
+                handleUpdateBeat={handleUpdateBeat}
+            />
         </>
     );
 }

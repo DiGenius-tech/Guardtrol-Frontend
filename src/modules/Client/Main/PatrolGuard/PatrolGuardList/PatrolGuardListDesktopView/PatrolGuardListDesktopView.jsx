@@ -2,6 +2,12 @@ import { Dropdown } from "flowbite-react";
 import { patrol_guards } from "../../patrol-guard-list";
 
 function PatrolGuardListDesktopView(props) {
+
+
+  const sendGuardToEdit = (data)=>{
+    console.log("data: ", data)
+    props.setGuardToEdit(data)
+  }
   return (
     <>
       {/* patrol-guard-list-desktop-view-app works! */}
@@ -81,12 +87,12 @@ function PatrolGuardListDesktopView(props) {
                           </button>
                         )}
                       >
-                        <Dropdown.Item>View guard</Dropdown.Item>
-                        <Dropdown.Item>Edit guard</Dropdown.Item>
+                        <Dropdown.Item  onClick={() => sendGuardToEdit(guard)}>Edit guard</Dropdown.Item>
+                        <Dropdown.Item>Assign guard to beat</Dropdown.Item>
                         <Dropdown.Item onClick={() => {
                           props.setSelectedGuard(guard)
                           props.setOpen(true)
-                        }}>Remove and deactivate</Dropdown.Item>
+                        }}>Deactivate</Dropdown.Item>
                       </Dropdown>
                     </td>
                   </tr>

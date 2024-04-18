@@ -79,6 +79,7 @@ function PatrolGuardList(props) {
             guards={guards}
             setSelectedGuard={setSelectedGuard}
             setOpen={setOpen}
+            setGuardToEdit={props.setGuardToEdit}
           />
         </Card>
       </div>
@@ -90,6 +91,7 @@ function PatrolGuardList(props) {
           guards={guards}
           setSelectedGuard={setSelectedGuard}
           setOpen={setOpen}
+          setGuardToEdit={props.setGuardToEdit}
         />
       </div>
 
