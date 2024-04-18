@@ -4,7 +4,10 @@ function SentRequestMobileView(props) {
   return (
     <>
       {/* sent-request-mobile-view-app works! */}
-
+      {props.sentRequestList.length < 1?(
+      <div class="bg-white p-8 rounded ">
+        <p class="text-gray-700 text-center">No Guards Here Yet</p>
+     </div>):(
       <div className="relative overflow-x-auto">
         <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
           <thead className="sr-only text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -54,10 +57,12 @@ function SentRequestMobileView(props) {
                             </button>
                           )}
                         >
-                          <Dropdown.Item>View guard</Dropdown.Item>
                           <Dropdown.Item>Edit guard</Dropdown.Item>
                           <Dropdown.Item>Complete onboarding</Dropdown.Item>
-                          <Dropdown.Item>Remove and deactivate</Dropdown.Item>
+                          <Dropdown.Item onClick={() => {
+                            props.setSelectedGuard(guard)
+                            props.setOpen(true)
+                          }}>Remove and deactivate</Dropdown.Item>
                         </Dropdown>
                       </div>
                     </div>
@@ -67,7 +72,7 @@ function SentRequestMobileView(props) {
             })}
           </tbody>
         </table>
-      </div>
+      </div>)}
     </>
   );
 }

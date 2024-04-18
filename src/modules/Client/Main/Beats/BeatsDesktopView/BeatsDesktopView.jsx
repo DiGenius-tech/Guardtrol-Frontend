@@ -45,25 +45,25 @@ function BeatsDesktopView(props) {
             {props?.beatList.map((beat) => {
               return (
                 <tr
-                  key={beat.id}
+                  key={beat._id}
                   className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
                 >
                   <th
                     scope="row"
                     className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                   >
-                    {beat.title}
+                    {beat.name}
                   </th>
                   <td className="px-6 py-4">
-                    {beat.numberOfGuards}&nbsp;guard
-                    {beat.numberOfGuards > 1 ? <span>s</span> : ""}
+                    {beat.guards.length}&nbsp;guard
+                    {beat.guards.length > 1 ? <span>s</span> : ""}
                   </td>
                   <td className="px-6 py-4">
-                    {beat.patrolPoints}&nbsp;point
-                    {beat.patrolPoints > 1 ? <span>s</span> : ""}
+                    {beat.routes?.length || 0}&nbsp;point
+                    {beat.routes?.length || 0 > 1 ? <span>s</span> : ""}
                   </td>
                   <td className="px-6 py-4">
-                    {beat.beatStatus ? (
+                    {beat.isactive ? (
                       <span className="text-green-400">Active</span>
                     ) : (
                       <span className="text-red-400">Not active</span>

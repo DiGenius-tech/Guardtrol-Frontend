@@ -1,12 +1,48 @@
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Card } from "flowbite-react";
 import icon_menu_dots from "../../../../../images/icons/icon-menu-dots.svg";
 import { beat_list } from "../beat-list";
 import BeatsDesktopView from "../BeatsDesktopView/BeatsDesktopView";
 import BeatsMobileView from "../BeatsMobileView/BeatsMobileView";
 import { Link } from 'react-router-dom';
+import { toast } from "react-toastify";
+import useHttpRequest from '../../../../../shared/Hooks/HttpRequestHook';
+import { AuthContext } from '../../../../../shared/Context/AuthContext';
 
 const BeatList = () => {
+  const auth = useContext(AuthContext)
+  const { isLoading, error, responseData, sendRequest } = useHttpRequest();
+  const [beats, setBeats] = useState([])
+
+  const [selectedBeat, setSelectedBeat] = useState(null)
+  const [open, setOpen] = useState(false)
+
+  const handleSentRequest = async () => {
+    const data = await sendRequest(
+      `http://localhost:5000/api/beat/getbeats/${auth.user.userid}`,
+      'GET',
+      null,
+      {
+        "Content-Type": "application/json",
+        'Authorization': `Bearer ${auth.token}`,
+      }
+    )
+   if(data){
+      const beats = data.beats
+      setBeats(beats)
+   }
+
+  };
+
+  useEffect(() => {
+    handleSentRequest();
+  }, [auth.token]);
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error)
+    }
+  }, [error])
     return (
         <>
             {/* beat-list-app works! */}
@@ -18,12 +54,19 @@ const BeatList = () => {
             </div>
             <div className="hidden sm:block">
                 <Card>
-                    <BeatsDesktopView beatList={beat_list} icon_menu_dots={icon_menu_dots} />
+                    <BeatsDesktopView beatList={beats} icon_menu_dots={icon_menu_dots} 
+                        setSelectedBeat={setSelectedBeat}
+                        setOpen={setOpen}
+                    />
                 </Card>
             </div>
 
             <div className="sm:hidden">
-                <BeatsMobileView beatList={beat_list} icon_menu_dots={icon_menu_dots} />
+                <BeatsMobileView beatList={beats} icon_menu_dots={icon_menu_dots}
+                    setSelectedBeat={setSelectedBeat}
+                    setOpen={setOpen}
+                
+                />
             </div>
         </>
     );

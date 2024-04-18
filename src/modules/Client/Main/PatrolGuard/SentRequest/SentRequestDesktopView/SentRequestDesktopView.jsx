@@ -1,11 +1,19 @@
 import { Dropdown } from "flowbite-react";
 
+
 function SentRequestDesktopView(props) {
+  
+
+ 
   return (
     <>
       {/* sent-request-desktop-view-app works! */}
+      {props.sentRequestList.length < 1?(
+      <div class="bg-white p-8 rounded ">
+        <p class="text-gray-700 text-center">No Guards Here Yet</p>
+     </div>):
 
-        <div className="patrol-guard-list-table">
+        (<div className="patrol-guard-list-table">
           <div className="relative overflow-x-auto">
             <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
               <thead className="text-sm text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -16,9 +24,9 @@ function SentRequestDesktopView(props) {
                   <th scope="col" className="px-6 py-3 whitespace-nowrap">
                     Phone number
                   </th>
-                  <th scope="col" className="px-6 py-3 whitespace-nowrap">
+                  {/* <th scope="col" className="px-6 py-3 whitespace-nowrap">
                     Email address
-                  </th>
+                  </th> */}
                   <th scope="col" className="px-6 py-3 whitespace-nowrap">
                     <span className="sr-only">Action</span>
                   </th>
@@ -28,7 +36,7 @@ function SentRequestDesktopView(props) {
                 {props.sentRequestList?.map((guard) => {
                   return (
                     <tr
-                      key={guard.id}
+                      key={guard._id}
                       className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
                     >
                       <th
@@ -47,7 +55,7 @@ function SentRequestDesktopView(props) {
                         </div>
                       </th>
                       <td className="px-6 py-4"> {guard.phone}</td>
-                      <td className="px-6 py-4"> {guard.email}</td>
+                      {/* <td className="px-6 py-4"> {guard.email}</td> */}
                       <td className="px-6 py-4">
                         <Dropdown
                           label=""
@@ -60,8 +68,11 @@ function SentRequestDesktopView(props) {
                           )}
                         >
                           <Dropdown.Item>Edit guard</Dropdown.Item>
-                          <Dropdown.Item>Send reminder</Dropdown.Item>
-                          <Dropdown.Item>Remove guard</Dropdown.Item>
+                          <Dropdown.Item>Complete OnBoarding</Dropdown.Item>
+                          <Dropdown.Item onClick={() => {
+                            props.setSelectedGuard(guard)
+                            props.setOpen(true)
+                          }}>Remove guard</Dropdown.Item>
                         </Dropdown>
                       </td>
                     </tr>
@@ -70,7 +81,7 @@ function SentRequestDesktopView(props) {
               </tbody>
             </table>
           </div>
-        </div>
+        </div>)}
     </>
   );
 }

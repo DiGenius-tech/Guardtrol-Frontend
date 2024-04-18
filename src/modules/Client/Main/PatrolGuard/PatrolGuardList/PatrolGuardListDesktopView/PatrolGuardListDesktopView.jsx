@@ -5,7 +5,10 @@ function PatrolGuardListDesktopView(props) {
   return (
     <>
       {/* patrol-guard-list-desktop-view-app works! */}
-
+      {props.guards.length < 1?(
+      <div class="bg-white p-8 rounded ">
+        <p class="text-gray-700 text-center">No Guards Here Yet</p>
+     </div>):(
       <div className="patrol-guard-list-table">
         <div className="relative overflow-x-auto">
           <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
@@ -17,9 +20,9 @@ function PatrolGuardListDesktopView(props) {
                 <th scope="col" className="px-6 py-3 whitespace-nowrap">
                   Phone number
                 </th>
-                <th scope="col" className="px-6 py-3 whitespace-nowrap">
+                {/* <th scope="col" className="px-6 py-3 whitespace-nowrap">
                   Email address
-                </th>
+                </th> */}
                 <th scope="col" className="px-6 py-3 whitespace-nowrap">
                   Status
                 </th>
@@ -29,7 +32,7 @@ function PatrolGuardListDesktopView(props) {
               </tr>
             </thead>
             <tbody>
-              {patrol_guards.map((guard) => {
+              {props.guards.map((guard) => {
                 return (
                   <tr
                     key={guard.id}
@@ -51,19 +54,19 @@ function PatrolGuardListDesktopView(props) {
                       </div>
                     </th>
                     <td className="px-6 py-4"> {guard.phone}</td>
-                    <td className="px-6 py-4"> {guard.email}</td>
+                    {/* <td className="px-6 py-4"> {guard.email}</td> */}
                     <td className="px-6 py-4">
-                      {guard.dutyStatus === props.duty_status.OFF_DUTY ? (
+                      {guard.status === "off-duty" ? (
                         <span className="text-yellow-300 font-semibold">
-                          Off duty
+                          Off Duty
                         </span>
-                      ) : guard.dutyStatus === props.duty_status.ON_DUTY ? (
+                      ) : guard.status === "on-duty" ? (
                         <span className="text-green-300 font-semibold">
-                          On duty
+                          On Duty
                         </span>
                       ) : (
                         <span className="text-gray-300 font-semibold">
-                          Removed
+                          Suspended
                         </span>
                       )}
                     </td>
@@ -80,8 +83,10 @@ function PatrolGuardListDesktopView(props) {
                       >
                         <Dropdown.Item>View guard</Dropdown.Item>
                         <Dropdown.Item>Edit guard</Dropdown.Item>
-                        <Dropdown.Item>Complete onboarding</Dropdown.Item>
-                        <Dropdown.Item>Remove and deactivate</Dropdown.Item>
+                        <Dropdown.Item onClick={() => {
+                          props.setSelectedGuard(guard)
+                          props.setOpen(true)
+                        }}>Remove and deactivate</Dropdown.Item>
                       </Dropdown>
                     </td>
                   </tr>
@@ -90,7 +95,7 @@ function PatrolGuardListDesktopView(props) {
             </tbody>
           </table>
         </div>
-      </div>
+      </div>)}
     </>
   );
 }
