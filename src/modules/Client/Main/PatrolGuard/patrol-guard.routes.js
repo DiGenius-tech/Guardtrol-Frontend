@@ -1,3 +1,4 @@
+import ActivateGuard from "./ActivateGuard/ActivateGuard";
 import PatrolGuard from "./PatrolGuard";
 import PatrolGuardDetails from "./PatrolGuardDetails/PatrolGuardDetails";
 import PatrolGuardList from "./PatrolGuardList/PatrolGuardList";
@@ -13,6 +14,10 @@ const patrol_guard_routes = {
         {
             path: "details/:guardId",
             element: <PatrolGuardDetails />
+        },
+        {
+            path: "activate/:guardId",
+            element: <ActivateGuard />
         }
     ]
 

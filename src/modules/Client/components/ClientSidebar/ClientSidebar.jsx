@@ -14,7 +14,8 @@ import { Link, useLocation, useParams } from 'react-router-dom';
 const ClientSidebar = () => {
     const location = useLocation();
 
-    let use_params = useParams()
+    let use_params = useParams();
+    console.log("use_params: ", use_params)
     /**QUERIES */
     const use_params_keys = []
     for (const key in use_params) {
@@ -29,6 +30,30 @@ const ClientSidebar = () => {
     const patrol_guard = ["/client/patrol-guard", "/client/patrol-guard/"];
     const beats = ["/client/beats", "/client/beats/", "/client/beats/configure-beat", "/client/beats/configure-beat/"];
     const settings = ["/client/settings"];
+
+
+
+    useEffect(() => {
+        // Get the query string from the URL
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+
+        console.log("urlParams: ", urlParams)
+
+        // Initialize an object to store the query parameters
+        const params = {};
+    
+        // Iterate through each parameter in the query string
+        for (const [key, value] of urlParams) {
+          // Add the parameter to the object
+          params[key] = value;
+        }
+        console.log("params: ", params)
+
+        return () => {
+
+        };
+    }, []);
 
 
     return (
