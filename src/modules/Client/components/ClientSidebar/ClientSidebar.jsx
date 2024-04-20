@@ -34,21 +34,14 @@ const ClientSidebar = () => {
 
 
     useEffect(() => {
-        // Get the query string from the URL
         const queryString = window.location.search;
         const urlParams = new URLSearchParams(queryString);
 
-        console.log("urlParams: ", urlParams)
-
-        // Initialize an object to store the query parameters
         const params = {};
     
-        // Iterate through each parameter in the query string
         for (const [key, value] of urlParams) {
-          // Add the parameter to the object
           params[key] = value;
         }
-        console.log("params: ", params)
 
         return () => {
 

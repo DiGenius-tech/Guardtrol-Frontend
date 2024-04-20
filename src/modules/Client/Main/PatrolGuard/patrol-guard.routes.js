@@ -1,6 +1,8 @@
 import ActivateGuard from "./ActivateGuard/ActivateGuard";
 import PatrolGuard from "./PatrolGuard";
 import PatrolGuardDetails from "./PatrolGuardDetails/PatrolGuardDetails";
+import ActivePatrolGuards from "./PatrolGuardList/ActivePatrolGuards/ActivePatrolGuards";
+import InactivePatrolGuards from "./PatrolGuardList/InactivePatrolGuards/InactivePatrolGuards";
 import PatrolGuardList from "./PatrolGuardList/PatrolGuardList";
 
 const patrol_guard_routes = {
@@ -10,6 +12,20 @@ const patrol_guard_routes = {
         {
             path: "",
             element: <PatrolGuardList />,
+            children: [
+                {
+                    path: "",
+                    element: <ActivePatrolGuards />
+                },
+                {
+                    path: "active",
+                    element: <ActivePatrolGuards />
+                },
+                {
+                    path: "inactive",
+                    element: <InactivePatrolGuards />
+                },
+            ]
         },
         {
             path: "details/:guardId",

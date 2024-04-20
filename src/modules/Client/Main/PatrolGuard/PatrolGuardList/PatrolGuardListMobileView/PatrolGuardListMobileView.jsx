@@ -1,12 +1,7 @@
 import { Dropdown } from "flowbite-react";
-import { patrol_guards } from "../../patrol-guard-list";
 import { Link } from "react-router-dom";
 
 function PatrolGuardListMobileView(props) {
-  const sendGuardToEdit = (data) => {
-    console.log("data: ", data)
-    props.setGuardToEdit(data)
-  }
   return (
     <>
       {/* patrol-guard-list-mobile-view-app works! */}
@@ -27,9 +22,12 @@ function PatrolGuardListMobileView(props) {
             </tr>
           </thead>
           <tbody>
-            {patrol_guards?.map((guard) => {
+            {props.patrol_guards?.map((guard) => {
               return (
-                <tr key={guard.id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                <tr
+                  key={guard.id}
+                  className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+                >
                   <th
                     scope="row"
                     className="p-2 font-medium text-gray-900 whitespace-nowrap dark:text-white"
@@ -41,9 +39,7 @@ function PatrolGuardListMobileView(props) {
                   <td className="p-2">
                     <div>
                       <div>
-                        <Link to={`details/${guard.id}`}>
-                          {guard.name}
-                        </Link>
+                        <Link to={`details/${guard.id}`}>{guard.name}</Link>
                       </div>
                       <small className="text-dark-250">{guard.email}</small>
                     </div>
@@ -63,7 +59,7 @@ function PatrolGuardListMobileView(props) {
                             </span>
                           ) : (
                             <span className="text-gray-300 font-semibold">
-                              Removed
+                              Null
                             </span>
                           )}
                         </div>
@@ -79,7 +75,10 @@ function PatrolGuardListMobileView(props) {
                             </button>
                           )}
                         >
-                          <Dropdown.Item onClick={() => sendGuardToEdit(guard)}>Edit guard</Dropdown.Item>
+                          <Dropdown.Item>
+                            <Link
+                              to={`/client/patrol-guard/details/${guard.id}`}>Edit guard</Link>
+                          </Dropdown.Item>
                           <Dropdown.Item>Assign guard to beat</Dropdown.Item>
                           <Dropdown.Item>Deactivate</Dropdown.Item>
                         </Dropdown>
