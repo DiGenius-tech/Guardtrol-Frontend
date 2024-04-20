@@ -67,9 +67,6 @@
       transition: margin-left 300ms ease-in-out;
       .page {
         flex-basis: 100%;
-        &:nth-child(odd) {
-          background-color: lightgreen;
-        }
       }
     }
   }

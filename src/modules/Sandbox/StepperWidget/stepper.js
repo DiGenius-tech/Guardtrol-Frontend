@@ -1,5 +1,5 @@
 class Stepper {
-    marginCount = 0;
+    marginSize = 0;
     fullWidth = 100;
     progressBar = null;
     progressPoints = null;
@@ -18,25 +18,25 @@ class Stepper {
 
 
     stepForward() {
-        if (this.marginCount != -this.maxPages) {
-            (this.marginCount) -= (this.fullWidth);
-            if (this.pagesWrapper) { this.pagesWrapper.style.marginLeft = this.marginCount + "% " };
-            this.updateProgress(this.marginCount);
+        if (this.marginSize != -this.maxPages) {
+            (this.marginSize) -= (this.fullWidth);
+            if (this.pagesWrapper) { this.pagesWrapper.style.marginLeft = this.marginSize + "% " };
+            this.updateProgress(this.marginSize);
         }
     }
     stepBackward() {
-        if (this.marginCount < 0) {
-            this.marginCount = this.marginCount + (this.fullWidth)
+        if (this.marginSize < 0) {
+            this.marginSize = this.marginSize + (this.fullWidth)
             if (this.pagesWrapper) {
-                this.pagesWrapper.style.marginLeft = this.marginCount + "% ";
+                this.pagesWrapper.style.marginLeft = this.marginSize + "% ";
             }
-            this.updateProgress(this.marginCount);
+            this.updateProgress(this.marginSize);
         }
     }
 
 
-    updateProgress(marginCount) {
-        let pagesWidthNotPassed = this.pagesWrapperWidth + marginCount;
+    updateProgress(marginSize) {
+        let pagesWidthNotPassed = this.pagesWrapperWidth + marginSize;
         let numberOfScreensNotPassed = pagesWidthNotPassed / (this.fullWidth);
         let currentScreenNumber = (this.pageCount + 1) - numberOfScreensNotPassed;
 
@@ -56,6 +56,11 @@ class Stepper {
             const element = this.progressPoints[i];
             element?.classList.add("passed")
         }
+    }
+
+
+    getMarginSize() {
+        return this.marginSize;
     }
 }
 
