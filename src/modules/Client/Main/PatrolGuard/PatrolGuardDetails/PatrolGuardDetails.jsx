@@ -5,6 +5,7 @@ import EditGuarantorForm from "../EditGuard/EditGuarantorForm/EditGuarantorForm"
 import EditIdentification from "../EditGuard/EditIdentification/EditIdentification";
 import BankDetails from "../EditGuard/BankDetails/BankDetails";
 import EditNextOfKin from "../EditGuard/EditNextOfKin/EditNextOfKin";
+import EditNewGuarantorForm from "../EditGuard/EditNewGuarantorForm/EditNewGuarantorForm";
 
 const PatrolGuardDetails = () => {
   const [isComment, setIsComment] = useState(false);
@@ -111,6 +112,7 @@ const PatrolGuardDetails = () => {
             <EditPersonalInformation />
           </Tabs.Item>
           <Tabs.Item title="Guarantor form">
+            <EditNewGuarantorForm />
             <EditGuarantorForm />
           </Tabs.Item>
           <Tabs.Item title="Identification">
