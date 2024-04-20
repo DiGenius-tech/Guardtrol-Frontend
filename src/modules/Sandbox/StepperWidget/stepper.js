@@ -44,11 +44,15 @@ class Stepper {
             const element = this.progressPoints[i];
             element.classList.remove(this.progressClassname);
         }
+        for (let i = 0; i < this.progressPoints.length; i++) {
+            const element = this.progressPoints[i];
+            element.classList.remove("passed");
+        }
         for (let i = 0; i < currentScreenNumber; i++) {
             const element = this.progressPoints[i];
             element?.classList.add(this.progressClassname)
         }
-        for (let i = 0; i < (currentScreenNumber-1); i++) {
+        for (let i = 0; i < (currentScreenNumber - 1); i++) {
             const element = this.progressPoints[i];
             element?.classList.add("passed")
         }
