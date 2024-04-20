@@ -20,7 +20,7 @@ const beats_routes = {
             element: <AddBeat/>
         },
         {
-            path: "details/:id",
+            path: "details/:beatId",
             element: <BeatDetails/>
         }
     ]

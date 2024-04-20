@@ -1,5 +1,6 @@
 import { Dropdown } from "flowbite-react";
 import EditBeat from "../EditBeat/EditBeat";
+import { Link } from "react-router-dom";
 
 function BeatsMobileView(props) {
   return (
@@ -15,7 +16,13 @@ function BeatsMobileView(props) {
                     scope="row"
                     className="p-2 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                   >
-                    <div>{beat.title}</div>
+                    <div>
+                      <Link
+                        to={`details/${beat.id}`}
+                      >
+                        {beat.title}
+                      </Link>
+                    </div>
                     <small className="text-dark-250">
                       {beat.patrolPoints}&nbsp;point
                       {beat.patrolPoints > 1 ? <span>s</span> : ""}
