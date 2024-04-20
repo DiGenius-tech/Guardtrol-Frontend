@@ -27,7 +27,19 @@ const sexOptions = [
 const BTN = {
     PERSONAL_INFO: "PERSONAL_INFO",
     WORK_INFO: "WORK_INFO",
+    IDENTIFICATION: "IDENTIFICATION",
 }
+
+const identificationTypeOptions = [
+    {
+        name: "Type one",
+        value: "typeOne"
+    },
+    {
+        name: "Type two",
+        value: "typeTwo"
+    },
+]
 const EditGuarantorForm = () => {
     const [validationErrors, setValidationErrors] = useState({});
     const pagesRef = useRef();
@@ -39,8 +51,13 @@ const EditGuarantorForm = () => {
         dob: "",
         sex: "",
         phone: "",
+        // 
         altPhone: "",
         placeOfWork: "",
+        rank: "",
+        // 
+        nin: "",
+        identificationNumber: "",
         rank: "",
     });
     const [stepperMargin, setstepperMargin] = useState(0);
@@ -48,6 +65,7 @@ const EditGuarantorForm = () => {
     const [title, setTitle] = useState(titleOptions[0]);
     const [sex, setSex] = useState(sexOptions[0]);
     const [stepperError, setStepperError] = useState("");
+    const [identificationType, setIdentificationType] = useState(identificationTypeOptions[0]);
 
 
 
@@ -55,14 +73,12 @@ const EditGuarantorForm = () => {
         setStepperError("")
         setFormData({ ...formData, [e.target.name]: e.target.value });
         setValidationErrors({ ...validationErrors, [e.target.name]: "" });
-        console.log("formData: ", formData)
     };
     const handleSelectChange = (e) => {
         setStepperError("")
         let _title = JSON.parse(e.target.value)
         setFormData({ ...formData, [e.target.name]: _title.value });
         setValidationErrors({ ...validationErrors, [e.target.name]: "" });
-        console.log("formData: ", formData)
     }
 
 
@@ -162,7 +178,7 @@ const EditGuarantorForm = () => {
                                 <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z" />
                             </svg> : <span className="me-2">2</span>
                         }
-                        Account <span className="hidden sm:inline-flex sm:ms-2">Info</span>
+                        Work <span className="hidden sm:inline-flex sm:ms-2">Info</span>
                     </span>
                 </li>
                 <li className={
@@ -172,7 +188,7 @@ const EditGuarantorForm = () => {
                             <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z" />
                         </svg> : <span className="me-2">3</span>
                     }
-                    Confirmation
+                    Identification
                 </li>
             </ol>
             <div className="my-8"></div>
@@ -342,7 +358,58 @@ const EditGuarantorForm = () => {
                         </div>
                     </li>
                     <li className="page">
-                        PAge 3
+                        <div className="mx-auto max-w-xl">
+                            <fieldset>
+                                <legend className='text-xl font-semibold mb-16 text-center'>Identification</legend>
+                                {
+                                    stepperError ? <div className="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 text-center" role="alert">
+                                        <span className="font-medium">Please!</span> Complete required fields!.
+                                    </div> : ""
+                                }
+
+                                <div className="grid grid-cols-12 gap-x-4">
+                                    <div className="col-span-12 sm:col-span-6">
+                                        <TextInputField
+                                            label="NIN"
+                                            semibold_label={true}
+                                            type="text"
+                                            id="nin"
+                                            required="required"
+                                            name="nin"
+                                            value={formData.nin}
+                                            onChange={handleChange}
+                                            error={validationErrors['nin']}
+                                        />
+                                    </div>
+                                    <div className="col-span-12 sm:col-span-6">
+                                        <TextInputField
+                                            label="Identification number"
+                                            semibold_label={true}
+                                            type="text"
+                                            id="identificationNumber"
+                                            required="required"
+                                            name="identificationNumber"
+                                            value={formData.identificationNumber}
+                                            onChange={handleChange}
+                                            error={validationErrors['identificationNumber']}
+                                        />
+                                    </div>
+                                    <div className="col-span-12">
+                                        <SelectField
+                                            value={identificationType}
+                                            name="IdentificationType"
+                                            id="identificationType"
+                                            label="Identification type"
+                                            semibold_label={true}
+                                            handleChangeOption={handleSelectChange}
+                                            optionList={identificationTypeOptions}
+                                            multipleSelect={false}
+                                        />
+                                    </div>
+                                </div>
+                                <RegularButton text="Complete" type="button" onClick={() => handleNextStep(BTN.IDENTIFICATION)} />
+                            </fieldset>
+                        </div>
                     </li>
                 </ul>
             </form>

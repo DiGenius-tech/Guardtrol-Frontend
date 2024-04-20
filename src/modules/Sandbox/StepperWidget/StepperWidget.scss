@@ -42,34 +42,34 @@
       }
     }
   }
-}
 
-.stepper {
-  //   background-color: lightblue;
-  overflow-x: hidden;
-  position: relative;
-  left: 0;
-  right: 0;
-  & + * {
-    display: none;
-  }
-  &.show {
-    display: block;
+  .stepper {
+    //   background-color: lightblue;
+    overflow-x: hidden;
+    position: relative;
+    left: 0;
+    right: 0;
     & + * {
-      display: flex;
+      display: none;
     }
-  }
-  .pages {
-    // "width" will be handled in javascript according to the number of direct children (page)
-    // width: 400%;
-    display: flex;
-    // "margin-left" will be handled in javascript according to click event
-    margin-left: 0;
-    transition: margin-left 300ms ease-in-out;
-    .page {
-      flex-basis: 100%;
-      &:nth-child(odd) {
-        background-color: lightgreen;
+    &.show {
+      display: block;
+      & + * {
+        display: flex;
+      }
+    }
+    .pages {
+      // "width" will be handled in javascript according to the number of direct children (page)
+      // width: 400%;
+      display: flex;
+      // "margin-left" will be handled in javascript according to click event
+      margin-left: 0;
+      transition: margin-left 300ms ease-in-out;
+      .page {
+        flex-basis: 100%;
+        &:nth-child(odd) {
+          background-color: lightgreen;
+        }
       }
     }
   }
