@@ -1,18 +1,13 @@
 import { Button, Card, Tabs } from "flowbite-react";
 import React, { useState } from "react";
 import EditPersonalInformation from "../EditGuard/EditPersonalInformation/EditPersonalInformation";
-import EditGuarantorForm from "../EditGuard/EditGuarantorForm/EditGuarantorForm";
 import EditIdentification from "../EditGuard/EditIdentification/EditIdentification";
 import BankDetails from "../EditGuard/BankDetails/BankDetails";
 import EditNextOfKin from "../EditGuard/EditNextOfKin/EditNextOfKin";
-import EditNewGuarantorForm from "../EditGuard/EditNewGuarantorForm/EditNewGuarantorForm";
+import EditGuarantorForm from "../EditGuard/EditGuarantorForm/EditGuarantorForm";
 
 const PatrolGuardDetails = () => {
   const [isComment, setIsComment] = useState(false);
-
-  const openCommentForm = () => {
-    setIsComment(!isComment);
-  };
 
   return (
     <>
@@ -69,7 +64,7 @@ const PatrolGuardDetails = () => {
                 </small>
                 <div className="my-4"></div>
                 <button
-                  onClick={openCommentForm}
+                  onClick={()=>setIsComment(true)}
                   className="text-secondary-500 font-semibold"
                 >
                   Edit comment
@@ -93,12 +88,21 @@ const PatrolGuardDetails = () => {
                       placeholder="Leave a comment..."
                     ></textarea>
                   </div>
-                  <button
-                    type="submit"
-                    className="text-white bg-primary-600 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
-                  >
-                    Submit
-                  </button>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="submit"
+                      className="text-white bg-primary-600 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+                    >
+                      Submit
+                    </button>
+                    <button
+                    onClick={()=>setIsComment(false)}
+                      type="button"
+                      className="text-white bg-gray-300 focus:outline-none font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
+                    >
+                      Cancel
+                    </button>
+                  </div>
                 </form>
               </>
             )}
@@ -112,8 +116,7 @@ const PatrolGuardDetails = () => {
             <EditPersonalInformation />
           </Tabs.Item>
           <Tabs.Item title="Guarantor form">
-            <EditNewGuarantorForm />
-            {/* <EditGuarantorForm /> */}
+            <EditGuarantorForm />
           </Tabs.Item>
           <Tabs.Item title="Identification">
             <EditIdentification />

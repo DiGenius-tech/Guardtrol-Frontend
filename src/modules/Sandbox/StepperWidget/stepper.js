@@ -18,6 +18,8 @@ class Stepper {
 
 
     stepForward() {
+        console.log("this.marginSize: ", this.marginSize)
+        console.log("this.maxPages: ", this.maxPages)
         if (this.marginSize != -this.maxPages) {
             (this.marginSize) -= (this.fullWidth);
             if (this.pagesWrapper) { this.pagesWrapper.style.marginLeft = this.marginSize + "% " };
