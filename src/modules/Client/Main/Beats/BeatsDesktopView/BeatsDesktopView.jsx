@@ -1,6 +1,7 @@
 import { Dropdown } from "flowbite-react";
 import EditBeat from "../EditBeat/EditBeat";
 import AlertDialog from "../../../../../shared/Dialog/AlertDialog";
+import { Link } from "react-router-dom";
 
 function BeatsDesktopView(props) {
 

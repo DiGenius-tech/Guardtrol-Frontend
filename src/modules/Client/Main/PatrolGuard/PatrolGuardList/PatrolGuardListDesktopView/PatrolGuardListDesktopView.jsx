@@ -1,13 +1,8 @@
 import { Dropdown } from "flowbite-react";
-import { patrol_guards } from "../../patrol-guard-list";
+import { Link } from "react-router-dom";
 
 function PatrolGuardListDesktopView(props) {
 
-
-  const sendGuardToEdit = (data)=>{
-    console.log("data: ", data)
-    props.setGuardToEdit(data)
-  }
   return (
     <>
       {/* patrol-guard-list-desktop-view-app works! */}
@@ -48,16 +43,18 @@ function PatrolGuardListDesktopView(props) {
                       scope="row"
                       className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                     >
-                      <div className="flex items-center gap-2">
-                        <div className="h-8 w-8 rounded-full overflow-hidden">
-                          <img src={guard.profileImage} alt={guard.name} />
+                      <Link to={`/client/patrol-guard/details/${guard.id}`}>
+                        <div className="flex items-center gap-2">
+                          <div className="h-8 w-8 rounded-full overflow-hidden">
+                            <img src={guard.profileImage} alt={guard.name} />
+                          </div>
+                          {guard.name}
+                          <span className="block sm:hidden">
+                            <br />
+                            {/* {time} */}
+                          </span>
                         </div>
-                        {guard.name}
-                        <span className="block sm:hidden">
-                          <br />
-                          {/* {time} */}
-                        </span>
-                      </div>
+                      </Link>
                     </th>
                     <td className="px-6 py-4"> {guard.phone}</td>
                     {/* <td className="px-6 py-4"> {guard.email}</td> */}
@@ -87,7 +84,9 @@ function PatrolGuardListDesktopView(props) {
                           </button>
                         )}
                       >
-                        <Dropdown.Item  onClick={() => sendGuardToEdit(guard)}>Edit guard</Dropdown.Item>
+                        <Dropdown.Item>
+                          <Link to={`/client/patrol-guard/details/${guard.id}`}>Edit guard</Link>
+                        </Dropdown.Item>
                         <Dropdown.Item>Assign guard to beat</Dropdown.Item>
                         <Dropdown.Item onClick={() => {
                           props.setSelectedGuard(guard)

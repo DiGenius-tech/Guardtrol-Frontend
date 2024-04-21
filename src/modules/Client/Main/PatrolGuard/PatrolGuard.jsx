@@ -4,6 +4,7 @@ import "./PatrolGuard.scss";
 import PatrolGuardList from "./PatrolGuardList/PatrolGuardList";
 import SentRequest from "./SentRequest/SentRequest";
 import EditGuard from "./EditGuard/EditGuard";
+import { Outlet } from "react-router-dom";
 
 const PatrolGuard = () => {
   const [guardToEdit, setGuardToEdit] = useState(null)

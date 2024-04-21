@@ -1,4 +1,3 @@
-import { Card } from "flowbite-react";
 import "./PatrolGuardList.scss";
 import PatrolGuardListDesktopView from "./PatrolGuardListDesktopView/PatrolGuardListDesktopView";
 import PatrolGuardListMobileView from "./PatrolGuardListMobileView/PatrolGuardListMobileView";
@@ -8,6 +7,7 @@ import { AuthContext } from "../../../../../shared/Context/AuthContext";
 import { useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import AlertDialog from "../../../../../shared/Dialog/AlertDialog";
+import { Card } from "flowbite-react";
 
 const duty_status = {
   OFF_DUTY: 0,

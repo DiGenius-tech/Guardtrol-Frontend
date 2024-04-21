@@ -1,6 +1,7 @@
 import { Dropdown } from "flowbite-react";
 import EditBeat from "../EditBeat/EditBeat";
 import AlertDialog from "../../../../../shared/Dialog/AlertDialog";
+import { Link } from "react-router-dom";
 
 function BeatsMobileView(props) {
   const sendBeatToUpdate = (beat) => {
@@ -21,7 +22,13 @@ function BeatsMobileView(props) {
                     scope="row"
                     className="p-2 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                   >
-                    <div>{beat.title}</div>
+                    <div>
+                      <Link
+                        to={`details/${beat.id}`}
+                      >
+                        {beat.title}
+                      </Link>
+                    </div>
                     <small className="text-dark-250">
                       {beat.routes?.length||0}&nbsp;point
                       {beat.routes?.length||0 > 1 ? <span>s</span> : ""}
