@@ -56,7 +56,7 @@ const EditPersonalInformation = () => {
       <form action="">
         <div className="mx-auto max-w-xl">
           <fieldset>
-            <legend className="text-xl font-semibold mb-16 text-center">
+            <legend className="text-xl font-semibold mb-8 text-center">
               Personal info
             </legend>
             <div className="grid grid-cols-12 gap-x-4">

@@ -198,7 +198,7 @@ const EditGuarantorForm = () => {
 
                         <div className="mx-auto max-w-xl">
                             <fieldset>
-                                <legend className='text-xl font-semibold mb-16 text-center'>Personal Information</legend>
+                                <legend className='text-xl font-semibold mb-8 text-center'>Personal Information</legend>
 
                                 {
                                     stepperError ? <div className="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 text-center" role="alert">
@@ -318,7 +318,7 @@ const EditGuarantorForm = () => {
 
                         <div className="mx-auto max-w-xl">
                             <fieldset>
-                                <legend className='text-xl font-semibold mb-16 text-center'>Work Information</legend>
+                                <legend className='text-xl font-semibold mb-8 text-center'>Work Information</legend>
                                 {
                                     stepperError ? <div className="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 text-center" role="alert">
                                         <span className="font-medium">Please!</span> {stepperError}.
@@ -360,7 +360,7 @@ const EditGuarantorForm = () => {
                     <li className="page">
                         <div className="mx-auto max-w-xl">
                             <fieldset>
-                                <legend className='text-xl font-semibold mb-16 text-center'>Identification</legend>
+                                <legend className='text-xl font-semibold mb-8 text-center'>Identification</legend>
                                 {
                                     stepperError ? <div className="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 text-center" role="alert">
                                         <span className="font-medium">Please!</span> Complete required fields!.
