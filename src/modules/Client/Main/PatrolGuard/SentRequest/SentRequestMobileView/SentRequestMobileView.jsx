@@ -57,12 +57,11 @@ function SentRequestMobileView(props) {
                             </button>
                           )}
                         >
-                          <Dropdown.Item>Edit guard</Dropdown.Item>
-                          <Dropdown.Item>Complete onboarding</Dropdown.Item>
+                          <Dropdown.Item onClick={() => props.setGuardToEdit(guard)}>Complete onboarding</Dropdown.Item>
                           <Dropdown.Item onClick={() => {
                             props.setSelectedGuard(guard)
                             props.setOpen(true)
-                          }}>Remove and deactivate</Dropdown.Item>
+                          }}>Remove</Dropdown.Item>
                         </Dropdown>
                       </div>
                     </div>

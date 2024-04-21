@@ -1,7 +1,13 @@
 import { Dropdown } from "flowbite-react";
 import EditBeat from "../EditBeat/EditBeat";
+import AlertDialog from "../../../../../shared/Dialog/AlertDialog";
 
 function BeatsMobileView(props) {
+  const sendBeatToUpdate = (beat) => {
+    
+    props.setOpenModal(true)
+    props.setBeatToEdit(beat)
+  }
   return (
     <>
       {/* beats-mobile-view-app works! */}
@@ -17,16 +23,16 @@ function BeatsMobileView(props) {
                   >
                     <div>{beat.title}</div>
                     <small className="text-dark-250">
-                      {beat.patrolPoints}&nbsp;point
-                      {beat.patrolPoints > 1 ? <span>s</span> : ""}
+                      {beat.routes?.length||0}&nbsp;point
+                      {beat.routes?.length||0 > 1 ? <span>s</span> : ""}
                     </small>
                   </th>
                   <td className="p-2">
                     <div className="flex items-center justify-end gap-2">
                       <div className="flex flex-col items-end">
                         <div className="text-dark-250">
-                          {beat.numberOfGuards}&nbsp;guard
-                          {beat.patrolPoints > 1 ? <span>s</span> : ""}
+                          {beat.guards?.length||0}&nbsp;guard
+                          {beat.guards?.length||0 > 1 ? <span>s</span> : ""}
                         </div>
                         <div>
                           {beat.beatStatus ? (
@@ -48,8 +54,11 @@ function BeatsMobileView(props) {
                             </button>
                           )}
                         >
-                          <Dropdown.Item href="#">Edit beat</Dropdown.Item>
-                          <Dropdown.Item>Deactivate beat</Dropdown.Item>
+                          <Dropdown.Item onClick={() => sendBeatToUpdate(beat)}>Edit beat</Dropdown.Item>
+                          <Dropdown.Item onClick={() => {
+                            props.setBeatToDelete(beat)
+                            props.setOpen(true)
+                          }}>Delete beat</Dropdown.Item>
                         </Dropdown>
                       </div>
                     </div>
@@ -60,6 +69,14 @@ function BeatsMobileView(props) {
           </tbody>
         </table>
       </div>
+      <AlertDialog
+        open={props.open}
+        title="Delete Beat ?"
+        description="Are you sure you want to delete this Beat ?, you can't revert this action"
+        setOpen={props.setOpen}
+        actionText="Delete"
+        action={props.handleDeleteBeat}
+      />
     </>
   );
 }

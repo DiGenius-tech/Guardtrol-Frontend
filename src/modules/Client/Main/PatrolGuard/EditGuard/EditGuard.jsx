@@ -61,7 +61,7 @@ const EditGuard = (props) => {
                                 </Tabs>
                             </div>
                         </div>
-                    </Modal.Body>
+                    </Modal.Body> 
                 </Modal>
             </div>
         </>

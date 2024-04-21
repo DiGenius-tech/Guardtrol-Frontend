@@ -5,13 +5,17 @@ import TextareaField from "../../../../Sandbox/TextareaField/TextareaField";
 import TextInputField from "../../../../Sandbox/InputField/TextInputField";
 import useHttpRequest from "../../../../../shared/Hooks/HttpRequestHook";
 import { SubscriptionContext } from "../../../../../shared/Context/SubscriptionContext";
+import { AuthContext } from "../../../../../shared/Context/AuthContext";
+import { toast } from "react-toastify";
 
 function EditBeat(props) {
   const [validationErrors, setValidationErrors] = useState({});
+  const auth = useContext(AuthContext)
   const sub = useContext(SubscriptionContext);
   const [open, setOpen] = useState(false);
   const { isLoading, error, responseData, sendRequest } = useHttpRequest();
   const [beat, setBeat] = useState({
+    id:"",
     beat_name: "",
     address: "",
     description: ""
@@ -24,13 +28,24 @@ function EditBeat(props) {
 
   const saveBeat = async (e) => {
     e.preventDefault();
+    if (beat.beat_name === "" || beat.beat_name.length < 3) {
+      setValidationErrors({
+        ...validationErrors,
+        beat_name: "Use A Valid Beat Name"
+      });
+
+      return
+    } 
+
+    props.handleUpdateBeat(beat)
   };
 
   useEffect(() => {
     // console.log("useEffect: ", props.beatToEdit)
     if (props.beatToEdit) {
       setBeat({
-        beat_name: props.beatToEdit?.title,
+        id: props.beatToEdit?._id,
+        beat_name: props.beatToEdit?.name,
         address: props.beatToEdit?.address,
         description: props.beatToEdit?.description
       })

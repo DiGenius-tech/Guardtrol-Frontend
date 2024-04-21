@@ -32,7 +32,7 @@ function PatrolGuardList(props) {
         'Authorization': `Bearer ${auth.token}`,
       }
     ).then(data => {
-      const activeguards = data.filter(guard => !guard.isactive)
+      const activeguards = data.filter(guard => guard.isactive)
       setGuards(activeguards)
       props.setGuardCount(activeguards.length)
     })

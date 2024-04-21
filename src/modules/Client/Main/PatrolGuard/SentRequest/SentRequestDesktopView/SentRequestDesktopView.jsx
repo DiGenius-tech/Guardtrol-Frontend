@@ -67,8 +67,8 @@ function SentRequestDesktopView(props) {
                             </button>
                           )}
                         >
-                          <Dropdown.Item>Edit guard</Dropdown.Item>
-                          <Dropdown.Item>Complete OnBoarding</Dropdown.Item>
+                          
+                          <Dropdown.Item onClick={() => props.setGuardToEdit(guard)}>Complete OnBoarding</Dropdown.Item>
                           <Dropdown.Item onClick={() => {
                             props.setSelectedGuard(guard)
                             props.setOpen(true)

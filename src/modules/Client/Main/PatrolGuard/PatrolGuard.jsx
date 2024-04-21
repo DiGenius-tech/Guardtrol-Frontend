@@ -48,6 +48,7 @@ const PatrolGuard = () => {
             <SentRequest
               sentRequestCount={sentRequestCount}
               setSentRequestCount={setSentRequestCount}
+              setGuardToEdit={setGuardToEdit}
             />
           </Tabs.Item>
         </Tabs>
