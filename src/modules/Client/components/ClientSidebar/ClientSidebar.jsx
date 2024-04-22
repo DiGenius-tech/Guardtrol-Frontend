@@ -27,9 +27,21 @@ const ClientSidebar = () => {
     /**URLS */
     const dashboard = ["/client", "/client/"];
     const history = ["/client/history", "/client/history/"];
-    const patrol_guard = ["/client/patrol-guard", "/client/patrol-guard/"];
+    const patrol_guard = ["/client/patrol-guard", "/client/patrol-guard/", "/client/patrol-guard/active", "/client/patrol-guard/active/"
+        , "/client/patrol-guard/inactive", "/client/patrol-guard/inactive/"];
     const beats = ["/client/beats", "/client/beats/", "/client/beats/configure-beat", "/client/beats/configure-beat/"];
-    const settings = ["/client/settings"];
+    const settings = [
+        "/client/settings",
+        "/client/settings/",
+        "/client/settings/personal-information",
+        "/client/settings/personal-information/",
+        "/client/settings/security",
+        "/client/settings/security/",
+        "/client/settings/shift-schedule",
+        "/client/settings/shift-schedule/",
+        "/client/settings/billing",
+        "/client/settings/billing/"
+    ];
 
 
 
@@ -38,9 +50,9 @@ const ClientSidebar = () => {
         const urlParams = new URLSearchParams(queryString);
 
         const params = {};
-    
+
         for (const [key, value] of urlParams) {
-          params[key] = value;
+            params[key] = value;
         }
 
         return () => {
