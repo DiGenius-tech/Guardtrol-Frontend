@@ -23,8 +23,8 @@ const SettingPersonalInformation = () => {
   return (
     <>
       {/* setting-personal-information-app works! */}
-      <form action="">
-        <div className="grid grid-cols-12 gap-4 sm:gap-8 max-w-3xl">
+      <form action="" className="max-w-3xl">
+        <div className="grid grid-cols-12 gap-4 sm:gap-8">
           <div className="col-span-6">
             <h3 className="font-bold">Profile photo</h3>
           </div>
@@ -146,7 +146,9 @@ const SettingPersonalInformation = () => {
             />
           </div>
         </div>
-        <RegularButton text="Save Changes" width="auto" padding="px-4 py-2" />
+        <div className="text-right">
+          <RegularButton text="Save Changes" width="auto" padding="px-4 py-2" />
+        </div>
       </form>
     </>
   );
