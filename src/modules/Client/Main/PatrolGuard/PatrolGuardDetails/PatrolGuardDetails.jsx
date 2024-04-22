@@ -115,9 +115,6 @@ const PatrolGuardDetails = () => {
           <Tabs.Item active title="Personal information">
             <EditPersonalInformation />
           </Tabs.Item>
-          <Tabs.Item title="Guarantor form">
-            <EditGuarantorForm />
-          </Tabs.Item>
           <Tabs.Item title="Identification">
             <EditIdentification />
           </Tabs.Item>
@@ -126,6 +123,9 @@ const PatrolGuardDetails = () => {
           </Tabs.Item>
           <Tabs.Item title="Bank details">
             <BankDetails />
+          </Tabs.Item>
+          <Tabs.Item title="Guarantor form">
+            <EditGuarantorForm />
           </Tabs.Item>
         </Tabs>
       </div>
