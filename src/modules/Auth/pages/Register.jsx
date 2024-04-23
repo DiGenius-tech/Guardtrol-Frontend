@@ -3,16 +3,16 @@ import { Link, useNavigate } from "react-router-dom";
 import googleIconImg from "../../../../images/icons/google-social-icon.svg";
 import left_pattern_boxes from "../../../../images/left-pattern-boxes.svg";
 import right_pattern_boxes from "../../../../images/right-pattern-boxes.svg";
-import { AuthContext } from "../../../../shared/Context/AuthContext";
-import useHttpRequest from "../../../../shared/Hooks/HttpRequestHook";
+import { AuthContext } from "../../../shared/Context/AuthContext";
+import useHttpRequest from "../../../shared/Hooks/HttpRequestHook";
 import { toast } from "react-toastify";
-import TextInputField from "../../../Sandbox/InputField/TextInputField";
-import RegularButton from "../../../Sandbox/Buttons/RegularButton";
+import TextInputField from "../../Sandbox/InputField/TextInputField";
+import RegularButton from "../../Sandbox/Buttons/RegularButton";
 import { useGoogleLogin } from "@react-oauth/google";
 
 const Register = () => {
   const auth = useContext(AuthContext);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [validationErrors, setValidationErrors] = useState({});
   const { isLoading, error, responseData, sendRequest } = useHttpRequest();
   const [formData, setFormData] = useState({
@@ -20,13 +20,13 @@ const Register = () => {
     email: "",
     phone: "",
     password: "",
-    password_confirmation: ""
+    password_confirmation: "",
   });
 
   /**toggle password field type */
   const password_field_ref = useRef();
   const [password_type, setPassword_type] = useState("password");
-  
+
   const toggle_pwd_type = () => {
     password_type === "password"
       ? setPassword_type("text")
@@ -77,18 +77,17 @@ const Register = () => {
           "POST",
           JSON.stringify(formData),
           {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
           }
         );
 
         if (null != data) {
           if (auth.login(data)) {
-            navigate('../verify-email', { replace: true }) //should be dashboard
+            navigate("../verify-email", { replace: true }); //should be dashboard
             window.location.reload();
           }
           // navigate('../verify-email', {replace: true})
           // window.location.reload();
-
         }
       } catch (err) {
         console.log(err);
@@ -100,51 +99,51 @@ const Register = () => {
 
   useEffect(() => {
     if (error) {
-      toast.error(error)
+      toast.error(error);
     }
-  }, [error])
+  }, [error]);
 
   const signUp = useGoogleLogin({
-    onSuccess: response => handleSignupSuccess(response)
-  })
+    onSuccess: (response) => handleSignupSuccess(response),
+  });
 
   const handleSignupSuccess = async (response) => {
     try {
-      auth.loading(true)
-      const accessToken = response.access_token
+      auth.loading(true);
+      const accessToken = response.access_token;
 
-      const userData = await getUserInfo(accessToken)
+      const userData = await getUserInfo(accessToken);
 
-      console.log(userData)
+      console.log(userData);
       const data = await sendRequest(
         "http://localhost:5000/api/users/signupwithgoogle",
         "POST",
         JSON.stringify(userData),
         {
-          'Content-type': 'application/json'
+          "Content-type": "application/json",
         }
-      )
+      );
       if (null != data) {
         if (auth.login(data)) {
-          toast("Signup Successful")
-          navigate('/client/dashboard', { replace: true }) //should be dashboard
+          toast("Signup Successful");
+          navigate("/client/dashboard", { replace: true }); //should be dashboard
           window.location.reload();
-
         }
       }
 
       //auth.login(data.token, data.userId)
     } catch (err) {
-      console.log(err)
+      console.log(err);
     } finally {
-      auth.loading(false)
+      auth.loading(false);
     }
   };
 
   const getUserInfo = async (accessToken) => {
     try {
       const response = await sendRequest(
-        "https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=" + accessToken,
+        "https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=" +
+          accessToken,
         "GET",
         null,
         {}
@@ -155,7 +154,6 @@ const Register = () => {
       toast.error(error);
     }
   };
-
 
   const handleSignupFailure = (error) => {
     // Handle failed login
@@ -184,15 +182,13 @@ const Register = () => {
 
             <div className="block px-4 py-8 sm:p-8 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
               <form method="post" onSubmit={handleSubmit}>
-
-
                 <TextInputField
                   label="Full Name"
                   name="name"
                   type="text"
                   placeholder="Full Name"
                   id="name"
-                  error={validationErrors['name']}
+                  error={validationErrors["name"]}
                   onChange={handleChange}
                   required="required"
                   value={formData.name}
@@ -204,7 +200,7 @@ const Register = () => {
                   type="email"
                   placeholder="Email Address"
                   id="email"
-                  error={validationErrors['email']}
+                  error={validationErrors["email"]}
                   onChange={handleChange}
                   required="required"
                   value={formData.email}
@@ -215,30 +211,29 @@ const Register = () => {
                   type="number"
                   placeholder="Phone Number"
                   id="phone"
-                  error={validationErrors['phone']}
+                  error={validationErrors["phone"]}
                   onChange={handleChange}
                   required="required"
                   value={formData.phone}
                 />
 
-                <TextInputField 
+                <TextInputField
                   label="Password"
                   name="password"
                   type="password"
                   placeholder="Enter Password"
                   id="password"
-                  error={validationErrors['password']}
+                  error={validationErrors["password"]}
                   onChange={handleChange}
                   required="required"
                   value={formData.password}
                   passwordToggler={true}
-                  // 
+                  //
                   password_field_ref={password_field_ref}
                   password_type={password_type}
                   setPassword_type={setPassword_type}
                   toggle_pwd_type={toggle_pwd_type}
                 />
-                
 
                 <TextInputField
                   label="Confirm Password"
@@ -246,14 +241,12 @@ const Register = () => {
                   type="password"
                   placeholder="Confirm Password"
                   id="password_confirmation"
-                  error={validationErrors['password_confirmation']}
+                  error={validationErrors["password_confirmation"]}
                   onChange={handleChange}
                   required="required"
                   value={formData.password_confirmation}
                 />
-                <RegularButton
-                  text="Create An Account"
-                />
+                <RegularButton text="Create An Account" />
               </form>
             </div>
 

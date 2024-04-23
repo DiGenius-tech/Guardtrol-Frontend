@@ -1,45 +1,43 @@
 import React, { useContext, useEffect, useState } from "react";
-import useHttpRequest from "../../../../../shared/Hooks/HttpRequestHook";
+import useHttpRequest from "../../../../shared/Hooks/HttpRequestHook";
 import { useNavigate } from "react-router-dom";
-import TextInputField from "../../../../Sandbox/InputField/TextInputField";
-import RegularButton from "../../../../Sandbox/Buttons/RegularButton";
-import HistoryButton from "../../../../Sandbox/Buttons/HistoryButton";
-import AlertDialog from "../../../../../shared/Dialog/AlertDialog";
+import TextInputField from "../../../Sandbox/InputField/TextInputField";
+import RegularButton from "../../../Sandbox/Buttons/RegularButton";
+import HistoryButton from "../../../Sandbox/Buttons/HistoryButton";
+import AlertDialog from "../../../../shared/Dialog/AlertDialog";
 import { toast } from "react-toastify";
-import { SubscriptionContext } from "../../../../../shared/Context/SubscriptionContext";
-import TextareaField from "../../../../Sandbox/TextareaField/TextareaField";
-import { AuthContext } from "../../../../../shared/Context/AuthContext";
+import { SubscriptionContext } from "../../../../shared/Context/SubscriptionContext";
+import TextareaField from "../../../Sandbox/TextareaField/TextareaField";
+import { AuthContext } from "../../../../shared/Context/AuthContext";
 
 const AddBeat = () => {
   const [validationErrors, setValidationErrors] = useState({});
-  const auth = useContext(AuthContext)
+  const auth = useContext(AuthContext);
   const navigate = useNavigate();
   const sub = useContext(SubscriptionContext);
   const [open, setOpen] = useState(false);
   const { isLoading, error, responseData, sendRequest } = useHttpRequest();
-  const [existingBeats, setExistingBeats] = useState([])
+  const [existingBeats, setExistingBeats] = useState([]);
   const [beat, setBeat] = useState({
     beat_name: "",
     address: "",
-    description: "my location"
+    description: "my location",
   });
-
 
   const getExistingBeats = async () => {
     const data = await sendRequest(
       `http://localhost:5000/api/beat/getbeats/${auth.user.userid}`,
-      'GET',
+      "GET",
       null,
       {
         "Content-Type": "application/json",
-        'Authorization': `Bearer ${auth.token}`,
+        Authorization: `Bearer ${auth.token}`,
       }
-    )
-   if(data){
-      const beats = data.beats
-      setExistingBeats(beats)
-   }
-
+    );
+    if (data) {
+      const beats = data.beats;
+      setExistingBeats(beats);
+    }
   };
   useEffect(() => {
     getExistingBeats();
@@ -47,10 +45,10 @@ const AddBeat = () => {
 
   useEffect(() => {
     if (error) {
-      toast.error(error)
+      toast.error(error);
     }
-  }, [error])
- 
+  }, [error]);
+
   const handleChange = (e) => {
     setBeat({ ...beat, [e.target.name]: e.target.value });
     setValidationErrors({ ...validationErrors, [e.target.name]: "" });
@@ -61,10 +59,9 @@ const AddBeat = () => {
     if (beat.beat_name === "" || beat.beat_name.length < 3) {
       setValidationErrors({
         ...validationErrors,
-        beat_name: "Use A Valid Beat Name"
+        beat_name: "Use A Valid Beat Name",
       });
     } else {
-
       if (existingBeats.length === sub.currentSubscription?.maxbeats) {
         setOpen(true);
         return;
@@ -76,18 +73,16 @@ const AddBeat = () => {
         JSON.stringify(beat),
         {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${auth.token}`
+          Authorization: `Bearer ${auth.token}`,
         }
       );
-  
+
       if (data && data.status) {
-        toast("Beat Created Successfully")
+        toast("Beat Created Successfully");
         navigate("../");
         window.location.reload();
       }
-    };
-    
-  
+    }
   };
   return (
     <>

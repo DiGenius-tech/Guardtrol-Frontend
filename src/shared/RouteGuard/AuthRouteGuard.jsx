@@ -1,20 +1,15 @@
 import { useContext, useEffect, useState } from "react";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { AuthContext } from "../Context/AuthContext";
+import { useSelector } from "react-redux";
+import { selectUser } from "../../redux/selectors/auth";
 
 const AuthRouteGuard = ({ component: Component, ...rest }) => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const user = useSelector(selectUser);
 
-  useEffect(() => {
-    const storedIsLoggedIn = localStorage.getItem('userData');
-  
-    setIsLoggedIn(!!storedIsLoggedIn); 
-
-   // console.log(isLoggedIn)
-  }, []);
   const location = useLocation();
   //console.log(isLoggedIn)
-  return !isLoggedIn ? (
+  return !user ? (
     <Component {...rest} />
   ) : (
     <Navigate to="/client" state={{ from: location }} replace />

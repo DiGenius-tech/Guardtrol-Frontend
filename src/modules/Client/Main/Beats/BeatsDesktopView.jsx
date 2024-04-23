@@ -1,15 +1,13 @@
 import { Dropdown } from "flowbite-react";
-import EditBeat from "../EditBeat/EditBeat";
-import AlertDialog from "../../../../../shared/Dialog/AlertDialog";
+import EditBeat from "./EditBeat/EditBeat";
+import AlertDialog from "../../../../shared/Dialog/AlertDialog";
 import { Link } from "react-router-dom";
 
 function BeatsDesktopView(props) {
-
   const sendBeatToUpdate = (beat) => {
-    
-    props.setOpenModal(true)
-    props.setBeatToEdit(beat)
-  }
+    props.setOpenModal(true);
+    props.setBeatToEdit(beat);
+  };
   return (
     <>
       {/* beats-desktop-view-app works! */}
@@ -51,7 +49,7 @@ function BeatsDesktopView(props) {
             </tr>
           </thead>
           <tbody>
-            {props?.beatList.map((beat) => {
+            {props?.beatList?.map((beat) => {
               return (
                 <tr
                   key={beat._id}
@@ -64,8 +62,8 @@ function BeatsDesktopView(props) {
                     {beat.name}
                   </th>
                   <td className="px-6 py-4">
-                    {beat.guards?.length||0}&nbsp;guard
-                    {beat.guards?.length||0 > 1 ? <span>s</span> : ""}
+                    {beat.guards?.length || 0}&nbsp;guard
+                    {beat.guards?.length || 0 > 1 ? <span>s</span> : ""}
                   </td>
                   <td className="px-6 py-4">
                     {beat.routes?.length || 0}&nbsp;point
@@ -89,11 +87,21 @@ function BeatsDesktopView(props) {
                         </button>
                       )}
                     >
-                      <Dropdown.Item onClick={() => sendBeatToUpdate(beat)}>Edit beat</Dropdown.Item>
-                      <Dropdown.Item onClick={() => {
-                            props.setBeatToDelete(beat)
-                            props.setOpen(true)
-                          }}>Delete beat</Dropdown.Item>
+                      <Dropdown.Item
+                        onClick={() => {
+                          sendBeatToUpdate(beat);
+                        }}
+                      >
+                        Edit beat
+                      </Dropdown.Item>
+                      <Dropdown.Item
+                        onClick={() => {
+                          props.setBeatToDelete(beat);
+                          props.setOpen(true);
+                        }}
+                      >
+                        Delete beat
+                      </Dropdown.Item>
                     </Dropdown>
                   </td>
                 </tr>

@@ -3,21 +3,25 @@ import { Link, useNavigate } from "react-router-dom";
 import googleIconImg from "../../../../images/icons/google-social-icon.svg";
 import left_pattern_boxes from "../../../../images/left-pattern-boxes.svg";
 import right_pattern_boxes from "../../../../images/right-pattern-boxes.svg";
-import { AuthContext } from "../../../../shared/Context/AuthContext";
-import useHttpRequest from "../../../../shared/Hooks/HttpRequestHook";
-import TextInputField from "../../../Sandbox/InputField/TextInputField";
-import RegularButton from "../../../Sandbox/Buttons/RegularButton";
+import { AuthContext } from "../../../shared/Context/AuthContext";
+import useHttpRequest from "../../../shared/Hooks/HttpRequestHook";
+import TextInputField from "../../Sandbox/InputField/TextInputField";
+import RegularButton from "../../Sandbox/Buttons/RegularButton";
 import { useGoogleLogin } from "@react-oauth/google";
 import { toast } from "react-toastify";
+import { post } from "../../../lib/methods";
+import { useDispatch } from "react-redux";
+import { loginSuccess } from "../../../redux/slice/authSlice";
+import axios from "axios";
 
 const Login = () => {
-  const auth = useContext(AuthContext);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [validationErrors, setValidationErrors] = useState({});
-  const { isLoading, error, responseData, sendRequest } = useHttpRequest();
+  const [validationErrors, setValidationErrors] = useState<any>({});
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
-    password: ""
+    password: "",
   });
 
   /**toggle password field type */
@@ -30,15 +34,16 @@ const Login = () => {
       : setPassword_type("password");
   };
 
-  const handleChange = (e) => {
+  const handleChange = (e: any) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     setValidationErrors({ ...validationErrors, [e.target.name]: "" });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: any) => {
+    console.log("first");
     e.preventDefault();
     const form = e.currentTarget;
-    const newErrors = {};
+    const newErrors: any = {};
 
     // Check each input field's validity and set errors accordingly
     for (const el of form.elements) {
@@ -54,58 +59,43 @@ const Login = () => {
       e.stopPropagation();
     } else {
       // Form is valid, handle submission
-      auth.loading(true);
+      setIsLoading(true);
       try {
-        const data = await sendRequest(
-          "http://localhost:5000/api/users/signin",
-          "POST",
-          JSON.stringify(formData),
-          {
-            "Content-Type": "application/json"
-          }
-        );
+        const data: any = await post("users/signin", JSON.stringify(formData));
+        console.log(data);
 
-        if (null != data) {
-          auth.login(data);
+        if (data) {
+          dispatch(loginSuccess(data));
           navigate("/client/dashboard", { replace: true });
-          window.location.reload();
         }
-      } catch (err) {
+      } catch (err: any) {
+        toast.error(err);
         console.log(err);
       } finally {
-        auth.loading(false);
+        setIsLoading(false);
       }
     }
   };
 
-  useEffect(() => {
-    if (error) {
-      toast.error(error);
-    }
-  }, [error]);
-
   const signIn = useGoogleLogin({
-    onSuccess: (response) => handleSignInSuccess(response)
+    onSuccess: (response) => handleSignInSuccess(response),
   });
 
-  const handleSignInSuccess = async (response) => {
+  const handleSignInSuccess = async (response: any) => {
     try {
-      auth.loading(true);
+      setIsLoading(true);
       const accessToken = response.access_token;
 
       const userData = await getUserInfo(accessToken);
 
       console.log(userData);
-      const data = await sendRequest(
-        "http://localhost:5000/api/users/signinwithgoogle",
-        "POST",
-        JSON.stringify(userData),
-        {
-          "Content-type": "application/json"
-        }
+      const data: any = await post(
+        "users/signinwithgoogle",
+        JSON.stringify(userData)
       );
+
       if (null != data) {
-        if (auth.login(data)) {
+        if (dispatch(loginSuccess(data))) {
           navigate("/client/dashboard", { replace: true }); //should be dashboard
           window.location.reload();
         }
@@ -115,27 +105,24 @@ const Login = () => {
     } catch (err) {
       console.log(err);
     } finally {
-      auth.loading(false);
+      setIsLoading(false);
     }
   };
 
-  const getUserInfo = async (accessToken) => {
+  const getUserInfo = async (accessToken: string) => {
     try {
-      const response = await sendRequest(
+      const response = await axios.get(
         "https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=" +
-          accessToken,
-        "GET",
-        null,
-        {}
+          accessToken
       );
       return response;
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error fetching user info: ", error);
       toast.error(error);
     }
   };
 
-  const handleSignInFailure = (error) => {
+  const handleSignInFailure = (error: any) => {
     // Handle failed login
     console.error("Login failure:", error);
   };
@@ -194,8 +181,14 @@ const Login = () => {
                   setPassword_type={setPassword_type}
                   toggle_pwd_type={toggle_pwd_type}
                 />
-                
-                <RegularButton text="Log In" />
+
+                <RegularButton
+                  isLoading={isLoading}
+                  text="Log In"
+                  type="submit"
+                  onClick={() => console.log("first")}
+                  disabled={isLoading}
+                />
               </form>
             </div>
 
