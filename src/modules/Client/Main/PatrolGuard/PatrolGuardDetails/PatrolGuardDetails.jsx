@@ -199,7 +199,7 @@ const PatrolGuardDetails = () => {
             <EditPersonalInformation  guard={guard?.personalinformation} setGuard={setGuard} handleSentRequest={handleSentRequest}/>
           </Tabs.Item>
           <Tabs.Item title="Guarantor form">
-            <EditGuarantorForm />
+            <EditGuarantorForm  guard={guard?.guarantor} setGuard={setGuard} handleSentRequest={handleSentRequest}/>
           </Tabs.Item>
           <Tabs.Item title="Identification">
             <EditIdentification guard={guard?.identification} setGuard={setGuard} handleSentRequest={handleSentRequest}/>
