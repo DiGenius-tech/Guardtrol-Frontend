@@ -80,10 +80,10 @@ function PatrolGuardListMobileView(props) {
                         >
                           <Dropdown.Item>
                             <Link
-                              to={`/client/patrol-guard/details/${guard.id}`}>Edit guard</Link>
+                              to={`/client/patrol-guard/details/${guard._id}`}>Edit guard</Link>
                           </Dropdown.Item>
                           <Dropdown.Item>Assign guard to beat</Dropdown.Item>
-                          <Dropdown.Item>Deactivate</Dropdown.Item>
+                          
                         </Dropdown>
                       </div>
                     </div>

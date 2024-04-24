@@ -14,6 +14,7 @@ function SelectField(props) {
           {props.label}
         </label>
         <select
+          required
           name={props.name}
           multiple={props?.multiple}
           size={props?.multiSelect ? props?.multiSelect : 0}

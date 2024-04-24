@@ -1,13 +1,101 @@
 import { Button, Card, Tabs } from "flowbite-react";
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import EditPersonalInformation from "../EditGuard/EditPersonalInformation/EditPersonalInformation";
 import EditIdentification from "../EditGuard/EditIdentification/EditIdentification";
 import BankDetails from "../EditGuard/BankDetails/BankDetails";
 import EditNextOfKin from "../EditGuard/EditNextOfKin/EditNextOfKin";
 import EditGuarantorForm from "../EditGuard/EditGuarantorForm/EditGuarantorForm";
+import { toast } from "react-toastify";
+import { useParams } from "react-router-dom";
+import useHttpRequest from "../../../../../shared/Hooks/HttpRequestHook";
+import { AuthContext } from "../../../../../shared/Context/AuthContext";
+import moment from "moment";
 
 const PatrolGuardDetails = () => {
   const [isComment, setIsComment] = useState(false);
+  const auth = useContext(AuthContext)
+  const { isLoading, error, responseData, sendRequest } = useHttpRequest();
+  const {guardId} = useParams()
+  const [guard, setGuard] = useState({})
+  const [comment, setComment] = useState('')
+
+  const handleSentRequest = () => {
+    const data = sendRequest(
+      `http://localhost:5000/api/guard/getguard/${guardId}`,
+      'GET',
+      null,
+      {
+        "Content-Type": "application/json",
+        'Authorization': `Bearer ${auth.token}`,
+      }
+    ).then(data => {
+      console.log(data)
+      setGuard(data)
+    })
+  };
+
+  useEffect(() => {
+    handleSentRequest();
+  }, [auth.token, guardId]);
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error)
+    }
+  }, [error])
+
+  const AddComment = (e) => {
+    e.preventDefault()
+    const commentData = {
+      comment: comment,
+      updatedat: Date.now()
+    }
+
+    const data = sendRequest(
+      `http://localhost:5000/api/guard/comment/${guardId}`,
+      'PATCH',
+      JSON.stringify(commentData),
+      {
+        "Content-Type": "application/json",
+        'Authorization': `Bearer ${auth.token}`,
+      }
+    ).then(data => {
+      if(data.status){
+        toast("Comment Updated")
+        setIsComment(false)
+      setGuard({})
+      handleSentRequest()
+      }
+    })
+
+
+  }
+
+  const verify = async (e) => {
+   
+    const statusData = {
+      status: !guard?.isactive,
+    }
+
+    const data = sendRequest(
+      `http://localhost:5000/api/guard/verify/${guardId}`,
+      'PATCH',
+      JSON.stringify(statusData),
+      {
+        "Content-Type": "application/json",
+        'Authorization': `Bearer ${auth.token}`,
+      }
+    ).then(data => {
+      if(data.status){
+        toast.clearWaitingQueue()
+        toast("Guard Status Updated")
+        handleSentRequest()
+        return
+      
+      }
+    })
+  }
+
 
   return (
     <>
@@ -22,19 +110,19 @@ const PatrolGuardDetails = () => {
               />
             </div>
             <h5 className="text-md font-bold text-gray-900 dark:text-white">
-              Doe John
+              {guard?.name}
             </h5>
             <ul className="font-normal text-sm text-gray-700 dark:text-gray-400">
-              <li>08034644344</li>
-              <li>doe_john@yahoo.com</li>
+              <li>{guard?.phone}</li>
+              {/* <li>doe_john@yahoo.com</li> */}
             </ul>
             <div className="my-8"></div>
-            <form action="">
-              <label className="inline-flex items-center cursor-pointer">
-                <input type="checkbox" name="verification" className="sr-only peer" />
+            <form>
+              <label className="inline-flex items-center cursor-pointer" onClick={() => verify()}>
+                <input type="checkbox" name="verification" className="sr-only peer" checked={guard?.isactive} />
                 <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 dark:peer-focus:ring-green-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary-600"></div>
-                <span className="ms-3 text-sm font-semibold text-gray-900 dark:text-gray-300">
-                  Verify
+                <span className="ms-3 text-sm font-semibold text-gray-900 dark:text-gray-300" >
+                  Activate
                 </span>
               </label>
             </form>
@@ -48,19 +136,12 @@ const PatrolGuardDetails = () => {
                   Comment
                 </h5>
                 <p className="font-normal text-gray-700 dark:text-gray-400">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  Autem, voluptas error! Earum tenetur id tempore reiciendis
-                  minus sunt molestias in repellat eveniet, sit nam sint alias
-                  accusamus maxime culpa, illum corrupti natus repellendus,
-                  iusto fugiat dignissimos ad consectetur aspernatur error!
+                 {guard?.comment?.comment|| "No Comment Here Yet"}
                 </p>
-                <p className="font-normal text-gray-700 dark:text-gray-400">
-                  Here are the biggest enterprise technology acquisitions of
-                  2021 so far, in reverse chronological order.
-                </p>
+                
                 <div className="my-2"></div>
                 <small className="text-dark-250 font-semibold">
-                  - Moyo (HR), 09:00am 20/03/2024
+                  - {auth?.user?.name}, {moment(guard?.comment?.updatedat).format('h:mm a ddd D MMM')}
                 </small>
                 <div className="my-4"></div>
                 <button
@@ -73,7 +154,7 @@ const PatrolGuardDetails = () => {
             ) : (
               <>
                 {/* comment form */}
-                <form>
+                <form onSubmit={AddComment}>
                   <div className="mb-5">
                     <label
                       for="message"
@@ -83,6 +164,8 @@ const PatrolGuardDetails = () => {
                     </label>
                     <textarea
                       id="message"
+                      value={comment}
+                      onChange={(e) => setComment(e.target.value)}
                       rows="6"
                       className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                       placeholder="Leave a comment..."
@@ -113,19 +196,19 @@ const PatrolGuardDetails = () => {
       <div className="tab flex-tabs flex-tab-nowrap">
         <Tabs aria-label="Tabs with underline" style="fullWidth">
           <Tabs.Item active title="Personal information">
-            <EditPersonalInformation />
+            <EditPersonalInformation  guard={guard?.personalinformation} setGuard={setGuard} handleSentRequest={handleSentRequest}/>
           </Tabs.Item>
           <Tabs.Item title="Guarantor form">
             <EditGuarantorForm />
           </Tabs.Item>
           <Tabs.Item title="Identification">
-            <EditIdentification />
+            <EditIdentification guard={guard?.identification} setGuard={setGuard} handleSentRequest={handleSentRequest}/>
           </Tabs.Item>
           <Tabs.Item title="Next of kin">
-            <EditNextOfKin />
+            <EditNextOfKin guard={guard?.nextofkin} setGuard={setGuard} handleSentRequest={handleSentRequest}/>
           </Tabs.Item>
           <Tabs.Item title="Bank details">
-            <BankDetails />
+            <BankDetails guard={guard?.banking} setGuard={setGuard} handleSentRequest={handleSentRequest}/>
           </Tabs.Item>
         </Tabs>
       </div>

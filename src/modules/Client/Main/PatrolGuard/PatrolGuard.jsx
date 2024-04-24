@@ -37,27 +37,8 @@ const PatrolGuard = () => {
     <>
       {/* patrol-guard-app works! */}
 
-      <div className="tab flex-tabs">
-        <Tabs aria-label="Tabs with underline" style="underline">
-          <Tabs.Item active title={handleGuardTitle()}>
-            <PatrolGuardList 
-            setGuardCount={setGuardCount}
-            setGuardToEdit={setGuardToEdit}
-            />
-          </Tabs.Item>
-          <Tabs.Item title={handleSentRequestTitle()}>
-            <SentRequest
-              sentRequestCount={sentRequestCount}
-              setSentRequestCount={setSentRequestCount}
-              setGuardToEdit={setGuardToEdit}
-            />
-          </Tabs.Item>
-        </Tabs>
-      </div>
+      <Outlet />
 
-
-      <EditGuard
-        guardToEdit={guardToEdit} setGuardToEdit={setGuardToEdit} />
     </>
   );
 };

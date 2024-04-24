@@ -6,7 +6,7 @@ function PatrolGuardListDesktopView(props) {
   return (
     <>
       {/* patrol-guard-list-desktop-view-app works! */}
-      {props.guards.length < 1?(
+      {!props.guards.length?(
       <div class="bg-white p-8 rounded ">
         <p class="text-gray-700 text-center">No Guards Here Yet</p>
      </div>):(
@@ -43,7 +43,7 @@ function PatrolGuardListDesktopView(props) {
                       scope="row"
                       className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                     >
-                      <Link to={`/client/patrol-guard/details/${guard.id}`}>
+                      <Link to={`/client/patrol-guard/details/${guard._id}`}>
                         <div className="flex items-center gap-2">
                           <div className="h-8 w-8 rounded-full overflow-hidden">
                             <img src={guard.profileImage} alt={guard.name} />
@@ -85,13 +85,10 @@ function PatrolGuardListDesktopView(props) {
                         )}
                       >
                         <Dropdown.Item>
-                          <Link to={`/client/patrol-guard/details/${guard.id}`}>Edit guard</Link>
+                          <Link to={`/client/patrol-guard/details/${guard._id}`}>Edit guard</Link>
                         </Dropdown.Item>
-                        <Dropdown.Item>Assign guard to beat</Dropdown.Item>
-                        <Dropdown.Item onClick={() => {
-                          props.setSelectedGuard(guard)
-                          props.setOpen(true)
-                        }}>Deactivate</Dropdown.Item>
+                        {/* <Dropdown.Item>Assign guard to beat</Dropdown.Item> */}
+                       
                       </Dropdown>
                     </td>
                   </tr>
