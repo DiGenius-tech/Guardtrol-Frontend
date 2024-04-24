@@ -72,6 +72,13 @@ input[type="radio"][name="plan-option"] {
   .title {
     &::after {
       content: "Default";
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #854d0e;
+      background: #fef08a;
+      border-radius: 100vmax;
+      padding: .3em .7em;
+      margin-left: 1em;
     }
   }
 }
