@@ -212,14 +212,14 @@ const SettingBilling = () => {
                   <label htmlFor="cardNumber" className="block text-sm font-medium text-gray-700">Card Number</label>
                   <input type="text" id="cardNumber" name="cardNumber" className="mt-1 focus:ring-primary-500 focus:border-primary-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
                 </div>
-                <div className="grid grid-cols-2 gap-4 mb-4">
-                  <div>
+                <div className="grid grid-cols-12 gap-4 mb-4">
+                  <div className="col-span-8">
                     <label htmlFor="expiry" className="block text-sm font-medium text-gray-700">Expiry Date</label>
                     <input type="text" id="expiry" name="expiry" placeholder="MM/YY" className="mt-1 focus:ring-primary-500 focus:border-primary-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
                   </div>
-                  <div>
+                  <div className="col-span-4">
                     <label htmlFor="cvv" className="block text-sm font-medium text-gray-700">CVV</label>
-                    <input type="number" min={`100`} max={`999`} id="cvv" name="cvv" className="mt-1 focus:ring-primary-500 focus:border-primary-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
+                    <input type="number" min={`100`} max={`999`} id="cvv" name="cvv" placeholder="123" className="mt-1 focus:ring-primary-500 focus:border-primary-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
                   </div>
                 </div>
                 <div className="mb-4">

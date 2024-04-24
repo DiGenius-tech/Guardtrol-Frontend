@@ -3,16 +3,34 @@ import TextInputField from '../../../../Sandbox/InputField/TextInputField';
 import RegularButton from '../../../../Sandbox/Buttons/RegularButton';
 import { Dropdown } from 'flowbite-react';
 import icon_menu_dots from "../../../../../images/icons/icon-menu-dots.svg";
+import ShiftConfigForm from './ShiftConfigForm/ShiftConfigForm';
+
+const list_of_shifts = [
+    {
+        id: "1",
+        name: "Early morning shift",
+        startTime: "06:30 am",
+        endTime: "09:30 am"
+    },
+    {
+        id: "2",
+        name: "Night shift",
+        startTime: "09:00 pm",
+        endTime: "06:00 am"
+    }
+]
 
 const SettingShiftSchedule = () => {
 
+    const [listOfShifts, setlistOfShifts] = useState(list_of_shifts);
+
     const [shiftStartSeconds, setShiftStartSeconds] = useState('00');
     const [shiftStartMinutes, setShiftStartMinutes] = useState('00');
-    const [shiftStartMeridian, setShiftStartMeridian] = useState('AM');
+    const [shiftStartMeridian, setShiftStartMeridian] = useState('am');
     // 
     const [shiftEndSeconds, setShiftEndSeconds] = useState('00');
     const [shiftEndMinutes, setShiftEndMinutes] = useState('00');
-    const [shiftEndMeridian, setShiftEndMeridian] = useState('AM');
+    const [shiftEndMeridian, setShiftEndMeridian] = useState('am');
 
     const [shiftNumber, setShiftNumber] = useState({
         numberOfShifts: "",
@@ -20,9 +38,9 @@ const SettingShiftSchedule = () => {
     });
 
     const [shift, setShift] = useState({
-        nameOfShift: "",
-        shiftStartsTime: "",
-        shiftEndTime: ""
+        name: "",
+        startTime: "",
+        endTime: ""
     })
     const [formData, setFormData] = useState({
         numberOfShift: "",
@@ -33,73 +51,75 @@ const SettingShiftSchedule = () => {
 
     // Handler functions to update state variables
     const handleShiftStartMinutesChange = (e) => {
-        console.log("handleShiftStartMinutesChange-e.target.value: ", e.target.value)
         setShiftStartMinutes(e.target.value);
         // setShift({ ...shift, [e.target.name]: e.target.value });
     };
 
     const handleShiftStartSecondsChange = (e) => {
-        console.log("handleShiftStartSecondsChange-e.target.value: ", e.target.value)
         setShiftStartSeconds(e.target.value);
-        // setShift({ ...shift, [e.target.name]: e.target.value });
     };
 
     const handleShiftStartMeridianChange = (e) => {
-        console.log("handleShiftStartMeridianChange-e.target.value: ", e.target.value)
         setShiftStartMeridian(e.target.value);
-        // setShift({ ...shift, [e.target.name]: e.target.value });
     };
 
     // 
 
-    // Handler functions to update state variables
     const handleShiftEndMinutesChange = (e) => {
-        console.log("handleShiftEndMinutesChange-e.target.value: ", e.target.value)
         setShiftEndMinutes(e.target.value);
-        // setShift({ ...shift, [e.target.name]: e.target.value });
     };
 
     const handleShiftEndSecondsChange = (e) => {
-        console.log("handleShiftEndSecondsChange-e.target.value: ", e.target.value)
         setShiftEndSeconds(e.target.value);
-        // setShift({ ...shift, [e.target.name]: e.target.value });
     };
 
     const handleShiftEndMeridianChange = (e) => {
-        console.log("handleShiftEndMeridianChange-e.target.value: ", e.target.value)
         setShiftEndMeridian(e.target.value);
-        // setShift({ ...shift, [e.target.name]: e.target.value });
     };
 
     // 
 
     const handleNumberOfShiftChange = (e) => {
-        console.log("e.target.value: ", e.target.value)
         setFormData({ ...formData, [e.target.name]: e.target.value });
     }
 
-    const handleAddShift = (e) => {
-        console.log("e.target.value: ", e.target.value)
+    const handleShiftData = (e) => {
         setShift({ ...shift, [e.target.name]: e.target.value });
-        console.log("shift: ", shift)
     }
 
-    const handleAddShiftToList = () => {
+    const handleAddShiftToList = (e) => {
+        e.preventDefault();
+        for (const key in shift) {
+            if (Object.hasOwnProperty.call(shift, key)) {
+                const element = shift[key];
+                if (!element) return;
 
+            }
+        }
+        setlistOfShifts([...listOfShifts, {id: (listOfShifts.length + 1).toString(), ...shift}]);
+        setShift({
+            name: "",
+            startTime: "",
+            endTime: ""
+        })
     }
 
     useEffect(() => {
-        setShift({ ...shift, shiftStartsTime: `${shiftStartMinutes}:${shiftStartSeconds} ${shiftStartMeridian}` });
-        console.log("shift: ", shift)
+        setShift({
+            ...shift, startTime: `${shiftStartMinutes}:${shiftStartSeconds} ${shiftStartMeridian}`,
+            endTime: `${shiftEndMinutes}:${shiftEndSeconds} ${shiftEndMeridian}`
+        });
         return () => {
 
         };
-    }, [shiftStartMinutes, shiftStartSeconds, shiftStartMeridian]);
+    }, [shift.name,
+        shiftStartMinutes, shiftStartSeconds, shiftStartMeridian,
+        shiftEndMinutes, shiftEndSeconds, shiftEndMeridian]);
 
     return (
         <>
             {/* setting-shift-schedule-app works! */}
-            <form action="" className="max-w-4xl">
+            <div className="max-w-4xl">
                 <div className="grid grid-cols-12 gap-4 sm:gap-8">
                     <div className="hidden sm:block col-span-12 sm:col-span-5">
                         <h3 className="font-bold">Number shifts</h3>
@@ -170,16 +190,46 @@ const SettingShiftSchedule = () => {
                         <h3 className="font-bold">Configure shifts</h3>
                         <p>Input how the shifts should be</p>
 
-                        <div className="my-16"></div>
-                        <p>Shift Date: {shift.nameOfShift}</p>
+
+                        {/* data test */}
+                        {/* <div className="my-16"></div>
+                        <p>Shift Date: {shift.name}</p>
                         <p>Selected shift start time: {`${shiftStartMinutes}:${shiftStartSeconds} ${shiftStartMeridian}`}</p>
-                        <p>Selected shift end time: {`${shiftEndMinutes}:${shiftEndSeconds} ${shiftEndMeridian}`}</p>
+                        <p>Selected shift end time: {`${shiftEndMinutes}:${shiftEndSeconds} ${shiftEndMeridian}`}</p> */}
                     </div>
                     <div className="col-span-12 sm:col-span-7">
                         <div className="grid grid-cols-12 gap-4">
                             <div className="col-span-12">
+                                {/* list of configured shifts */}
                                 <ul className='grid grid-cols-1 gap-2'>
-                                    <li className='col-span-1'>
+                                    {
+                                        listOfShifts.map((shift) => {
+                                            return <li key={shift.id} className='col-span-1'>
+                                                <div className="p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+                                                    <div className="flex items-center justify-between text-sm">
+                                                        <div>
+                                                            <h3 className="font-bold">{shift.name}</h3>
+                                                            <p className="text-dark-200">{shift.startTime}&nbsp;-&nbsp;{shift.endTime}</p>
+                                                        </div>
+                                                        <Dropdown
+                                                            label=""
+                                                            placement="right"
+                                                            dismissOnClick={false}
+                                                            renderTrigger={() => (
+                                                                <button type='button' className="flex w-8 justify-end">
+                                                                    <img src={icon_menu_dots} alt="menu" />
+                                                                </button>
+                                                            )}
+                                                        >
+                                                            <Dropdown.Item>Edit</Dropdown.Item>
+                                                            <Dropdown.Item>Remove</Dropdown.Item>
+                                                        </Dropdown>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        })
+                                    }
+                                    {/* <li className='col-span-1'>
                                         <div className="p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
                                             <div className="flex items-center justify-between text-sm">
                                                 <div>
@@ -201,129 +251,35 @@ const SettingShiftSchedule = () => {
                                                 </Dropdown>
                                             </div>
                                         </div>
-                                    </li>
-                                    <li className='col-span-1'>
-                                        <div className="p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-                                            <div className="flex items-center justify-between text-sm">
-                                                <div>
-                                                    <h3 className="font-bold">Early morning shift</h3>
-                                                    <p className="text-dark-200">06:30 am - 09:30 am</p>
-                                                </div>
-                                                <Dropdown
-                                                    label=""
-                                                    placement="right"
-                                                    dismissOnClick={false}
-                                                    renderTrigger={() => (
-                                                        <button type='button' className="flex w-8 justify-end">
-                                                            <img src={icon_menu_dots} alt="menu" />
-                                                        </button>
-                                                    )}
-                                                >
-                                                    <Dropdown.Item>Edit</Dropdown.Item>
-                                                    <Dropdown.Item>Remove</Dropdown.Item>
-                                                </Dropdown>
-                                            </div>
-                                        </div>
-                                    </li>
+                                    </li> */}
                                 </ul>
                             </div>
-                            <div className="col-span-12">
-                                <TextInputField
-                                    label="Name of shift"
-                                    name="nameOfShift"
-                                    type="text"
-                                    id="nameOfShift"
-                                    semibold_label={true}
-                                    //   error={validationErrors["name"]}
-                                    onChange={handleAddShift}
-                                      required="required"
-                                    value={shift.nameOfShift}
-                                />
-                            </div>
-                            <div className="col-span-12 sm:col-span-6">
-                                <fieldset>
-                                    <legend className='block mb-2 text-gray-900 dark:text-white cursor-pointer font-semibold'>Shift starts</legend>
-
-                                    <div className="flex items-center gap-2">
-                                        <div className='flex items-center gap-2'>
-                                            <div className='w-[50px]'>
-                                                <input type='number' max={59} min={0}
-                                                    value={shiftStartMinutes}
-                                                    onChange={handleShiftStartMinutesChange}
-                                                    placeholder='00' className='text-center bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500' />
-                                            </div>
-                                            <div>:</div>
-                                            <div className='w-[50px]'>
-                                                <input type='number' max={59} min={0}
-                                                    value={shiftStartSeconds}
-                                                    onChange={handleShiftStartSecondsChange} placeholder='00' className='text-center bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500' />
-                                            </div>
-                                        </div>
-                                        <ul className='flex items-center'>
-                                            <li className="meridian-check">
-                                                <input type="radio" id='shiftStartAM' name='shiftStartMeridian'
-                                                    value="AM" onChange={(e) => handleShiftStartMeridianChange(e)} />
-                                                <label htmlFor="shiftStartAM" className='cursor-pointer text-center border border-gray-300 text-sm rounded-l-lg block w-full p-2.5'>AM</label>
-                                            </li>
-                                            <li className="meridian-check">
-                                                <input type="radio" id='shiftStartPM' name='shiftStartMeridian'
-                                                    value="PM" onChange={(e) => handleShiftStartMeridianChange(e)} />
-                                                <label htmlFor="shiftStartPM" className='cursor-pointer text-center border border-gray-300 text-sm rounded-r-lg block w-full p-2.5'>PM</label>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </fieldset>
-                            </div>
-                            <div className="col-span-12 sm:col-span-6">
-                                <fieldset>
-                                    <legend className='block mb-2 text-gray-900 dark:text-white cursor-pointer font-semibold'>Shift ends</legend>
-
-                                    <div className="flex items-center gap-2">
-                                        <div className='flex items-center gap-2'>
-                                            <div className='w-[50px]'>
-                                                <input type='number' max={59} min={0}
-                                                    value={shiftEndMinutes}
-                                                    onChange={handleShiftEndMinutesChange}
-                                                    placeholder='00' className='text-center bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500' />
-                                            </div>
-                                            <div>:</div>
-                                            <div className='w-[50px]'>
-                                                <input type='number' max={59} min={0}
-                                                    value={shiftEndSeconds}
-                                                    onChange={handleShiftEndSecondsChange} placeholder='00' className='text-center bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500' />
-                                            </div>
-                                        </div>
-                                        <ul className='flex items-center'>
-                                            <li className="meridian-check">
-                                                <input type="radio" id='shiftEndAM' name='shiftEndMeridian'
-                                                    value="AM" onChange={(e) => handleShiftEndMeridianChange(e)} />
-                                                <label htmlFor="shiftEndAM" className='cursor-pointer text-center border border-gray-300 text-sm rounded-l-lg block w-full p-2.5'>AM</label>
-                                            </li>
-                                            <li className="meridian-check">
-                                                <input type="radio" id='shiftEndPM' name='shiftEndMeridian'
-                                                    value="PM" onChange={(e) => handleShiftEndMeridianChange(e)} />
-                                                <label htmlFor="shiftEndPM" className='cursor-pointer text-center border border-gray-300 text-sm rounded-r-lg block w-full p-2.5'>PM</label>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </fieldset>
-                            </div>
-                            <div className="col-span-12">
-                                <div className="flex items-center justify-between flex-wrap">
-                                    <button type='submit' className="text-sm font-semibold text-primary-500">+ Save and configure another shift</button>
-                                    <span className='flex flex-nowrap text-sm text-dark-200'>
-                                        <span>1</span>/<span>5</span>&nbsp;Shifts
-                                    </span>
-                                </div>
-                            </div>
                         </div>
+                        <hr className="my-4" />
+
+                        {/* Shift configuration form */}
+                        <ShiftConfigForm
+                            shift={shift}
+                            handleShiftData={handleShiftData}
+                            handleShiftStartMinutesChange={handleShiftStartMinutesChange}
+                            shiftStartMinutes={shiftStartMinutes}
+                            shiftStartSeconds={shiftStartSeconds}
+                            shiftEndMinutes={shiftEndMinutes}
+                            shiftEndSeconds={shiftEndSeconds}
+                            handleShiftEndMeridianChange={handleShiftEndMeridianChange}
+                            handleShiftEndSecondsChange={handleShiftEndSecondsChange}
+                            handleShiftEndMinutesChange={handleShiftEndMinutesChange}
+                            handleShiftStartMeridianChange={handleShiftStartMeridianChange}
+                            handleShiftStartSecondsChange={handleShiftStartSecondsChange}
+                            handleAddShiftToList={handleAddShiftToList}
+                        />
                     </div>
                 </div>
                 <div className="my-4"></div>
                 <div className="text-right">
                     <RegularButton text="Save Changes" width="auto" padding="px-4 py-2" textSize="text-sm" />
                 </div>
-            </form>
+            </div>
         </>
     );
 }
