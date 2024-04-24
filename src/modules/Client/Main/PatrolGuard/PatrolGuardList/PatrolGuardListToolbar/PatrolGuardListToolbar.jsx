@@ -18,7 +18,7 @@ function PatrolGuardListToolbar() {
       {/* patrol-guard-list-toolbar-app works! */}
       <nav>
         {/*  active border-cyan-600 text-cyan-600 dark:border-cyan-500 dark:text-cyan-500 */}
-        <ul className="flex gap-2 flex text-center -mb-px flex-wrap border-b border-gray-200 dark:border-gray-700">
+        <ul className="flex gap-2 text-center -mb-px flex-wrap border-b border-gray-200 dark:border-gray-700">
           <li>
             <Link
               to={`active`}
