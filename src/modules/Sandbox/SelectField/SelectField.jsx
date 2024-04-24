@@ -14,6 +14,7 @@ function SelectField(props) {
           {props.label}
         </label>
         <select
+          required
           name={props.name}
           multiple={props?.multiple}
           size={props?.multiSelect ? props?.multiSelect : 0}
@@ -39,6 +40,13 @@ function SelectField(props) {
             </option> : ""
           }
 
+
+          <option value="def" key={""}>
+            {
+              "Select Option"
+            }
+            
+          </option>
 
           {props.optionList.length > 0 && props.optionList?.map((route, index) => {
 

@@ -17,7 +17,9 @@ const BeatList = () => {
 
   const [selectedBeat, setSelectedBeat] = useState(null)
   const [open, setOpen] = useState(false)
-
+  const [openModal, setOpenModal] = useState(false);
+  const [beatToEdit, setBeatToEdit] = useState(null);
+  const [beatToDelete, setBeatToDelete] = useState(null)
   const handleSentRequest = async () => {
     const data = await sendRequest(
       `http://localhost:5000/api/beat/getbeats/${auth.user.userid}`,
@@ -44,11 +46,49 @@ const BeatList = () => {
       toast.error(error)
     }
   }, [error])
-    const [openModal, setOpenModal] = useState(false);
-    const [beatToEdit, setBeatToEdit] = useState(null);
+    
 
-    const handleUpdateBeat = (Beat) => {
-        console.log("Beat: ", Beat)
+    const handleUpdateBeat = async (beat) => {
+        auth.loading(true);
+        const data = await sendRequest(
+          `http://localhost:5000/api/beat/editbeat/${auth.user.userid}`,
+          "PATCH",
+          JSON.stringify(beat),
+          {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${auth.token}`
+          }
+        );
+    
+        if (data && data.status) {
+          toast("Changes Saved Successfully")
+          setOpenModal(false);
+          setBeatToEdit(null);
+          auth.loading(false);
+          setBeats([])
+          handleSentRequest()
+        }
+      
+    }
+
+    const handleDeleteBeat = async () => {
+      auth.loading(true);
+        const data = await sendRequest(
+          `http://localhost:5000/api/beat/deletebeat/${auth.user.userid}`,
+          "DELETE",
+          JSON.stringify(beatToDelete),
+          {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${auth.token}`
+          }
+        );
+    
+        if (data && data.status) {
+          toast("Beat Deleted Successfully")
+          setBeats([])
+          setOpen(false)
+          handleSentRequest()
+        }
     }
     return (
         <>
@@ -61,7 +101,7 @@ const BeatList = () => {
             </div>
             <div className="hidden sm:block">
                 <Card>
-                    <BeatsDesktopView beatList={beat_list} icon_menu_dots={icon_menu_dots}
+                    <BeatsDesktopView beatList={beats} icon_menu_dots={icon_menu_dots}
                         openModal={openModal}
                         setOpenModal={setOpenModal}
                         beatToEdit={beatToEdit}
@@ -69,12 +109,15 @@ const BeatList = () => {
                         handleUpdateBeat={handleUpdateBeat}
                         setSelectedBeat={setSelectedBeat}
                         setOpen={setOpen}
+                        open={open}
+                        setBeatToDelete={setBeatToDelete}
+                        handleDeleteBeat={handleDeleteBeat}
                     />
                 </Card>
             </div>
 
             <div className="sm:hidden">
-                <BeatsMobileView beatList={beat_list} icon_menu_dots={icon_menu_dots}
+                <BeatsMobileView beatList={beats} icon_menu_dots={icon_menu_dots}
                     openModal={openModal}
                     setOpenModal={setOpenModal}
                     beatToEdit={beatToEdit}
@@ -82,6 +125,9 @@ const BeatList = () => {
                     handleUpdateBeat={handleUpdateBeat}
                     setSelectedBeat={setSelectedBeat}
                     setOpen={setOpen}
+                    open={open}
+                    setBeatToDelete={setBeatToDelete}
+                    handleDeleteBeat={handleDeleteBeat}
                 />
             </div>
 

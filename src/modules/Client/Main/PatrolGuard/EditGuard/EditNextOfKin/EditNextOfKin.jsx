@@ -1,14 +1,61 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import TextInputField from "../../../../../Sandbox/InputField/TextInputField";
 import RegularButton from "../../../../../Sandbox/Buttons/RegularButton";
+import SelectField from "../../../../../Sandbox/SelectField/SelectField";
+import { useParams } from "react-router-dom";
+import { AuthContext } from "../../../../../../shared/Context/AuthContext";
+import useHttpRequest from "../../../../../../shared/Hooks/HttpRequestHook";
+import { toast } from "react-toastify";
 
-const EditNextOfKin = () => {
+const identificationTypeOptions = [
+  {
+    name: "National Identification Number (NIN)",
+    value: "NIN"
+  },
+  {
+    name: "Drivers Liscense",
+    value: "Drivers Liscense"
+  },
+  {
+    name: "International Passport",
+    value: "International Passport"
+  },
+
+  {
+    name: "Voter Card",
+    value: "Voter Card"
+  }
+];
+
+const EditNextOfKin = (props) => {
+  const {guardId} = useParams()
+  const auth = useContext(AuthContext)
+  const { isLoading, error, responseData, sendRequest } = useHttpRequest();
   const [validationErrors, setValidationErrors] = useState({});
   const [formData, setFormData] = useState({
-    nextOfKinName: "",
-    nextOfKinPhone: "",
+    name: "",
+    idnumber: "",
+    phone: "",
+    idname: "",
     relationship: ""
   });
+
+  useEffect(()=>{
+    setFormData({
+      name: props.guard?.name,
+      idnumber: props.guard?.idnumber,
+      idname: props.guard?.idname,
+      phone: props.guard?.phone,
+      relationship: props.guard?.relationship
+    })
+  }, [props])
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error)
+    }
+  }, [error])
+
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -16,41 +63,105 @@ const EditNextOfKin = () => {
     // console.log("formData: ", formData)
   };
 
+  const [identificationType, setIdentificationType] = useState(
+    null
+  );
+  const handleSelectChange = (e) => {
+    let type = JSON.parse(e.target.value);
+    setFormData({ ...formData, [e.target.name]: type.value });
+    setValidationErrors({ ...validationErrors, [e.target.name]: "" });
+  };
+
+
+  const save = async (e) => {
+    e.preventDefault()
+    if(!formData.idname) {
+      toast.warn("select a valid identification type")
+      return
+    }
+   
+    
+    
+    const data = sendRequest(
+      `http://localhost:5000/api/guard/nextofkin/${guardId}`,
+      'PATCH',
+      JSON.stringify(formData),
+      {
+        "Content-Type": "application/json",
+        'Authorization': `Bearer ${auth.token}`,
+      }
+    ).then(data => {
+      if(data.status){
+        toast("Next Of Kin Information Updated")
+        //props.setGuard({})
+        props.handleSentRequest()
+      }
+    })
+  }
+
   return (
     <>
       {/* edit-next-of-kin-app works! */}
 
-      <form action="">
+      <form onSubmit={save}>
         <div className="mx-auto max-w-xl">
           <fieldset>
             <legend className="text-xl font-semibold mb-8 text-center">
               Next of kin
             </legend>
             <div className="grid grid-cols-12 gap-x-4">
+            <div className="col-span-12">
+                <SelectField
+                  value={identificationType}
+                  name="idname"
+                  id="idname"
+                  label="Next Of Kin Identification Type"
+                  semibold_label={true}
+                  handleChangeOption={handleSelectChange}
+                  optionList={identificationTypeOptions}
+                  multipleSelect={false}
+                />
+              </div>
               <div className="col-span-12 sm:col-span-6">
                 <TextInputField
                   label="Next of kin name"
                   semibold_label={true}
                   type="text"
-                  id="nextOfKinName"
+                  id="name"
                   required="required"
-                  name="nextOfKinName"
-                  value={formData.nextOfKinName}
+                  name="name"
+                  value={formData.name}
                   onChange={handleChange}
-                  error={validationErrors["nextOfKinName"]}
+                  error={validationErrors["name"]}
                 />
               </div>
+
               <div className="col-span-12 sm:col-span-6">
+                
                 <TextInputField
                   label="Identification number"
                   semibold_label={true}
                   type="text"
-                  id="identificationNumber"
+                  id="idnumber"
                   required="required"
-                  name="identificationNumber"
-                  value={formData.identificationNumber}
+                  name="idnumber"
+                  value={formData.idnumber}
                   onChange={handleChange}
-                  error={validationErrors["identificationNumber"]}
+                  error={validationErrors["idnumber"]}
+                />
+              </div>
+              <div className="col-span-12">
+                
+                <TextInputField
+                  label="Phone Number"
+                  semibold_label={true}
+                  type="text"
+                  id="phone"
+                  required="required"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  error={validationErrors["phone"]}
                 />
               </div>
               <div className="col-span-12">

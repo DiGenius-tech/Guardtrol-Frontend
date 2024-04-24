@@ -1,30 +1,55 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import TextInputField from "../../../../../Sandbox/InputField/TextInputField";
 import SelectField from "../../../../../Sandbox/SelectField/SelectField";
 import RegularButton from "../../../../../Sandbox/Buttons/RegularButton";
+import { useParams } from "react-router-dom";
+import { AuthContext } from "../../../../../../shared/Context/AuthContext";
+import useHttpRequest from "../../../../../../shared/Hooks/HttpRequestHook";
+import { toast } from "react-toastify";
 const identificationTypeOptions = [
   {
-    name: "Type one",
-    value: "typeOne"
+    name: "National Identification Number (NIN)",
+    value: "NIN"
   },
   {
-    name: "Type two",
-    value: "typeTwo"
+    name: "Drivers Liscense",
+    value: "Drivers Liscense"
+  },
+  {
+    name: "International Passport",
+    value: "International Passport"
+  },
+
+  {
+    name: "Voter Card",
+    value: "Voter Card"
   }
 ];
-const EditIdentification = () => {
+const EditIdentification = (props) => {
+  const {guardId} = useParams()
+  const auth = useContext(AuthContext)
+  const { isLoading, error, responseData, sendRequest } = useHttpRequest();
   const [validationErrors, setValidationErrors] = useState({});
   const [formData, setFormData] = useState({
-    nin: "",
-    lastName: "",
-    height: "",
-    dob: "",
-    sex: "",
-    altPhone: ""
+    idnumber: "",
+    idname: "",
   });
+  useEffect(()=>{
+    setFormData({
+      idnumber: props.guard?.idnumber,
+      idname: props.guard?.idname
+    })
+  }, [props])
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error)
+    }
+  }, [error])
+
 
   const [identificationType, setIdentificationType] = useState(
-    identificationTypeOptions[0]
+    null
   );
 
   const handleChange = (e) => {
@@ -38,55 +63,72 @@ const EditIdentification = () => {
     setFormData({ ...formData, [e.target.name]: type.value });
     setValidationErrors({ ...validationErrors, [e.target.name]: "" });
   };
+
+  const save = async (e) => {
+    e.preventDefault()
+    if(!formData.idname) {
+      toast.warn("select a valid identification type")
+      return
+    }
+   
+    const guardData = {
+      idname: formData.idname,
+      idnumber: formData.idnumber
+    }
+    
+    const data = sendRequest(
+      `http://localhost:5000/api/guard/identification/${guardId}`,
+      'PATCH',
+      JSON.stringify(guardData),
+      {
+        "Content-Type": "application/json",
+        'Authorization': `Bearer ${auth.token}`,
+      }
+    ).then(data => {
+      if(data.status){
+        toast("Identification Information Updated")
+        //props.setGuard({})
+        props.handleSentRequest()
+      }
+    })
+  }
   return (
     <>
       {/* edit-identification-app works! */}
 
-      <form action="">
+      <form onSubmit={save}>
         <div className="mx-auto max-w-xl">
           <fieldset>
             <legend className="text-xl font-semibold mb-8 text-center">
               Identification
             </legend>
             <div className="grid grid-cols-12 gap-x-4">
-              <div className="col-span-12 sm:col-span-6">
-                <TextInputField
-                  label="NIN"
-                  semibold_label={true}
-                  type="text"
-                  id="nin"
-                  required="required"
-                  name="nin"
-                  value={formData.nin}
-                  onChange={handleChange}
-                  error={validationErrors["nin"]}
-                />
-              </div>
-              <div className="col-span-12 sm:col-span-6">
-                <TextInputField
-                  label="Identification number"
-                  semibold_label={true}
-                  type="text"
-                  id="identificationNumber"
-                  required="required"
-                  name="identificationNumber"
-                  value={formData.identificationNumber}
-                  onChange={handleChange}
-                  error={validationErrors["identificationNumber"]}
-                />
-              </div>
-              <div className="col-span-12">
+            <div className="col-span-12">
                 <SelectField
                   value={identificationType}
-                  name="IdentificationType"
-                  id="identificationType"
-                  label="Identification type"
+                  name="idname"
+                  id="idname"
+                  label="Identification Type"
                   semibold_label={true}
                   handleChangeOption={handleSelectChange}
                   optionList={identificationTypeOptions}
                   multipleSelect={false}
                 />
               </div>
+            <div className="col-span-12">
+                <TextInputField
+                  label="Identification Number"
+                  semibold_label={true}
+                  type="text"
+                  id="idnumber"
+                  required="required"
+                  name="idnumber"
+                  value={formData.idnumber}
+                  onChange={handleChange}
+                  error={validationErrors["idnumber"]}
+                />
+              </div>
+              
             </div>
             <RegularButton text="Update" />
           </fieldset>

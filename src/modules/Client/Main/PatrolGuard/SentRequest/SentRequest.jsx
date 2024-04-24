@@ -77,6 +77,7 @@ function SentRequest(props) {
             setSentRequestList={setInActiveGuards}
             icon_menu_dots={icon_menu_dots}
             setSelectedGuard={setSelectedGuard}
+            setGuardToEdit={props.setGuardToEdit}
             setOpen={setOpen}
           />
         </Card>
@@ -88,6 +89,7 @@ function SentRequest(props) {
           setSentRequestList={setInActiveGuards}
           icon_menu_dots={icon_menu_dots}
           setSelectedGuard={setSelectedGuard}
+          setGuardToEdit={props.setGuardToEdit}
           setOpen={setOpen}
         />
       </div>

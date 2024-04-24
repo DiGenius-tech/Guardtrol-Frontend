@@ -1,19 +1,23 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import Stepper from "../../../../../Sandbox/StepperWidget/stepper";
 import TextInputField from "../../../../../Sandbox/InputField/TextInputField";
 import RegularButton from "../../../../../Sandbox/Buttons/RegularButton";
 import SelectField from "../../../../../Sandbox/SelectField/SelectField";
+import { useParams } from "react-router-dom";
+import { AuthContext } from "../../../../../../shared/Context/AuthContext";
+import useHttpRequest from "../../../../../../shared/Hooks/HttpRequestHook";
+import { toast } from "react-toastify";
 
 const titleOptions = [
     {
-        name: "Type one",
-        value: "typeOne"
+        name: "Mr",
+        value: "Mr"
     },
     {
-        name: "Type two",
-        value: "typeTwo"
+        name: "Mrs",
+        value: "Mrs"
     }
-];
+]; 
 const sexOptions = [
     {
         name: "Male",
@@ -33,16 +37,28 @@ const formContent = {
 
 const identificationTypeOptions = [
     {
-        name: "Type one",
-        value: "typeOne"
-    },
-    {
-        name: "Type two",
-        value: "typeTwo"
-    }
+        name: "National Identification Number (NIN)",
+        value: "NIN"
+      },
+      {
+        name: "Drivers Liscense",
+        value: "Drivers Liscense"
+      },
+      {
+        name: "International Passport",
+        value: "International Passport"
+      },
+    
+      {
+        name: "Voter Card",
+        value: "Voter Card"
+      }
 ];
 
-const EditGuarantorForm = () => {
+const EditGuarantorForm = (props) => {
+    const {guardId} = useParams()
+    const auth = useContext(AuthContext)
+    const { isLoading, error, responseData, sendRequest } = useHttpRequest();
     const stepperRef = useRef(); //stepperWrapper
     const pagesRef = useRef();
     const progressRef = useRef();
@@ -51,7 +67,6 @@ const EditGuarantorForm = () => {
     const [progressBar, setProgressBar] = useState();
     const [stepper, setStepper] = useState();
     const [marginSize, setMarginSize] = useState(0);
-    //
     const [stepperError, setStepperError] = useState("");
     const [validationErrors, setValidationErrors] = useState({});
     const [formCompleted, setFormCompleted] = useState(false);
@@ -73,10 +88,34 @@ const EditGuarantorForm = () => {
         placeOfWork: "",
         rank: "",
         //
-        nin: "",
         identificationNumber: "",
-        rank: ""
+        identificationType: ""
     });
+
+    useEffect(()=>{
+        setFormData({
+        title: props.guard?.title,
+        firstName: props.guard?.firstName,
+        lastName: props.guard?.lastName,
+        email: props.guard?.email,
+        dob: props.guard?.dob,
+        sex: props.guard?.sex,
+        phone: props.guard?.phone,
+        //
+        altPhone: props.guard?.altPhone,
+        placeOfWork: props.guard?.placeOfWork,
+        rank: props.guard?.rank,
+        //
+        identificationNumber: props.guard?.identificationNumber,
+        identificationType: props.guard?.identificationType
+        })
+      }, [props])
+    
+      useEffect(() => {
+        if (error) {
+          toast.error(error)
+        }
+      }, [error])
 
     const handleChange = (e) => {
         setStepperError("");
@@ -94,14 +133,14 @@ const EditGuarantorForm = () => {
         switch (content) {
             case formContent.PERSONAL_INFO:
                 if (
-                    formData.title != "" &&
-                    formData.firstName != "" &&
-                    formData.lastName != "" &&
-                    formData.email != "" &&
-                    formData.dob != "" &&
-                    formData.sex != "" &&
-                    formData.phone != "" &&
-                    formData.altPhone != ""
+                    formData.title &&
+                    formData.firstName  &&
+                    formData.lastName &&
+                    formData.email &&
+                    formData.dob  &&
+                    formData.sex &&
+                    formData.phone  &&
+                    formData.altPhone
                 ) {
                     if (marginSize < 200) {
                         stepper.stepForward();
@@ -114,7 +153,7 @@ const EditGuarantorForm = () => {
                 break;
 
             case formContent.WORK_INFO:
-                if (formData.placeOfWork != "" && formData.rank != "") {
+                if (formData.placeOfWork  && formData.rank ) {
                     if (marginSize < 200) {
                         stepper.stepForward();
                     }
@@ -125,9 +164,9 @@ const EditGuarantorForm = () => {
 
             case formContent.IDENTIFICATION:
                 if (
-                    formData.nin != "" &&
-                    formData.identificationNumber != "" &&
-                    formData.rank != ""
+                  
+                    formData.identificationNumber
+                  
                 ) {
                     if (marginSize < 200) {
                         stepper.stepForward();
@@ -165,6 +204,30 @@ const EditGuarantorForm = () => {
         // setMarginSize(stepper.getMarginSize());
         // console.log("setMarginSize: ", marginSize);
     }, []);
+
+    const save = async (e) => {
+        e.preventDefault()
+        if(!formData.identificationType) {
+            toast.warn("select a valid identification type")
+            return
+          }
+        const data = sendRequest(
+          `http://localhost:5000/api/guard/guarantor/${guardId}`,
+          'PATCH',
+          JSON.stringify(formData),
+          {
+            "Content-Type": "application/json",
+            'Authorization': `Bearer ${auth.token}`,
+          }
+        ).then(data => {
+          if(data.status){
+            toast("Guarantor Information Updated")
+            //props.setGuard({})
+            props.handleSentRequest()
+            handleNext(formContent.IDENTIFICATION)
+          }
+        })
+      }
 
     return (
         <>
@@ -222,7 +285,7 @@ const EditGuarantorForm = () => {
                         </li>
                     </ol>
 
-                    <form action="">
+                    <form onSubmit={save}>
                         <div
                             ref={stepperRef}
                             className="stepper py-8 min-h-max"
@@ -458,20 +521,22 @@ const EditGuarantorForm = () => {
                                             )}
 
                                             <div className="grid grid-cols-12 gap-x-4">
-                                                <div className="col-span-12 sm:col-span-6">
-                                                    <TextInputField
-                                                        label="NIN"
+                                                
+                                               
+                                                <div className="col-span-12">
+                                                    <SelectField
+                                                        value={identificationType}
+                                                        name="identificationType"
+                                                        id="identificationType"
+                                                        label="Identification type"
                                                         semibold_label={true}
-                                                        type="number"
-                                                        id="nin"
-                                                        required="required"
-                                                        name="nin"
-                                                        value={formData.nin}
-                                                        onChange={handleChange}
-                                                        error={validationErrors["nin"]}
+                                                        handleChangeOption={handleSelectChange}
+                                                        optionList={identificationTypeOptions}
+                                                        multipleSelect={false}
                                                     />
                                                 </div>
-                                                <div className="col-span-12 sm:col-span-6">
+
+                                                <div className="col-span-12">
                                                     <TextInputField
                                                         label="Identification number"
                                                         semibold_label={true}
@@ -482,18 +547,6 @@ const EditGuarantorForm = () => {
                                                         value={formData.identificationNumber}
                                                         onChange={handleChange}
                                                         error={validationErrors["identificationNumber"]}
-                                                    />
-                                                </div>
-                                                <div className="col-span-12">
-                                                    <SelectField
-                                                        value={identificationType}
-                                                        name="IdentificationType"
-                                                        id="identificationType"
-                                                        label="Identification type"
-                                                        semibold_label={true}
-                                                        handleChangeOption={handleSelectChange}
-                                                        optionList={identificationTypeOptions}
-                                                        multipleSelect={false}
                                                     />
                                                 </div>
                                             </div>
@@ -508,10 +561,10 @@ const EditGuarantorForm = () => {
                                                 />
                                                 <RegularButton
                                                     text="Complete"
-                                                    type="button"
+                                                    type="submit"
                                                     width="auto"
                                                     padding="px-8 py-2"
-                                                    onClick={() => handleNext(formContent.IDENTIFICATION)}
+                                                    // onClick={() => handleNext(formContent.IDENTIFICATION)}
                                                 />
                                             </div>
                                         </fieldset>

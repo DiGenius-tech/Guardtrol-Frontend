@@ -1,11 +1,12 @@
 import { Dropdown } from "flowbite-react";
 import EditBeat from "../EditBeat/EditBeat";
+import AlertDialog from "../../../../../shared/Dialog/AlertDialog";
 import { Link } from "react-router-dom";
 
 function BeatsDesktopView(props) {
 
   const sendBeatToUpdate = (beat) => {
-    console.log("beat: ", beat)
+    
     props.setOpenModal(true)
     props.setBeatToEdit(beat)
   }
@@ -63,8 +64,8 @@ function BeatsDesktopView(props) {
                     {beat.name}
                   </th>
                   <td className="px-6 py-4">
-                    {beat.guards.length}&nbsp;guard
-                    {beat.guards.length > 1 ? <span>s</span> : ""}
+                    {beat.guards?.length||0}&nbsp;guard
+                    {beat.guards?.length||0 > 1 ? <span>s</span> : ""}
                   </td>
                   <td className="px-6 py-4">
                     {beat.routes?.length || 0}&nbsp;point
@@ -89,7 +90,10 @@ function BeatsDesktopView(props) {
                       )}
                     >
                       <Dropdown.Item onClick={() => sendBeatToUpdate(beat)}>Edit beat</Dropdown.Item>
-                      <Dropdown.Item>Deactivate beat</Dropdown.Item>
+                      <Dropdown.Item onClick={() => {
+                            props.setBeatToDelete(beat)
+                            props.setOpen(true)
+                          }}>Delete beat</Dropdown.Item>
                     </Dropdown>
                   </td>
                 </tr>
@@ -98,6 +102,15 @@ function BeatsDesktopView(props) {
           </tbody>
         </table>
       </div>
+
+      <AlertDialog
+        open={props.open}
+        title="Delete Beat ?"
+        description="Are you sure you want to delete this Beat ?, you can't revert this action"
+        setOpen={props.setOpen}
+        actionText="Delete"
+        action={props.handleDeleteBeat}
+      />
     </>
   );
 }
