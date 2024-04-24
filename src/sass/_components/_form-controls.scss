@@ -1,3 +1,4 @@
+@use "../_partials/mixins";
 .custom-success-check {
   &[type="radio"] {
     &:checked {
@@ -20,4 +21,13 @@
       }
     }
   }
+}
+
+input[type="number"] {
+  @include mixins.appearance(textfield);
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  @include mixins.appearance(none);
+  margin: 0;
 }

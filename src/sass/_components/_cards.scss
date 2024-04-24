@@ -68,11 +68,10 @@ input[type="radio"][name="plan-option"] {
   }
 }
 
-
-.point-card{
-  // background-color: red;
-
-  .number{
-
+.default-payment-card {
+  .title {
+    &::after {
+      content: "Default";
+    }
   }
 }

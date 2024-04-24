@@ -14,17 +14,18 @@ const SettingShiftSchedule = () => {
     const [shiftEndMinutes, setShiftEndMinutes] = useState('00');
     const [shiftEndMeridian, setShiftEndMeridian] = useState('AM');
 
-    const [numberOfShift, setnumberOfShift] = useState({
+    const [shiftNumber, setShiftNumber] = useState({
         numberOfShifts: "",
         numberOfMoreShifts: "",
     });
+
     const [shift, setShift] = useState({
         nameOfShift: "",
         shiftStartsTime: "",
         shiftEndTime: ""
     })
     const [formData, setFormData] = useState({
-        numberOfShift: null,
+        numberOfShift: "",
         shift: [],
     });
 
@@ -161,10 +162,8 @@ const SettingShiftSchedule = () => {
                             type="text"
                             id="numberOfMoreShifts"
                             semibold_label={true}
-                            //   error={validationErrors["name"]}
                             onChange={handleNumberOfShiftChange}
-                            //   required="required"
-                            value={numberOfShift.numberOfMoreShifts}
+                            value={formData.numberOfShift}
                         />
                     </div>
                     <div className="hidden sm:block col-span-12 sm:col-span-5">
