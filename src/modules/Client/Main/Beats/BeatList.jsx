@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Card } from "flowbite-react";
-import icon_menu_dots from "../../../../../images/icons/icon-menu-dots.svg";
+import icon_menu_dots from "../../../../images/icons/icon-menu-dots.svg";
 import { beat_list } from "./beat-list";
 import BeatsDesktopView from "./BeatsDesktopView";
 import BeatsMobileView from "./BeatsMobileView";
@@ -8,7 +8,7 @@ import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import useHttpRequest from "../../../../shared/Hooks/HttpRequestHook";
 import { AuthContext } from "../../../../shared/Context/AuthContext";
-import EditBeat from "./EditBeat/EditBeat";
+import EditBeat from "./EditBeat";
 import {
   useDeleteBeatMutation,
   useGetBeatsQuery,

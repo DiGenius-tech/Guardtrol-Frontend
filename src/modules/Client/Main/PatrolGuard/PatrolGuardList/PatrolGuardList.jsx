@@ -14,6 +14,8 @@ import {
 } from "../../../../../redux/services/guards";
 import { useSelector } from "react-redux";
 import { selectToken, selectUser } from "../../../../../redux/selectors/auth";
+import { useGetBeatsQuery } from "../../../../../redux/services/beats";
+import { useParams } from "react-router-dom";
 
 const duty_status = {
   OFF_DUTY: 0,
@@ -24,7 +26,7 @@ function PatrolGuardList(props) {
   const [selectedGuard, setSelectedGuard] = useState(null);
   const [open, setOpen] = useState(false);
   const user = useSelector(selectUser);
-  console.log(user);
+  const { beatId } = useParams();
 
   const {
     data: guards,
@@ -32,10 +34,15 @@ function PatrolGuardList(props) {
     error,
   } = useGetGuardsQuery(user.userid, { skip: user.userid ? false : true });
 
+  const {
+    data: beats,
+    isLoading: beatsIsLoading,
+    error: beatsFetchError,
+  } = useGetBeatsQuery(user.userid, { skip: user.userid ? false : true });
+  const beat = beats?.find((b) => b?._id === beatId);
+
   const [deleteGuard, { isLoading: isUpdating, status }] =
     useDeleteGuardMutation();
-
-  console.log(guards);
 
   // if (status) {
   //   toast("Guard Deleted Successfully");
@@ -56,6 +63,8 @@ function PatrolGuardList(props) {
       toast.error(error);
     }
   }, [error]);
+
+  console.log(beat);
   return (
     <>
       {/* patrol-guard-list-app works! */}
@@ -65,7 +74,7 @@ function PatrolGuardList(props) {
           <PatrolGuardListDesktopView
             duty_status={duty_status}
             icon_menu_dots={icon_menu_dots}
-            guards={guards || []}
+            guards={beat?.guards || guards || []}
             setSelectedGuard={setSelectedGuard}
             setOpen={setOpen}
             setGuardToEdit={props.setGuardToEdit}
@@ -77,7 +86,7 @@ function PatrolGuardList(props) {
         <PatrolGuardListMobileView
           duty_status={duty_status}
           icon_menu_dots={icon_menu_dots}
-          guards={guards || []}
+          guards={beat?.guards || guards || []}
           setSelectedGuard={setSelectedGuard}
           setOpen={setOpen}
           setGuardToEdit={props.setGuardToEdit}

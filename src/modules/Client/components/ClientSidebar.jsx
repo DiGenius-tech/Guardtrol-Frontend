@@ -7,7 +7,7 @@ import {
   HiOutlineCog,
   HiUser,
 } from "react-icons/hi";
-import { customTheme } from "../../../../flowbite-theme";
+import { customTheme } from "../../../flowbite-theme";
 import { Link, useLocation, useParams } from "react-router-dom";
 
 const ClientSidebar = () => {

@@ -6,21 +6,29 @@ import RegularButton from "../../../../Sandbox/Buttons/RegularButton";
 import { AuthContext } from "../../../../../shared/Context/AuthContext";
 import { toast } from "react-toastify";
 import useHttpRequest from "../../../../../shared/Hooks/HttpRequestHook";
+import { useDispatch, useSelector } from "react-redux";
+import { selectUser } from "../../../../../redux/selectors/auth";
+import {
+  suspenseHide,
+  suspenseShow,
+} from "../../../../../redux/slice/suspenseSlice";
+import { useAddGuardsMutation } from "../../../../../redux/services/guards";
 
 const Status = {
   Success: 1,
-  Pending: 0
+  Pending: 0,
 };
 
-
-
 function GuardList() {
-  const auth = useContext(AuthContext)
-  const navigate = useNavigate()
+  const user = useSelector(selectUser);
+
+  const navigate = useNavigate();
   const { isLoading, error, responseData, sendRequest } = useHttpRequest();
   const [isEdit, setIsEdit] = useState(false);
+  const dispatch = useDispatch();
+
   const [selectedGuard, setSelectedGuard] = useState(null);
-  const [guards, setGuards] = useState([])
+  const [guards, setGuards] = useState([]);
   const [isGuardsLoaded, setIsGuardsLoaded] = useState(false);
 
   const handle_edit_guard = (guard) => {
@@ -29,67 +37,73 @@ function GuardList() {
       setSelectedGuard(guard);
     }
   };
-  const cancelEdit = ()=>{
+  const cancelEdit = () => {
     setIsEdit(false);
-  }
-  const addGuard = useCallback((guard, index) => {
-    
-    guards[index] = guard;
-    setGuards(guards);
-   
-  }, [guards, setGuards]);
+  };
+  const addGuard = useCallback(
+    (guard, index) => {
+      guards[index] = guard;
+      setGuards(guards);
+    },
+    [guards, setGuards]
+  );
 
   useEffect(() => {
     const savedGuards = localStorage.getItem("guards");
-    
+
     if (savedGuards) {
       const parsedGuards = JSON.parse(savedGuards);
       if (!isGuardsLoaded) {
         setIsGuardsLoaded(true);
-        parsedGuards.forEach( addGuard);
+        parsedGuards.forEach(addGuard);
       }
-      
     }
-
-     
   }, [isGuardsLoaded]);
+  const [addGuards] = useAddGuardsMutation();
 
   const saveGuard = async (guards) => {
     if (guards == [] || guards.length < 1) {
-      toast.info("Add at Least One Guard To Continue")
-      return
+      toast.info("Add at Least One Guard To Continue");
+      return;
     }
-    auth.loading(true)
-    const data = await sendRequest(
-      `http://localhost:5000/api/guard/addguard/${auth.user.userid}`,
-      'POST',
-      JSON.stringify(guards),
-      {
-        "Content-Type": "application/json",
-        'Authorization': `Bearer ${auth.token}`,
-      }
-    )
+    dispatch(suspenseShow());
 
-    if(data){
-      localStorage.removeItem('guards')
-      localStorage.setItem("onBoardingLevel", 3)
-      navigate("/onboarding/assign-beats")
-      window.location.reload()
+    const data = await addGuards({ guards, userid: user.userid });
+    console.log(data);
+    // const data = await sendRequest(
+    //   `guard/addguard/${user.userid}`,
+    //   "POST",
+    //   JSON.stringify(guards),
+    //   {
+    //     "Content-Type": "application/json",
+    //     Authorization: `Bearer ${user.token}`,
+    //   }
+    // ).finally(dispatch(suspenseHide()));
+
+    if (data) {
+      localStorage.removeItem("guards");
+      localStorage.setItem("onBoardingLevel", 3);
+      navigate("/onboarding/assign-beats");
+      window.location.reload();
     }
-  }
+  };
 
   useEffect(() => {
     if (error) {
-      toast.error(error)
+      toast.error(error);
     }
-  }, [error])
+  }, [error]);
   return (
     <>
       {/* guard-list-app works! */}
       <div className="max-w-md mx-auto block mb-20 sm:mb-16">
         {isEdit ? (
           <div className="mb-8">
-            <UpdateGuard selectedGuard={selectedGuard} cancelEdit={cancelEdit} setGuards={setGuards} />
+            <UpdateGuard
+              selectedGuard={selectedGuard}
+              cancelEdit={cancelEdit}
+              setGuards={setGuards}
+            />
           </div>
         ) : (
           <>
@@ -113,7 +127,10 @@ function GuardList() {
             </Link>
 
             <div className="my-8"></div>
-            <RegularButton text="Continue To Assign Beats" onClick={()=> saveGuard(guards)} />
+            <RegularButton
+              text="Continue To Assign Beats"
+              onClick={() => saveGuard(guards)}
+            />
           </>
         )}
       </div>

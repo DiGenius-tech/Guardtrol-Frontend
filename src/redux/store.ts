@@ -13,6 +13,8 @@ import {
 } from "redux-persist";
 import logger from "redux-logger";
 import authReducer from "./slice/authSlice";
+import suspenseReducer from "./slice/suspenseSlice";
+import subscriptionReducer from "./slice/subscriptionSlice";
 import storage from "redux-persist/lib/storage";
 import persistReducer from "redux-persist/es/persistReducer";
 import persistStore from "redux-persist/es/persistStore";
@@ -23,6 +25,8 @@ import { rtkQueryErrorLogger } from "../middleware/rtkQueryErrorLogger";
 const reducers = combineReducers({
   [api.reducerPath]: api.reducer,
   auth: authReducer,
+  suspense: suspenseReducer,
+  subscription: subscriptionReducer,
 });
 
 const persistConfig = {

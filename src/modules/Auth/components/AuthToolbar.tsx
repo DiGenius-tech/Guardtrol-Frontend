@@ -1,11 +1,17 @@
 import React, { useContext } from "react";
 import { NavLink, useLocation } from "react-router-dom";
-import brandLogo from "../../../../images/brand-logo.svg";
-import { AuthContext } from "../../../shared/Context/AuthContext";
+import { useSelector } from "react-redux";
+import {
+  selectAuth,
+  selectIsUserLoggedIn,
+  selectUser,
+} from "../../../redux/selectors/auth";
+import { toAbsoluteUrl } from "../../../utils/assetHelper";
+import brandLogo from "../../../images/brand-logo.svg";
 
 const AuthToolbar = () => {
   const location = useLocation();
-  const auth = useContext(AuthContext);
+  const auth = useSelector(selectAuth);
 
   return (
     <>
@@ -20,7 +26,7 @@ const AuthToolbar = () => {
             </div>
             <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
               <NavLink
-                to={auth.isLoggedIn ? "/dashboard" : "/auth/register"}
+                to={auth.isAuthenticated ? "/dashboard" : "/auth/register"}
                 className={`${
                   location.pathname === "/auth/register" ||
                   location.pathname === "/auth/register/" ||
@@ -32,10 +38,10 @@ const AuthToolbar = () => {
                     : "rounded-md py-2 text-sm font-medium text-primary-500"
                 }`}
               >
-                {auth.isLoggedIn ? "Dashboard" : "Create An Account"}
+                {auth.isAuthenticated ? "Dashboard" : "Create An Account"}
               </NavLink>
               <NavLink
-                to={auth.isLoggedIn ? "/dashboard" : "/auth/login"}
+                to={auth.isAuthenticated ? "/dashboard" : "/auth/login"}
                 className={`${
                   location.pathname === "/auth/login" ||
                   location.pathname === "/auth/login/" ||
@@ -45,7 +51,7 @@ const AuthToolbar = () => {
                     : "rounded-md py-2 text-sm font-medium text-primary-500"
                 }`}
               >
-                {auth.isLoggedIn ? "Dashboard" : "Login"}
+                {auth.isAuthenticated ? "Dashboard" : "Login"}
               </NavLink>
             </div>
           </div>

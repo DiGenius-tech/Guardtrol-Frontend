@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
-import left_pattern_boxes from "../../../../images/left-pattern-boxes.svg";
-import right_pattern_boxes from "../../../../images/right-pattern-boxes.svg";
+import left_pattern_boxes from "../../../images/left-pattern-boxes.svg";
+import right_pattern_boxes from "../../../images/right-pattern-boxes.svg";
 import { AuthContext } from "../../../shared/Context/AuthContext";
 import TextInputField from "../../Sandbox/InputField/TextInputField";
 import RegularButton from "../../Sandbox/Buttons/RegularButton";
@@ -21,7 +21,7 @@ function VerifyEmail() {
 
   const checkIfVerified = async (props) => {
     const data = await sendRequest(
-      `http://localhost:5000/api/users/${props.userid}/checkverifyemail`,
+      `users/${props.userid}/checkverifyemail`,
       "get",
       null,
       {
@@ -74,7 +74,7 @@ function VerifyEmail() {
         auth.loading(true);
         try {
           const data = await sendRequest(
-            `http://localhost:5000/api/users/${auth.user.userid}/verifyemail`,
+            `users/${auth.user.userid}/verifyemail`,
             "POST",
             JSON.stringify(formData),
             {

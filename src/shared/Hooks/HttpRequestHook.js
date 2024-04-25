@@ -2,6 +2,7 @@ import { useState, useEffect, useContext } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { AuthContext } from "../Context/AuthContext";
+import { API_BASE_URL } from "../../constants/api";
 
 const useHttpRequest = () => {
   const auth = useContext(AuthContext);
@@ -19,7 +20,7 @@ const useHttpRequest = () => {
     setError(null);
     setResponseData(null);
     try {
-      const response = await fetch(url, {
+      const response = await fetch(API_BASE_URL + url, {
         method,
         body: body ? body : null,
         headers: {

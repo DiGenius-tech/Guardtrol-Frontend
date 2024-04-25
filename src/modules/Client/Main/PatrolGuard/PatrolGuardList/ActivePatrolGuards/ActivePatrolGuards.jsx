@@ -6,7 +6,7 @@ import { patrol_guards } from "../../patrol-guard-list";
 
 const duty_status = {
   OFF_DUTY: 0,
-  ON_DUTY: 1
+  ON_DUTY: 1,
 };
 function ActivePatrolGuards() {
   return (

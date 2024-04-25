@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
-import left_pattern_boxes from "../../../../images/left-pattern-boxes.svg";
-import right_pattern_boxes from "../../../../images/right-pattern-boxes.svg";
+import left_pattern_boxes from "../../../images/left-pattern-boxes.svg";
+import right_pattern_boxes from "../../../images/right-pattern-boxes.svg";
 import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
 import useHttpRequest from "../../../shared/Hooks/HttpRequestHook";
@@ -46,7 +46,7 @@ const ForgotPassword = () => {
         auth.loading(true);
         try {
           const data = await sendRequest(
-            `http://localhost:5000/api/users/forgotpassword`,
+            `users/forgotpassword`,
             "POST",
             JSON.stringify(formData),
             {

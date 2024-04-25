@@ -23,11 +23,12 @@ import { PersistGate } from "redux-persist/integration/react";
 import { persistor, store } from "./redux/store";
 import { useGetSubscriptionQuery } from "./redux/services/subscriptions";
 import { selectToken, selectUser } from "./redux/selectors/auth";
+import { selectSuspenseShow } from "./redux/selectors/suspense";
 
 function App() {
   const token = useSelector(selectToken);
   const user = useSelector(selectUser);
-
+  const suspense = useSelector(selectSuspenseShow);
   const { error, responseData, sendRequest } = useHttpRequest();
 
   // const login = useCallback((data) => {
@@ -92,7 +93,7 @@ function App() {
   useEffect(() => {
     // const getSub = async () => {
     //   const data = await u(
-    //     `http://localhost:5000/api/users/getsubscription/${user.userid}`,
+    //     `users/getsubscription/${user.userid}`,
     //     "GET",
     //     null,
     //     {
@@ -123,7 +124,7 @@ function App() {
   return (
     <Provider store={store}>
       <PersistGate persistor={persistor}>
-        {/* {isLoading && <LoadingSpinner />} */}
+        {suspense && <LoadingSpinner />}
         <RouterProvider router={router} />
       </PersistGate>
     </Provider>

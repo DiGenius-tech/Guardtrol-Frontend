@@ -33,6 +33,16 @@ export const BeatApi = api.injectEndpoints({
       },
       invalidatesTags: (student) => [{ type: "Beats", id: student?._id }],
     }),
+    assignGuardToBeat: build.mutation<TBeat, Partial<any>>({
+      query(data) {
+        return {
+          url: `guard/assignbeat/${data.userid}`,
+          method: "POST",
+          body: data.body,
+        };
+      },
+      invalidatesTags: (student) => [{ type: "Beats", id: student?._id }],
+    }),
 
     deleteBeat: build.mutation<{ success: boolean; _id: number }, number>({
       query(_id) {
@@ -56,4 +66,5 @@ export const {
   useGetBeatsQuery,
   useUpdateBeatMutation,
   useGetErrorProneQuery,
+  useAssignGuardToBeatMutation,
 } = BeatApi;

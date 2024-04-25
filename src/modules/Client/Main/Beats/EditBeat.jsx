@@ -1,0 +1,131 @@
+import { Modal } from "flowbite-react";
+import { useContext, useEffect, useState } from "react";
+import RegularButton from "../../../Sandbox/Buttons/RegularButton";
+import TextareaField from "../../../Sandbox/TextareaField/TextareaField";
+import TextInputField from "../../../Sandbox/InputField/TextInputField";
+import useHttpRequest from "../../../../shared/Hooks/HttpRequestHook";
+import { SubscriptionContext } from "../../../../shared/Context/SubscriptionContext";
+import { AuthContext } from "../../../../shared/Context/AuthContext";
+import { toast } from "react-toastify";
+
+function EditBeat(props) {
+  const [validationErrors, setValidationErrors] = useState({});
+  const auth = useContext(AuthContext);
+  const sub = useContext(SubscriptionContext);
+  const [open, setOpen] = useState(false);
+  const { isLoading, error, responseData, sendRequest } = useHttpRequest();
+  const [beat, setBeat] = useState({
+    id: "",
+    beat_name: "",
+    address: "",
+    description: "",
+  });
+
+  const handleChange = (e) => {
+    setBeat({ ...beat, [e.target.name]: e.target.value });
+    setValidationErrors({ ...validationErrors, [e.target.name]: "" });
+  };
+
+  const saveBeat = async (e) => {
+    e.preventDefault();
+    if (beat.beat_name === "" || beat.beat_name.length < 3) {
+      setValidationErrors({
+        ...validationErrors,
+        beat_name: "Use A Valid Beat Name",
+      });
+
+      return;
+    }
+
+    props.handleUpdateBeat(beat);
+  };
+
+  useEffect(() => {
+    // console.log("useEffect: ", props.beatToEdit)
+    if (props.beatToEdit) {
+      setBeat({
+        id: props.beatToEdit?._id,
+        beat_name: props.beatToEdit?.name,
+        address: props.beatToEdit?.address,
+        description: props.beatToEdit?.description,
+      });
+    }
+    return () => {};
+  }, [props.beatToEdit]);
+  return (
+    <>
+      {/* edit-beat-app works! */}
+
+      <Modal show={props.openModal} onClose={() => props.setOpenModal(false)}>
+        <Modal.Header>Edit beat</Modal.Header>
+        <Modal.Body>
+          <div className="space-y-6">
+            {/* {props.beatToEdit?.title} */}
+
+            <form method="post" onSubmit={saveBeat}>
+              <div className="mb-6">
+                <TextInputField
+                  label="Beat Name"
+                  name="beat_name"
+                  type="text"
+                  placeholder="Beat Name"
+                  id="beat_name"
+                  error={validationErrors["beat_name"]}
+                  onChange={handleChange}
+                  required="required"
+                  value={beat.beat_name}
+                  semibold_label={true}
+                />
+              </div>
+              <div className="mb-6">
+                <TextInputField
+                  label="Address"
+                  name="address"
+                  type="text"
+                  placeholder="Beat Address"
+                  id="address"
+                  error={validationErrors["address"]}
+                  onChange={handleChange}
+                  required="required"
+                  value={beat.address}
+                  semibold_label={true}
+                />
+              </div>
+              <div className="mb-6">
+                <div className="mb-2 block">
+                  <TextareaField
+                    label="Description"
+                    id="beat_description"
+                    placeholder="Leave a description..."
+                    semibold_label={true}
+                    value={beat.description}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+              <div className="">
+                <div className="flex items-center justify-between">
+                  <RegularButton
+                    text="Update Beat"
+                    rounded="full"
+                    width="auto"
+                    padding="px-8 py-2.5"
+                    textSize="sm"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => props.setOpenModal(false)}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </Modal.Body>
+      </Modal>
+    </>
+  );
+}
+
+export default EditBeat;

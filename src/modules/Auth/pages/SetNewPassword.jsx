@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
-import left_pattern_boxes from "../../../../images/left-pattern-boxes.svg";
-import right_pattern_boxes from "../../../../images/right-pattern-boxes.svg";
+import left_pattern_boxes from "../../../images/left-pattern-boxes.svg";
+import right_pattern_boxes from "../../../images/right-pattern-boxes.svg";
 import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
 import useHttpRequest from "../../../shared/Hooks/HttpRequestHook";
@@ -61,7 +61,7 @@ function SetNewPassword() {
         auth.loading(true);
         try {
           const data = await sendRequest(
-            `http://localhost:5000/api/users/resetpassword`,
+            `users/resetpassword`,
             "PATCH",
             JSON.stringify(formData),
             {

@@ -1,13 +1,14 @@
 import { Dropdown } from "flowbite-react";
-import EditBeat from "./EditBeat/EditBeat";
 import AlertDialog from "../../../../shared/Dialog/AlertDialog";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function BeatsDesktopView(props) {
-  const sendBeatToUpdate = (beat) => {
-    props.setOpenModal(true);
-    props.setBeatToEdit(beat);
-  };
+  // const sendBeatToUpdate = (beat) => {
+  //   props.setOpenModal(true);
+  //   props.setBeatToEdit(beat);
+
+  // };
+  const navigate = useNavigate();
   return (
     <>
       {/* beats-desktop-view-app works! */}
@@ -89,7 +90,7 @@ function BeatsDesktopView(props) {
                     >
                       <Dropdown.Item
                         onClick={() => {
-                          sendBeatToUpdate(beat);
+                          navigate(`details/${beat._id}`);
                         }}
                       >
                         Edit beat

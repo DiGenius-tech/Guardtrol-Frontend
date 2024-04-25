@@ -1,20 +1,26 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import googleIconImg from "../../../../images/icons/google-social-icon.svg";
-import left_pattern_boxes from "../../../../images/left-pattern-boxes.svg";
-import right_pattern_boxes from "../../../../images/right-pattern-boxes.svg";
+import googleIconImg from "../../../images/icons/google-social-icon.svg";
+import left_pattern_boxes from "../../../images/left-pattern-boxes.svg";
+import right_pattern_boxes from "../../../images/right-pattern-boxes.svg";
 import { AuthContext } from "../../../shared/Context/AuthContext";
 import useHttpRequest from "../../../shared/Hooks/HttpRequestHook";
 import { toast } from "react-toastify";
 import TextInputField from "../../Sandbox/InputField/TextInputField";
 import RegularButton from "../../Sandbox/Buttons/RegularButton";
 import { useGoogleLogin } from "@react-oauth/google";
+import { useDispatch, useSelector } from "react-redux";
+import { selectUser } from "../../../redux/selectors/auth";
+import { API_BASE_URL } from "../../../constants/api";
+import { loginSuccess } from "../../../redux/slice/authSlice";
 
 const Register = () => {
-  const auth = useContext(AuthContext);
+  const user = useSelector(selectUser);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+
   const [validationErrors, setValidationErrors] = useState({});
-  const { isLoading, error, responseData, sendRequest } = useHttpRequest();
+  const { error, responseData, sendRequest } = useHttpRequest();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -22,6 +28,7 @@ const Register = () => {
     password: "",
     password_confirmation: "",
   });
+  const [isLoading, setIsLoading] = useState(false);
 
   /**toggle password field type */
   const password_field_ref = useRef();
@@ -70,10 +77,10 @@ const Register = () => {
       e.stopPropagation();
     } else {
       // Form is valid, handle submission
-      auth.loading(true);
+      setIsLoading(true);
       try {
         const data = await sendRequest(
-          "http://localhost:5000/api/users/signup",
+          "users/signup",
           "POST",
           JSON.stringify(formData),
           {
@@ -82,7 +89,8 @@ const Register = () => {
         );
 
         if (null != data) {
-          if (auth.login(data)) {
+          if (data) {
+            dispatch(loginSuccess(data));
             navigate("../verify-email", { replace: true }); //should be dashboard
             window.location.reload();
           }
@@ -92,7 +100,7 @@ const Register = () => {
       } catch (err) {
         console.log(err);
       } finally {
-        auth.loading(false);
+        setIsLoading(false);
       }
     }
   };
@@ -109,14 +117,14 @@ const Register = () => {
 
   const handleSignupSuccess = async (response) => {
     try {
-      auth.loading(true);
+      setIsLoading(true);
       const accessToken = response.access_token;
 
       const userData = await getUserInfo(accessToken);
 
       console.log(userData);
       const data = await sendRequest(
-        "http://localhost:5000/api/users/signupwithgoogle",
+        "signupwithgoogle",
         "POST",
         JSON.stringify(userData),
         {
@@ -124,18 +132,17 @@ const Register = () => {
         }
       );
       if (null != data) {
-        if (auth.login(data)) {
+        if (data) {
+          dispatch(loginSuccess(data));
           toast("Signup Successful");
           navigate("/client/dashboard", { replace: true }); //should be dashboard
           window.location.reload();
         }
       }
-
-      //auth.login(data.token, data.userId)
     } catch (err) {
       console.log(err);
     } finally {
-      auth.loading(false);
+      setIsLoading(false);
     }
   };
 

@@ -1,17 +1,17 @@
 import React, { useContext, useEffect, useState } from "react";
-import { AuthContext } from "../../../../shared/Context/AuthContext";
+import { AuthContext } from "../../../shared/Context/AuthContext";
 import { Dropdown, Flowbite } from "flowbite-react";
-import { customTheme } from "../../../../flowbite-theme";
-// import {brandLogo} from "../../../../images/brand-logo.svg";
-import brandLogo from "../../../../images/brand-logo.svg";
+import { customTheme } from "../../../flowbite-theme";
+import brandLogo from "../../../images/brand-logo.svg";
 import { HiMenu } from "react-icons/hi";
-import { useLocation } from "react-router-dom";
-import { clientModuleList } from "../../client.module-list";
+import { useLocation, useNavigate } from "react-router-dom";
+import { clientModuleList } from "../client.module-list";
 import { useDispatch, useSelector } from "react-redux";
-import { selectAuth, selectUser } from "../../../../redux/selectors/auth";
-import { logout } from "../../../../redux/slice/authSlice";
+import { selectAuth, selectUser } from "../../../redux/selectors/auth";
+import { logout } from "../../../redux/slice/authSlice";
 
 const ClientToolbar = (props) => {
+  const navigate = useNavigate();
   const user = useSelector(selectUser);
   const dispatch = useDispatch();
   const [isProfileDropdownOpened, setIsProfileDropdownOpened] = useState(false);
@@ -111,7 +111,10 @@ const ClientToolbar = (props) => {
                   </a>
                   <a
                     href="#"
-                    onClick={() => dispatch(logout())}
+                    onClick={() => {
+                      dispatch(logout());
+                      navigate("/auth");
+                    }}
                     className="block px-4 py-2 text-sm text-gray-700"
                     role="menuitem"
                     tabIndex="-1"
@@ -264,11 +267,15 @@ const ClientToolbar = (props) => {
                   </a>
                   <a
                     href="#"
-                    onClick={() => user?.logout()}
+                    onClick={() => {
+                      dispatch(logout());
+                      navigate("/auth");
+                    }}
                     className="block px-4 py-2 text-sm text-gray-700"
                     role="menuitem"
                     tabIndex="-1"
                     id="user-menu-item-2"
+                    style={{ cursor: "pointer" }}
                   >
                     Sign out
                   </a>

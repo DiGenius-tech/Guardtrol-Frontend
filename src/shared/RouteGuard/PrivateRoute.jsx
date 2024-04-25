@@ -11,6 +11,7 @@ const PrivateRoute = ({
   ...rest
 }) => {
   const user = useSelector(selectUser);
+
   const [isLoading, setIsLoading] = useState(true);
   const [onboardingComplete, setOnboardingComplete] = useState(false);
   const [onboardingRoute, setOnboardingRoute] = useState(
@@ -30,10 +31,12 @@ const PrivateRoute = ({
   const subRoutes2 = ["onboarding", "successful"];
 
   useEffect(() => {
+    console.log(user);
     setOnboardingComplete(user?.onboardingcomplete);
 
     const onboardingLevel = localStorage.getItem("onBoardingLevel") || "0";
     console.log(onboardingLevel);
+
     switch (onboardingLevel) {
       case "0":
         setOnboardingRoute("/onboarding/membership");

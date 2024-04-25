@@ -6,10 +6,19 @@ import RegularButton from "../../../../Sandbox/Buttons/RegularButton";
 import useHttpRequest from "../../../../../shared/Hooks/HttpRequestHook";
 import { AuthContext } from "../../../../../shared/Context/AuthContext";
 import { toast } from "react-toastify";
+import { useDispatch, useSelector } from "react-redux";
+import { selectUser } from "../../../../../redux/selectors/auth";
+import {
+  suspenseHide,
+  suspenseShow,
+} from "../../../../../redux/slice/suspenseSlice";
 
 function BeatList() {
   const [isEdit, setIsEdit] = useState(false);
-  const auth = useContext(AuthContext);
+  const auth = useSelector(selectUser);
+  const dispatch = useDispatch();
+  //dispatch(suspenseHide());
+
   const navigate = useNavigate();
   const { isLoading, error, responseData, sendRequest } = useHttpRequest();
   const [selectedBeat, setSelectedBeat] = useState(null);
@@ -56,16 +65,17 @@ function BeatList() {
       toast.info("Add at Least One Beat To Continue");
       return;
     }
-    auth.loading(true);
+
+    dispatch(suspenseShow());
     const data = await sendRequest(
-      `http://localhost:5000/api/beat/addbeats/${auth.user.userid}`,
+      `beat/addbeats/${auth.userid}`,
       "POST",
       JSON.stringify(beats),
       {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${auth.token}`
+        Authorization: `Bearer ${auth.token}`,
       }
-    );
+    ).finally(dispatch(suspenseHide()));
 
     if (data) {
       localStorage.removeItem("beats");

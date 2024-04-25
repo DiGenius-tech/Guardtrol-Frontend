@@ -3,18 +3,18 @@ import AssignNewBeat from "./AssignNewBeat/AssignNewBeat";
 import AssignedBeatList from "./AssignedBeatList/AssignedBeatList";
 
 const assign_beats_routes = {
-    path: "assign-beats",
-    element: <AssignBeats />,
-    children: [
-        {
-            path: "",
-            element: <AssignedBeatList />
-        },
-        {
-            path: "assign-new-beat",
-            element: <AssignNewBeat />
-        },
-    ]
-}
+  path: "assign-beats",
+  element: <AssignBeats />,
+  children: [
+    {
+      path: "",
+      element: <AssignedBeatList isOnboarding={true} />,
+    },
+    {
+      path: "assign-new-beat",
+      element: <AssignNewBeat isOnboarding={true} />,
+    },
+  ],
+};
 
 export default assign_beats_routes;

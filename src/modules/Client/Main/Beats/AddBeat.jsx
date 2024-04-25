@@ -26,7 +26,7 @@ const AddBeat = () => {
 
   const getExistingBeats = async () => {
     const data = await sendRequest(
-      `http://localhost:5000/api/beat/getbeats/${auth.user.userid}`,
+      `beat/getbeats/${auth.user.userid}`,
       "GET",
       null,
       {
@@ -68,7 +68,7 @@ const AddBeat = () => {
       }
       auth.loading(true);
       const data = await sendRequest(
-        `http://localhost:5000/api/beat/addbeat/${auth.user.userid}`,
+        `beat/addbeat/${auth.user.userid}`,
         "POST",
         JSON.stringify(beat),
         {

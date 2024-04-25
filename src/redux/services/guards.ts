@@ -12,12 +12,14 @@ export const GuardApi = api.injectEndpoints({
       ],
     }),
 
-    addGuard: build.mutation<TGuard, Partial<TGuard>>({
-      query: (body) => ({
-        url: `guard/addguard`,
-        method: "PATCH",
-        body,
-      }),
+    addGuards: build.mutation<TGuard, Partial<any>>({
+      query: (data) => {
+        return {
+          url: `guard/addguard/${data.userid}`,
+          method: "POST",
+          body: data.body,
+        };
+      },
       invalidatesTags: [{ type: "Guards", id: "LIST" }],
     }),
 
@@ -50,7 +52,7 @@ export const GuardApi = api.injectEndpoints({
 });
 
 export const {
-  useAddGuardMutation,
+  useAddGuardsMutation,
   useDeleteGuardMutation,
   useGetGuardsQuery,
   useUpdateGuardMutation,

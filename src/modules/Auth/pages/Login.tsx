@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import googleIconImg from "../../../../images/icons/google-social-icon.svg";
-import left_pattern_boxes from "../../../../images/left-pattern-boxes.svg";
-import right_pattern_boxes from "../../../../images/right-pattern-boxes.svg";
+import googleIconImg from "../../../images/icons/google-social-icon.svg";
+import left_pattern_boxes from "../../../images/left-pattern-boxes.svg";
+import right_pattern_boxes from "../../../images/right-pattern-boxes.svg";
 import { AuthContext } from "../../../shared/Context/AuthContext";
 import useHttpRequest from "../../../shared/Hooks/HttpRequestHook";
 import TextInputField from "../../Sandbox/InputField/TextInputField";
@@ -13,6 +13,7 @@ import { post } from "../../../lib/methods";
 import { useDispatch } from "react-redux";
 import { loginSuccess } from "../../../redux/slice/authSlice";
 import axios from "axios";
+import { suspenseHide, suspenseShow } from "../../../redux/slice/suspenseSlice";
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -40,6 +41,7 @@ const Login = () => {
   };
 
   const handleSubmit = async (e: any) => {
+    dispatch(suspenseShow());
     console.log("first");
     e.preventDefault();
     const form = e.currentTarget;
@@ -72,6 +74,7 @@ const Login = () => {
         toast.error(err);
         console.log(err);
       } finally {
+        dispatch(suspenseHide());
         setIsLoading(false);
       }
     }
