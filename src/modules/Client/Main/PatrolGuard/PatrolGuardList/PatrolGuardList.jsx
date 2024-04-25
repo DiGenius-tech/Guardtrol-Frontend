@@ -9,6 +9,7 @@ import { useSelector } from "react-redux";
 import { selectToken, selectUser } from "../../../../../redux/selectors/auth";
 import { useGetBeatsQuery } from "../../../../../redux/services/beats";
 import { useParams } from "react-router-dom";
+import AddGuard from "../../../../Onboarding/pages/OnboardGuard/AddGuard/AddGuard";
 
 const duty_status = {
   OFF_DUTY: 0,
@@ -51,6 +52,7 @@ function PatrolGuardList(props) {
       <PatrolGuardListToolbar />
       <div className="my-4"></div>
       <Outlet />
+
       {/* <AlertDialog 
         open={open}
         title={`Delete Guard ?`}

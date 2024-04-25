@@ -1,3 +1,4 @@
+import AddGuard from "../../../Onboarding/pages/OnboardGuard/AddGuard/AddGuard";
 import ActivateGuard from "./ActivateGuard/ActivateGuard";
 import PatrolGuard from "./PatrolGuard";
 import PatrolGuardDetails from "./PatrolGuardDetails/PatrolGuardDetails";
@@ -20,6 +21,10 @@ const patrol_guard_routes = {
     {
       path: "inactive",
       element: <InactivePatrolGuards />,
+    },
+    {
+      path: "addguard",
+      element: <AddGuard />,
     },
 
     {

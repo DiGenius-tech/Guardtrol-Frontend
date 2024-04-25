@@ -3,9 +3,14 @@ import PatrolGuardListDesktopView from "../../PatrolGuard/PatrolGuardList/Patrol
 import { DUTY_STATUS } from "../../../../../constants/statics";
 import icon_menu_dots from "../../../../../images/icons/icon-menu-dots.svg";
 import PatrolGuardList from "../../PatrolGuard/PatrolGuardList/PatrolGuardList";
+import AddGuard from "../../../../Onboarding/pages/OnboardGuard/AddGuard/AddGuard";
 
 const BeatGaurds = () => {
-  return <PatrolGuardList />;
+  return (
+    <>
+      <PatrolGuardList />
+    </>
+  );
 };
 
 export default BeatGaurds;

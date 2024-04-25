@@ -17,6 +17,7 @@ import PatrolGuardList from "../PatrolGuard/PatrolGuardList/PatrolGuardList";
 import ActivateGuard from "../PatrolGuard/ActivateGuard/ActivateGuard";
 import InactivePatrolGuards from "../PatrolGuard/PatrolGuardList/InactivePatrolGuards/InactivePatrolGuards";
 import ActivePatrolGuards from "../PatrolGuard/PatrolGuardList/ActivePatrolGuards/ActivePatrolGuards";
+import AddGuard from "../../../Onboarding/pages/OnboardGuard/AddGuard/AddGuard";
 
 const BeatDetails = () => {
   const { beatId } = useParams();
@@ -54,6 +55,7 @@ export const BeatGaurdRouter = () => {
         <Route path="" element={<Navigate to={"active"} />} />
         <Route path="active" element={<ActivePatrolGuards beat={beat} />} />
         <Route path="inactive" element={<InactivePatrolGuards beat={beat} />} />
+        <Route path="addguard" element={<AddGuard beat={beat} />} />
       </Route>
     </Routes>
   );
