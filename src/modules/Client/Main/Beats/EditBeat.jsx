@@ -5,12 +5,12 @@ import TextareaField from "../../../Sandbox/TextareaField/TextareaField";
 import TextInputField from "../../../Sandbox/InputField/TextInputField";
 import useHttpRequest from "../../../../shared/Hooks/HttpRequestHook";
 import { SubscriptionContext } from "../../../../shared/Context/SubscriptionContext";
-import { AuthContext } from "../../../../shared/Context/AuthContext";
+
 import { toast } from "react-toastify";
 
 function EditBeat(props) {
   const [validationErrors, setValidationErrors] = useState({});
-  const auth = useContext(AuthContext);
+
   const sub = useContext(SubscriptionContext);
   const [open, setOpen] = useState(false);
   const { isLoading, error, responseData, sendRequest } = useHttpRequest();

@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import googleIconImg from "../../../images/icons/google-social-icon.svg";
 import left_pattern_boxes from "../../../images/left-pattern-boxes.svg";
 import right_pattern_boxes from "../../../images/right-pattern-boxes.svg";
-import { AuthContext } from "../../../shared/Context/AuthContext";
+
 import useHttpRequest from "../../../shared/Hooks/HttpRequestHook";
 import TextInputField from "../../Sandbox/InputField/TextInputField";
 import RegularButton from "../../Sandbox/Buttons/RegularButton";

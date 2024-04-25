@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
-import { AuthContext } from "../Context/AuthContext";
+
 import LoadingSpinner from "../LoadingSpinner/LoadingSpinner";
 import { useSelector } from "react-redux";
 import { selectUser } from "../../redux/selectors/auth";

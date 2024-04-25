@@ -1,68 +1,59 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
 import TextInputField from "../../../../Sandbox/InputField/TextInputField";
 import RegularButton from "../../../../Sandbox/Buttons/RegularButton";
-import SelectField from "../../../../Sandbox/SelectField/SelectField";
-import AddGuard from "../../../../Onboarding/pages/OnboardGuard/AddGuard/AddGuard";
+import { FormatAlignCenter } from "@mui/icons-material";
+import {
+  useGetBeatsQuery,
+  useUpdateBeatMutation,
+} from "../../../../../redux/services/beats";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  suspenseHide,
+  suspenseShow,
+} from "../../../../../redux/slice/suspenseSlice";
+import { selectUser } from "../../../../../redux/selectors/auth";
 
-const sexOptions = [
-  {
-    name: "Male",
-    value: "male",
-  },
-  {
-    name: "Female",
-    value: "female",
-  },
-];
-const EditBeatInformation = ({ setPage }) => {
+const EditBeatInformation = ({ setPage, beat }) => {
   const [validationErrors, setValidationErrors] = useState({});
-  const [formData, setFormData] = useState({
-    beatName: "",
-    beatAddress: "",
-    height: "",
-    dob: "",
-    sex: "",
-    altPhone: "",
-  });
-  const [stateOfOriginList, setStateOfOriginList] = useState([
-    {
-      name: "Lagos",
-      value: "lagos",
-    },
-    {
-      name: "Ogun",
-      value: "ogun",
-    },
-  ]);
+  const dispatch = useDispatch();
+  const user = useSelector(selectUser);
 
-  const [sex, setSex] = useState(sexOptions[0]);
-  const [state, setState] = useState(sexOptions[0]);
+  const [formData, setFormData] = useState({
+    id: beat?._id || "",
+    beat_name: beat?.name || "",
+    address: beat?.address || "",
+    description: beat?.description || "",
+  });
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     setValidationErrors({ ...validationErrors, [e.target.name]: "" });
-    // console.log("formData: ", formData)
   };
 
-  const handleSelectChange = (e) => {
-    let sex = JSON.parse(e.target.value);
-    setFormData({ ...formData, [e.target.name]: sex.value });
-    setValidationErrors({ ...validationErrors, [e.target.name]: "" });
-  };
+  const [updateBeat] = useUpdateBeatMutation();
 
+  const { refetch: refetchBeats } = useGetBeatsQuery(user.userid, {
+    skip: user.userid ? false : true,
+  });
+
+  const handleUpdateBeat = () => {
+    dispatch(suspenseShow());
+    updateBeat({ body: formData, userid: user?.userid });
+    refetchBeats();
+    dispatch(suspenseHide());
+  };
   return (
     <>
-      <div className="flex justify-between flex-row my-2">
-        <h5 className="text-md font-bold text-primary-500 dark:text-white">
+      <div className="flex justify-between flex-row my-5">
+        <h5 className="text-lg font-bold text-primary-500 dark:text-white">
           Edit Beat
         </h5>
 
         <span
           onClick={() => setPage("ViewBeatInformation")}
-          className="text-primary-500 font-semibold text-sm cursor-pointer"
+          className="text-primary-500 font-semibold text-md cursor-pointer"
         >
-          {"<"} Back
+          Back
         </span>
       </div>
       <div className="grid grid-cols-12 gap-4 items-stretch">
@@ -74,7 +65,7 @@ const EditBeatInformation = ({ setPage }) => {
               </h4>
             </div>
             <hr />
-            <form action="" className="col-span-12">
+            <form className="col-span-12">
               <fieldset>
                 <div className="grid grid-cols-12 gap-x-4 mt-2">
                   <div className="col-span-12 sm:col-span-6">
@@ -84,8 +75,8 @@ const EditBeatInformation = ({ setPage }) => {
                       type="text"
                       id="beatName"
                       required="required"
-                      name="beatName"
-                      value={formData.beatName}
+                      name="beat_name"
+                      value={formData.beat_name}
                       onChange={handleChange}
                       error={validationErrors["beatName"]}
                     />
@@ -97,14 +88,32 @@ const EditBeatInformation = ({ setPage }) => {
                       type="text"
                       id="beatAddress"
                       required="required"
-                      name="beatAddress"
-                      value={formData.beatAddress}
+                      name="address"
+                      value={formData.address}
                       onChange={handleChange}
                       error={validationErrors["beatAddress"]}
                     />
                   </div>
+                  <div className="col-span-12 sm:col-span-6">
+                    <TextInputField
+                      label="Beat Description"
+                      semibold_label={true}
+                      type="text"
+                      id="beatDescription"
+                      required="required"
+                      name="description"
+                      value={formData.description}
+                      onChange={handleChange}
+                      error={validationErrors["beatDescription"]}
+                    />
+                  </div>
                 </div>
-                <RegularButton width="w-50" text="Save" />
+                <RegularButton
+                  type={"button"}
+                  onClick={() => handleUpdateBeat()}
+                  width="w-50"
+                  text="Save"
+                />
               </fieldset>
             </form>
           </div>

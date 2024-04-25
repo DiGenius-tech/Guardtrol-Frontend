@@ -22,16 +22,15 @@ export const BeatApi = api.injectEndpoints({
       invalidatesTags: [{ type: "Beats", id: "LIST" }],
     }),
 
-    updateBeat: build.mutation<TBeat, Partial<TBeat>>({
+    updateBeat: build.mutation<TBeat, Partial<any>>({
       query(data) {
-        const { _id, ...body } = data;
         return {
-          url: `editbeat/${_id}`,
+          url: `beat/editbeat/${data.userid}`,
           method: "PATCH",
-          body,
+          body: data.body,
         };
       },
-      invalidatesTags: (student) => [{ type: "Beats", id: student?._id }],
+      invalidatesTags: [{ type: "Beats", id: "LIST" }],
     }),
     assignGuardToBeat: build.mutation<TBeat, Partial<any>>({
       query(data) {
@@ -41,7 +40,7 @@ export const BeatApi = api.injectEndpoints({
           body: data.body,
         };
       },
-      invalidatesTags: (student) => [{ type: "Beats", id: student?._id }],
+      invalidatesTags: (beat) => [{ type: "Beats", id: beat?._id }],
     }),
 
     deleteBeat: build.mutation<{ success: boolean; _id: number }, number>({
@@ -51,7 +50,7 @@ export const BeatApi = api.injectEndpoints({
           method: "DELETE",
         };
       },
-      invalidatesTags: (student) => [{ type: "Beats", _id: student?._id }],
+      invalidatesTags: (beat) => [{ type: "Beats", _id: beat?._id }],
     }),
     getErrorProne: build.query<{ success: boolean }, void>({
       query: () => "error-prone",

@@ -1,6 +1,3 @@
-import { useContext } from "react";
-import { AuthContext } from "../../../shared/Context/AuthContext";
-
 const RegularButton = (props) => {
   return (
     <button

@@ -1,19 +1,10 @@
 import "./PatrolGuardList.scss";
-import PatrolGuardListDesktopView from "./PatrolGuardListDesktopView/PatrolGuardListDesktopView";
-import PatrolGuardListMobileView from "./PatrolGuardListMobileView/PatrolGuardListMobileView";
-import icon_menu_dots from "../../../../../images/icons/icon-menu-dots.svg";
-import useHttpRequest from "../../../../../shared/Hooks/HttpRequestHook";
-import { AuthContext } from "../../../../../shared/Context/AuthContext";
+
 import { useContext, useEffect, useState } from "react";
-import { toast } from "react-toastify";
-import AlertDialog from "../../../../../shared/Dialog/AlertDialog";
-import { Card } from "flowbite-react";
+
 import { Outlet } from "react-router-dom";
 import PatrolGuardListToolbar from "./PatrolGuardListToolbar/PatrolGuardListToolbar";
-import {
-  useDeleteGuardMutation,
-  useGetGuardsQuery,
-} from "../../../../../redux/services/guards";
+import { useDeleteGuardMutation } from "../../../../../redux/services/guards";
 import { useSelector } from "react-redux";
 import { selectToken, selectUser } from "../../../../../redux/selectors/auth";
 import { useGetBeatsQuery } from "../../../../../redux/services/beats";
@@ -29,12 +20,6 @@ function PatrolGuardList(props) {
   const [open, setOpen] = useState(false);
   const user = useSelector(selectUser);
   const { beatId } = useParams();
-
-  const {
-    data: guards,
-    isLoading,
-    error,
-  } = useGetGuardsQuery(user.userid, { skip: user.userid ? false : true });
 
   const {
     data: beats,
@@ -60,13 +45,6 @@ function PatrolGuardList(props) {
   //   props.setGuardCount(activeguards.length);
   // }, [guards]);
 
-  useEffect(() => {
-    if (error) {
-      toast.error(error);
-    }
-  }, [error]);
-
-  console.log(beat);
   return (
     <>
       {/* patrol-guard-list-app works! */}

@@ -1,18 +1,21 @@
 import React, { useContext, useState } from "react";
-import { AuthContext } from "../../../../shared/Context/AuthContext";
-import { useDispatch } from "react-redux";
+
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../../../../redux/slice/authSlice";
+import { selectUser } from "../../../../redux/selectors/auth";
 
 const OnboardingToolbar = () => {
-  const auth = useContext(AuthContext);
+  const user = useSelector(selectUser);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const [isProfileDropdownOpened, setIsProfileDropdownOpened] = useState(false);
 
   const handleProfileDropdownToggle = () => {
     setIsProfileDropdownOpened(!isProfileDropdownOpened);
   };
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
+
   return (
     <>
       {/* onboarding-toolbar-app works! */}
@@ -43,7 +46,7 @@ const OnboardingToolbar = () => {
                     <span className="sr-only">Open user menu</span>
                     <img
                       className="h-8 w-8 rounded-full"
-                      src={auth.user.image || null}
+                      src={user.image || null}
                       alt=""
                     />
                   </button>

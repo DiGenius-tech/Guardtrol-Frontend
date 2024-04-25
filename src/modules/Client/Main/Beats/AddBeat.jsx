@@ -8,13 +8,22 @@ import AlertDialog from "../../../../shared/Dialog/AlertDialog";
 import { toast } from "react-toastify";
 import { SubscriptionContext } from "../../../../shared/Context/SubscriptionContext";
 import TextareaField from "../../../Sandbox/TextareaField/TextareaField";
-import { AuthContext } from "../../../../shared/Context/AuthContext";
+
+import { useDispatch, useSelector } from "react-redux";
+import { selectUser } from "../../../../redux/selectors/auth";
+import {
+  suspenseHide,
+  suspenseShow,
+} from "../../../../redux/slice/suspenseSlice";
 
 const AddBeat = () => {
   const [validationErrors, setValidationErrors] = useState({});
-  const auth = useContext(AuthContext);
+  const user = useSelector(selectUser);
   const navigate = useNavigate();
   const sub = useContext(SubscriptionContext);
+
+  const dispatch = useDispatch();
+
   const [open, setOpen] = useState(false);
   const { isLoading, error, responseData, sendRequest } = useHttpRequest();
   const [existingBeats, setExistingBeats] = useState([]);
@@ -26,12 +35,12 @@ const AddBeat = () => {
 
   const getExistingBeats = async () => {
     const data = await sendRequest(
-      `beat/getbeats/${auth.user.userid}`,
+      `beat/getbeats/${user.userid}`,
       "GET",
       null,
       {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${auth.token}`,
+        Authorization: `Bearer ${user.token}`,
       }
     );
     if (data) {
@@ -41,7 +50,7 @@ const AddBeat = () => {
   };
   useEffect(() => {
     getExistingBeats();
-  }, [auth.token]);
+  }, [user.token]);
 
   useEffect(() => {
     if (error) {
@@ -66,16 +75,17 @@ const AddBeat = () => {
         setOpen(true);
         return;
       }
-      auth.loading(true);
+      dispatch(suspenseShow());
+
       const data = await sendRequest(
-        `beat/addbeat/${auth.user.userid}`,
+        `beat/addbeat/${user.userid}`,
         "POST",
         JSON.stringify(beat),
         {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${auth.token}`,
+          Authorization: `Bearer ${user.token}`,
         }
-      );
+      ).finally(dispatch(suspenseHide()));
 
       if (data && data.status) {
         toast("Beat Created Successfully");

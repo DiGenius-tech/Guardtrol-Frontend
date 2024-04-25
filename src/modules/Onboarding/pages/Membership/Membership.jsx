@@ -4,7 +4,7 @@ import RegularButton from "../../../Sandbox/Buttons/RegularButton";
 import { toast } from "react-toastify";
 import useHttpRequest from "../../../../shared/Hooks/HttpRequestHook";
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../../../../shared/Context/AuthContext";
+
 import { FlutterWaveButton, closePaymentModal } from "flutterwave-react-v3";
 import { useDispatch, useSelector } from "react-redux";
 import { selectUser } from "../../../../redux/selectors/auth";

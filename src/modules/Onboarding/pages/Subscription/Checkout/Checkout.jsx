@@ -6,7 +6,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useFlutterwave, closePaymentModal } from "flutterwave-react-v3";
 import { usePaystackPayment } from "react-paystack";
 import "./Checkout.scss";
-import { AuthContext } from "../../../../../shared/Context/AuthContext";
+
 import { formatNumberWithCommas } from "../../../../../shared/functions/random-hex-color";
 import { toast } from "react-toastify";
 import useHttpRequest from "../../../../../shared/Hooks/HttpRequestHook";

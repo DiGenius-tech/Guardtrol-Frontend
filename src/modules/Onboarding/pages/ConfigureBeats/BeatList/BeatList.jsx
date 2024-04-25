@@ -4,7 +4,7 @@ import Beat from "./Beat/Beat";
 import EditBeat from "../EditBeat/EditBeat";
 import RegularButton from "../../../../Sandbox/Buttons/RegularButton";
 import useHttpRequest from "../../../../../shared/Hooks/HttpRequestHook";
-import { AuthContext } from "../../../../../shared/Context/AuthContext";
+
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import { selectUser } from "../../../../../redux/selectors/auth";

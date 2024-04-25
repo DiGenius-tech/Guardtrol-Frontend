@@ -4,16 +4,16 @@ import { Link } from "react-router-dom";
 const ViewBeatInformation = ({ setPage, beat }) => {
   return (
     <>
-      <div className="flex justify-between flex-row my-2">
-        <h5 className="text-md font-bold text-primary-500 dark:text-white">
+      <div className="flex justify-between flex-row my-5">
+        <h4 className="text-lg font-semibold text-primary-500 dark:text-white">
           View Beat Information
-        </h5>
+        </h4>
 
         <span
           onClick={() => setPage("EditBeatInformation")}
-          className="text-primary-500 font-semibold text-sm cursor-pointer"
+          className="text-primary-500 font-semibold text-md cursor-pointer"
         >
-          + Edit
+          Edit
         </span>
       </div>
       <div className="grid grid-cols-12 gap-4 items-stretch">
@@ -26,34 +26,23 @@ const ViewBeatInformation = ({ setPage, beat }) => {
             </div>
             <hr />
             <div className="flex justify-between flex-row">
-              <h5 className="text-md font-bold text-gray-900 dark:text-white">
-                Name
-              </h5>
-              <div className="">
-                <span className="text-md text-gray-700 font-medium cursor-pointer dark:text-white">
-                  {beat?.name || "No Name"}
-                </span>
-              </div>
-            </div>
-            <div className="flex justify-between flex-row">
-              <h5 className="text-md font-bold text-gray-900 dark:text-white">
-                Location
-              </h5>
-              <div className="">
-                <span className="text-md font-medium cursor-pointer dark:text-white">
-                  {beat?.address || "No Address"}
-                </span>
-              </div>
-            </div>
-            <div className="flex justify-between flex-row">
-              <h5 className="text-md font-bold text-gray-900 dark:text-white">
-                Beat Guards
-              </h5>
+              <h3 className="font-bold">Name</h3>
 
               <div className="">
-                <span className="text-md font-medium cursor-pointer dark:text-white">
-                  {beat?.guards.length}
-                </span>
+                <p>{beat?.name || "No Name"}</p>
+              </div>
+            </div>
+            <div className="flex justify-between flex-row">
+              <h3 className="font-bold">Location</h3>
+              <div className="">
+                <p>{beat?.address || "No Address"}</p>
+              </div>
+            </div>
+            <div className="flex justify-between flex-row">
+              <h3 className="font-bold">Beat Guards</h3>
+
+              <div className="">
+                <p>{beat?.guards.length}</p>
               </div>
             </div>
           </div>
@@ -67,33 +56,21 @@ const ViewBeatInformation = ({ setPage, beat }) => {
             </div>
             <hr />
             <div className="flex justify-between flex-row">
-              <h5 className="text-md font-bold text-gray-900 dark:text-white">
-                Most recent patrol
-              </h5>
+              <h3 className="font-bold">Most recent patrol</h3>
               <div className="">
-                <span className="text-md font-medium cursor-pointer dark:text-white">
-                  Beat Name
-                </span>
+                <p>Beat Name</p>
               </div>
             </div>
             <div className="flex justify-between flex-row">
-              <h5 className="text-md font-bold text-gray-900 dark:text-white">
-                Location
-              </h5>
+              <h3 className="font-bold">Location</h3>
               <div className="">
-                <span className="text-md font-medium cursor-pointer dark:text-white">
-                  Beat Lacation
-                </span>
+                <p>Beat Lacation</p>
               </div>
             </div>
             <div className="flex justify-between flex-row">
-              <h5 className="text-md font-bold text-gray-900 dark:text-white">
-                Beat Guards
-              </h5>
+              <h3 className="font-bold">Beat Guards</h3>
               <div className="">
-                <span className="text-md font-medium cursor-pointer dark:text-white">
-                  8
-                </span>
+                <p>8</p>
               </div>
             </div>
           </div>

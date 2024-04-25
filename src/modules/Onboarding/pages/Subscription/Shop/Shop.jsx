@@ -4,7 +4,7 @@ import RegularButton from "../../../../Sandbox/Buttons/RegularButton";
 import { toast } from "react-toastify";
 import useHttpRequest from "../../../../../shared/Hooks/HttpRequestHook";
 import { useNavigate, useLocation } from "react-router-dom";
-import { AuthContext } from "../../../../../shared/Context/AuthContext";
+
 import { FlutterWaveButton, closePaymentModal } from "flutterwave-react-v3";
 import { formatNumberWithCommas } from "../../../../../shared/functions/random-hex-color";
 import { SubscriptionContext } from "../../../../../shared/Context/SubscriptionContext";

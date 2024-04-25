@@ -32,7 +32,7 @@ export const GuardApi = api.injectEndpoints({
           body,
         };
       },
-      invalidatesTags: (student) => [{ type: "Guards", id: student?._id }],
+      invalidatesTags: (guard) => [{ type: "Guards", id: guard?._id }],
     }),
 
     deleteGuard: build.mutation<{ success: boolean; _id: number }, number>({
@@ -42,7 +42,7 @@ export const GuardApi = api.injectEndpoints({
           method: "DELETE",
         };
       },
-      invalidatesTags: (student) => [{ type: "Guards", _id: student?._id }],
+      invalidatesTags: (guard) => [{ type: "Guards", _id: guard?._id }],
     }),
     getErrorProne: build.query<{ success: boolean }, void>({
       query: () => "error-prone",

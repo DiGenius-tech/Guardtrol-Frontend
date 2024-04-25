@@ -4,9 +4,8 @@ import EditBeatInformation from "./EditBeatInformation";
 
 const BeatInformation = ({ beat }) => {
   const [page, setPage] = useState("");
-  console.log(page);
   return (
-    <div className="tab flex-tabs flex-tab-nowrap">
+    <div>
       {(page === "ViewBeatInformation" || page === "") && (
         <ViewBeatInformation beat={beat} setPage={setPage} />
       )}

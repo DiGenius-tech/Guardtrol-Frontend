@@ -7,7 +7,7 @@ import BeatsMobileView from "./BeatsMobileView";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import useHttpRequest from "../../../../shared/Hooks/HttpRequestHook";
-import { AuthContext } from "../../../../shared/Context/AuthContext";
+
 import EditBeat from "./EditBeat";
 import {
   useDeleteBeatMutation,

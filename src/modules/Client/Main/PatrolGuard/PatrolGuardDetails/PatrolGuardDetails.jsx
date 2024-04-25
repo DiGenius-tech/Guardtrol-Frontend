@@ -8,30 +8,28 @@ import EditGuarantorForm from "../EditGuard/EditGuarantorForm/EditGuarantorForm"
 import { toast } from "react-toastify";
 import { useParams } from "react-router-dom";
 import useHttpRequest from "../../../../../shared/Hooks/HttpRequestHook";
-import { AuthContext } from "../../../../../shared/Context/AuthContext";
+
 import moment from "moment";
+import { useSelector } from "react-redux";
+import { selectUser } from "../../../../../redux/selectors/auth";
 
 const PatrolGuardDetails = () => {
   const [isComment, setIsComment] = useState(false);
-  const auth = useContext(AuthContext)
+  const auth = useSelector(selectUser);
   const { isLoading, error, responseData, sendRequest } = useHttpRequest();
-  const {guardId} = useParams()
-  const [guard, setGuard] = useState({})
-  const [comment, setComment] = useState('')
+
+  const { guardId } = useParams();
+  const [guard, setGuard] = useState({});
+  const [comment, setComment] = useState("");
 
   const handleSentRequest = () => {
-    const data = sendRequest(
-      `http://localhost:5000/api/guard/getguard/${guardId}`,
-      'GET',
-      null,
-      {
-        "Content-Type": "application/json",
-        'Authorization': `Bearer ${auth.token}`,
-      }
-    ).then(data => {
-      console.log(data)
-      setGuard(data)
-    })
+    const data = sendRequest(`guard/getguard/${guardId}`, "GET", null, {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${auth.token}`,
+    }).then((data) => {
+      console.log(data);
+      setGuard(data);
+    });
   };
 
   useEffect(() => {
@@ -40,62 +38,57 @@ const PatrolGuardDetails = () => {
 
   useEffect(() => {
     if (error) {
-      toast.error(error)
+      toast.error(error);
     }
-  }, [error])
+  }, [error]);
 
   const AddComment = (e) => {
-    e.preventDefault()
+    e.preventDefault();
     const commentData = {
       comment: comment,
-      updatedat: Date.now()
-    }
+      updatedat: Date.now(),
+    };
 
     const data = sendRequest(
-      `http://localhost:5000/api/guard/comment/${guardId}`,
-      'PATCH',
+      `guard/comment/${guardId}`,
+      "PATCH",
       JSON.stringify(commentData),
       {
         "Content-Type": "application/json",
-        'Authorization': `Bearer ${auth.token}`,
+        Authorization: `Bearer ${auth.token}`,
       }
-    ).then(data => {
-      if(data.status){
-        toast("Comment Updated")
-        setIsComment(false)
-      setGuard({})
-      handleSentRequest()
+    ).then((data) => {
+      if (data.status) {
+        toast("Comment Updated");
+        setIsComment(false);
+        setGuard({});
+        handleSentRequest();
       }
-    })
-
-
-  }
+    });
+  };
 
   const verify = async (e) => {
-   
     const statusData = {
       status: !guard?.isactive,
-    }
+    };
 
     const data = sendRequest(
-      `http://localhost:5000/api/guard/verify/${guardId}`,
-      'PATCH',
+      `guard/verify/${guardId}`,
+      "PATCH",
       JSON.stringify(statusData),
       {
         "Content-Type": "application/json",
-        'Authorization': `Bearer ${auth.token}`,
+        Authorization: `Bearer ${auth.token}`,
       }
-    ).then(data => {
-      if(data.status){
-        toast.clearWaitingQueue()
-        toast("Guard Status Updated")
-        handleSentRequest()
-        return
-      
+    ).then((data) => {
+      if (data.status) {
+        toast.clearWaitingQueue();
+        toast("Guard Status Updated");
+        handleSentRequest();
+        return;
       }
-    })
-  }
-
+    });
+  };
 
   return (
     <>
@@ -118,10 +111,18 @@ const PatrolGuardDetails = () => {
             </ul>
             <div className="my-8"></div>
             <form>
-              <label className="inline-flex items-center cursor-pointer" onClick={() => verify()}>
-                <input type="checkbox" name="verification" className="sr-only peer" checked={guard?.isactive} />
+              <label
+                className="inline-flex items-center cursor-pointer"
+                onClick={() => verify()}
+              >
+                <input
+                  type="checkbox"
+                  name="verification"
+                  className="sr-only peer"
+                  checked={guard?.isactive}
+                />
                 <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 dark:peer-focus:ring-green-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary-600"></div>
-                <span className="ms-3 text-sm font-semibold text-gray-900 dark:text-gray-300" >
+                <span className="ms-3 text-sm font-semibold text-gray-900 dark:text-gray-300">
                   Activate
                 </span>
               </label>
@@ -136,16 +137,17 @@ const PatrolGuardDetails = () => {
                   Comment
                 </h5>
                 <p className="font-normal text-gray-700 dark:text-gray-400">
-                 {guard?.comment?.comment|| "No Comment Here Yet"}
+                  {guard?.comment?.comment || "No Comment Here Yet"}
                 </p>
-                
+
                 <div className="my-2"></div>
                 <small className="text-dark-250 font-semibold">
-                  - {auth?.user?.name}, {moment(guard?.comment?.updatedat).format('h:mm a ddd D MMM')}
+                  - {auth?.user?.name},{" "}
+                  {moment(guard?.comment?.updatedat).format("h:mm a ddd D MMM")}
                 </small>
                 <div className="my-4"></div>
                 <button
-                  onClick={()=>setIsComment(true)}
+                  onClick={() => setIsComment(true)}
                   className="text-secondary-500 font-semibold"
                 >
                   Edit comment
@@ -179,7 +181,7 @@ const PatrolGuardDetails = () => {
                       Submit
                     </button>
                     <button
-                    onClick={()=>setIsComment(false)}
+                      onClick={() => setIsComment(false)}
                       type="button"
                       className="text-white bg-gray-300 focus:outline-none font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
                     >
@@ -196,19 +198,39 @@ const PatrolGuardDetails = () => {
       <div className="tab flex-tabs flex-tab-nowrap">
         <Tabs aria-label="Tabs with underline" style="fullWidth">
           <Tabs.Item active title="Personal information">
-            <EditPersonalInformation  guard={guard?.personalinformation} setGuard={setGuard} handleSentRequest={handleSentRequest}/>
+            <EditPersonalInformation
+              guard={guard?.personalinformation}
+              setGuard={setGuard}
+              handleSentRequest={handleSentRequest}
+            />
           </Tabs.Item>
           <Tabs.Item title="Guarantor form">
-            <EditGuarantorForm  guard={guard?.guarantor} setGuard={setGuard} handleSentRequest={handleSentRequest}/>
+            <EditGuarantorForm
+              guard={guard?.guarantor}
+              setGuard={setGuard}
+              handleSentRequest={handleSentRequest}
+            />
           </Tabs.Item>
           <Tabs.Item title="Identification">
-            <EditIdentification guard={guard?.identification} setGuard={setGuard} handleSentRequest={handleSentRequest}/>
+            <EditIdentification
+              guard={guard?.identification}
+              setGuard={setGuard}
+              handleSentRequest={handleSentRequest}
+            />
           </Tabs.Item>
           <Tabs.Item title="Next of kin">
-            <EditNextOfKin guard={guard?.nextofkin} setGuard={setGuard} handleSentRequest={handleSentRequest}/>
+            <EditNextOfKin
+              guard={guard?.nextofkin}
+              setGuard={setGuard}
+              handleSentRequest={handleSentRequest}
+            />
           </Tabs.Item>
           <Tabs.Item title="Bank details">
-            <BankDetails guard={guard?.banking} setGuard={setGuard} handleSentRequest={handleSentRequest}/>
+            <BankDetails
+              guard={guard?.banking}
+              setGuard={setGuard}
+              handleSentRequest={handleSentRequest}
+            />
           </Tabs.Item>
         </Tabs>
       </div>

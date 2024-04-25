@@ -7,7 +7,7 @@ function PatrolGuardListDesktopView(props) {
   return (
     <>
       {/* patrol-guard-list-desktop-view-app works! */}
-      {!props.guards.length ? (
+      {!props.guards?.length ? (
         <div class="bg-white p-8 rounded ">
           <p class="text-gray-700 text-center">No Guards Here Yet</p>
         </div>
@@ -35,7 +35,7 @@ function PatrolGuardListDesktopView(props) {
                 </tr>
               </thead>
               <tbody>
-                {props.guards.map((guard) => {
+                {props?.guards?.map((guard) => {
                   return (
                     <tr
                       key={guard._id}

@@ -7,10 +7,11 @@ import PatrolGuardList from "./PatrolGuardList/PatrolGuardList";
 
 const patrol_guard_routes = {
   path: "patrol-guard",
+  element: <PatrolGuardList />,
   children: [
     {
       path: "",
-      element: <PatrolGuard />,
+      element: <ActivePatrolGuards />,
     },
     {
       path: "active",

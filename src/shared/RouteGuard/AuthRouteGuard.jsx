@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
-import { AuthContext } from "../Context/AuthContext";
+
 import { useSelector } from "react-redux";
 import { selectUser } from "../../redux/selectors/auth";
 

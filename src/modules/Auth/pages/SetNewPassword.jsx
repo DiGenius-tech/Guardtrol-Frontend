@@ -6,14 +6,21 @@ import { Link, useNavigate } from "react-router-dom";
 import useHttpRequest from "../../../shared/Hooks/HttpRequestHook";
 import TextInputField from "../../Sandbox/InputField/TextInputField";
 import RegularButton from "../../Sandbox/Buttons/RegularButton";
-import { AuthContext } from "../../../shared/Context/AuthContext";
+
 import { useContext, useEffect, useState } from "react";
+import { selectUser } from "../../../redux/selectors/auth";
+import { useDispatch, useSelector } from "react-redux";
+import { suspenseHide, suspenseShow } from "../../../redux/slice/suspenseSlice";
 
 function SetNewPassword() {
   const { token } = useParams();
-  const auth = useContext(AuthContext);
+  const user = useSelector(selectUser);
   const navigate = useNavigate();
+
+  const dispatch = useDispatch();
+
   const [passwordChanged, setPasswordChanged] = useState(false);
+
   const [validationErrors, setValidationErrors] = useState({});
   const { isLoading, error, responseData, sendRequest } = useHttpRequest();
   const [formData, setFormData] = useState({
@@ -58,7 +65,8 @@ function SetNewPassword() {
         e.stopPropagation();
       } else {
         // Form is valid, handle submission
-        auth.loading(true);
+        dispatch(suspenseShow());
+
         try {
           const data = await sendRequest(
             `users/resetpassword`,
@@ -76,7 +84,7 @@ function SetNewPassword() {
         } catch (err) {
           console.log(err);
         } finally {
-          auth.loading(false);
+          dispatch(suspenseHide());
         }
       }
     }

@@ -5,7 +5,7 @@ function PatrolGuardListMobileView(props) {
   return (
     <>
       {/* patrol-guard-list-mobile-view-app works! */}
-      {props.guards.length < 1 ? (
+      {props?.guards?.length < 1 ? (
         <div class="bg-white p-8 rounded ">
           <p class="text-gray-700 text-center">No Guards Here Yet</p>
         </div>
@@ -26,7 +26,7 @@ function PatrolGuardListMobileView(props) {
               </tr>
             </thead>
             <tbody>
-              {props.guards?.map((guard) => {
+              {props?.guards?.map((guard) => {
                 return (
                   <tr
                     key={guard._id}

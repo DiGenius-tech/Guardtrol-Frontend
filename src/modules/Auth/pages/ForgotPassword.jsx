@@ -6,11 +6,17 @@ import { Link, useNavigate } from "react-router-dom";
 import useHttpRequest from "../../../shared/Hooks/HttpRequestHook";
 import TextInputField from "../../Sandbox/InputField/TextInputField";
 import RegularButton from "../../Sandbox/Buttons/RegularButton";
-import { AuthContext } from "../../../shared/Context/AuthContext";
+
+import { useDispatch, useSelector } from "react-redux";
+import { selectUser } from "../../../redux/selectors/auth";
+import { suspenseHide, suspenseShow } from "../../../redux/slice/suspenseSlice";
 
 const ForgotPassword = () => {
-  const auth = useContext(AuthContext);
+  const user = useSelector(selectUser);
   const navigate = useNavigate();
+
+  const dispatch = useDispatch();
+
   const [emailSent, setEmailSent] = useState(false);
   const [validationErrors, setValidationErrors] = useState({});
   const { isLoading, error, responseData, sendRequest } = useHttpRequest();
@@ -43,7 +49,8 @@ const ForgotPassword = () => {
         e.stopPropagation();
       } else {
         // Form is valid, handle submission
-        auth.loading(true);
+        dispatch(suspenseShow());
+
         try {
           const data = await sendRequest(
             `users/forgotpassword`,
@@ -60,7 +67,7 @@ const ForgotPassword = () => {
         } catch (err) {
           console.log(err);
         } finally {
-          auth.loading(false);
+          dispatch(suspenseHide());
         }
       }
     }

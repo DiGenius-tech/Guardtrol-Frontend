@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { AuthContext } from "../../../shared/Context/AuthContext";
+
 import { Dropdown, Flowbite } from "flowbite-react";
 import { customTheme } from "../../../flowbite-theme";
 import brandLogo from "../../../images/brand-logo.svg";

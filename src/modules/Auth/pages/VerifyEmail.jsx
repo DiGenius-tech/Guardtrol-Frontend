@@ -1,16 +1,21 @@
 import { useContext, useEffect, useState } from "react";
 import left_pattern_boxes from "../../../images/left-pattern-boxes.svg";
 import right_pattern_boxes from "../../../images/right-pattern-boxes.svg";
-import { AuthContext } from "../../../shared/Context/AuthContext";
+
 import TextInputField from "../../Sandbox/InputField/TextInputField";
 import RegularButton from "../../Sandbox/Buttons/RegularButton";
 import useHttpRequest from "../../../shared/Hooks/HttpRequestHook";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useDispatch, useSelector } from "react-redux";
+import { selectAuth } from "../../../redux/selectors/auth";
+import { suspenseHide, suspenseShow } from "../../../redux/slice/suspenseSlice";
 
 function VerifyEmail() {
-  const auth = useContext(AuthContext);
-  const { user } = useContext(AuthContext);
+  const auth = useSelector(selectAuth);
+  const { user } = useSelector(selectAuth);
+  const dispatch = useDispatch();
+
   const navigate = useNavigate();
   const [verified, setVerified] = useState(false);
   const [validationErrors, setValidationErrors] = useState({});
@@ -71,15 +76,15 @@ function VerifyEmail() {
         e.stopPropagation();
       } else {
         // Form is valid, handle submission
-        auth.loading(true);
+        dispatch(suspenseShow());
         try {
           const data = await sendRequest(
-            `users/${auth.user.userid}/verifyemail`,
+            `users/${user.userid}/verifyemail`,
             "POST",
             JSON.stringify(formData),
             {
               "Content-Type": "application/json",
-              Authorization: "Bearer " + auth.user.token,
+              Authorization: "Bearer " + user.token,
             }
           );
 
@@ -91,7 +96,7 @@ function VerifyEmail() {
         } catch (err) {
           console.log(err);
         } finally {
-          auth.loading(false);
+          dispatch(suspenseHide());
         }
       }
     }
@@ -121,7 +126,7 @@ function VerifyEmail() {
               </h1>
               <p className="text-center">
                 Enter the 6 Digits Code that was sent to your email address{" "}
-                <b>{auth.user.email}</b>
+                <b>{user.email}</b>
               </p>
 
               <div className="mt-8"></div>

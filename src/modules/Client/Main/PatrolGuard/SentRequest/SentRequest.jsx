@@ -5,8 +5,7 @@ import SentRequestDesktopView from "./SentRequestDesktopView/SentRequestDesktopV
 import SentRequestMobileView from "./SentRequestMobileView/SentRequestMobileView";
 import { Card } from "flowbite-react";
 import { toast } from "react-toastify";
-import { AuthContext } from "../../../../../shared/Context/AuthContext";
-import useHttpRequest from "../../../../../shared/Hooks/HttpRequestHook";
+
 import AlertDialog from "../../../../../shared/Dialog/AlertDialog";
 import {
   useDeleteGuardMutation,
@@ -16,9 +15,9 @@ import { useSelector } from "react-redux";
 import { selectUser } from "../../../../../redux/selectors/auth";
 
 function SentRequest(props) {
-  const auth = useContext(AuthContext);
+  const { user } = useSelector(selectUser);
+
   const [inActiveGuards, setInActiveGuards] = useState([]);
-  const user = useSelector(selectUser);
 
   const [selectedGuard, setSelectedGuard] = useState(null);
   const [open, setOpen] = useState(false);
