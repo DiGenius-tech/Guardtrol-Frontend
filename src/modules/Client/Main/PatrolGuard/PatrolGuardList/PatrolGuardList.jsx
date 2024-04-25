@@ -8,6 +8,8 @@ import { useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import AlertDialog from "../../../../../shared/Dialog/AlertDialog";
 import { Card } from "flowbite-react";
+import { Outlet } from "react-router-dom";
+import PatrolGuardListToolbar from "./PatrolGuardListToolbar/PatrolGuardListToolbar";
 import {
   useDeleteGuardMutation,
   useGetGuardsQuery,
@@ -68,39 +70,17 @@ function PatrolGuardList(props) {
   return (
     <>
       {/* patrol-guard-list-app works! */}
-
-      <div className="hidden sm:block">
-        <Card>
-          <PatrolGuardListDesktopView
-            duty_status={duty_status}
-            icon_menu_dots={icon_menu_dots}
-            guards={beat?.guards || guards || []}
-            setSelectedGuard={setSelectedGuard}
-            setOpen={setOpen}
-            setGuardToEdit={props.setGuardToEdit}
-          />
-        </Card>
-      </div>
-
-      <div className="sm:hidden rounded-lg bg-white p-2">
-        <PatrolGuardListMobileView
-          duty_status={duty_status}
-          icon_menu_dots={icon_menu_dots}
-          guards={beat?.guards || guards || []}
-          setSelectedGuard={setSelectedGuard}
-          setOpen={setOpen}
-          setGuardToEdit={props.setGuardToEdit}
-        />
-      </div>
-
-      <AlertDialog
+      <PatrolGuardListToolbar />
+      <div className="my-4"></div>
+      <Outlet />
+      {/* <AlertDialog 
         open={open}
         title={`Delete Guard ?`}
         description={`Are You Sure You Want To Delete This Guard ?`}
         setOpen={setOpen}
         actionText="Delete"
         action={deleteGuard}
-      />
+      /> */}
     </>
   );
 }

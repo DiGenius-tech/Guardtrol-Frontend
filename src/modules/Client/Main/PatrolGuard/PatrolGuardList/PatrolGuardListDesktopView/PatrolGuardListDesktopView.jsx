@@ -7,7 +7,7 @@ function PatrolGuardListDesktopView(props) {
   return (
     <>
       {/* patrol-guard-list-desktop-view-app works! */}
-      {props.guards.length < 1 ? (
+      {!props.guards.length ? (
         <div class="bg-white p-8 rounded ">
           <p class="text-gray-700 text-center">No Guards Here Yet</p>
         </div>
@@ -41,23 +41,19 @@ function PatrolGuardListDesktopView(props) {
                       key={guard._id}
                       className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
                     >
-                      <th
-                        scope="row"
-                        className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                      >
-                        <Link to={`/client/patrol-guard/details/${guard._id}`}>
-                          <div className="flex items-center gap-2">
-                            <div className="h-8 w-8 rounded-full overflow-hidden">
-                              <img src={guard.profileImage} alt={guard.name} />
-                            </div>
-                            {guard.name}
-                            <span className="block sm:hidden">
-                              <br />
-                              {/* {time} */}
-                            </span>
+                      <Link to={`/client/patrol-guard/details/${guard._id}`}>
+                        <div className="flex items-center gap-2">
+                          <div className="h-8 w-8 rounded-full overflow-hidden">
+                            <img src={guard.profileImage} alt={guard.name} />
                           </div>
-                        </Link>
-                      </th>
+                          {guard.name}
+                          <span className="block sm:hidden">
+                            <br />
+                            {/* {time} */}
+                          </span>
+                        </div>
+                      </Link>
+
                       <td className="px-6 py-4"> {guard.phone}</td>
                       {/* <td className="px-6 py-4"> {guard.email}</td> */}
                       <td className="px-6 py-4">
@@ -86,26 +82,14 @@ function PatrolGuardListDesktopView(props) {
                             </button>
                           )}
                         >
-                          <Dropdown.Item
-                            onClick={() =>
-                              navigate(
-                                `/client/patrol-guard/details/${guard._id}`
-                              )
-                            }
-                          >
-                            <span style={{ cursor: "pointer" }}>
+                          <Dropdown.Item>
+                            <Link
+                              to={`/client/patrol-guard/details/${guard._id}`}
+                            >
                               Edit guard
-                            </span>
+                            </Link>
                           </Dropdown.Item>
-                          <Dropdown.Item>Assign guard to beat</Dropdown.Item>
-                          <Dropdown.Item
-                            onClick={() => {
-                              props.setSelectedGuard(guard);
-                              props.setOpen(true);
-                            }}
-                          >
-                            Deactivate
-                          </Dropdown.Item>
+                          {/* <Dropdown.Item>Assign guard to beat</Dropdown.Item> */}
                         </Dropdown>
                       </td>
                     </tr>
@@ -119,5 +103,4 @@ function PatrolGuardListDesktopView(props) {
     </>
   );
 }
-
 export default PatrolGuardListDesktopView;

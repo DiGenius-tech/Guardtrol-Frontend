@@ -1,0 +1,33 @@
+@use "../_partials/mixins";
+.custom-success-check {
+  &[type="radio"] {
+    &:checked {
+      background-image: url("../../images/icons/Icon-tick-white.svg");
+      background-size: 10px 10px;
+    }
+  }
+}
+
+.meridian-check {
+  input {
+    &[type="radio"] {
+      position: absolute;
+      visibility: hidden;
+      &:checked {
+        & + label {
+          color: var(--clr-primary-500);
+          background-color: var(--clr-primary-50);
+        }
+      }
+    }
+  }
+}
+
+input[type="number"] {
+  @include mixins.appearance(textfield);
+}
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  @include mixins.appearance(none);
+  margin: 0;
+}
