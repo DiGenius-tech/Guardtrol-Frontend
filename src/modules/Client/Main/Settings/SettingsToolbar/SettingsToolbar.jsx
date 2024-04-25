@@ -30,7 +30,7 @@ const SettingsToolbar = () => {
 
             <nav>
                 {/*  active border-cyan-600 text-cyan-600 dark:border-cyan-500 dark:text-cyan-500 */}
-                <ul className="flex gap-2 flex-nowrap overflow-auto text-center -mb-px border-b border-gray-200 dark:border-gray-700">
+                <ul className="remove-scrollbar flex gap-2 flex-nowrap overflow-auto text-center -mb-px border-b border-gray-200 dark:border-gray-700">
                     <li>
                         <Link
                             to={`personal-information`}

@@ -15,3 +15,8 @@
     width: 100%;
   }
 }
+
+.remove-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
