@@ -39,10 +39,10 @@ function AddBeat() {
   const saveBeat = async (e) => {
     e.preventDefault();
     console.log(beats);
-    if (beat.beat_name === "" || beat.beat_name.length < 3) {
+    if (beat.name === "" || beat.name.length < 3) {
       setValidationErrors({
         ...validationErrors,
-        beat_name: "Use A Valid Beat Name",
+        name: "Use A Valid Beat Name",
       });
     } else {
       console.log(beats);
@@ -67,14 +67,28 @@ function AddBeat() {
           <div className="mb-6">
             <TextInputField
               label="Beat Name"
-              name="beat_name"
+              name="name"
               type="text"
               placeholder="Beat Name"
-              id="beat_name"
-              error={validationErrors["beat_name"]}
+              id="name"
+              error={validationErrors["name"]}
               onChange={handleChange}
               required="required"
-              value={beat.beat_name}
+              value={beat.name}
+              semibold_label={true}
+            />
+          </div>
+          <div className="mb-6">
+            <TextInputField
+              label="Address"
+              name="address"
+              type="text"
+              placeholder="Beat Address"
+              id="address"
+              error={validationErrors["address"]}
+              onChange={handleChange}
+              required="required"
+              value={beat.address}
               semibold_label={true}
             />
           </div>

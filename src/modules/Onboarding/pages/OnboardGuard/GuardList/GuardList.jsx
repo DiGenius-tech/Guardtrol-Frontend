@@ -116,7 +116,6 @@ function GuardList() {
       toast.error(error);
     }
   }, [error]);
-
   return (
     <>
       {/* guard-list-app works! */}

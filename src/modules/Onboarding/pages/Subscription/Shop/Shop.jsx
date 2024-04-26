@@ -15,13 +15,18 @@ import {
   selectOnboardingLevel,
 } from "../../../../../redux/selectors/onboarding";
 import { setOnboardingLevel } from "../../../../../redux/slice/onboardingSlice";
+import {
+  setFwConfig,
+  setPlan,
+  setPsConfig,
+} from "../../../../../redux/slice/selectedPlanSlice";
 
 const Shop = () => {
   const user = useSelector(selectUser);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const location = useLocation();
   const onBoardingLevel = useSelector(selectOnboardingLevel);
-  const dispatch = useDispatch();
 
   const [validationErrors, setValidationErrors] = useState({});
   const { isLoading, error, responseData, sendRequest } = useHttpRequest();
@@ -117,10 +122,10 @@ const Shop = () => {
           12 *
           0.8;
       }
-      localStorage.setItem("selectedPlan", JSON.stringify(selectedPlan));
 
-      // Open the modal after form submission
-      //setIsModalOpen(true); no longer needed
+      dispatch(setPsConfig({ ...selectedPlan, ...user }));
+      dispatch(setFwConfig({ ...selectedPlan, ...user }));
+      dispatch(setPlan(selectedPlan));
 
       navigate("/onboarding/membership/checkout");
     }
@@ -198,33 +203,16 @@ const Shop = () => {
     console.log("Modal button clicked");
   };
 
-  const config = {
-    public_key: "FLWPUBK-a1be03107079ab0523984695c59cbbed-X",
-    tx_ref: Date.now(),
-    amount: selectedPlan && selectedPlan.amount ? selectedPlan.amount : 0,
-    currency: "NGN",
-    payment_options: "card,mobilemoney,ussd",
-    customer: {
-      email: user.email,
-      phone_number: user.phone,
-      name: user.name,
-    },
-    customizations: {
-      title: "Alphatrol",
-      description: "Guardtrol Subscription",
-      logo: "https://alphatrol.com/wp-content/uploads/2022/09/alphatrol-logo-black.png",
-    },
-  };
+  // const fwConfig = {
+  //   ...config,
+  //   text: "Pay with Flutterwave!",
+  //   callback: (response) => {
+  //     console.log(response);
+  //     closePaymentModal(); // this will close the modal programmatically
+  //   },
+  //   onClose: () => {},
+  // };
 
-  const fwConfig = {
-    ...config,
-    text: "Pay with Flutterwave!",
-    callback: (response) => {
-      console.log(response);
-      closePaymentModal(); // this will close the modal programmatically
-    },
-    onClose: () => {},
-  };
   return (
     <>
       <h1 className="font-bold text-center text-2xl text-dark-450">
@@ -363,7 +351,7 @@ const Shop = () => {
                 className="mt-4 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 focus:outline-none focus:ring focus:ring-blue-200"
                 onClick={handleModalButtonClick}
               >
-                <FlutterWaveButton {...fwConfig} />
+                {/* <FlutterWaveButton {...fwConfig} /> */}
               </button>
             </div>
           </div>

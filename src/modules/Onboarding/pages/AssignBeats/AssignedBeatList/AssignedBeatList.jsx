@@ -211,11 +211,6 @@ function AssignedBeatList(props) {
       }
     }
   };
-  useEffect(() => {
-    if (token && !isUninitialized) {
-      refetchBeats();
-    }
-  }, [token]);
   return (
     <>
       {/* assigned-beat-list-app works! */}

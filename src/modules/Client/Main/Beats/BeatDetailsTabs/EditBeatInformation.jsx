@@ -7,6 +7,7 @@ import {
   useUpdateBeatMutation,
 } from "../../../../../redux/services/beats";
 import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
 import {
   suspenseHide,
   suspenseShow,
@@ -57,10 +58,12 @@ const EditBeatInformation = ({ setPage, beat }) => {
     skip: user.userid ? false : true,
   });
 
-  const handleUpdateBeat = (data) => {
+  const handleUpdateBeat = async (data) => {
     dispatch(suspenseShow());
-    updateBeat({ body: data, userid: user?.userid });
-    refetchBeats();
+    await updateBeat({ body: data, userid: user?.userid }).then(
+      toast("Beat Updated")
+    );
+    await refetchBeats();
     dispatch(suspenseHide());
   };
   return (

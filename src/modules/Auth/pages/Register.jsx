@@ -132,7 +132,7 @@ const Register = () => {
 
       console.log(userData);
       const data = await sendRequest(
-        "signupwithgoogle",
+        "users/signupwithgoogle",
         "POST",
         JSON.stringify(userData),
         {
@@ -161,7 +161,8 @@ const Register = () => {
           accessToken,
         "GET",
         null,
-        {}
+        {},
+        false
       );
       return response;
     } catch (error) {

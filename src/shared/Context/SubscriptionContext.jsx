@@ -5,4 +5,4 @@ export const SubscriptionContext = createContext({
     currentSubscription: null,
     setCurrentSubscription: () => {}
     
-  })
+  }) 
