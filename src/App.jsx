@@ -31,6 +31,9 @@ function App() {
   const suspense = useSelector(selectSuspenseShow);
   const { error, responseData, sendRequest } = useHttpRequest();
 
+  const [psConfig, setPsConfig] = useState({})
+  const [fwConfig, setFwConfig] = useState({})
+
   // const login = useCallback((data) => {
   //   setToken(data.token);
   //   setUser(data);
@@ -60,6 +63,41 @@ function App() {
   //   }
   //   loading(false);
   // }, [login, loading]);
+
+  const init = (selectedPlan) => {
+    const psConfig = {
+      email: user.email,
+      amount: parseInt(selectedPlan?.amount) * 100,
+      metadata: {
+        name: user.name,
+        phone: user.phone || null,
+      },
+      publicKey: process.env.REACT_APP_PAYSTACK_KEY,
+    }
+
+    const fwConfig = {
+      public_key: process.env.REACT_APP_FLUTTERWAVE_KEY,
+      tx_ref: Date.now(),
+      amount: parseInt(selectedPlan?.amount),
+      currency: "NGN",
+      payment_options: "all",
+      payment_plan: selectedPlan?.type,
+      customer: {
+        email: user.email,
+        phone_number: user.phone || null,
+        name: user.name,
+      },
+      meta: { counsumer_id: user.userid, consumer_mac: user.clientid },
+      customizations: {
+        title: "Guardtrol Lite Subscription",
+        description: `${selectedPlan?.type} subscription to guardtrol lite`,
+        logo: "https://st2.depositphotos.com/4403291/7418/v/450/depositphotos_74189661-stock-illustration-online-shop-log.jpg",
+      },
+    };
+
+    setFwConfig(fwConfig)
+    setPsConfig(psConfig)
+  }
 
   const router = createBrowserRouter([
     {

@@ -14,13 +14,14 @@ const useHttpRequest = () => {
     url,
     method = "GET",
     body = null,
-    headers = {}
+    headers = {},
+    base = true
   ) => {
     setIsLoading(true);
     setError(null);
     setResponseData(null);
     try {
-      const response = await fetch(API_BASE_URL + url, {
+      const response = await fetch(base ? API_BASE_URL + url: url, {
         method,
         body: body ? body : null,
         headers: {

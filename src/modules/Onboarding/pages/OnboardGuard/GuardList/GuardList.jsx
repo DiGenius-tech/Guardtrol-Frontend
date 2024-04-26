@@ -68,22 +68,22 @@ function GuardList() {
     }
     dispatch(suspenseShow());
 
-    const data = await addGuards({ guards, userid: user.userid });
-    console.log(data);
-    // const data = await sendRequest(
-    //   `guard/addguard/${user.userid}`,
-    //   "POST",
-    //   JSON.stringify(guards),
-    //   {
-    //     "Content-Type": "application/json",
-    //     Authorization: `Bearer ${user.token}`,
-    //   }
-    // ).finally(dispatch(suspenseHide()));
+    // const data = await addGuards({ guards, userid: user.userid });
+    // console.log(data);
+    const data = await sendRequest(
+      `guard/addguard/${user.userid}`,
+      "POST",
+      JSON.stringify(guards),
+      {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${user.token}`,
+      }
+    ).finally(dispatch(suspenseHide()));
 
     if (data) {
       localStorage.removeItem("guards");
       localStorage.setItem("onBoardingLevel", 3);
-      navigate("/onboarding/assign-beats");
+     navigate("/onboarding/assign-beats");
       window.location.reload();
     }
   };
@@ -93,6 +93,7 @@ function GuardList() {
       toast.error(error);
     }
   }, [error]);
+  dispatch(suspenseHide());
   return (
     <>
       {/* guard-list-app works! */}

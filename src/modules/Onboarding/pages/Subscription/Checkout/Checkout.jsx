@@ -20,6 +20,8 @@ import {
 import { useGetSubscriptionQuery } from "../../../../../redux/services/subscriptions";
 import { selectSuspenseShow } from "../../../../../redux/selectors/suspense";
 import { setCurrentSubscription } from "../../../../../redux/slice/subscriptionSlice";
+import { selectFwConfig, selectPlan, selectPsConfig } from "../../../../../redux/selectors/selectedPlan";
+import selectedPlanSlice from "../../../../../redux/slice/selectedPlanSlice";
 
 const PaymentOption = {
   FIRST: "flutterwave",
@@ -28,6 +30,9 @@ const PaymentOption = {
 
 const Checkout = () => {
   const user = useSelector(selectUser);
+  const psConfig = useSelector(selectPsConfig)
+  const fwConfig = useSelector(selectFwConfig)
+  const plan = useSelector(selectPlan);
   //   const sub = useContext(SubscriptionContext);
 
   const { data: sub } = useGetSubscriptionQuery(user.userid);
@@ -39,51 +44,25 @@ const Checkout = () => {
 
   const { isLoading, error, responseData, sendRequest } = useHttpRequest();
   const [selectedPlan, setSelectedPlan] = useState(null);
+  
   const [paymentMethod, setPaymentMethod] = useState("flutterwave");
   const navigate = useNavigate();
-
   useEffect(() => {
-    const selectedPlan = JSON.parse(localStorage.getItem("selectedPlan"));
 
-    if (selectedPlan && selectedPlan.amount) {
-      setSelectedPlan(selectedPlan);
+    if (plan && plan.amount) {
+      setSelectedPlan(plan);
     }
 
     dispatch(suspenseHide());
-  }, [suspenseState, setSelectedPlan]);
+  }, [suspenseState, plan]);
+
   const handleCheck = (e) => {
     setPaymentMethod(e);
   };
 
-  const psConfig = {
-    email: user.email,
-    amount: parseInt(selectedPlan?.amount) * 100,
-    metadata: {
-      name: user.name,
-      phone: user.phone || null,
-    },
-    publicKey: process.env.REACT_APP_PAYSTACK_KEY,
-  };
+  
   const handlePaystackPayment = usePaystackPayment(psConfig);
-  const fwConfig = {
-    public_key: process.env.REACT_APP_FLUTTERWAVE_KEY,
-    tx_ref: Date.now(),
-    amount: parseInt(selectedPlan?.amount),
-    currency: "NGN",
-    payment_options: "all",
-    payment_plan: selectedPlan?.type,
-    customer: {
-      email: user.email,
-      phone_number: user.phone || null,
-      name: user.name,
-    },
-    meta: { counsumer_id: user.userid, consumer_mac: user.clientid },
-    customizations: {
-      title: "Guardtrol Lite Subscription",
-      description: `${selectedPlan?.type} subscription to guardtrol lite`,
-      logo: "https://st2.depositphotos.com/4403291/7418/v/450/depositphotos_74189661-stock-illustration-online-shop-log.jpg",
-    },
-  };
+  
   const handleFlutterPayment = useFlutterwave(fwConfig);
 
   const pay = async (e) => {

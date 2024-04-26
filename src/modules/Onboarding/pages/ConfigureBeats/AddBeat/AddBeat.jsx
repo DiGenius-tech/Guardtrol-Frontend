@@ -16,6 +16,7 @@ function AddBeat() {
   const { isLoading, error, responseData, sendRequest } = useHttpRequest();
   const [beat, setBeat] = useState({
     beat_name: "",
+    address: "",
     description: "my location"
   });
 
@@ -30,8 +31,6 @@ function AddBeat() {
       setValidationErrors({ ...validationErrors, beat_name: "Use A Valid Beat Name" });
     } else {
       const existingBeats = JSON.parse(localStorage.getItem("beats")) || [];
-      console.log(existingBeats.length)
-      console.log(sub)
 
       if(existingBeats.length === sub.currentSubscription?.maxbeats){
         setOpen(true)
@@ -64,6 +63,20 @@ function AddBeat() {
               semibold_label={true}
             />
           </div>
+          <div className="mb-6">
+            <TextInputField
+              label="Address"
+              name="address"
+              type="text"
+              placeholder="Beat Address"
+              id="address"
+              error={validationErrors["address"]}
+              onChange={handleChange}
+              required="required"
+              value={beat.address}
+              semibold_label={true}
+            />
+            </div>
           <div className="mb-6">
             <div className="mb-2 block">
               <TextareaField
