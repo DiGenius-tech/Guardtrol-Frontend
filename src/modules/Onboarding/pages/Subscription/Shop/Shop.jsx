@@ -8,15 +8,21 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { FlutterWaveButton, closePaymentModal } from "flutterwave-react-v3";
 import { formatNumberWithCommas } from "../../../../../shared/functions/random-hex-color";
 import { SubscriptionContext } from "../../../../../shared/Context/SubscriptionContext";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { selectAuth, selectUser } from "../../../../../redux/selectors/auth";
+import {
+  selectOnboarding,
+  selectOnboardingLevel,
+} from "../../../../../redux/selectors/onboarding";
+import { setOnboardingLevel } from "../../../../../redux/slice/onboardingSlice";
 
 const Shop = () => {
   const user = useSelector(selectUser);
-  console.log(user);
-  const sub = useContext(SubscriptionContext);
   const navigate = useNavigate();
   const location = useLocation();
+  const onBoardingLevel = useSelector(selectOnboardingLevel);
+  const dispatch = useDispatch();
+
   const [validationErrors, setValidationErrors] = useState({});
   const { isLoading, error, responseData, sendRequest } = useHttpRequest();
   const [selectedPlan, setSelectedPlan] = useState(null);
@@ -33,20 +39,17 @@ const Shop = () => {
         Authorization: `Bearer ${user.token}`,
       }).then((response) => {
         if (response?.subscriptions.length > 0) {
-          localStorage.setItem("onBoardingLevel", 1);
+          dispatch(setOnboardingLevel(1));
 
           if (response.beats.length > 0) {
-            localStorage.setItem("onBoardingLevel", 2);
-
+            dispatch(setOnboardingLevel(2));
             if (response.guards.length > 0) {
-              localStorage.setItem("onBoardingLevel", 3);
-
+              dispatch(setOnboardingLevel(3));
               if (response.beats.some((beat) => beat.guards.length > 0)) {
-                localStorage.setItem("onBoardingLevel", 4);
+                dispatch(setOnboardingLevel(4));
               }
             }
           }
-          window.location.reload();
         }
       });
     }
@@ -222,7 +225,6 @@ const Shop = () => {
     },
     onClose: () => {},
   };
-
   return (
     <>
       <h1 className="font-bold text-center text-2xl text-dark-450">

@@ -7,44 +7,58 @@ import HistoryButton from "../../../../Sandbox/Buttons/HistoryButton";
 import { useNavigate } from "react-router";
 import { SubscriptionContext } from "../../../../../shared/Context/SubscriptionContext";
 import AlertDialog from "../../../../../shared/Dialog/AlertDialog";
+import {
+  useAddBeatMutation,
+  useGetBeatsQuery,
+} from "../../../../../redux/services/beats";
+import { useSelector } from "react-redux";
+import { selectUser } from "../../../../../redux/selectors/auth";
 
 function AddBeat() {
   const [validationErrors, setValidationErrors] = useState({});
-  const navigate = useNavigate()
-  const sub = useContext(SubscriptionContext)
+  const navigate = useNavigate();
+  const user = useSelector(selectUser);
+
+  const sub = useContext(SubscriptionContext);
   const [open, setOpen] = useState(false);
   const { isLoading, error, responseData, sendRequest } = useHttpRequest();
   const [beat, setBeat] = useState({
     beat_name: "",
-    description: "my location"
+    description: "my location",
   });
 
   const handleChange = (e) => {
     setBeat({ ...beat, [e.target.name]: e.target.value });
     setValidationErrors({ ...validationErrors, [e.target.name]: "" });
   };
+  const [addBeat] = useAddBeatMutation();
+  const { date: beats, refetch: refetchBeats } = useGetBeatsQuery(user.userid, {
+    skip: user.userid ? false : true,
+  });
 
-  const saveBeat = async(e) => {
+  const saveBeat = async (e) => {
     e.preventDefault();
+    console.log(beats);
     if (beat.beat_name === "" || beat.beat_name.length < 3) {
-      setValidationErrors({ ...validationErrors, beat_name: "Use A Valid Beat Name" });
+      setValidationErrors({
+        ...validationErrors,
+        beat_name: "Use A Valid Beat Name",
+      });
     } else {
-      const existingBeats = JSON.parse(localStorage.getItem("beats")) || [];
-      console.log(existingBeats.length)
-      console.log(sub)
+      console.log(beats);
 
-      if(existingBeats.length === sub.currentSubscription?.maxbeats){
-        setOpen(true)
-        return
+      if (
+        beats?.length &&
+        sub.currentSubscription?.maxbeats &&
+        beats?.length === sub.currentSubscription?.maxbeats
+      ) {
+        setOpen(true);
+        return;
       }
-      const updatedBeats = [...existingBeats, beat];
-      localStorage.setItem("beats", JSON.stringify(updatedBeats));
-      
-      navigate("../")
+      await addBeat({ body: beat, userid: user.userid });
+      refetchBeats().then(navigate("../"));
     }
-      
-    
-  }
+  };
   return (
     <>
       {/* add-beat-app works! */}
@@ -89,7 +103,7 @@ function AddBeat() {
           </div>
         </form>
       </div>
-      <AlertDialog 
+      <AlertDialog
         open={open}
         title="OOPS!! You've Ran Out Of Beats"
         description="Would You Like To Subscribe For Another Beat ?"

@@ -16,10 +16,12 @@ import LoadingSpinner from "./shared/LoadingSpinner/LoadingSpinner";
 import patrol_route_configuration from "./modules/PatrolRouteConfiguration/patrol-route-configuration.routes";
 import PrivateRoute from "./shared/RouteGuard/PrivateRoute";
 import client_routes from "./modules/Client/client.routes";
+
 import { toast } from "react-toastify";
 import { SubscriptionContext } from "./shared/Context/SubscriptionContext";
 import useHttpRequest from "./shared/Hooks/HttpRequestHook";
 import { PersistGate } from "redux-persist/integration/react";
+
 import { persistor, store } from "./redux/store";
 import { useGetSubscriptionQuery } from "./redux/services/subscriptions";
 import { selectToken, selectUser } from "./redux/selectors/auth";
@@ -76,14 +78,16 @@ function App() {
       element: <PageNotFound />,
     },
   ]);
+  console.log(user?.userid, token);
 
   const {
     data: subcription,
     isError,
     isLoading,
     refetch,
+    isUninitialized,
   } = useGetSubscriptionQuery(user?.userid, {
-    skip: token ? false : true,
+    skip: user?.userid ? false : true,
   });
 
   if (isError && token) {
@@ -106,7 +110,7 @@ function App() {
     //   } else {
     //   }
     // };
-    if (token) {
+    if (token && !isUninitialized) {
       refetch();
     }
   }, [token]);

@@ -7,24 +7,38 @@ import useHttpRequest from "../../../../../shared/Hooks/HttpRequestHook";
 
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
-import { selectUser } from "../../../../../redux/selectors/auth";
+import { selectToken, selectUser } from "../../../../../redux/selectors/auth";
 import {
   suspenseHide,
   suspenseShow,
 } from "../../../../../redux/slice/suspenseSlice";
+import { setOnboardingLevel } from "../../../../../redux/slice/onboardingSlice";
+import {
+  useAddBeatMutation,
+  useGetBeatsQuery,
+} from "../../../../../redux/services/beats";
 
 function BeatList() {
   const [isEdit, setIsEdit] = useState(false);
-  const auth = useSelector(selectUser);
+  const user = useSelector(selectUser);
   const dispatch = useDispatch();
   //dispatch(suspenseHide());
+  const token = useSelector(selectToken);
 
   const navigate = useNavigate();
-  const { isLoading, error, responseData, sendRequest } = useHttpRequest();
   const [selectedBeat, setSelectedBeat] = useState(null);
   const [isBeatsLoaded, setIsBeatsLoaded] = useState(false);
-  const [beats, setBeats] = useState([]);
 
+  const {
+    data: beats,
+    isLoading,
+    isUninitialized,
+    refetch: refetchBeats,
+  } = useGetBeatsQuery(user.userid, {
+    skip: user.userid ? false : true,
+  });
+
+  const [beatsToedit, setBeatsToEdit] = useState(beats);
   const handle_edit_beat = (guard) => {
     if (guard) {
       setIsEdit(true);
@@ -32,31 +46,20 @@ function BeatList() {
     }
   };
 
-  const addBeat = useCallback(
-    (beat, index) => {
-      beats[index] = beat;
-      setBeats(beats);
-      //setBeats((prevBeats) => [...prevBeats, beat]);
-    },
-    [beats, setBeats]
-  );
-
-  useEffect(() => {
-    const savedBeats = localStorage.getItem("beats");
-
-    if (savedBeats) {
-      const parsedBeats = JSON.parse(savedBeats);
-      if (!isBeatsLoaded) {
-        setIsBeatsLoaded(true);
-        parsedBeats.forEach(addBeat);
-      }
-    }
-  }, [isBeatsLoaded]);
+  // const addBeat = useCallback(
+  //   (beat, index) => {
+  //     beats[index] = beat;
+  //     setBeats(beats);
+  //     //setBeats((prevBeats) => [...prevBeats, beat]);
+  //   },
+  //   [beats, setBeats]
+  // );
 
   const cancelEdit = () => {
     setIsEdit(false);
   };
 
+  const [addBeats] = useAddBeatMutation();
   const saveBeat = async (beats) => {
     // if (beats == [] || beats.lenght < 1) { //wrong condition
     //}
@@ -67,29 +70,22 @@ function BeatList() {
     }
 
     dispatch(suspenseShow());
-    const data = await sendRequest(
-      `beat/addbeats/${auth.userid}`,
-      "POST",
-      JSON.stringify(beats),
-      {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${auth.token}`,
-      }
-    ).finally(dispatch(suspenseHide()));
+
+    const data = await addBeats({ userId: user.userid, body: beats }).finally(
+      dispatch(suspenseHide())
+    );
 
     if (data) {
-      localStorage.removeItem("beats");
-      localStorage.setItem("onBoardingLevel", 2);
+      dispatch(setOnboardingLevel(2));
       navigate("/onboarding/onboard-guard");
-      window.location.reload();
     }
   };
 
-  useEffect(() => {
-    if (error) {
-      toast.error(error);
-    }
-  }, [error]);
+  // useEffect(() => {
+  //   if (error) {
+  //     toast.error(error);
+  //   }
+  // }, [error]);
   return (
     <>
       {/* beat-list-app works! */}
@@ -98,18 +94,18 @@ function BeatList() {
           <div className="mb-8">
             <EditBeat
               selectedBeat={selectedBeat}
-              setBeats={setBeats}
+              setBeats={setBeatsToEdit}
               cancelEdit={cancelEdit}
             />
           </div>
         ) : (
           <>
             <ul className="mb-4 flex flex-col gap-4">
-              {beats.map((guard) => (
-                <li key={guard.beat_name}>
+              {beats.map((beat) => (
+                <li key={beat._id}>
                   <Beat
-                    guard={guard}
-                    setBeats={setBeats}
+                    beat={beat}
+                    setBeats={setBeatsToEdit}
                     handle_edit_beat={handle_edit_beat}
                   />
                 </li>

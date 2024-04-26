@@ -55,17 +55,29 @@ export const BeatGaurdRouter = () => {
         <Route path="" element={<Navigate to={"active"} />} />
         <Route path="active" element={<ActivePatrolGuards beat={beat} />} />
         <Route path="inactive" element={<InactivePatrolGuards beat={beat} />} />
-        <Route path="addguard" element={<AddGuard beat={beat} />} />
+        <Route
+          path="addguard"
+          element={<AssignNewBeat isOnboarding={false} beat={beat} />}
+        />
       </Route>
     </Routes>
   );
 };
 
 export const BeatDetailsRouter = () => {
+  const user = useSelector(selectUser);
+  const { beatId } = useParams();
+  const {
+    data: beats,
+    isLoading,
+    error,
+  } = useGetBeatsQuery(user.userid, { skip: user.userid ? false : true });
+
+  const beat = beats?.find((b) => b._id === beatId);
   return (
     <Routes>
       <Route element={<BeatDetails />}>
-        <Route path="" element={<BeatInformation />} />
+        <Route path="" element={<BeatInformation beat={beat} />} />
         <Route path="beat-guards/*" element={<BeatGaurdRouter />} />
         <Route path="beat-patrol" element={<BeatPatrol />} />
         <Route path="beat-report" element={<BeatReport />} />

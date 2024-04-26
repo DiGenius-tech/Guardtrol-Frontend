@@ -15,6 +15,7 @@ import logger from "redux-logger";
 import authReducer from "./slice/authSlice";
 import suspenseReducer from "./slice/suspenseSlice";
 import subscriptionReducer from "./slice/subscriptionSlice";
+import onboardingReducer from "./slice/onboardingSlice";
 import storage from "redux-persist/lib/storage";
 import persistReducer from "redux-persist/es/persistReducer";
 import persistStore from "redux-persist/es/persistStore";
@@ -27,6 +28,7 @@ const reducers = combineReducers({
   auth: authReducer,
   suspense: suspenseReducer,
   subscription: subscriptionReducer,
+  onboarding: onboardingReducer,
 });
 
 const persistConfig = {

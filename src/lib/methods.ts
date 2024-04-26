@@ -39,6 +39,9 @@ export const post = async <T>(
       ...(token && { headers: { Authorization: `Bearer ${token}` } }),
     });
 
+    if (isPrompt) {
+      toast(prompt);
+    }
     return response.data;
   } catch (error: any) {
     errorHandler(error);
@@ -56,6 +59,10 @@ export const put = async <T>(
     const response: AxiosResponse<T> = await api.put(url, data, {
       ...(token && { headers: { Authorization: `Bearer ${token}` } }),
     });
+
+    if (isPrompt) {
+      toast(prompt);
+    }
     return response.data;
   } catch (error: any) {
     errorHandler(error);

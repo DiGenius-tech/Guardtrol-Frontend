@@ -13,12 +13,24 @@ export const BeatApi = api.injectEndpoints({
       transformResponse: (response: any, meta, arg) => response.beats,
     }),
 
-    addBeat: build.mutation<TBeat, Partial<TBeat>>({
-      query: (body) => ({
-        url: `beat/addbeat`,
-        method: "PATCH",
-        body,
-      }),
+    addBeat: build.mutation<TBeat, Partial<any>>({
+      query(data) {
+        return {
+          url: `beat/addbeat/${data.userid}`,
+          method: "POST",
+          body: data.body,
+        };
+      },
+      invalidatesTags: [{ type: "Beats", id: "LIST" }],
+    }),
+    addBeats: build.mutation<TBeat, Partial<any>>({
+      query(data) {
+        return {
+          url: `beat/addbeat/${data.userid}`,
+          method: "POST",
+          body: data.body,
+        };
+      },
       invalidatesTags: [{ type: "Beats", id: "LIST" }],
     }),
 
@@ -32,6 +44,7 @@ export const BeatApi = api.injectEndpoints({
       },
       invalidatesTags: [{ type: "Beats", id: "LIST" }],
     }),
+
     assignGuardToBeat: build.mutation<TBeat, Partial<any>>({
       query(data) {
         return {

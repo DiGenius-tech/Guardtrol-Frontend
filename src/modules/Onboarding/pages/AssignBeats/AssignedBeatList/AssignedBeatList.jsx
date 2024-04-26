@@ -11,7 +11,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import AlertDialog from "../../../../../shared/Dialog/AlertDialog";
 import { useDispatch, useSelector } from "react-redux";
-import { selectUser } from "../../../../../redux/selectors/auth";
+import { selectToken, selectUser } from "../../../../../redux/selectors/auth";
 import { useGetBeatsQuery } from "../../../../../redux/services/beats";
 import { patch } from "../../../../../lib/methods";
 import { loginSuccess } from "../../../../../redux/slice/authSlice";
@@ -21,6 +21,7 @@ import {
 } from "../../../../../redux/slice/suspenseSlice";
 import axios from "axios";
 import { API_BASE_URL } from "../../../../../constants/api";
+import { setOnboardingLevel } from "../../../../../redux/slice/onboardingSlice";
 // const guardList = [
 //   {
 //     id: 1,
@@ -122,6 +123,8 @@ function AssignedBeatList(props) {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
 
+  const token = useSelector(selectToken);
+
   const user = useSelector(selectUser);
   const dispatch = useDispatch();
   const [isEdit, setIsEdit] = useState(false);
@@ -148,6 +151,7 @@ function AssignedBeatList(props) {
   const {
     data: beats,
     isLoading,
+    isUninitialized,
     refetch: refetchBeats,
   } = useGetBeatsQuery(user.userid, {
     skip: user.userid ? false : true,
@@ -174,7 +178,7 @@ function AssignedBeatList(props) {
       return;
     }
     dispatch(loginSuccess(data));
-    localStorage.setItem("onBoardingLevel", 4);
+    dispatch(setOnboardingLevel(4));
     navigate("/onboarding/complete");
   };
 
@@ -207,6 +211,11 @@ function AssignedBeatList(props) {
       }
     }
   };
+  useEffect(() => {
+    if (token && !isUninitialized) {
+      refetchBeats();
+    }
+  }, [token]);
   return (
     <>
       {/* assigned-beat-list-app works! */}

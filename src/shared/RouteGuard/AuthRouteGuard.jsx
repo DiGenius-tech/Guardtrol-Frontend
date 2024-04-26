@@ -9,6 +9,7 @@ const AuthRouteGuard = ({ component: Component, ...rest }) => {
 
   const location = useLocation();
   //console.log(isLoggedIn)
+  console.log(user);
   return !user ? (
     <Component {...rest} />
   ) : (

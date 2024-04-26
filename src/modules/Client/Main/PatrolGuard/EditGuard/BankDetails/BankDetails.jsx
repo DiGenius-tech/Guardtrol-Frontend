@@ -6,11 +6,16 @@ import useHttpRequest from "../../../../../../shared/Hooks/HttpRequestHook";
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
-import { selectAuth } from "../../../../../../redux/selectors/auth";
+import {
+  selectAuth,
+  selectToken,
+} from "../../../../../../redux/selectors/auth";
 
 const BankDetails = (props) => {
   const { guardId } = useParams();
   const auth = useSelector(selectAuth);
+
+  const token = useSelector(selectToken);
   const { isLoading, error, responseData, sendRequest } = useHttpRequest();
   const [validationErrors, setValidationErrors] = useState({});
   const [formData, setFormData] = useState({
@@ -48,7 +53,7 @@ const BankDetails = (props) => {
       JSON.stringify(formData),
       {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${auth.token}`,
+        Authorization: `Bearer ${token}`,
       }
     ).then((data) => {
       if (data.status) {

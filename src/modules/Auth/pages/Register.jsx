@@ -13,6 +13,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { selectUser } from "../../../redux/selectors/auth";
 import { API_BASE_URL } from "../../../constants/api";
 import { loginSuccess } from "../../../redux/slice/authSlice";
+import {
+  setOnboardingGuards,
+  setOnboardingLevel,
+} from "../../../redux/slice/onboardingSlice";
+import { setCurrentSubscription } from "../../../redux/slice/subscriptionSlice";
 
 const Register = () => {
   const user = useSelector(selectUser);
@@ -90,9 +95,12 @@ const Register = () => {
 
         if (null != data) {
           if (data) {
+            dispatch(setOnboardingLevel(0));
+            dispatch(setOnboardingGuards([]));
+            dispatch(setCurrentSubscription(null));
             dispatch(loginSuccess(data));
-            navigate("../verify-email", { replace: true }); //should be dashboard
-            window.location.reload();
+            // navigate("../verify-email", { replace: true }); //should be dashboard
+            // window.location.reload();
           }
           // navigate('../verify-email', {replace: true})
           // window.location.reload();

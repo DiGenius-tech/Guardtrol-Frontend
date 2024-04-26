@@ -12,7 +12,15 @@ import {
   suspenseHide,
   suspenseShow,
 } from "../../../../../redux/slice/suspenseSlice";
-import { useAddGuardsMutation } from "../../../../../redux/services/guards";
+import {
+  useAddGuardsMutation,
+  useGetGuardsQuery,
+} from "../../../../../redux/services/guards";
+import { selectOnboardingGuards } from "../../../../../redux/selectors/onboarding";
+import {
+  setOnboardingGuards,
+  setOnboardingLevel,
+} from "../../../../../redux/slice/onboardingSlice";
 
 const Status = {
   Success: 1,
@@ -21,6 +29,7 @@ const Status = {
 
 function GuardList() {
   const user = useSelector(selectUser);
+  const onboardingGuards = useSelector(selectOnboardingGuards);
 
   const navigate = useNavigate();
   const { isLoading, error, responseData, sendRequest } = useHttpRequest();
@@ -40,36 +49,57 @@ function GuardList() {
   const cancelEdit = () => {
     setIsEdit(false);
   };
-  const addGuard = useCallback(
-    (guard, index) => {
-      guards[index] = guard;
-      setGuards(guards);
-    },
-    [guards, setGuards]
-  );
+  // const addGuard = useCallback(
+  //   (guard, index) => {
+  //     guards[index] = guard;
+  //     setGuards(guards);
+  //   },
+  //   [guards, setGuards]
+  // );
 
-  useEffect(() => {
-    const savedGuards = localStorage.getItem("guards");
+  // useEffect(() => {
+  //   const savedGuards = localStorage.getItem("guards");
 
-    if (savedGuards) {
-      const parsedGuards = JSON.parse(savedGuards);
-      if (!isGuardsLoaded) {
-        setIsGuardsLoaded(true);
-        parsedGuards.forEach(addGuard);
-      }
-    }
-  }, [isGuardsLoaded]);
+  //   if (savedGuards) {
+  //     const parsedGuards = JSON.parse(savedGuards);
+  //     if (!isGuardsLoaded) {
+  //       setIsGuardsLoaded(true);
+  //       parsedGuards.forEach(addGuard);
+  //     }
+  //   }
+  // }, [isGuardsLoaded]);
+
   const [addGuards] = useAddGuardsMutation();
+  const { refetch: refetchGuards } = useGetGuardsQuery(user.userid, {
+    skip: user.userid ? false : true,
+  });
 
-  const saveGuard = async (guards) => {
-    if (guards == [] || guards.length < 1) {
+  const saveGuard = async () => {
+    if (onboardingGuards == [] || onboardingGuards.length < 1) {
       toast.info("Add at Least One Guard To Continue");
       return;
     }
-    dispatch(suspenseShow());
 
-    const data = await addGuards({ guards, userid: user.userid });
-    console.log(data);
+    dispatch(suspenseShow());
+    try {
+      const data = await addGuards({
+        body: onboardingGuards,
+        userid: user.userid,
+      });
+
+      if (data) {
+        dispatch(setOnboardingGuards([]));
+        dispatch(setOnboardingLevel(3));
+        await refetchGuards();
+        navigate("/onboarding/assign-beats");
+      }
+      console.log(data);
+
+      dispatch(suspenseHide());
+    } catch (error) {
+      dispatch(suspenseHide());
+    }
+
     // const data = await sendRequest(
     //   `guard/addguard/${user.userid}`,
     //   "POST",
@@ -79,13 +109,6 @@ function GuardList() {
     //     Authorization: `Bearer ${user.token}`,
     //   }
     // ).finally(dispatch(suspenseHide()));
-
-    if (data) {
-      localStorage.removeItem("guards");
-      localStorage.setItem("onBoardingLevel", 3);
-      navigate("/onboarding/assign-beats");
-      window.location.reload();
-    }
   };
 
   useEffect(() => {
@@ -93,6 +116,7 @@ function GuardList() {
       toast.error(error);
     }
   }, [error]);
+
   return (
     <>
       {/* guard-list-app works! */}
@@ -108,8 +132,8 @@ function GuardList() {
         ) : (
           <>
             <ul className="mb-4 flex flex-col gap-4">
-              {guards.map((guard) => (
-                <li key={guard.full_name}>
+              {onboardingGuards?.map((guard) => (
+                <li key={guard?.full_name}>
                   <Guard
                     setGuards={setGuards}
                     guard={guard}
