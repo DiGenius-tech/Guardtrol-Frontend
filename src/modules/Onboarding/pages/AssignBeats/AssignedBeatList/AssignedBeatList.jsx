@@ -56,8 +56,9 @@ function AssignedBeatList(props) {
     refetch: refetchBeats,
   } = useGetBeatsQuery(user.userid, {
     skip: user.userid ? false : true,
-    
+     
   });
+  console.log(beats)
 
   const finish = async () => {
     const check = beats.some((beat) => {
