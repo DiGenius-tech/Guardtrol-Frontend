@@ -1,9 +1,24 @@
 import React, { useRef, useState } from "react";
 import TextInputField from "../../../../Sandbox/InputField/TextInputField";
 import RegularButton from "../../../../Sandbox/Buttons/RegularButton";
+import { useDispatch, useSelector } from "react-redux";
+import { selectUser } from "../../../../../redux/selectors/auth";
+import * as Yup from "yup";
+import { useFormik } from "formik";
+import { post, put } from "../../../../../lib/methods";
+import { updateUser } from "../../../../../redux/slice/authSlice";
+
+const PersonalInformationSchema = Yup.object().shape({
+  name: Yup.string().required("Fullname is required"),
+  email: Yup.string().required("Email is required"),
+  phone: Yup.string().required("PhoneNumber is required"),
+});
 
 const SettingPersonalInformation = () => {
+  const dispatch = useDispatch();
+  const user = useSelector(selectUser);
   const profilePhotoControlRef = useRef();
+
   const [fileName, setFileName] = useState("");
   const [preview, setPreview] = useState("");
 
@@ -20,10 +35,43 @@ const SettingPersonalInformation = () => {
       setFileName("");
     }
   };
+
+  const [loading, setLoading] = useState(false);
+
+  const formik = useFormik({
+    initialValues: { ...user },
+    validationSchema: PersonalInformationSchema,
+    onSubmit: (values) => {
+      console.log("first");
+      setLoading(true);
+      try {
+        handleUpdateProfile(values);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
+    },
+  });
+
+  const handleUpdateProfile = async (values) => {
+    const data = await put(
+      "settings/personal-information",
+      values,
+      user.token,
+      true,
+      "Profile information updated"
+    );
+    console.log(data);
+    if (data) {
+      dispatch(updateUser(data));
+    }
+  };
+
   return (
     <>
       {/* setting-personal-information-app works! */}
-      <form action="" className="max-w-3xl">
+      <form onSubmit={formik.handleSubmit} className="max-w-3xl">
         <div className="grid grid-cols-12 gap-4 sm:gap-8">
           <div className="hidden sm:block col-span-12 sm:col-span-6">
             <h3 className="font-bold">Profile photo</h3>
@@ -42,7 +90,7 @@ const SettingPersonalInformation = () => {
                   )}
                 </div>
               </div>
-              <form action="">
+              <div>
                 <p className="text-sm">
                   We accept files in PNG or JPG format, with a maximum size of 5
                   MB.{" "}
@@ -62,7 +110,7 @@ const SettingPersonalInformation = () => {
                   />
                   <strong className="block text-xs mt-2">{fileName}</strong>
                 </p>
-              </form>
+              </div>
             </div>
           </div>
           <div className="hidden sm:block col-span-12 sm:col-span-6">
@@ -72,36 +120,18 @@ const SettingPersonalInformation = () => {
           <div className="col-span-12 sm:col-span-6">
             <TextInputField
               label="Full Name"
-              name="name"
               type="text"
               id="name"
+              {...formik.getFieldProps("name")}
               semibold_label={true}
-            //   error={validationErrors["name"]}
-            //   onChange={handleChange}
-            //   required="required"
-            //   value={formData.name}
             />
-
-            {/* <TextInputField
-                  label="Email Address"
-                  name="email"
-                  type="email"
-                  id="email"
-                  error={validationErrors['email']}
-                  onChange={handleChange}
-                  required="required"
-                  value={formData.email}
-                />
-                <TextInputField
-                  label="Phone Number"
-                  name="phone"
-                  type="number"
-                  id="phone"
-                  error={validationErrors['phone']}
-                  onChange={handleChange}
-                  required="required"
-                  value={formData.phone}
-                /> */}
+            <div className="mb-3">
+              {formik.touched.name && formik.errors.name && (
+                <div className="">
+                  <div className="  text-red-500">{formik.errors.name}</div>
+                </div>
+              )}
+            </div>
           </div>
           <div className="hidden sm:block col-span-12 sm:col-span-6">
             <h3 className="font-bold">Email Address</h3>
@@ -113,15 +143,18 @@ const SettingPersonalInformation = () => {
           <div className="col-span-12 sm:col-span-6">
             <TextInputField
               label="Email Address"
-              name="email"
               type="email"
               id="email"
+              {...formik.getFieldProps("email")}
               semibold_label={true}
-            //   error={validationErrors['email']}
-            //   onChange={handleChange}
-            //   required="required"
-            //   value={formData.email}
             />
+            <div className="mb-3">
+              {formik.touched.email && formik.errors.email && (
+                <div className="">
+                  <div className="  text-red-500">{formik.errors.email}</div>
+                </div>
+              )}
+            </div>
           </div>
           <div className="hidden sm:block col-span-12 sm:col-span-6">
             <h3 className="font-bold">Phone Number</h3>
@@ -134,18 +167,29 @@ const SettingPersonalInformation = () => {
             <TextInputField
               label="Phone Number"
               name="phone"
+              {...formik.getFieldProps("phone")}
               type="number"
               id="phone"
               semibold_label={true}
-            //   error={validationErrors['phone']}
-            //   onChange={handleChange}
-            //   required="required"
-            //   value={formData.phone}
             />
+            <div className="mb-3">
+              {formik.touched.phone && formik.errors.phone && (
+                <div className="">
+                  <div className=" text-red-500">{formik.errors.phone}</div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
         <div className="text-right">
-          <RegularButton text="Save Changes" width="auto" padding="px-4 py-2" textSize="text-sm" />
+          <RegularButton
+            disable={loading}
+            type={"submit"}
+            text="Save Changes"
+            width="auto"
+            padding="px-4 py-2"
+            textSize="text-sm"
+          />
         </div>
       </form>
     </>

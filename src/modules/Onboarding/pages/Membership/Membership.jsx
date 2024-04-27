@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { selectUser } from "../../../../redux/selectors/auth";
 import { suspenseHide } from "../../../../redux/slice/suspenseSlice";
 import { selectSuspenseShow } from "../../../../redux/selectors/suspense";
+import { setOnboardingLevel } from "../../../../redux/slice/onboardingSlice";
 
 const Membership = () => {
   const auth = useSelector(selectUser);
@@ -19,6 +20,7 @@ const Membership = () => {
   const navigate = useNavigate();
   const [validationErrors, setValidationErrors] = useState({});
   const { isLoading, error, responseData, sendRequest } = useHttpRequest();
+
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [planFormData, setPlanFormData] = useState({
     numberofbeats: 1,
@@ -101,9 +103,10 @@ const Membership = () => {
       }
 
       localStorage.setItem("selectedPlan", JSON.stringify(selectedPlan));
-      localStorage.setItem("onBoardingLevel", 1);
+      // localStorage.setItem("onBoardingLevel", 1);
 
-      // Open the modal after form submission
+      dispatch(setOnboardingLevel(1));
+      navigate("/onboarding/configure-beats");
       setIsModalOpen(true);
     }
   };

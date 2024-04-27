@@ -7,28 +7,50 @@ import {
   useUpdateBeatMutation,
 } from "../../../../../redux/services/beats";
 import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
 import {
   suspenseHide,
   suspenseShow,
 } from "../../../../../redux/slice/suspenseSlice";
 import { selectUser } from "../../../../../redux/selectors/auth";
+import * as Yup from "yup";
+import { useFormik } from "formik";
+import { post, put } from "../../../../../lib/methods";
+import { updateUser } from "../../../../../redux/slice/authSlice";
+
+const BeatInformationSchema = Yup.object().shape({
+  name: Yup.string().required("Name is required"),
+  address: Yup.string().required("Address is required"),
+  description: Yup.string().required("Description is required"),
+});
 
 const EditBeatInformation = ({ setPage, beat }) => {
   const [validationErrors, setValidationErrors] = useState({});
   const dispatch = useDispatch();
   const user = useSelector(selectUser);
 
-  const [formData, setFormData] = useState({
-    id: beat?._id || "",
-    beat_name: beat?.name || "",
-    address: beat?.address || "",
-    description: beat?.description || "",
-  });
+  const [loading, setLoading] = useState(false);
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-    setValidationErrors({ ...validationErrors, [e.target.name]: "" });
-  };
+  const formik = useFormik({
+    initialValues: {
+      _id: beat._id,
+      address: beat.address,
+      name: beat.name,
+      description: beat.description,
+    },
+    validationSchema: BeatInformationSchema,
+    onSubmit: (values) => {
+      console.log("first");
+      setLoading(true);
+      try {
+        handleUpdateBeat(values);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
+    },
+  });
 
   const [updateBeat] = useUpdateBeatMutation();
 
@@ -36,10 +58,12 @@ const EditBeatInformation = ({ setPage, beat }) => {
     skip: user.userid ? false : true,
   });
 
-  const handleUpdateBeat = () => {
+  const handleUpdateBeat = async (data) => {
     dispatch(suspenseShow());
-    updateBeat({ body: formData, userid: user?.userid });
-    refetchBeats();
+    await updateBeat({ body: data, userid: user?.userid }).then(
+      toast("Beat Updated")
+    );
+    await refetchBeats();
     dispatch(suspenseHide());
   };
   return (
@@ -65,7 +89,7 @@ const EditBeatInformation = ({ setPage, beat }) => {
               </h4>
             </div>
             <hr />
-            <form className="col-span-12">
+            <form onSubmit={formik.handleSubmit}>
               <fieldset>
                 <div className="grid grid-cols-12 gap-x-4 mt-2">
                   <div className="col-span-12 sm:col-span-6">
@@ -73,47 +97,56 @@ const EditBeatInformation = ({ setPage, beat }) => {
                       label="Beat name"
                       semibold_label={true}
                       type="text"
-                      id="beatName"
-                      required="required"
-                      name="beat_name"
-                      value={formData.beat_name}
-                      onChange={handleChange}
-                      error={validationErrors["beatName"]}
+                      {...formik.getFieldProps("name")}
                     />
+                    <div className="mb-3">
+                      {formik.touched.name && formik.errors.name && (
+                        <div className="">
+                          <div className=" text-red-500">
+                            {formik.errors.name}
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
                   <div className="col-span-12 sm:col-span-6">
                     <TextInputField
                       label="Beat Address"
                       semibold_label={true}
                       type="text"
-                      id="beatAddress"
-                      required="required"
-                      name="address"
-                      value={formData.address}
-                      onChange={handleChange}
-                      error={validationErrors["beatAddress"]}
+                      {...formik.getFieldProps("address")}
                     />
+
+                    <div className="mb-3">
+                      {formik.touched.address && formik.errors.address && (
+                        <div className="">
+                          <div className=" text-red-500">
+                            {formik.errors.address}
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
                   <div className="col-span-12 sm:col-span-6">
                     <TextInputField
                       label="Beat Description"
                       semibold_label={true}
                       type="text"
-                      id="beatDescription"
-                      required="required"
-                      name="description"
-                      value={formData.description}
-                      onChange={handleChange}
-                      error={validationErrors["beatDescription"]}
+                      {...formik.getFieldProps("description")}
                     />
+                    <div className="mb-3">
+                      {formik.touched.description &&
+                        formik.errors.description && (
+                          <div className="">
+                            <div className=" text-red-500">
+                              {formik.errors.description}
+                            </div>
+                          </div>
+                        )}
+                    </div>
                   </div>
                 </div>
-                <RegularButton
-                  type={"button"}
-                  onClick={() => handleUpdateBeat()}
-                  width="w-50"
-                  text="Save"
-                />
+                <RegularButton type={"submit"} width="w-50" text="Save" />
               </fieldset>
             </form>
           </div>

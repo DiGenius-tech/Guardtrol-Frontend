@@ -1,8 +1,12 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import "./OnboardGuard.scss";
+import { useDispatch } from "react-redux";
+import { setOnboardingGuards } from "../../../../redux/slice/onboardingSlice";
 
 const OnboardGuard = () => {
+  const dispatch = useDispatch();
+
   return (
     <div id="onboard-guard">
       {/* onboard-guard-app works! */}

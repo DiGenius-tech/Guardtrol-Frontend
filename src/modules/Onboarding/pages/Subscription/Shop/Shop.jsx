@@ -10,15 +10,24 @@ import { formatNumberWithCommas } from "../../../../../shared/functions/random-h
 import { SubscriptionContext } from "../../../../../shared/Context/SubscriptionContext";
 import { useDispatch, useSelector } from "react-redux";
 import { selectAuth, selectUser } from "../../../../../redux/selectors/auth";
-import { setFwConfig, setPlan, setPsConfig } from "../../../../../redux/slice/selectedPlanSlice";
+import {
+  selectOnboarding,
+  selectOnboardingLevel,
+} from "../../../../../redux/selectors/onboarding";
+import { setOnboardingLevel } from "../../../../../redux/slice/onboardingSlice";
+import {
+  setFwConfig,
+  setPlan,
+  setPsConfig,
+} from "../../../../../redux/slice/selectedPlanSlice";
 
 const Shop = () => {
   const user = useSelector(selectUser);
-  console.log(user);
-  const sub = useContext(SubscriptionContext);
   const navigate = useNavigate();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const location = useLocation();
+  const onBoardingLevel = useSelector(selectOnboardingLevel);
+
   const [validationErrors, setValidationErrors] = useState({});
   const { isLoading, error, responseData, sendRequest } = useHttpRequest();
   const [selectedPlan, setSelectedPlan] = useState(null);
@@ -35,20 +44,17 @@ const Shop = () => {
         Authorization: `Bearer ${user.token}`,
       }).then((response) => {
         if (response?.subscriptions.length > 0) {
-          localStorage.setItem("onBoardingLevel", 1);
+          dispatch(setOnboardingLevel(1));
 
           if (response.beats.length > 0) {
-            localStorage.setItem("onBoardingLevel", 2);
-
+            dispatch(setOnboardingLevel(2));
             if (response.guards.length > 0) {
-              localStorage.setItem("onBoardingLevel", 3);
-
+              dispatch(setOnboardingLevel(3));
               if (response.beats.some((beat) => beat.guards.length > 0)) {
-                localStorage.setItem("onBoardingLevel", 4);
+                dispatch(setOnboardingLevel(4));
               }
             }
           }
-          window.location.reload();
         }
       });
     }
@@ -117,9 +123,9 @@ const Shop = () => {
           0.8;
       }
 
-      dispatch(setPsConfig({...selectedPlan , ...user}))
-      dispatch(setFwConfig({...selectedPlan , ...user}))
-      dispatch(setPlan(selectedPlan))
+      dispatch(setPsConfig({ ...selectedPlan, ...user }));
+      dispatch(setFwConfig({ ...selectedPlan, ...user }));
+      dispatch(setPlan(selectedPlan));
 
       navigate("/onboarding/membership/checkout");
     }
@@ -197,7 +203,15 @@ const Shop = () => {
     console.log("Modal button clicked");
   };
 
-
+  // const fwConfig = {
+  //   ...config,
+  //   text: "Pay with Flutterwave!",
+  //   callback: (response) => {
+  //     console.log(response);
+  //     closePaymentModal(); // this will close the modal programmatically
+  //   },
+  //   onClose: () => {},
+  // };
 
   return (
     <>

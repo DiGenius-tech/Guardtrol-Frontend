@@ -11,21 +11,23 @@ import useHttpRequest from "../../../../../shared/Hooks/HttpRequestHook";
 
 import moment from "moment";
 import { useSelector } from "react-redux";
-import { selectUser } from "../../../../../redux/selectors/auth";
+import { selectToken, selectUser } from "../../../../../redux/selectors/auth";
 
 const PatrolGuardDetails = () => {
   const [isComment, setIsComment] = useState(false);
   const auth = useSelector(selectUser);
   const { isLoading, error, responseData, sendRequest } = useHttpRequest();
 
+  const token = useSelector(selectToken);
   const { guardId } = useParams();
   const [guard, setGuard] = useState({});
+
   const [comment, setComment] = useState("");
 
   const handleSentRequest = () => {
     const data = sendRequest(`guard/getguard/${guardId}`, "GET", null, {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${auth.token}`,
+      Authorization: `Bearer ${token}`,
     }).then((data) => {
       console.log(data);
       setGuard(data);
@@ -34,7 +36,7 @@ const PatrolGuardDetails = () => {
 
   useEffect(() => {
     handleSentRequest();
-  }, [auth.token, guardId]);
+  }, [token, guardId]);
 
   useEffect(() => {
     if (error) {
@@ -55,7 +57,7 @@ const PatrolGuardDetails = () => {
       JSON.stringify(commentData),
       {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${auth.token}`,
+        Authorization: `Bearer ${token}`,
       }
     ).then((data) => {
       if (data.status) {
@@ -78,7 +80,7 @@ const PatrolGuardDetails = () => {
       JSON.stringify(statusData),
       {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${auth.token}`,
+        Authorization: `Bearer ${token}`,
       }
     ).then((data) => {
       if (data.status) {

@@ -12,13 +12,11 @@ export interface CustomError {
   statusText?: string;
 }
 
-export const errorHandler = <T>(error: AxiosError<ErrorResponse>): any => {
-  if (error.response) {
-    toast.error(error.response.data.message);
-    // The request was made and the server responded with a status code
-  } else if (error.request) {
-    // The request was made but no response was received
-  } else {
-    // Something happened in setting up the request that triggered an error
+export const errorHandler = <T>(error: any): any => {
+  if (error?.response?.data?.error) {
+    return toast.error(error.response.data?.error);
+  }
+  if (error?.response?.data?.message) {
+    return toast.error(error.response.data?.message);
   }
 };

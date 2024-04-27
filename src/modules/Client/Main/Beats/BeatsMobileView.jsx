@@ -16,7 +16,7 @@ function BeatsMobileView(props) {
             {props.beatList?.map((beat) => {
               return (
                 <tr
-                  key={beat.id}
+                  key={beat._id}
                   className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
                 >
                   <th

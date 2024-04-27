@@ -7,18 +7,31 @@ import RegularButton from "../../../../Sandbox/Buttons/RegularButton";
 import HistoryButton from "../../../../Sandbox/Buttons/HistoryButton";
 import { SubscriptionContext } from "../../../../../shared/Context/SubscriptionContext";
 import AlertDialog from "../../../../../shared/Dialog/AlertDialog";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { selectCurrentSubscription } from "../../../../../redux/selectors/subscription";
+import { useGetGuardsQuery } from "../../../../../redux/services/guards";
+import { selectUser } from "../../../../../redux/selectors/auth";
+import { selectOnboardingGuards } from "../../../../../redux/selectors/onboarding";
+import { addOnboardingGuard } from "../../../../../redux/slice/onboardingSlice";
 
 function AddGuard() {
   const [isGotIt, setIsGotIt] = useState(false);
   const [validationErrors, setValidationErrors] = useState({});
   const [open, setOpen] = useState(false);
+  const user = useSelector(selectUser);
+
+  const dispatch = useDispatch();
+  const onboardingGuards = useSelector(selectOnboardingGuards);
+
   const navigate = useNavigate();
   const sub = useSelector(selectCurrentSubscription);
-  console.log(sub);
 
-  const { isLoading, error, responseData, sendRequest } = useHttpRequest();
+  const {
+    data: guards,
+    isLoading: guardsIsLoading,
+    error: guardsFetchError,
+  } = useGetGuardsQuery(user.userid, { skip: user.userid ? false : true });
+
   const [guard, setGuard] = useState({
     full_name: "",
     phone: "",
@@ -50,17 +63,16 @@ function AddGuard() {
       return;
     }
 
-    const existingGuards = JSON.parse(localStorage.getItem("guards")) || [];
+    dispatch(addOnboardingGuard(guard));
+    console.log(onboardingGuards);
     if (
-      existingGuards.length ===
+      onboardingGuards?.length ===
       sub.currentSubscription?.maxbeats * 5 +
         sub.currentSubscription?.maxextraguards
     ) {
       setOpen(true);
       return;
     }
-    const updatedGuards = [...existingGuards, guard];
-    localStorage.setItem("guards", JSON.stringify(updatedGuards));
 
     navigate("../");
   };

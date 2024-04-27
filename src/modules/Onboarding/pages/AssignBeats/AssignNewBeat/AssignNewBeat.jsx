@@ -18,8 +18,10 @@ import {
   useGetBeatsQuery,
 } from "../../../../../redux/services/beats";
 import { useGetGuardsQuery } from "../../../../../redux/services/guards";
+import { setOnboardingLevel } from "../../../../../redux/slice/onboardingSlice";
+import { selectOnboardingLevel } from "../../../../../redux/selectors/onboarding";
 
-function AssignNewBeat({ isOnboarding }) {
+function AssignNewBeat({ isOnboarding = true, beat: selectedBeat }) {
   const navigate = useNavigate();
   const user = useSelector(selectUser);
   const dispatch = useDispatch();
@@ -39,9 +41,11 @@ function AssignNewBeat({ isOnboarding }) {
   const [assignToBeat] = useAssignGuardToBeatMutation();
 
   const { responseData, sendRequest } = useHttpRequest();
+  console.log(selectedBeat);
 
   const initialFrequencyState = useState([]);
   const [beat, setBeat] = useState(beats?.[0]);
+
   const [guard, setGuard] = useState([]);
   const [frequency, setFrequency] = useState(initialFrequencyState);
 
@@ -103,7 +107,7 @@ function AssignNewBeat({ isOnboarding }) {
 
   const save = async (e) => {
     e.preventDefault();
-    if (!beat) {
+    if (!beat && !selectedBeat) {
       toast.info("Select a Beat to Assign Guards");
       return;
     }
@@ -114,6 +118,7 @@ function AssignNewBeat({ isOnboarding }) {
     const check = guard.map((item) => {
       return checkIfGuardIsAssigned(item);
     });
+
     const c = check.some((value) => {
       if (value.status) {
         toast.warning(value.message);
@@ -126,7 +131,11 @@ function AssignNewBeat({ isOnboarding }) {
     console.log(check);
 
     dispatch(suspenseShow);
-    const formData = { beat: beat, guards: guard };
+
+    const formData = {
+      beat: selectedBeat ? selectedBeat : beat,
+      guards: guard,
+    };
 
     // const data = await sendRequest(
     //   `guard/assignbeat/${user.userid}`,
@@ -157,29 +166,34 @@ function AssignNewBeat({ isOnboarding }) {
   return (
     <>
       {/* assign-new-beat-app works! */}
-
-      <h1 className="font-bold text-center text-2xl text-dark-450">
-        Assign Beats
-      </h1>
-      <p className="text-center mx-auto max-w-[400px] text-dark-400">
-        Select A beat And Guards To be Assigned(You Can Select Multiple Guards)
-      </p>
-
+      {isOnboarding && (
+        <>
+          <h1 className="font-bold text-center text-2xl text-dark-450">
+            Assign Beats
+          </h1>
+          <p className="text-center mx-auto max-w-[400px] text-dark-400">
+            Select A beat And Guards To be Assigned(You Can Select Multiple
+            Guards)
+          </p>
+        </>
+      )}
       <div className="max-w-md mx-auto block px-4 py-8 sm:p-8 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700 my-16">
         <form onSubmit={save}>
           {/*  */}
-          <div className="mb-6">
-            <SelectField
-              value={beat}
-              name="beat"
-              id="beat"
-              label="Select beat"
-              semibold_label={true}
-              handleChangeOption={handleBeatSelection}
-              optionList={beats}
-              multipleSelect={false}
-            />
-          </div>
+          {!selectedBeat && (
+            <div className="mb-6">
+              <SelectField
+                value={beat}
+                name="beat"
+                id="beat"
+                label="Select beat"
+                semibold_label={true}
+                handleChangeOption={handleBeatSelection}
+                optionList={beats}
+                multipleSelect={false}
+              />{" "}
+            </div>
+          )}
 
           <div className="mb-6">
             <MultiSelectField

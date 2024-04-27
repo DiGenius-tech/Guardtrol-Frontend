@@ -29,6 +29,7 @@ function ActivePatrolGuards({ beat }) {
     data: guards,
     isLoading,
     refetch: refetchGuards,
+    isUninitialized,
     error,
   } = useGetGuardsQuery(user.userid, { skip: user.userid ? false : true });
 
@@ -54,7 +55,9 @@ function ActivePatrolGuards({ beat }) {
   };
 
   useEffect(() => {
-    refetchGuards();
+    if (!isUninitialized) {
+      refetchGuards();
+    }
   }, [user.token]);
 
   useEffect(() => {
