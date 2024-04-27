@@ -8,12 +8,15 @@ const AuthRouteGuard = ({ component: Component, ...rest }) => {
   const user = useSelector(selectUser);
 
   const location = useLocation();
+  console.log(user)
   //console.log(isLoggedIn)
   console.log(user);
-  return !user ? (
-    <Component {...rest} />
-  ) : (
+  return user && user.emailverified ? (
     <Navigate to="/client" state={{ from: location }} replace />
+    
+  ) : (
+
+    <Component {...rest} />
   );
 };
 

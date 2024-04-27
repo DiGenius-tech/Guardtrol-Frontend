@@ -99,7 +99,8 @@ const Register = () => {
             dispatch(setOnboardingGuards([]));
             dispatch(setCurrentSubscription(null));
             dispatch(loginSuccess(data));
-            // navigate("../verify-email", { replace: true }); //should be dashboard
+            toast("Signup Successful");
+            navigate("/auth/verify-email", { replace: true }); //should be dashboard
             // window.location.reload();
           }
           // navigate('../verify-email', {replace: true})
@@ -141,10 +142,12 @@ const Register = () => {
       );
       if (null != data) {
         if (data) {
+          dispatch(setOnboardingLevel(0));
+          dispatch(setOnboardingGuards([]));
+          dispatch(setCurrentSubscription(null));
           dispatch(loginSuccess(data));
           toast("Signup Successful");
-          navigate("/client/dashboard", { replace: true }); //should be dashboard
-          window.location.reload();
+         
         }
       }
     } catch (err) {

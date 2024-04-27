@@ -31,8 +31,8 @@ const PrivateRoute = ({
     data: beats,
     isUninitialized,
     refetch: refetchBeats,
-  } = useGetBeatsQuery(user.userid, {
-    skip: user.userid ? false : true,
+  } = useGetBeatsQuery(user?.userid, {
+    skip: user?.userid ? false : true,
   });
 
   useEffect(() => {

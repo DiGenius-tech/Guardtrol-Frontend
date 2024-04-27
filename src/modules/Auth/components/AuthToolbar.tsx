@@ -26,7 +26,7 @@ const AuthToolbar = () => {
             </div>
             <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
               <NavLink
-                to={auth.isAuthenticated ? "/dashboard" : "/auth/register"}
+                to={auth.isAuthenticated ? "/client/dashboard" : "/auth/register"}
                 className={`${
                   location.pathname === "/auth/register" ||
                   location.pathname === "/auth/register/" ||
@@ -41,7 +41,7 @@ const AuthToolbar = () => {
                 {auth.isAuthenticated ? "Dashboard" : "Create An Account"}
               </NavLink>
               <NavLink
-                to={auth.isAuthenticated ? "/dashboard" : "/auth/login"}
+                to={auth.isAuthenticated ? "/client/dashboard" : "/auth/login"}
                 className={`${
                   location.pathname === "/auth/login" ||
                   location.pathname === "/auth/login/" ||

@@ -73,7 +73,7 @@ function GuardList() {
   const { refetch: refetchGuards } = useGetGuardsQuery(user.userid, {
     skip: user.userid ? false : true,
   });
-
+ 
   const saveGuard = async () => {
     if (onboardingGuards == [] || onboardingGuards.length < 1) {
       toast.info("Add at Least One Guard To Continue");

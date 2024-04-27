@@ -13,15 +13,16 @@ import {
 } from "../../../../../redux/services/beats";
 import { useSelector } from "react-redux";
 import { selectUser } from "../../../../../redux/selectors/auth";
+import { selectSubscriptionState } from "../../../../../redux/selectors/subscription";
 
 function AddBeat() {
   const [validationErrors, setValidationErrors] = useState({});
   const navigate = useNavigate();
   const user = useSelector(selectUser);
 
-  const sub = useContext(SubscriptionContext);
+  const sub = useSelector(selectSubscriptionState);
   const [open, setOpen] = useState(false);
-  const { isLoading, error, responseData, sendRequest } = useHttpRequest();
+
   const [beat, setBeat] = useState({
     beat_name: "",
     description: "my location",
@@ -31,32 +32,41 @@ function AddBeat() {
     setBeat({ ...beat, [e.target.name]: e.target.value });
     setValidationErrors({ ...validationErrors, [e.target.name]: "" });
   };
+
   const [addBeat] = useAddBeatMutation();
-  const { date: beats, refetch: refetchBeats } = useGetBeatsQuery(user.userid, {
+
+  const {
+    data: beats,
+    isLoading,
+    isUninitialized,
+    refetch: refetchBeats,
+  } = useGetBeatsQuery(user.userid, {
     skip: user.userid ? false : true,
   });
+  console.log(beats)
+  console.log(sub.currentSubscription?.maxbeats)
 
   const saveBeat = async (e) => {
     e.preventDefault();
-    console.log(beats);
+
     if (beat.name === "" || beat.name.length < 3) {
       setValidationErrors({
         ...validationErrors,
         name: "Use A Valid Beat Name",
       });
     } else {
-      console.log(beats);
-
       if (
         beats?.length &&
         sub.currentSubscription?.maxbeats &&
-        beats?.length === sub.currentSubscription?.maxbeats
+        beats?.length >= sub.currentSubscription?.maxbeats
       ) {
         setOpen(true);
         return;
       }
       await addBeat({ body: beat, userid: user.userid });
-      refetchBeats().then(navigate("../"));
+      console.log(user)
+      await refetchBeats()
+      navigate("../")
     }
   };
   return (

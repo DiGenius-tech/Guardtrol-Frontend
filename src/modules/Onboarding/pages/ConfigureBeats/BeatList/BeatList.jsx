@@ -37,7 +37,8 @@ function BeatList() {
   } = useGetBeatsQuery(user.userid, {
     skip: user.userid ? false : true,
   });
-  
+
+  console.log(beats)
 
   const [beatsToedit, setBeatsToEdit] = useState(beats);
   const handle_edit_beat = (guard) => {
@@ -61,25 +62,23 @@ function BeatList() {
   };
 
   const [addBeats] = useAddBeatMutation();
-  const saveBeat = async (beats) => {
-    // if (beats == [] || beats.lenght < 1) { //wrong condition
-    //}
 
+  const saveBeat = async (beats) => {
     if (!beats.length) {
       toast.info("Add at Least One Beat To Continue");
       return;
     }
 
-    dispatch(suspenseShow());
+    //dispatch(suspenseShow());
 
-    const data = await addBeats({ userId: user.userid, body: beats }).finally(
-      dispatch(suspenseHide())
-    );
+    // const data = await addBeats({ userId: user.userid, body: beats }).finally(
+    //   dispatch(suspenseHide())
+    // );
 
-    if (data) {
+    
       dispatch(setOnboardingLevel(2));
       navigate("/onboarding/onboard-guard");
-    }
+  
   };
 
   // useEffect(() => {

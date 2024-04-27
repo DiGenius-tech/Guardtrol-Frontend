@@ -38,6 +38,8 @@ function VerifyEmail() {
     if (data.isverified) {
       setVerified(true);
       toast("already verified");
+
+      navigate("/client")
     }
   };
 
@@ -90,7 +92,7 @@ function VerifyEmail() {
 
           if (null != data) {
             toast(data.message);
-            navigate("../login", { replace: true });
+            navigate("/client/dashboard", { replace: true });
             window.location.reload();
           }
         } catch (err) {

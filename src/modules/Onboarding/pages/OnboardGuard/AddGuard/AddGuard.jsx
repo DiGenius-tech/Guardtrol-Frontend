@@ -8,7 +8,7 @@ import HistoryButton from "../../../../Sandbox/Buttons/HistoryButton";
 import { SubscriptionContext } from "../../../../../shared/Context/SubscriptionContext";
 import AlertDialog from "../../../../../shared/Dialog/AlertDialog";
 import { useDispatch, useSelector } from "react-redux";
-import { selectCurrentSubscription } from "../../../../../redux/selectors/subscription";
+import { selectCurrentSubscription, selectSubscriptionState } from "../../../../../redux/selectors/subscription";
 import { useGetGuardsQuery } from "../../../../../redux/services/guards";
 import { selectUser } from "../../../../../redux/selectors/auth";
 import { selectOnboardingGuards } from "../../../../../redux/selectors/onboarding";
@@ -24,7 +24,7 @@ function AddGuard() {
   const onboardingGuards = useSelector(selectOnboardingGuards);
 
   const navigate = useNavigate();
-  const sub = useSelector(selectCurrentSubscription);
+  const sub = useSelector(selectSubscriptionState);
 
   const {
     data: guards,
@@ -63,8 +63,7 @@ function AddGuard() {
       return;
     }
 
-    dispatch(addOnboardingGuard(guard));
-    console.log(onboardingGuards);
+    
     if (
       onboardingGuards?.length ===
       sub.currentSubscription?.maxbeats * 5 +
@@ -73,6 +72,7 @@ function AddGuard() {
       setOpen(true);
       return;
     }
+    dispatch(addOnboardingGuard(guard));
 
     navigate("../");
   };
