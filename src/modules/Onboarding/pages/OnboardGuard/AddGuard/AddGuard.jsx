@@ -78,9 +78,9 @@ function AddGuard({ onBoarding = true }) {
 
       dispatch(addOnboardingGuard(guard));
     } else {
-      console.log(guards?.length, sub?.maxextraguards);
+      console.log(guards?.length, sub?.maxbeats * 5 + sub?.maxextraguards);
 
-      if (guards?.length >= sub?.maxextraguards) {
+      if (guards?.length >= sub?.maxbeats * 5 + sub?.maxextraguards) {
         setOpen(true);
         return;
       } else {
