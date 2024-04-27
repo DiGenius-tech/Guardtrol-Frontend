@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 const ViewBeatInformation = ({ setPage, beat }) => {
+  console.log(beat);
   return (
     <>
       <div className="flex justify-between flex-row my-5">

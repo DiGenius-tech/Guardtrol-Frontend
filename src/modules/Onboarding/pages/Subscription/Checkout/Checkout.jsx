@@ -12,7 +12,7 @@ import { toast } from "react-toastify";
 import useHttpRequest from "../../../../../shared/Hooks/HttpRequestHook";
 import { SubscriptionContext } from "../../../../../shared/Context/SubscriptionContext";
 import { useDispatch, useSelector } from "react-redux";
-import { selectUser } from "../../../../../redux/selectors/auth";
+import { selectToken, selectUser } from "../../../../../redux/selectors/auth";
 import {
   suspenseHide,
   suspenseShow,
@@ -20,7 +20,11 @@ import {
 import { useGetSubscriptionQuery } from "../../../../../redux/services/subscriptions";
 import { selectSuspenseShow } from "../../../../../redux/selectors/suspense";
 import { setCurrentSubscription } from "../../../../../redux/slice/subscriptionSlice";
-import { selectFwConfig, selectPlan, selectPsConfig } from "../../../../../redux/selectors/selectedPlan";
+import {
+  selectFwConfig,
+  selectPlan,
+  selectPsConfig,
+} from "../../../../../redux/selectors/selectedPlan";
 import selectedPlanSlice from "../../../../../redux/slice/selectedPlanSlice";
 
 const PaymentOption = {
@@ -30,12 +34,12 @@ const PaymentOption = {
 
 const Checkout = () => {
   const user = useSelector(selectUser);
-  const psConfig = useSelector(selectPsConfig)
-  const fwConfig = useSelector(selectFwConfig)
+  const psConfig = useSelector(selectPsConfig);
+  const fwConfig = useSelector(selectFwConfig);
   const plan = useSelector(selectPlan);
-  //   const sub = useContext(SubscriptionContext);
+  const token = useSelector(selectToken);
 
-  const { data: sub } = useGetSubscriptionQuery(user.userid);
+  const { data: sub } = useGetSubscriptionQuery({ skip: token ? false : true });
   const suspenseState = useSelector(selectSuspenseShow);
 
   const dispatch = useDispatch();
@@ -44,11 +48,10 @@ const Checkout = () => {
 
   const { isLoading, error, responseData, sendRequest } = useHttpRequest();
   const [selectedPlan, setSelectedPlan] = useState(null);
-  
+
   const [paymentMethod, setPaymentMethod] = useState("flutterwave");
   const navigate = useNavigate();
   useEffect(() => {
-
     if (plan && plan.amount) {
       setSelectedPlan(plan);
     }
@@ -60,9 +63,8 @@ const Checkout = () => {
     setPaymentMethod(e);
   };
 
-  
   const handlePaystackPayment = usePaystackPayment(psConfig);
-  
+
   const handleFlutterPayment = useFlutterwave(fwConfig);
 
   const pay = async (e) => {

@@ -5,8 +5,9 @@ import { TSubscription } from "../../types/subscription";
 export const SubscriptionApi = api.injectEndpoints({
   endpoints: (build) => ({
     getSubscription: build.query<TSubscription[], void>({
-      query: (userID: any) => ({ url: `users/getsubscription/${userID}` }),
+      query: (userID: any) => ({ url: `users/getsubscription` }),
       providesTags: ["Subscription"],
+      transformResponse: (response: any, meta, arg) => response.subscription,
     }),
 
     addSubscription: build.mutation<TSubscription, Partial<TSubscription>>({

@@ -31,7 +31,7 @@ function ActivePatrolGuards({ beat }) {
     refetch: refetchGuards,
     isUninitialized,
     error,
-  } = useGetGuardsQuery(user.userid, { skip: user.userid ? false : true });
+  } = useGetGuardsQuery();
 
   const deleteGuard = async () => {
     dispatch(suspenseShow());

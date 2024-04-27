@@ -33,7 +33,7 @@ function InactivePatrolGuards({ beat }) {
     isLoading,
     refetch: refetchGuards,
     error,
-  } = useGetGuardsQuery(user.userid, { skip: user.userid ? false : true });
+  } = useGetGuardsQuery();
 
   const deleteGuard = async () => {
     dispatch(suspenseShow());

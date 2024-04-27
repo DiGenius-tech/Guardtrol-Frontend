@@ -15,7 +15,10 @@ import { loginSuccess } from "../../../redux/slice/authSlice";
 import axios from "axios";
 import { suspenseHide, suspenseShow } from "../../../redux/slice/suspenseSlice";
 import { errorHandler } from "../../../lib/errorHandler";
-import { setOnboardingGuards, setOnboardingLevel } from "../../../redux/slice/onboardingSlice";
+import {
+  setOnboardingGuards,
+  setOnboardingLevel,
+} from "../../../redux/slice/onboardingSlice";
 import { setCurrentSubscription } from "../../../redux/slice/subscriptionSlice";
 
 const Login = () => {
@@ -72,11 +75,11 @@ const Login = () => {
         if (data) {
           dispatch(setOnboardingLevel(0));
           dispatch(setOnboardingGuards([]));
-          dispatch(setCurrentSubscription(null));
+
           dispatch(loginSuccess(data));
           toast("Signin Successful");
-         // navigate("/client/dashboard", { replace: true });
-         // window.location.reload()
+          // navigate("/client/dashboard", { replace: true });
+          // window.location.reload()
         }
       } catch (err: any) {
         errorHandler(err);
@@ -107,13 +110,13 @@ const Login = () => {
       );
 
       if (null != data) {
-          dispatch(setOnboardingLevel(0));
-          dispatch(setOnboardingGuards([]));
-          dispatch(setCurrentSubscription(null));
-          dispatch(loginSuccess(data));
-          toast("Signin Successful");
-          // navigate("/client/dashboard", { replace: true }); //should be dashboard
-          // window.location.reload();
+        dispatch(setOnboardingLevel(0));
+        dispatch(setOnboardingGuards([]));
+        dispatch(setCurrentSubscription(null));
+        dispatch(loginSuccess(data));
+        toast("Signin Successful");
+        // navigate("/client/dashboard", { replace: true }); //should be dashboard
+        // window.location.reload();
       }
 
       //auth.login(data.token, data.userId)

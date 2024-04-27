@@ -7,12 +7,25 @@ import useHttpRequest from "../../../../shared/Hooks/HttpRequestHook";
 import { SubscriptionContext } from "../../../../shared/Context/SubscriptionContext";
 
 import { toast } from "react-toastify";
+import { useGetSubscriptionQuery } from "../../../../redux/services/subscriptions";
+import { useSelector } from "react-redux";
+import { selectToken } from "../../../../redux/selectors/auth";
 
 function EditBeat(props) {
   const [validationErrors, setValidationErrors] = useState({});
+  const token = useSelector(selectToken);
 
-  const sub = useContext(SubscriptionContext);
+  const {
+    data: sub,
+    isError,
+    refetch,
+    isUninitialized,
+  } = useGetSubscriptionQuery({
+    skip: token ? false : true,
+  });
+
   const [open, setOpen] = useState(false);
+
   const { isLoading, error, responseData, sendRequest } = useHttpRequest();
   const [beat, setBeat] = useState({
     id: "",

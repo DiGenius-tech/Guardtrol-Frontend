@@ -37,7 +37,7 @@ function AssignNewBeat({ isOnboarding = true, beat: selectedBeat }) {
     data: guards,
     isLoading: isGuardsLoading,
     error: guardsError,
-  } = useGetGuardsQuery(user.userid, { skip: user.userid ? false : true });
+  } = useGetGuardsQuery();
 
   const [assignToBeat] = useAssignGuardToBeatMutation();
   const { responseData, sendRequest } = useHttpRequest();

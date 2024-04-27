@@ -10,23 +10,35 @@ import { SubscriptionContext } from "../../../../shared/Context/SubscriptionCont
 import TextareaField from "../../../Sandbox/TextareaField/TextareaField";
 
 import { useDispatch, useSelector } from "react-redux";
-import { selectUser } from "../../../../redux/selectors/auth";
+import { selectToken, selectUser } from "../../../../redux/selectors/auth";
 import {
   suspenseHide,
   suspenseShow,
 } from "../../../../redux/slice/suspenseSlice";
+import { useGetSubscriptionQuery } from "../../../../redux/services/subscriptions";
 
 const AddBeat = () => {
   const [validationErrors, setValidationErrors] = useState({});
   const user = useSelector(selectUser);
+  const token = useSelector(selectToken);
+
   const navigate = useNavigate();
-  const sub = useContext(SubscriptionContext);
+  const {
+    data: sub,
+    isError,
+
+    refetch,
+    isUninitialized,
+  } = useGetSubscriptionQuery({
+    skip: token ? false : true,
+  });
 
   const dispatch = useDispatch();
 
   const [open, setOpen] = useState(false);
   const { isLoading, error, responseData, sendRequest } = useHttpRequest();
   const [existingBeats, setExistingBeats] = useState([]);
+
   const [beat, setBeat] = useState({
     beat_name: "",
     address: "",
@@ -40,7 +52,7 @@ const AddBeat = () => {
       null,
       {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${user.token}`,
+        Authorization: `Bearer ${token}`,
       }
     );
     if (data) {
@@ -50,7 +62,7 @@ const AddBeat = () => {
   };
   useEffect(() => {
     getExistingBeats();
-  }, [user.token]);
+  }, [token]);
 
   useEffect(() => {
     if (error) {
@@ -71,7 +83,7 @@ const AddBeat = () => {
         beat_name: "Use A Valid Beat Name",
       });
     } else {
-      if (existingBeats.length === sub.currentSubscription?.maxbeats) {
+      if (existingBeats.length === sub?.maxbeats) {
         setOpen(true);
         return;
       }
@@ -83,7 +95,7 @@ const AddBeat = () => {
         JSON.stringify(beat),
         {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${user.token}`,
+          Authorization: `Bearer ${token}`,
         }
       ).finally(dispatch(suspenseHide()));
 
