@@ -40,11 +40,9 @@ function AddBeat() {
     isLoading,
     isUninitialized,
     refetch: refetchBeats,
-  } = useGetBeatsQuery(user.userid, {
-    skip: user.userid ? false : true,
-  });
-  console.log(beats)
-  console.log(sub.currentSubscription?.maxbeats)
+  } = useGetBeatsQuery();
+  console.log(beats);
+  console.log(sub.currentSubscription?.maxbeats);
 
   const saveBeat = async (e) => {
     e.preventDefault();
@@ -64,9 +62,9 @@ function AddBeat() {
         return;
       }
       await addBeat({ body: beat, userid: user.userid });
-      console.log(user)
-      await refetchBeats()
-      navigate("../")
+      console.log(user);
+      await refetchBeats();
+      navigate("../");
     }
   };
   return (

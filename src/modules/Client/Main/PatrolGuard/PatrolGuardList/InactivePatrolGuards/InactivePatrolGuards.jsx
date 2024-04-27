@@ -71,7 +71,10 @@ function InactivePatrolGuards({ beat }) {
           <PatrolGuardListDesktopView
             duty_status={duty_status}
             icon_menu_dots={icon_menu_dots}
-            guards={beat?.guards || guards}
+            guards={
+              beat?.guards?.filter((guard) => !guard.isactive) ||
+              guards?.filter((guard) => !guard.isactive)
+            }
           />
         </Card>
       </div>
@@ -80,7 +83,10 @@ function InactivePatrolGuards({ beat }) {
         <PatrolGuardListMobileView
           duty_status={duty_status}
           icon_menu_dots={icon_menu_dots}
-          guards={beat?.guards || guards}
+          guards={
+            beat?.guards?.filter((guard) => !guard.isactive) ||
+            guards?.filter((guard) => !guard.isactive)
+          }
         />
       </div>
     </>

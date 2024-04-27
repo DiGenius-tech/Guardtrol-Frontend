@@ -54,9 +54,7 @@ const EditBeatInformation = ({ setPage, beat }) => {
 
   const [updateBeat] = useUpdateBeatMutation();
 
-  const { refetch: refetchBeats } = useGetBeatsQuery(user.userid, {
-    skip: user.userid ? false : true,
-  });
+  const { refetch: refetchBeats } = useGetBeatsQuery();
 
   const handleUpdateBeat = async (data) => {
     dispatch(suspenseShow());

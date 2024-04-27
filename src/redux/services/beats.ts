@@ -5,7 +5,7 @@ import { TBeat } from "../../types/beat";
 export const BeatApi = api.injectEndpoints({
   endpoints: (build) => ({
     getBeats: build.query<TBeat[], void>({
-      query: (userid) => ({ url: `beat/getbeats/${userid}` }),
+      query: () => ({ url: `beat/getbeats` }),
       providesTags: (result = []) => [
         ...result.map(({ _id }) => ({ type: "Beats", _id } as const)),
         { type: "Beats" as const, id: "LIST" },

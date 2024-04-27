@@ -26,11 +26,7 @@ const BeatList = () => {
   const [beatToEdit, setBeatToEdit] = useState(null);
   const [beatToDelete, setBeatToDelete] = useState(null);
 
-  const {
-    data: beats,
-    isLoading,
-    error,
-  } = useGetBeatsQuery(user.userid, { skip: user.userid ? false : true });
+  const { data: beats, isLoading, error } = useGetBeatsQuery();
 
   const [deleteBeat, { isLoading: isDeleting, deleteStatus }] =
     useDeleteBeatMutation();

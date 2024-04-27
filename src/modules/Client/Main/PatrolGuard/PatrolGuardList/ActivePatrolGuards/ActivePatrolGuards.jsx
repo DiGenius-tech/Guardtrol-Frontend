@@ -65,6 +65,8 @@ function ActivePatrolGuards({ beat }) {
       toast.error(error);
     }
   }, [error]);
+
+  console.log(guards);
   return (
     <>
       {/* active-patrol-guards-app works! */}
@@ -73,7 +75,7 @@ function ActivePatrolGuards({ beat }) {
           <PatrolGuardListDesktopView
             duty_status={duty_status}
             icon_menu_dots={icon_menu_dots}
-            guards={beat?.guards || guards}
+            guards={beat?.guards || guards?.filter((guard) => guard.isactive)}
           />
         </Card>
       </div>
@@ -81,7 +83,7 @@ function ActivePatrolGuards({ beat }) {
         <PatrolGuardListMobileView
           duty_status={duty_status}
           icon_menu_dots={icon_menu_dots}
-          guards={beat?.guards || guards}
+          guards={beat?.guards || guards?.filter((guard) => guard.isactive)}
         />
       </div>
     </>

@@ -34,9 +34,7 @@ function BeatList() {
     isLoading,
     isUninitialized,
     refetch: refetchBeats,
-  } = useGetBeatsQuery(user.userid, {
-    skip: user.userid ? false : true,
-  });
+  } = useGetBeatsQuery();
 
   console.log(beats)
 
