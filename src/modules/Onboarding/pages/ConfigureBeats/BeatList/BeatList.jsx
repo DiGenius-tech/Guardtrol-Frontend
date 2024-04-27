@@ -37,6 +37,7 @@ function BeatList() {
   } = useGetBeatsQuery(user.userid, {
     skip: user.userid ? false : true,
   });
+  
 
   const [beatsToedit, setBeatsToEdit] = useState(beats);
   const handle_edit_beat = (guard) => {
@@ -101,7 +102,7 @@ function BeatList() {
         ) : (
           <>
             <ul className="mb-4 flex flex-col gap-4">
-              {beats.map((beat) => (
+              {beats?.map((beat) => (
                 <li key={beat._id}>
                   <Beat
                     beat={beat}
