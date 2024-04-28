@@ -46,24 +46,19 @@ const SettingBilling = () => {
   } = useGetSubscriptionQuery(null, { skip: token ? false : true });
 
   const { data: guards } = useGetGuardsQuery();
-  console.log(sub);
   const [defaultCard, setDefaultCard] = useState({
     id: "",
   });
 
   const { data: subs } = useGetAllSubscriptionsQuery();
 
-  console.log(subs);
-
   const [isAddNewCard, setIsAddNewCard] = useState(false);
 
   const handleDefaultCard = (e) => {
-    console.log("e.target.value: ", e.target.value);
     setDefaultCard(e.target.value);
   };
 
   useEffect(() => {
-    console.log("defaultCard: ", defaultCard);
     return () => {};
   }, [defaultCard]);
 
@@ -94,7 +89,6 @@ const SettingBilling = () => {
     filterData();
   }, [currentPage, subs]);
 
-  console.log(subs?.length);
   return (
     <>
       {/* setting-billing-app works! */}

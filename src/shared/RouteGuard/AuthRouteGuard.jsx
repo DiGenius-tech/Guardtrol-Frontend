@@ -8,7 +8,6 @@ const AuthRouteGuard = ({ component: Component, ...rest }) => {
   const user = useSelector(selectUser);
 
   const location = useLocation();
-  console.log(user);
   return (
     <>
       {user?.emailverified && user && user?.onboardingcomplete && (

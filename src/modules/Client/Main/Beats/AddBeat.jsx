@@ -16,6 +16,10 @@ import {
   suspenseShow,
 } from "../../../../redux/slice/suspenseSlice";
 import { useGetSubscriptionQuery } from "../../../../redux/services/subscriptions";
+import {
+  useAddBeatMutation,
+  useGetBeatsQuery,
+} from "../../../../redux/services/beats";
 
 const AddBeat = () => {
   const [validationErrors, setValidationErrors] = useState({});
@@ -31,8 +35,6 @@ const AddBeat = () => {
   const dispatch = useDispatch();
 
   const [open, setOpen] = useState(false);
-  const { isLoading, error, responseData, sendRequest } = useHttpRequest();
-  const [existingBeats, setExistingBeats] = useState([]);
 
   const [beat, setBeat] = useState({
     name: "",
@@ -40,32 +42,23 @@ const AddBeat = () => {
     description: "my location",
   });
 
-  const getExistingBeats = async () => {
-    dispatch(suspenseShow());
-    const data = await sendRequest(`beat/getbeats`, "GET", null, {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    });
-    if (data) {
-      const beats = data.beats;
-      setExistingBeats(beats);
-    }
-    dispatch(suspenseHide());
-  };
-  useEffect(() => {
-    getExistingBeats();
-  }, [token]);
+  const {
+    data: beats,
+    isLoading,
+    isUninitialized,
+    refetch: refetchBeats,
+  } = useGetBeatsQuery();
 
   useEffect(() => {
-    if (error) {
-      toast.error(error);
-    }
-  }, [error]);
+    refetchBeats();
+  }, [token]);
 
   const handleChange = (e) => {
     setBeat({ ...beat, [e.target.name]: e.target.value });
     setValidationErrors({ ...validationErrors, [e.target.name]: "" });
   };
+
+  const [addBeat] = useAddBeatMutation();
 
   const saveBeat = async (e) => {
     e.preventDefault();
@@ -75,26 +68,18 @@ const AddBeat = () => {
         name: "Use A Valid Beat Name",
       });
     } else {
-      if (existingBeats.length >= sub?.maxbeats) {
+      if (beats?.length >= sub?.maxbeats) {
         setOpen(true);
         return;
       }
       dispatch(suspenseShow());
 
-      const data = await sendRequest(
-        `beat/addbeat/${user.userid}`,
-        "POST",
-        JSON.stringify(beat),
-        {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        }
-      ).finally(dispatch(suspenseHide()));
+      const { data } = await addBeat(beat).finally(dispatch(suspenseHide()));
 
       if (data && data.status) {
         toast("Beat Created Successfully");
-        navigate("../");
-       // window.location.reload();
+        navigate("/client/beats");
+        // window.location.reload();
       }
     }
   };

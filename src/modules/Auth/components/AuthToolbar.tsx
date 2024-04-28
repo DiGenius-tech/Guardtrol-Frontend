@@ -12,7 +12,6 @@ import brandLogo from "../../../images/brand-logo.svg";
 const AuthToolbar = () => {
   const location = useLocation();
   const auth = useSelector(selectAuth);
-  console.log(auth);
   return (
     <>
       {/* auth-toolbar-app works! */}

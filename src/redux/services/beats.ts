@@ -14,21 +14,21 @@ export const BeatApi = api.injectEndpoints({
     }),
 
     addBeat: build.mutation<TBeat, Partial<any>>({
-      query(data) {
+      query(body) {
         return {
-          url: `beat/addbeat/${data.userid}`,
+          url: `beat/addbeat`,
           method: "POST",
-          body: data.body,
+          body,
         };
       },
       invalidatesTags: [{ type: "Beats", id: "LIST" }],
     }),
     addBeats: build.mutation<TBeat, Partial<any>>({
-      query(data) {
+      query(body) {
         return {
-          url: `beat/addbeat/${data.userid}`,
+          url: `beat/addbeat`,
           method: "POST",
-          body: data.body,
+          body,
         };
       },
       invalidatesTags: [{ type: "Beats", id: "LIST" }],
@@ -56,11 +56,12 @@ export const BeatApi = api.injectEndpoints({
       invalidatesTags: (beat) => [{ type: "Beats", id: beat?._id }],
     }),
 
-    deleteBeat: build.mutation<{ success: boolean; _id: number }, number>({
-      query(_id) {
+    deleteBeat: build.mutation<{ success: boolean; _id: number }, any>({
+      query(body) {
         return {
-          url: `deletebeat/${_id}`,
+          url: `beat/deletebeat`,
           method: "DELETE",
+          body: body,
         };
       },
       invalidatesTags: (beat) => [{ type: "Beats", _id: beat?._id }],

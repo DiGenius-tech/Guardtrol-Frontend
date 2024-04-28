@@ -6,7 +6,6 @@ function BeatDetailsHeader() {
   const { beatId } = useParams();
 
   const active = [`/client/beats/details/${beatId}`];
-  console.log(location.pathname);
   return (
     <>
       <nav>

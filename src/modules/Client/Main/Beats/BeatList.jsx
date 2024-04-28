@@ -51,11 +51,12 @@ const BeatList = () => {
   };
   const handleDelete = async () => {
     try {
-      const { data } = await deleteBeat({ variables: { _id: beatToDelete._id } });
-      // Handle response
-    } catch (error) {
-      // Handle error
-    }
+      console.log(beatToDelete);
+      const data = await deleteBeat({ beatId: beatToDelete._id });
+      setOpen(false);
+      toast("Beat deleted");
+      console.log(data);
+    } catch (error) {}
   };
 
   return (

@@ -47,8 +47,6 @@ const ClientToolbar = (props) => {
     return () => {};
   }, [location]);
 
-  console.log(user?.image);
-
   const handleLogout = () => {
     persistor.purge();
     dispatch(api.util.resetApiState());

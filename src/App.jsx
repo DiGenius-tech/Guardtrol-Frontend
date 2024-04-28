@@ -117,12 +117,9 @@ function App() {
     },
   ]);
 
-  console.log(token);
-
   const {
     data: subcription,
     isError,
-    isLoading,
     refetch,
     isUninitialized,
   } = useGetSubscriptionQuery(null, { skip: token ? false : true });

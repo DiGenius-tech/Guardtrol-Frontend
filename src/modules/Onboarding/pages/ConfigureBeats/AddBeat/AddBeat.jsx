@@ -59,7 +59,7 @@ function AddBeat() {
         setOpen(true);
         return;
       }
-      await addBeat({ body: beat, userid: user.userid });
+      await addBeat(beat);
       console.log(user);
       await refetchBeats();
       navigate("../");

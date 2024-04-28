@@ -46,7 +46,6 @@ function ActivePatrolGuards() {
 
   useEffect(() => {
     setSelectedBeat(beats?.find((b) => b?._id === beatId));
-    console.log(beats?.find((b) => b?._id === beatId));
   }, [beats]);
 
   const deleteGuard = async () => {

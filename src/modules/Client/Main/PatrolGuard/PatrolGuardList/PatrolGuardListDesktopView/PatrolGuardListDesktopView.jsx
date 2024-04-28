@@ -8,8 +8,8 @@ function PatrolGuardListDesktopView(props) {
     <>
       {/* patrol-guard-list-desktop-view-app works! */}
       {!props.guards?.length ? (
-        <div class="bg-white p-8 rounded ">
-          <p class="text-gray-700 text-center">No Guards Here Yet</p>
+        <div className="bg-white p-8 rounded ">
+          <p className="text-gray-700 text-center">No Guards Here Yet</p>
         </div>
       ) : (
         <div className="patrol-guard-list-table">
@@ -41,19 +41,20 @@ function PatrolGuardListDesktopView(props) {
                       key={guard._id}
                       className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
                     >
-                      <Link to={`/client/patrol-guard/details/${guard._id}`}>
-                        <div className="flex items-center gap-2">
-                          <div className="h-8 w-8 rounded-full overflow-hidden">
-                            <img src={guard.profileImage} alt={guard.name} />
+                      <td>
+                        <Link to={`/client/patrol-guard/details/${guard._id}`}>
+                          <div className="flex items-center gap-2">
+                            <div className="h-8 w-8 rounded-full overflow-hidden">
+                              <img src={guard.profileImage} alt={guard.name} />
+                            </div>
+                            {guard.name}
+                            <span className="block sm:hidden">
+                              <br />
+                              {/* {time} */}
+                            </span>
                           </div>
-                          {guard.name}
-                          <span className="block sm:hidden">
-                            <br />
-                            {/* {time} */}
-                          </span>
-                        </div>
-                      </Link>
-
+                        </Link>
+                      </td>
                       <td className="px-6 py-4"> {guard.phone}</td>
                       {/* <td className="px-6 py-4"> {guard.email}</td> */}
                       <td className="px-6 py-4">

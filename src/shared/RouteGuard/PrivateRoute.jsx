@@ -34,8 +34,6 @@ const PrivateRoute = ({
   } = useGetBeatsQuery();
 
   useEffect(() => {
-    console.log(isUninitialized && token);
-
     if (isUninitialized && token) {
       refetchBeats();
     }
@@ -132,10 +130,6 @@ const PrivateRoute = ({
   ) {
     return <Navigate to={"/onboarding"} state={{ from: "/" }} replace />;
   }
-
-  // if (onboardingComplete) {
-  //   return <Navigate to={"/client/dashboard"} />;
-  // }
 
   return <Component {...rest} />;
 };
