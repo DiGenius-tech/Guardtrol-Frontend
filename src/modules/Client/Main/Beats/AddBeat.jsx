@@ -41,6 +41,7 @@ const AddBeat = () => {
   });
 
   const getExistingBeats = async () => {
+    dispatch(suspenseShow());
     const data = await sendRequest(`beat/getbeats`, "GET", null, {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
@@ -49,6 +50,7 @@ const AddBeat = () => {
       const beats = data.beats;
       setExistingBeats(beats);
     }
+    dispatch(suspenseHide());
   };
   useEffect(() => {
     getExistingBeats();
@@ -73,7 +75,7 @@ const AddBeat = () => {
         name: "Use A Valid Beat Name",
       });
     } else {
-      if (existingBeats.length === sub?.maxbeats) {
+      if (existingBeats.length >= sub?.maxbeats) {
         setOpen(true);
         return;
       }
@@ -92,7 +94,7 @@ const AddBeat = () => {
       if (data && data.status) {
         toast("Beat Created Successfully");
         navigate("../");
-        window.location.reload();
+       // window.location.reload();
       }
     }
   };

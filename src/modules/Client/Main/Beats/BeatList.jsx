@@ -49,6 +49,14 @@ const BeatList = () => {
       setBeatToEdit(null);
     }
   };
+  const handleDelete = async () => {
+    try {
+      const { data } = await deleteBeat({ variables: { _id: beatToDelete._id } });
+      // Handle response
+    } catch (error) {
+      // Handle error
+    }
+  };
 
   return (
     <>
@@ -76,7 +84,7 @@ const BeatList = () => {
             setOpen={setOpen}
             open={open}
             setBeatToDelete={setBeatToDelete}
-            handleDeleteBeat={deleteBeat}
+            handleDeleteBeat={handleDelete}
           />
         </Card>
       </div>
@@ -94,7 +102,7 @@ const BeatList = () => {
           setOpen={setOpen}
           open={open}
           setBeatToDelete={setBeatToDelete}
-          handleDeleteBeat={deleteBeat}
+          handleDeleteBeat={handleDelete}
         />
       </div>
 
