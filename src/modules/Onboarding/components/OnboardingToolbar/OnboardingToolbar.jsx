@@ -4,6 +4,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { logout } from "../../../../redux/slice/authSlice";
 import { selectUser } from "../../../../redux/selectors/auth";
+import { api } from "../../../../redux/services/api";
+import { persistor } from "../../../../redux/store";
+import { PURGE } from "redux-persist";
 
 const OnboardingToolbar = () => {
   const user = useSelector(selectUser);
@@ -16,6 +19,12 @@ const OnboardingToolbar = () => {
     setIsProfileDropdownOpened(!isProfileDropdownOpened);
   };
 
+  const handleLogout = () => {
+    persistor.purge();
+    dispatch(api.util.resetApiState());
+    dispatch(logout());
+    navigate("/auth");
+  };
   return (
     <>
       {/* onboarding-toolbar-app works! */}
@@ -94,10 +103,7 @@ const OnboardingToolbar = () => {
                     Settings
                   </a>
                   <a
-                    onClick={() => {
-                      dispatch(logout());
-                      navigate("/auth");
-                    }}
+                    onClick={() => handleLogout()}
                     className="block px-4 py-2 text-sm text-gray-700"
                     role="menuitem"
                     tabIndex="-1"

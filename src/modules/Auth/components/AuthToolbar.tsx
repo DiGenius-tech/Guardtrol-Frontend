@@ -12,7 +12,7 @@ import brandLogo from "../../../images/brand-logo.svg";
 const AuthToolbar = () => {
   const location = useLocation();
   const auth = useSelector(selectAuth);
-
+  console.log(auth);
   return (
     <>
       {/* auth-toolbar-app works! */}
@@ -26,7 +26,9 @@ const AuthToolbar = () => {
             </div>
             <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
               <NavLink
-                to={auth.isAuthenticated ? "/client/dashboard" : "/auth/register"}
+                to={
+                  auth.isAuthenticated ? "/client/dashboard" : "/auth/register"
+                }
                 className={`${
                   location.pathname === "/auth/register" ||
                   location.pathname === "/auth/register/" ||

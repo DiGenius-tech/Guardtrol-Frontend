@@ -115,7 +115,9 @@ const PrivateRoute = ({
   //     <Navigate to="/onboarding/complete" state={{ from: location }} replace />
   //   );
   // }
-
+  if (user?.onboardingcomplete && location.pathname === "/auth") {
+    return <Navigate to={"/client"} state={{ from: "/" }} replace />;
+  }
   if (
     onboarding &&
     location.pathname !== onboardingRoute &&

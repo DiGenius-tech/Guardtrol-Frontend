@@ -2,6 +2,7 @@
 import { createSelector, PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../store";
 import { TUser } from "../../types/user";
+import { PURGE } from "redux-persist";
 
 interface Suspense {
   show: boolean;
@@ -21,6 +22,9 @@ const suspenseSlice = createSlice({
     suspenseHide(state) {
       state.show = false;
     },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(PURGE, () => initialState);
   },
 });
 

@@ -21,12 +21,8 @@ function AddBeat() {
   const navigate = useNavigate();
   const user = useSelector(selectUser);
   const token = useSelector(selectToken);
-
-  const {
-    data: sub,
-    isError,
-    refetch,
-  } = useGetSubscriptionQuery({
+  console.log(token);
+  const { data: sub } = useGetSubscriptionQuery(null, {
     skip: token ? false : true,
   });
   const [open, setOpen] = useState(false);

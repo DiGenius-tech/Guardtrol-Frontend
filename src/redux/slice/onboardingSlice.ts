@@ -3,6 +3,7 @@ import { createSelector, PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../store";
 import { TUser } from "../../types/user";
 import { TSubscription } from "../../types/subscription";
+import { PURGE } from "redux-persist";
 
 interface Subscription {
   onboardingLevel: number;
@@ -28,6 +29,9 @@ const onboardingSlice = createSlice({
     addOnboardingGuard(state, action) {
       state.guards = [...state.guards, action.payload];
     },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(PURGE, () => initialState);
   },
 });
 

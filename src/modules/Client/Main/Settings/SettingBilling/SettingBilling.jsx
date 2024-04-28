@@ -43,9 +43,7 @@ const SettingBilling = () => {
 
     refetch,
     isUninitialized,
-  } = useGetSubscriptionQuery({
-    skip: token ? false : true,
-  });
+  } = useGetSubscriptionQuery(null, { skip: token ? false : true });
 
   const { data: guards } = useGetGuardsQuery();
   console.log(sub);

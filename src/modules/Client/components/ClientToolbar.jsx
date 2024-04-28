@@ -9,9 +9,14 @@ import { clientModuleList } from "../client.module-list";
 import { useDispatch, useSelector } from "react-redux";
 import { selectAuth, selectUser } from "../../../redux/selectors/auth";
 import { logout } from "../../../redux/slice/authSlice";
+import { api } from "../../../redux/services/api";
+import { persistor, store } from "../../../redux/store";
+import { ScreenRotationSharp } from "@mui/icons-material";
+import { PURGE } from "redux-persist";
 
 const ClientToolbar = (props) => {
   const navigate = useNavigate();
+
   const user = useSelector(selectUser);
   const dispatch = useDispatch();
   const [isProfileDropdownOpened, setIsProfileDropdownOpened] = useState(false);
@@ -42,6 +47,14 @@ const ClientToolbar = (props) => {
     return () => {};
   }, [location]);
 
+  console.log(user?.image);
+
+  const handleLogout = () => {
+    persistor.purge();
+    dispatch(api.util.resetApiState());
+    dispatch(logout());
+    navigate("/auth");
+  };
   return (
     <>
       {/* clientToolbar-app works! */}
@@ -71,11 +84,18 @@ const ClientToolbar = (props) => {
                   >
                     <span className="absolute -inset-1.5"></span>
                     <span className="sr-only">Open user menu</span>
-                    <img
-                      className="h-8 w-8 rounded-full"
-                      src={user?.image || null}
-                      alt=""
-                    />
+                    {!user.image ? (
+                      <div className="bg-secondary-50 p-2 cursor-pointer rounded-full h-full w-full flex items-center justify-center text-lg font-bold">
+                        {user.name.split(" ")[0][0] +
+                          user.name.split(" ")[1][0]}
+                      </div>
+                    ) : (
+                      <img
+                        className="cursor-pointer"
+                        src={user.image}
+                        alt={"profile"}
+                      />
+                    )}
                   </button>
                 </div>
                 {/* <div className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button" tabIndex="-1"> */}
@@ -111,10 +131,7 @@ const ClientToolbar = (props) => {
                   </a>
                   <a
                     href="#"
-                    onClick={() => {
-                      dispatch(logout());
-                      navigate("/auth");
-                    }}
+                    onClick={() => handleLogout()}
                     className="block px-4 py-2 text-sm text-gray-700"
                     role="menuitem"
                     tabIndex="-1"
@@ -228,11 +245,18 @@ const ClientToolbar = (props) => {
                   >
                     <span className="absolute -inset-1.5"></span>
                     <span className="sr-only">Open user menu</span>
-                    <img
-                      className="h-8 w-8 rounded-full"
-                      src={user?.image || null}
-                      alt=""
-                    />
+                    {!user.image ? (
+                      <div className="bg-secondary-50 cursor-pointer rounded-full h-full w-full flex items-center justify-center text-2xl font-bold">
+                        {user.name.split(" ")[0][0] +
+                          user.name.split(" ")[1][0]}
+                      </div>
+                    ) : (
+                      <img
+                        className="cursor-pointer"
+                        src={user.image}
+                        alt={"profile"}
+                      />
+                    )}
                   </button>
                 </div>
                 <div

@@ -3,6 +3,7 @@ import { createSelector, PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../store";
 import { TUser } from "../../types/user";
 import { TSubscription } from "../../types/subscription";
+import { PURGE } from "redux-persist";
 
 interface Subscription {
   isSubscribed: boolean;
@@ -21,6 +22,9 @@ const subscriptionSlice = createSlice({
     setCurrentSubscription(state, action) {
       state.currentSubscription = action.payload;
     },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(PURGE, () => initialState);
   },
 });
 

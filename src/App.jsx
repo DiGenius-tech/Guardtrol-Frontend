@@ -117,16 +117,15 @@ function App() {
     },
   ]);
 
+  console.log(token);
+
   const {
     data: subcription,
     isError,
     isLoading,
     refetch,
     isUninitialized,
-  } = useGetSubscriptionQuery({
-    skip: token ? false : true,
-  });
-
+  } = useGetSubscriptionQuery(null, { skip: token ? false : true });
   if (isError && token) {
     toast.warn("You are not currently Subscribed to any Plan");
   }

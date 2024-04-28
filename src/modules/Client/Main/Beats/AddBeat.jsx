@@ -23,13 +23,8 @@ const AddBeat = () => {
   const token = useSelector(selectToken);
 
   const navigate = useNavigate();
-  const {
-    data: sub,
-    isError,
-
-    refetch,
-    isUninitialized,
-  } = useGetSubscriptionQuery({
+  console.log(token);
+  const { data: sub } = useGetSubscriptionQuery(null, {
     skip: token ? false : true,
   });
 
@@ -46,15 +41,10 @@ const AddBeat = () => {
   });
 
   const getExistingBeats = async () => {
-    const data = await sendRequest(
-      `beat/getbeats`,
-      "GET",
-      null,
-      {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      }
-    );
+    const data = await sendRequest(`beat/getbeats`, "GET", null, {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    });
     if (data) {
       const beats = data.beats;
       setExistingBeats(beats);

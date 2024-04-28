@@ -2,9 +2,11 @@
 import { createSelector, PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../store";
 import { TUser } from "../../types/user";
+import { PURGE } from "redux-persist";
+import { createEntityAdapter } from "@reduxjs/toolkit";
 
 interface Auth {
-  token: string;
+  token: string | null;
   user:
     | {
         clientid: string;
@@ -21,8 +23,8 @@ interface Auth {
   role: string;
 }
 
-const initialState: Auth | null = {
-  token: "",
+const initialState: Auth = {
+  token: null,
   user: undefined,
   isAuthenticated: false,
   role: "",
@@ -31,6 +33,7 @@ const initialState: Auth | null = {
 const authSlice = createSlice({
   name: "auth",
   initialState,
+
   reducers: {
     loginSuccess(
       state,
@@ -52,11 +55,14 @@ const authSlice = createSlice({
     logout(state) {
       state.isAuthenticated = false;
       state.user = undefined;
-      state.token = "";
+      state.token = null;
     },
     updateUser(state, action) {
       state.user = action.payload;
     },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(PURGE, () => initialState);
   },
 });
 

@@ -81,7 +81,7 @@ function VerifyEmail() {
         dispatch(suspenseShow());
         try {
           const data = await sendRequest(
-            `users/${user.userid}/verifyemail`,
+            `users/${user?.userid}/verifyemail`,
             "POST",
             JSON.stringify(formData),
             {
@@ -128,7 +128,7 @@ function VerifyEmail() {
               </h1>
               <p className="text-center">
                 Enter the 6 Digits Code that was sent to your email address{" "}
-                <b>{user.email}</b>
+                <b>{user?.email}</b>
               </p>
 
               <div className="mt-8"></div>

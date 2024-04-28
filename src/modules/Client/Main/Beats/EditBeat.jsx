@@ -20,9 +20,7 @@ function EditBeat(props) {
     isError,
     refetch,
     isUninitialized,
-  } = useGetSubscriptionQuery({
-    skip: token ? false : true,
-  });
+  } = useGetSubscriptionQuery(null, { skip: token ? false : true });
 
   const [open, setOpen] = useState(false);
 
