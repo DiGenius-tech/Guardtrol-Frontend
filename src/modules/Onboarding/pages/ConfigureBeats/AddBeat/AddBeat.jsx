@@ -21,7 +21,7 @@ function AddBeat() {
   const navigate = useNavigate();
   const user = useSelector(selectUser);
   const token = useSelector(selectToken);
-  console.log(token);
+
   const { data: sub } = useGetSubscriptionQuery(null, {
     skip: token ? false : true,
   });

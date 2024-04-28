@@ -48,7 +48,6 @@ const Login = () => {
 
   const handleSubmit = async (e: any) => {
     dispatch(suspenseShow());
-    console.log("first");
     e.preventDefault();
     const form = e.currentTarget;
     const newErrors: any = {};
@@ -56,7 +55,6 @@ const Login = () => {
     // Check each input field's validity and set errors accordingly
     for (const el of form.elements) {
       if (el.nodeName === "INPUT" && !el.validity.valid) {
-        console.log(el.name);
         newErrors[el.name] = el.validationMessage;
       }
     }
@@ -70,7 +68,6 @@ const Login = () => {
       setIsLoading(true);
       try {
         const data: any = await post("users/signin", JSON.stringify(formData));
-        console.log(data);
 
         if (data) {
           dispatch(setOnboardingLevel(0));
@@ -84,7 +81,6 @@ const Login = () => {
       } catch (err: any) {
         errorHandler(err);
         toast.error(err);
-        console.log(err);
       } finally {
         dispatch(suspenseHide());
         setIsLoading(false);
@@ -103,7 +99,6 @@ const Login = () => {
 
       const userData = await getUserInfo(accessToken);
 
-      console.log(userData);
       const data: any = await post(
         "users/signinwithgoogle",
         JSON.stringify(userData)
@@ -140,10 +135,6 @@ const Login = () => {
     }
   };
 
-  const handleSignInFailure = (error: any) => {
-    // Handle failed login
-    console.error("Login failure:", error);
-  };
   return (
     <>
       {/* login-app works! */}

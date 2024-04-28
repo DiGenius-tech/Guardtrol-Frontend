@@ -194,7 +194,6 @@ const Shop = () => {
   const onSelectPlan = (e) => {
     localStorage.setItem("selectedPlan", e.target.value);
     setSelectedPlan(JSON.parse(e.target.value));
-    console.log(selectedPlan);
   };
 
   // Function to handle modal close
