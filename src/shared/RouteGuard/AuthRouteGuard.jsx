@@ -9,8 +9,6 @@ const AuthRouteGuard = ({ component: Component, ...rest }) => {
 
   const location = useLocation();
   console.log(user)
-  //console.log(isLoggedIn)
-  console.log(user);
   return user && user.emailverified ? (
     <Navigate to="/client" state={{ from: location }} replace />
     

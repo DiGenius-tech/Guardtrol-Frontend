@@ -11,6 +11,7 @@ interface Auth {
         email: string;
         image: string;
         name: string;
+        emailverified: boolean;
         onboardingcomplete: true;
         token: string;
         userid: string;
@@ -38,6 +39,7 @@ const authSlice = createSlice({
         email: string;
         image: string;
         name: string;
+        emailverified: boolean;
         onboardingcomplete: true;
         token: string;
         userid: string;
