@@ -24,7 +24,7 @@ const patrol_guard_routes = {
     },
     {
       path: "addguard",
-      element: <AddGuard />,
+      element: <AddGuard onBoarding={false} />,
     },
 
     {

@@ -49,6 +49,7 @@ export const BeatGaurdRouter = () => {
   } = useGetBeatsQuery(user.userid, { skip: user.userid ? false : true });
 
   const beat = beats?.find((b) => b._id === beatId);
+
   return (
     <Routes>
       <Route element={<PatrolGuardList />}>
@@ -67,11 +68,7 @@ export const BeatGaurdRouter = () => {
 export const BeatDetailsRouter = () => {
   const user = useSelector(selectUser);
   const { beatId } = useParams();
-  const {
-    data: beats,
-    isLoading,
-    error,
-  } = useGetBeatsQuery(user.userid, { skip: user.userid ? false : true });
+  const { data: beats, isLoading, error } = useGetBeatsQuery();
 
   const beat = beats?.find((b) => b._id === beatId);
   return (

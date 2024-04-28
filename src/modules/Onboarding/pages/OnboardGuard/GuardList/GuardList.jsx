@@ -70,10 +70,8 @@ function GuardList() {
   // }, [isGuardsLoaded]);
 
   const [addGuards] = useAddGuardsMutation();
-  const { refetch: refetchGuards } = useGetGuardsQuery(user.userid, {
-    skip: user.userid ? false : true,
-  });
- 
+  const { refetch: refetchGuards } = useGetGuardsQuery();
+
   const saveGuard = async () => {
     if (onboardingGuards == [] || onboardingGuards.length < 1) {
       toast.info("Add at Least One Guard To Continue");
@@ -82,10 +80,7 @@ function GuardList() {
 
     dispatch(suspenseShow());
     try {
-      const data = await addGuards({
-        body: onboardingGuards,
-        userid: user.userid,
-      });
+      const data = await addGuards(onboardingGuards);
 
       if (data) {
         dispatch(setOnboardingGuards([]));

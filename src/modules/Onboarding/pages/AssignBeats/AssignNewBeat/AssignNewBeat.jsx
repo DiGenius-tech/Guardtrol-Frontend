@@ -31,17 +31,16 @@ function AssignNewBeat({ isOnboarding = true, beat: selectedBeat }) {
     isLoading,
     error,
     refetch: refetchBeats,
-  } = useGetBeatsQuery(user.userid, { skip: user.userid ? false : true });
+  } = useGetBeatsQuery();
+
   const {
     data: guards,
     isLoading: isGuardsLoading,
     error: guardsError,
-  } = useGetGuardsQuery(user.userid, { skip: user.userid ? false : true });
+  } = useGetGuardsQuery();
 
   const [assignToBeat] = useAssignGuardToBeatMutation();
-
   const { responseData, sendRequest } = useHttpRequest();
-  console.log(selectedBeat);
 
   const initialFrequencyState = useState([]);
   const [beat, setBeat] = useState(beats?.[0]);

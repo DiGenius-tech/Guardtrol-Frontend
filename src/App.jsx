@@ -33,8 +33,8 @@ function App() {
   const suspense = useSelector(selectSuspenseShow);
   const { error, responseData, sendRequest } = useHttpRequest();
 
-  const [psConfig, setPsConfig] = useState({})
-  const [fwConfig, setFwConfig] = useState({})
+  const [psConfig, setPsConfig] = useState({});
+  const [fwConfig, setFwConfig] = useState({});
 
   // const login = useCallback((data) => {
   //   setToken(data.token);
@@ -75,7 +75,7 @@ function App() {
         phone: user.phone || null,
       },
       publicKey: process.env.REACT_APP_PAYSTACK_KEY,
-    }
+    };
 
     const fwConfig = {
       public_key: process.env.REACT_APP_FLUTTERWAVE_KEY,
@@ -97,9 +97,9 @@ function App() {
       },
     };
 
-    setFwConfig(fwConfig)
-    setPsConfig(psConfig)
-  }
+    setFwConfig(fwConfig);
+    setPsConfig(psConfig);
+  };
 
   const router = createBrowserRouter([
     {
@@ -116,7 +116,6 @@ function App() {
       element: <PageNotFound />,
     },
   ]);
-  console.log(user?.userid, token);
 
   const {
     data: subcription,
@@ -124,8 +123,8 @@ function App() {
     isLoading,
     refetch,
     isUninitialized,
-  } = useGetSubscriptionQuery(user?.userid, {
-    skip: user?.userid ? false : true,
+  } = useGetSubscriptionQuery({
+    skip: token ? false : true,
   });
 
   if (isError && token) {

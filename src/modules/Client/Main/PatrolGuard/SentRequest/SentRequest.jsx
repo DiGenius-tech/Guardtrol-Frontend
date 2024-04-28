@@ -22,11 +22,7 @@ function SentRequest(props) {
   const [selectedGuard, setSelectedGuard] = useState(null);
   const [open, setOpen] = useState(false);
 
-  const {
-    data: guards,
-    isLoading,
-    error,
-  } = useGetGuardsQuery(user.userid, { skip: user.userid ? false : true });
+  const { data: guards, isLoading, error } = useGetGuardsQuery();
 
   const [deleteGuard, { isLoading: isUpdating, status }] =
     useDeleteGuardMutation();

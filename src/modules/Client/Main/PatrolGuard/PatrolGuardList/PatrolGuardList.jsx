@@ -26,7 +26,7 @@ function PatrolGuardList(props) {
     data: beats,
     isLoading: beatsIsLoading,
     error: beatsFetchError,
-  } = useGetBeatsQuery(user.userid, { skip: user.userid ? false : true });
+  } = useGetBeatsQuery();
   const beat = beats?.find((b) => b?._id === beatId);
 
   const [deleteGuard, { isLoading: isUpdating, status }] =

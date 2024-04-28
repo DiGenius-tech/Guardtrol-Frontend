@@ -12,15 +12,23 @@ import {
   useGetBeatsQuery,
 } from "../../../../../redux/services/beats";
 import { useSelector } from "react-redux";
-import { selectUser } from "../../../../../redux/selectors/auth";
+import { selectToken, selectUser } from "../../../../../redux/selectors/auth";
 import { selectSubscriptionState } from "../../../../../redux/selectors/subscription";
+import { useGetSubscriptionQuery } from "../../../../../redux/services/subscriptions";
 
 function AddBeat() {
   const [validationErrors, setValidationErrors] = useState({});
   const navigate = useNavigate();
   const user = useSelector(selectUser);
+  const token = useSelector(selectToken);
 
-  const sub = useSelector(selectSubscriptionState);
+  const {
+    data: sub,
+    isError,
+    refetch,
+  } = useGetSubscriptionQuery({
+    skip: token ? false : true,
+  });
   const [open, setOpen] = useState(false);
 
   const [beat, setBeat] = useState({
@@ -40,11 +48,7 @@ function AddBeat() {
     isLoading,
     isUninitialized,
     refetch: refetchBeats,
-  } = useGetBeatsQuery(user.userid, {
-    skip: user.userid ? false : true,
-  });
-  console.log(beats)
-  console.log(sub.currentSubscription?.maxbeats)
+  } = useGetBeatsQuery();
 
   const saveBeat = async (e) => {
     e.preventDefault();
@@ -55,18 +59,14 @@ function AddBeat() {
         name: "Use A Valid Beat Name",
       });
     } else {
-      if (
-        beats?.length &&
-        sub.currentSubscription?.maxbeats &&
-        beats?.length >= sub.currentSubscription?.maxbeats
-      ) {
+      if (beats?.length && sub?.maxbeats && beats?.length >= sub?.maxbeats) {
         setOpen(true);
         return;
       }
       await addBeat({ body: beat, userid: user.userid });
-      console.log(user)
-      await refetchBeats()
-      navigate("../")
+      console.log(user);
+      await refetchBeats();
+      navigate("../");
     }
   };
   return (

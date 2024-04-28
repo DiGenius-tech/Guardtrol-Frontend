@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { Link } from "react-router-dom";
 import TextInputField from "../../../../Sandbox/InputField/TextInputField";
 import useHttpRequest from "../../../../../shared/Hooks/HttpRequestHook";
@@ -8,29 +8,37 @@ import HistoryButton from "../../../../Sandbox/Buttons/HistoryButton";
 import { SubscriptionContext } from "../../../../../shared/Context/SubscriptionContext";
 import AlertDialog from "../../../../../shared/Dialog/AlertDialog";
 import { useDispatch, useSelector } from "react-redux";
-import { selectCurrentSubscription, selectSubscriptionState } from "../../../../../redux/selectors/subscription";
-import { useGetGuardsQuery } from "../../../../../redux/services/guards";
-import { selectUser } from "../../../../../redux/selectors/auth";
+import {
+  selectCurrentSubscription,
+  selectSubscriptionState,
+} from "../../../../../redux/selectors/subscription";
+import {
+  useAddGuardMutation,
+  useGetGuardsQuery,
+} from "../../../../../redux/services/guards";
+import { selectToken, selectUser } from "../../../../../redux/selectors/auth";
 import { selectOnboardingGuards } from "../../../../../redux/selectors/onboarding";
 import { addOnboardingGuard } from "../../../../../redux/slice/onboardingSlice";
+import { useGetSubscriptionQuery } from "../../../../../redux/services/subscriptions";
 
-function AddGuard() {
+function AddGuard({ onBoarding = true }) {
   const [isGotIt, setIsGotIt] = useState(false);
   const [validationErrors, setValidationErrors] = useState({});
   const [open, setOpen] = useState(false);
-  const user = useSelector(selectUser);
+  const token = useSelector(selectToken);
 
+  const params = useParams();
+  const { beatId } = params;
   const dispatch = useDispatch();
   const onboardingGuards = useSelector(selectOnboardingGuards);
 
-  const navigate = useNavigate();
-  const sub = useSelector(selectSubscriptionState);
+  const { data: guards } = useGetGuardsQuery();
 
-  const {
-    data: guards,
-    isLoading: guardsIsLoading,
-    error: guardsFetchError,
-  } = useGetGuardsQuery(user.userid, { skip: user.userid ? false : true });
+  const navigate = useNavigate();
+
+  const { data: sub } = useGetSubscriptionQuery({ skip: token ? false : true });
+  console.log(sub);
+  const [addGuards] = useAddGuardMutation();
 
   const [guard, setGuard] = useState({
     full_name: "",
@@ -45,7 +53,6 @@ function AddGuard() {
     setGuard({ ...guard, [e.target.name]: e.target.value });
     setValidationErrors({ ...validationErrors, [e.target.name]: "" });
   };
-
   const saveGuard = async (e) => {
     e.preventDefault();
     if (guard.full_name === "" || guard.full_name.length < 5) {
@@ -63,19 +70,26 @@ function AddGuard() {
       return;
     }
 
-    
-    if (
-      onboardingGuards?.length ===
-      sub.currentSubscription?.maxbeats * 5 +
-        sub.currentSubscription?.maxextraguards
-    ) {
-      setOpen(true);
-      return;
-    }
-    dispatch(addOnboardingGuard(guard));
+    if (onBoarding) {
+      if (onboardingGuards?.length >= sub?.maxbeats * 5 + sub?.maxextraguards) {
+        setOpen(true);
+        return;
+      }
 
-    navigate("../");
+      dispatch(addOnboardingGuard(guard));
+    } else {
+      console.log(guards?.length, sub?.maxbeats * 5 + sub?.maxextraguards);
+
+      if (guards?.length >= sub?.maxbeats * 5 + sub?.maxextraguards) {
+        setOpen(true);
+        return;
+      } else {
+        addGuards(guard);
+        navigate("../");
+      }
+    }
   };
+
   return (
     <>
       {/* add-guard-app works! */}
