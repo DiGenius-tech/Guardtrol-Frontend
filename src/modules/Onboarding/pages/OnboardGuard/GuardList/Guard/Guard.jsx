@@ -42,7 +42,7 @@ function Guard({ setGuards, guard, status, handle_edit_guard }) {
 
   const deleteGuard = (guardName) => {
     const index = onboardingGuards?.findIndex(
-      (guard) => onboardingGuards?.full_name === guardName
+      (guard) => guard?.full_name === guardName
     );
 
     if (index !== -1) {
@@ -51,6 +51,8 @@ function Guard({ setGuards, guard, status, handle_edit_guard }) {
       const newGuards = onboardingGuards?.filter((guard, i) => i !== index);
 
       dispatch(setOnboardingGuards(newGuards));
+      setOpen(false)
+      toast("Guard deleted");
     } else {
       toast.error("Guard not found");
     }

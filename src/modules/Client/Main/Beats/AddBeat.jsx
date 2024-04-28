@@ -40,14 +40,14 @@ const AddBeat = () => {
   const [existingBeats, setExistingBeats] = useState([]);
 
   const [beat, setBeat] = useState({
-    beat_name: "",
+    name: "",
     address: "",
     description: "my location",
   });
 
   const getExistingBeats = async () => {
     const data = await sendRequest(
-      `beat/getbeats/${user.userid}`,
+      `beat/getbeats`,
       "GET",
       null,
       {
@@ -77,10 +77,10 @@ const AddBeat = () => {
 
   const saveBeat = async (e) => {
     e.preventDefault();
-    if (beat.beat_name === "" || beat.beat_name.length < 3) {
+    if (beat.name === "" || beat.name.length < 3) {
       setValidationErrors({
         ...validationErrors,
-        beat_name: "Use A Valid Beat Name",
+        name: "Use A Valid Beat Name",
       });
     } else {
       if (existingBeats.length === sub?.maxbeats) {
@@ -115,11 +115,11 @@ const AddBeat = () => {
           <div className="mb-6">
             <TextInputField
               label="Beat Name"
-              name="beat_name"
+              name="name"
               type="text"
               placeholder="Beat Name"
-              id="beat_name"
-              error={validationErrors["beat_name"]}
+              id="name"
+              error={validationErrors["name"]}
               onChange={handleChange}
               required="required"
               value={beat.beat_name}

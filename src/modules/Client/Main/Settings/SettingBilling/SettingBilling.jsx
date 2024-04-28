@@ -4,6 +4,13 @@ import { GrPrevious } from "react-icons/gr";
 import logo_mastercard from "../../../../../images/logo-mastercard.svg";
 import logo_visa from "../../../../../images/logo-visa.svg";
 import { FaRegTrashAlt } from "react-icons/fa";
+import { useSelector } from "react-redux";
+import { selectToken, selectUser } from "../../../../../redux/selectors/auth";
+import { useNavigate } from "react-router-dom";
+import { useGetAllSubscriptionsQuery, useGetSubscriptionQuery } from "../../../../../redux/services/subscriptions";
+import { useGetGuardsQuery } from "../../../../../redux/services/guards";
+import { formatNumberWithCommas } from "../../../../../shared/functions/random-hex-color";
+import moment from "moment";
 
 const savedPaymentCards = [
   {
@@ -23,9 +30,31 @@ const savedPaymentCards = [
 ]
 
 const SettingBilling = () => {
+  const user = useSelector(selectUser);
+  const token = useSelector(selectToken);
+
+  const navigate = useNavigate();
+  const {
+    data: sub,
+    isError,
+
+    refetch,
+    isUninitialized,
+  } = useGetSubscriptionQuery({
+    skip: token ? false : true,
+  });
+
+  const { data: guards } = useGetGuardsQuery();
+  console.log(sub)
   const [defaultCard, setDefaultCard] = useState({
     id: ""
   });
+
+  const {
+    data: subs,
+  } = useGetAllSubscriptionsQuery();
+
+  console.log(subs)
 
   const [isAddNewCard, setIsAddNewCard] = useState(false);
 
@@ -52,16 +81,16 @@ const SettingBilling = () => {
           <div className="p-4 sm:p-6 bg-dark-400 text-white border border-gray-200 rounded-lg shadow">
             <ul className="flex flex-col gap-4">
               <li className="grid grid-cols-2 items-center">
-                <div className="col-span-2 sm:col-span-1 font-light">Monthly plan</div>
+                <div className="col-span-2 sm:col-span-1 font-light">{sub?.plan} plan</div>
                 <div className="col-span-2 sm:col-span-1 sm:text-right">
-                  <p className="text-2xl font-bold">₦26,000</p>
-                  <p className="text-xs font-light">5 of 7 Guards used</p>
+                  <p className="text-2xl font-bold">₦{formatNumberWithCommas(sub?.totalamount)}</p>
+                  <p className="text-xs font-light">{guards?.length} of {sub?.maxbeats*5 + sub?.maxextraguards} Guards used</p>
                 </div>
               </li>
               <li className="grid grid-cols-2 items-center">
                 <div className="col-span-2 sm:col-span-1 font-light">Next billing date</div>
                 <div className="col-span-2 sm:col-span-1 sm:text-right">
-                  <p className="font-normal">24 April, 2024</p>
+                  <p className="font-normal">{moment(sub?.updatedat).add(sub?.plan === "monthly" ? 30 : 365, 'days').format('DD MMMM, YYYY')}</p>
                 </div>
               </li>
             </ul>
@@ -93,20 +122,20 @@ const SettingBilling = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {[1, 2, 3].map((e, i) => {
+                  {subs?.map((s, i) => {
                     return (
-                      <tr key={i} className="bg-white dark:bg-gray-800">
+                      <tr key={s._id} className="bg-white dark:bg-gray-800">
                         <th
                           scope="row"
                           className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                         >
-                          24 Aug, 2023
+                          {moment(s.updatedat).format('DD MMMM, YYYY')}
                         </th>
-                        <td className="px-6 py-4">Monthly plan</td>
+                        <td className="px-6 py-4">{s.plan} plan</td>
                         <td className="px-6 py-4">Paid</td>
                         <td className="px-6 py-4">
                           <a
-                            href=""
+                            href="#"
                             className="font-semibold text-primary-500 whitespace-nowrap"
                           >
                             Get Invoice
@@ -156,7 +185,7 @@ const SettingBilling = () => {
           </div>
         </div>
 
-        <div className="hidden sm:block col-span-12 sm:col-span-5">
+        {/* <div className="hidden sm:block col-span-12 sm:col-span-5">
           <h3 className="font-bold">Card details</h3>
         </div>
         <div className="col-span-12 sm:col-span-7">
@@ -235,7 +264,7 @@ const SettingBilling = () => {
 
           }
 
-        </div>
+        </div> */}
       </div>
       {/* <div className="my-4"></div>
                 <div className="text-right">

@@ -86,7 +86,7 @@ function GuardList() {
         dispatch(setOnboardingGuards([]));
         dispatch(setOnboardingLevel(3));
         await refetchGuards();
-        navigate("/onboarding/assign-beats");
+        //navigate("/onboarding/assign-beats");
       }
       console.log(data);
 

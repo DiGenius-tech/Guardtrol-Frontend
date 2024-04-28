@@ -76,7 +76,7 @@ const SettingPersonalInformation = () => {
   const handleUpdateImage = async (values) => {
     const data = await put(
       "settings/personal-image",
-      { image: base },
+      { image: `data:image/png;base64,${base}` },
       token,
       true,
       "Profile image updated"
@@ -136,7 +136,7 @@ const SettingPersonalInformation = () => {
                   ) : (
                     <img
                       className="cursor-pointer"
-                      src={preview || "data:image/png;base64," + user.image}
+                      src={user.image ? user.image : preview ? preview : ''}
                       alt={fileName}
                     />
                   )}

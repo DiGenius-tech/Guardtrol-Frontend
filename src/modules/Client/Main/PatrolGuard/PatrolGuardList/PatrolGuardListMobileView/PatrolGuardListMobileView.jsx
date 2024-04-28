@@ -81,37 +81,16 @@ function PatrolGuardListMobileView(props) {
                           >
                             <Dropdown.Item>
                               <Link
-                                to={`/client/patrol-guard/details/${guard.id}`}
+                                to={`/client/patrol-guard/details/${guard._id}`}
                               >
                                 Edit guard
                               </Link>
                             </Dropdown.Item>
-                            <Dropdown.Item>Assign guard to beat</Dropdown.Item>
-                            <Dropdown.Item>Deactivate</Dropdown.Item>
+                            
                           </Dropdown>
                         </div>
                       </div>
-                      <div>
-                        <Dropdown
-                          label=""
-                          placement="right"
-                          dismissOnClick={false}
-                          renderTrigger={() => (
-                            <button className="flex w-8 justify-end">
-                              <img src={props.icon_menu_dots} alt="menu" />
-                            </button>
-                          )}
-                        >
-                          <Dropdown.Item>
-                            <Link
-                              to={`/client/patrol-guard/details/${guard._id}`}
-                            >
-                              Edit guard
-                            </Link>
-                          </Dropdown.Item>
-                          <Dropdown.Item>Assign guard to beat</Dropdown.Item>
-                        </Dropdown>
-                      </div>
+                   
                     </td>
                   </tr>
                 );

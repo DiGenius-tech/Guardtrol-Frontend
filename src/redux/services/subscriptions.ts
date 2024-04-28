@@ -10,6 +10,12 @@ export const SubscriptionApi = api.injectEndpoints({
       transformResponse: (response: any, meta, arg) => response.subscription,
     }),
 
+    getAllSubscriptions: build.query<TSubscription[], void>({
+      query: (userID: any) => ({ url: `users/getallsubscription` }),
+      providesTags: ["Subscriptions"],
+      transformResponse: (response: any, meta, arg) => response.subscriptions,
+    }),
+
     addSubscription: build.mutation<TSubscription, Partial<TSubscription>>({
       query: (body) => ({
         url: `subscription/addsubscription`,
@@ -58,6 +64,7 @@ export const {
   useAddSubscriptionMutation,
   useDeleteSubscriptionMutation,
   useGetSubscriptionQuery,
+  useGetAllSubscriptionsQuery,
   useUpdateSubscriptionMutation,
   useGetErrorProneQuery,
 } = SubscriptionApi;

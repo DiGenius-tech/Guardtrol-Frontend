@@ -11,7 +11,7 @@ import { errorHandler } from "../../../../../lib/errorHandler";
 const securityDataSchema = Yup.object().shape({
   currentPassword: Yup.string()
     .required("Current Password is required")
-    .min(6, "Current Password must be at least 6 characters"),
+    .min(0, "Current Password must be at least 6 characters"),
   newPassword: Yup.string()
     .required("New Password is required")
     .min(6, "New Password must be at least 6 characters"),
