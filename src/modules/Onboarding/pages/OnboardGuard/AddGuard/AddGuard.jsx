@@ -53,6 +53,7 @@ function AddGuard({ onBoarding = true }) {
     setGuard({ ...guard, [e.target.name]: e.target.value });
     setValidationErrors({ ...validationErrors, [e.target.name]: "" });
   };
+
   const saveGuard = async (e) => {
     e.preventDefault();
     if (guard.full_name === "" || guard.full_name.length < 5) {
@@ -79,8 +80,6 @@ function AddGuard({ onBoarding = true }) {
       dispatch(addOnboardingGuard(guard));
       navigate("../");
     } else {
-      //console.log(guards?.length, sub?.maxbeats * 5 + sub?.maxextraguards);
-
       if (guards?.length >= sub?.maxbeats * 5 + sub?.maxextraguards) {
         setOpen(true);
         return;

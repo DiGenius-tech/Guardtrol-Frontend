@@ -127,7 +127,7 @@ const Checkout = () => {
         JSON.stringify(reqData),
         {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${user.token}`,
+          Authorization: `Bearer ${token}`,
         }
       );
       console.log(1);

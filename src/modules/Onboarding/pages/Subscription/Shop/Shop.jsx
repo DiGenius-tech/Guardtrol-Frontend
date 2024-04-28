@@ -9,7 +9,11 @@ import { FlutterWaveButton, closePaymentModal } from "flutterwave-react-v3";
 import { formatNumberWithCommas } from "../../../../../shared/functions/random-hex-color";
 import { SubscriptionContext } from "../../../../../shared/Context/SubscriptionContext";
 import { useDispatch, useSelector } from "react-redux";
-import { selectAuth, selectUser } from "../../../../../redux/selectors/auth";
+import {
+  selectAuth,
+  selectToken,
+  selectUser,
+} from "../../../../../redux/selectors/auth";
 import {
   selectOnboarding,
   selectOnboardingLevel,
@@ -27,6 +31,7 @@ const Shop = () => {
   const dispatch = useDispatch();
   const location = useLocation();
   const onBoardingLevel = useSelector(selectOnboardingLevel);
+  const token = useSelector(selectToken);
 
   const [validationErrors, setValidationErrors] = useState({});
   const { isLoading, error, responseData, sendRequest } = useHttpRequest();
@@ -38,10 +43,10 @@ const Shop = () => {
   const [isModalOpen, setIsModalOpen] = useState(false); // State variable to control modal visibility
 
   useEffect(() => {
-    if (user.token) {
+    if (token) {
       const data = sendRequest(`users/getuser/${user.userid}`, "GET", null, {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${user.token}`,
+        Authorization: `Bearer ${token}`,
       }).then((response) => {
         if (response?.subscriptions.length > 0) {
           dispatch(setOnboardingLevel(1));
@@ -58,7 +63,7 @@ const Shop = () => {
         }
       });
     }
-  }, [user.token]);
+  }, [token]);
 
   useEffect(() => {
     const plan = JSON.parse(localStorage.getItem("selectedPlan"));

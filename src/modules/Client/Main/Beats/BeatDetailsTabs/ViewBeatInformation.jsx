@@ -1,8 +1,12 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
+import { useGetBeatsQuery } from "../../../../../redux/services/beats";
 
-const ViewBeatInformation = ({ setPage, beat }) => {
-  console.log(beat);
+const ViewBeatInformation = ({ setPage }) => {
+  const { beatId } = useParams();
+  const { data: beats, refetch: refetchBeats } = useGetBeatsQuery();
+
+  const selectedBeat = beats?.find((b) => b._id === beatId);
   return (
     <>
       <div className="flex justify-between flex-row my-5">
@@ -30,20 +34,20 @@ const ViewBeatInformation = ({ setPage, beat }) => {
               <h3 className="font-bold">Name</h3>
 
               <div className="">
-                <p>{beat?.name || "No Name"}</p>
+                <p>{selectedBeat?.name || "No Name"}</p>
               </div>
             </div>
             <div className="flex justify-between flex-row">
               <h3 className="font-bold">Location</h3>
               <div className="">
-                <p>{beat?.address || "No Address"}</p>
+                <p>{selectedBeat?.address || "No Address"}</p>
               </div>
             </div>
             <div className="flex justify-between flex-row">
               <h3 className="font-bold">Beat Guards</h3>
 
               <div className="">
-                <p>{beat?.guards.length}</p>
+                <p>{selectedBeat?.guards.length}</p>
               </div>
             </div>
           </div>

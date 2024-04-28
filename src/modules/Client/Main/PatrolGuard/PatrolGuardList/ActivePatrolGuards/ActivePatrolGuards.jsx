@@ -8,19 +8,26 @@ import { useContext, useEffect, useState } from "react";
 import { useGetGuardsQuery } from "../../../../../../redux/services/guards";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
-import { selectUser } from "../../../../../../redux/selectors/auth";
+import {
+  selectToken,
+  selectUser,
+} from "../../../../../../redux/selectors/auth";
 import {
   suspenseHide,
   suspenseShow,
 } from "../../../../../../redux/slice/suspenseSlice";
+import { useGetBeatsQuery } from "../../../../../../redux/services/beats";
+import { useParams } from "react-router-dom";
 
 const duty_status = {
   OFF_DUTY: 0,
   ON_DUTY: 1,
 };
-function ActivePatrolGuards({ beat }) {
+function ActivePatrolGuards() {
   const user = useSelector(selectUser);
+  const token = useSelector(selectToken);
   const dispatch = useDispatch();
+  const { beatId } = useParams();
 
   const [selectedGuard, setSelectedGuard] = useState(null);
   const [open, setOpen] = useState(false);
@@ -33,6 +40,15 @@ function ActivePatrolGuards({ beat }) {
     error,
   } = useGetGuardsQuery();
 
+  const { data: beats } = useGetBeatsQuery();
+
+  const [selectedBeat, setSelectedBeat] = useState({});
+
+  useEffect(() => {
+    setSelectedBeat(beats?.find((b) => b?._id === beatId));
+    console.log(beats?.find((b) => b?._id === beatId));
+  }, [beats]);
+
   const deleteGuard = async () => {
     dispatch(suspenseShow());
     const data = axios(
@@ -41,7 +57,7 @@ function ActivePatrolGuards({ beat }) {
       JSON.stringify(selectedGuard),
       {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${user.token}`,
+        Authorization: `Bearer ${token}`,
       }
     )
       .then((data) => {
@@ -55,10 +71,10 @@ function ActivePatrolGuards({ beat }) {
   };
 
   useEffect(() => {
-    if (!isUninitialized) {
+    if (isUninitialized) {
       refetchGuards();
     }
-  }, [user.token]);
+  }, [token]);
 
   useEffect(() => {
     if (error) {
@@ -66,7 +82,6 @@ function ActivePatrolGuards({ beat }) {
     }
   }, [error]);
 
-  console.log(guards);
   return (
     <>
       {/* active-patrol-guards-app works! */}
@@ -75,7 +90,11 @@ function ActivePatrolGuards({ beat }) {
           <PatrolGuardListDesktopView
             duty_status={duty_status}
             icon_menu_dots={icon_menu_dots}
-            guards={beat?.guards || guards?.filter((guard) => guard.isactive)}
+            guards={
+              beatId
+                ? selectedBeat?.guards?.filter((guard) => guard.isactive)
+                : guards?.filter((guard) => guard.isactive)
+            }
           />
         </Card>
       </div>
@@ -83,7 +102,11 @@ function ActivePatrolGuards({ beat }) {
         <PatrolGuardListMobileView
           duty_status={duty_status}
           icon_menu_dots={icon_menu_dots}
-          guards={beat?.guards || guards?.filter((guard) => guard.isactive)}
+          guards={
+            beatId
+              ? selectedBeat?.guards?.filter((guard) => guard.isactive)
+              : guards?.filter((guard) => guard.isactive)
+          }
         />
       </div>
     </>

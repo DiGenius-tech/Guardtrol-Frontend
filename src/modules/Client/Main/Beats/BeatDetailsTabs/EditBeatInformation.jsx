@@ -17,6 +17,7 @@ import * as Yup from "yup";
 import { useFormik } from "formik";
 import { post, put } from "../../../../../lib/methods";
 import { updateUser } from "../../../../../redux/slice/authSlice";
+import { useParams } from "react-router-dom";
 
 const BeatInformationSchema = Yup.object().shape({
   name: Yup.string().required("Name is required"),
@@ -24,7 +25,14 @@ const BeatInformationSchema = Yup.object().shape({
   description: Yup.string().required("Description is required"),
 });
 
-const EditBeatInformation = ({ setPage, beat }) => {
+const EditBeatInformation = ({ setPage }) => {
+  const { beatId } = useParams();
+  const [updateBeat] = useUpdateBeatMutation();
+
+  const { data: beats, refetch: refetchBeats } = useGetBeatsQuery();
+
+  const selectedBeat = beats?.find((b) => b._id === beatId);
+
   const [validationErrors, setValidationErrors] = useState({});
   const dispatch = useDispatch();
   const user = useSelector(selectUser);
@@ -33,10 +41,10 @@ const EditBeatInformation = ({ setPage, beat }) => {
 
   const formik = useFormik({
     initialValues: {
-      _id: beat._id,
-      address: beat.address,
-      name: beat.name,
-      description: beat.description,
+      _id: selectedBeat._id,
+      address: selectedBeat.address,
+      name: selectedBeat.name,
+      description: selectedBeat.description,
     },
     validationSchema: BeatInformationSchema,
     onSubmit: (values) => {
@@ -51,10 +59,6 @@ const EditBeatInformation = ({ setPage, beat }) => {
       }
     },
   });
-
-  const [updateBeat] = useUpdateBeatMutation();
-
-  const { refetch: refetchBeats } = useGetBeatsQuery();
 
   const handleUpdateBeat = async (data) => {
     dispatch(suspenseShow());

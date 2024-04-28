@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useParams } from "react-router-dom";
 import SelectField from "../../../../Sandbox/SelectField/SelectField";
 import RegularButton from "../../../../Sandbox/Buttons/RegularButton";
 import useHttpRequest from "../../../../../shared/Hooks/HttpRequestHook";
@@ -8,7 +8,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import MultiSelectField from "../../../../Sandbox/SelectField/MultiSelectField";
 import { useDispatch, useSelector } from "react-redux";
-import { selectUser } from "../../../../../redux/selectors/auth";
+import { selectToken, selectUser } from "../../../../../redux/selectors/auth";
 import {
   suspenseHide,
   suspenseShow,
@@ -21,10 +21,13 @@ import { useGetGuardsQuery } from "../../../../../redux/services/guards";
 import { setOnboardingLevel } from "../../../../../redux/slice/onboardingSlice";
 import { selectOnboardingLevel } from "../../../../../redux/selectors/onboarding";
 
-function AssignNewBeat({ isOnboarding = true, beat: selectedBeat }) {
+function AssignNewBeat({ isOnboarding = true }) {
   const navigate = useNavigate();
   const user = useSelector(selectUser);
+  const token = useSelector(selectToken);
   const dispatch = useDispatch();
+
+  const { beatId } = useParams();
 
   const {
     data: beats,
@@ -32,6 +35,7 @@ function AssignNewBeat({ isOnboarding = true, beat: selectedBeat }) {
     error,
     refetch: refetchBeats,
   } = useGetBeatsQuery();
+  const selectedBeat = beats?.find((b) => b._id === beatId);
 
   const {
     data: guards,
@@ -70,7 +74,7 @@ function AssignNewBeat({ isOnboarding = true, beat: selectedBeat }) {
   //       null,
   //       {
   //         "Content-Type": "application/json",
-  //         Authorization: `Bearer ${user.token}`,
+  //         Authorization: `Bearer ${token}`,
   //       }
   //     );
   //     if (!!data) {
@@ -81,9 +85,9 @@ function AssignNewBeat({ isOnboarding = true, beat: selectedBeat }) {
   //       toast.error("Failed To Fetch Beats");
   //     }
   //   };
-  //   user.token && getBeats();
+  //   token && getBeats();
   //   //setBeats(guardList);
-  // }, [user.token, user.userid]);
+  // }, [token, user.userid]);
 
   const checkIfGuardIsAssigned = (guard) => {
     dispatch(suspenseShow);
@@ -142,7 +146,7 @@ function AssignNewBeat({ isOnboarding = true, beat: selectedBeat }) {
     //   JSON.stringify(formData),
     //   {
     //     "Content-Type": "application/json",
-    //     Authorization: `Bearer ${user.token}`,
+    //     Authorization: `Bearer ${token}`,
     //   }
     // );
     const data = await assignToBeat({ userid: user.userid, body: formData });

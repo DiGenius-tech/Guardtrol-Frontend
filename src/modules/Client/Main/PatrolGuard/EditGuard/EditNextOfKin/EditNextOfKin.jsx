@@ -32,7 +32,7 @@ const identificationTypeOptions = [
 const EditNextOfKin = (props) => {
   const { guardId } = useParams();
   const auth = useSelector(selectAuth);
-  const { user } = useSelector(selectAuth);
+  const { user, token } = useSelector(selectAuth);
 
   const { isLoading, error, responseData, sendRequest } = useHttpRequest();
   const [validationErrors, setValidationErrors] = useState({});
@@ -86,7 +86,7 @@ const EditNextOfKin = (props) => {
       JSON.stringify(formData),
       {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${user.token}`,
+        Authorization: `Bearer ${token}`,
       }
     ).then((data) => {
       if (data.status) {

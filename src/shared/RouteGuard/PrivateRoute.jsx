@@ -36,7 +36,7 @@ const PrivateRoute = ({
   useEffect(() => {
     console.log(isUninitialized && token);
 
-    if (!isUninitialized && token) {
+    if (isUninitialized && token) {
       refetchBeats();
     }
   }, [token]);

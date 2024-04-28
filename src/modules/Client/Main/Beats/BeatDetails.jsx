@@ -45,6 +45,7 @@ export const BeatGaurdRouter = () => {
   const {
     data: beats,
     isLoading,
+    refetch: refetchGuards,
     error,
   } = useGetBeatsQuery(user.userid, { skip: user.userid ? false : true });
 
@@ -58,7 +59,13 @@ export const BeatGaurdRouter = () => {
         <Route path="inactive" element={<InactivePatrolGuards beat={beat} />} />
         <Route
           path="addguard"
-          element={<AssignNewBeat isOnboarding={false} beat={beat} />}
+          element={
+            <AssignNewBeat
+              refetchGuards={refetchGuards}
+              isOnboarding={false}
+              beat={beat}
+            />
+          }
         />
       </Route>
     </Routes>

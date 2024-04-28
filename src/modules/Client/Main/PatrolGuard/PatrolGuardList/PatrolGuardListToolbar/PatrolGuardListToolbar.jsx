@@ -56,7 +56,7 @@ function PatrolGuardListToolbar() {
                 `flex items-center justify-center p-4 text-sm font-medium first:ml-0 disabled:cursor-not-allowed disabled:text-gray-400 disabled:dark:text-gray-500 rounded-t-lg border-b-2 text-gray-500 hover:border-gray-300 hover:text-gray-600 dark:text-gray-400 dark:hover:text-gray-300`
               }
             >
-              Add Guard
+              Assign
             </Link>
           </li>
         </ul>

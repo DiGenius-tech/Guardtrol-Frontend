@@ -7,7 +7,7 @@ import RegularButton from "../../../../Sandbox/Buttons/RegularButton";
 import { toast } from "react-toastify";
 import useHttpRequest from "../../../../../shared/Hooks/HttpRequestHook";
 import { useDispatch, useSelector } from "react-redux";
-import { selectUser } from "../../../../../redux/selectors/auth";
+import { selectToken, selectUser } from "../../../../../redux/selectors/auth";
 import {
   suspenseHide,
   suspenseShow,
@@ -30,6 +30,7 @@ const Status = {
 function GuardList() {
   const user = useSelector(selectUser);
   const onboardingGuards = useSelector(selectOnboardingGuards);
+  const token = useSelector(selectToken);
 
   const navigate = useNavigate();
   const { isLoading, error, responseData, sendRequest } = useHttpRequest();
@@ -101,7 +102,7 @@ function GuardList() {
     //   JSON.stringify(guards),
     //   {
     //     "Content-Type": "application/json",
-    //     Authorization: `Bearer ${user.token}`,
+    //     Authorization: `Bearer ${token}`,
     //   }
     // ).finally(dispatch(suspenseHide()));
   };

@@ -147,7 +147,7 @@ function App() {
     //   } else {
     //   }
     // };
-    if (token && !isUninitialized) {
+    if (token && isUninitialized) {
       refetch();
     }
   }, [token]);

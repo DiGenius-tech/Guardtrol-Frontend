@@ -7,7 +7,10 @@ import { useParams } from "react-router-dom";
 import useHttpRequest from "../../../../../../shared/Hooks/HttpRequestHook";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
-import { selectUser } from "../../../../../../redux/selectors/auth";
+import {
+  selectToken,
+  selectUser,
+} from "../../../../../../redux/selectors/auth";
 const identificationTypeOptions = [
   {
     name: "National Identification Number (NIN)",
@@ -30,6 +33,7 @@ const identificationTypeOptions = [
 const EditIdentification = (props) => {
   const { guardId } = useParams();
   const user = useSelector(selectUser);
+  const token = useSelector(selectToken);
   const { isLoading, error, responseData, sendRequest } = useHttpRequest();
   const [validationErrors, setValidationErrors] = useState({});
   const [formData, setFormData] = useState({
@@ -81,7 +85,7 @@ const EditIdentification = (props) => {
       JSON.stringify(guardData),
       {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${user.token}`,
+        Authorization: `Bearer ${token}`,
       }
     ).then((data) => {
       if (data.status) {

@@ -61,7 +61,7 @@ const stateOfOriginList = [
 const EditPersonalInformation = (props) => {
   const { guardId } = useParams();
 
-  const { user } = useSelector(selectAuth);
+  const { user, token } = useSelector(selectAuth);
 
   const { isLoading, error, responseData, sendRequest } = useHttpRequest();
   const [validationErrors, setValidationErrors] = useState({});
@@ -134,7 +134,7 @@ const EditPersonalInformation = (props) => {
       JSON.stringify(guardData),
       {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${user.token}`,
+        Authorization: `Bearer ${token}`,
       }
     ).then((data) => {
       if (data.status) {

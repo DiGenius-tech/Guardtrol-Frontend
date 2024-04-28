@@ -169,7 +169,7 @@ function AssignedBeatList(props) {
     const data = await patch(
       `users/finishonboarding/${user.userid}`,
       {},
-      user.token
+      token
     );
 
     if (!data) {
@@ -191,7 +191,7 @@ function AssignedBeatList(props) {
           {
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer ${user.token}`,
+              Authorization: `Bearer ${token}`,
             },
             data: bt, // Assuming 'bt' is the data you want to send in the request body
           }

@@ -7,7 +7,7 @@ import { useParams } from "react-router-dom";
 
 import useHttpRequest from "../../../../../../shared/Hooks/HttpRequestHook";
 import { toast } from "react-toastify";
-import { selectUser } from "../../../../../../redux/selectors/auth";
+import { selectToken, selectUser } from "../../../../../../redux/selectors/auth";
 import { useSelector } from "react-redux";
 
 const titleOptions = [
@@ -60,6 +60,7 @@ const identificationTypeOptions = [
 const EditGuarantorForm = (props) => {
   const { guardId } = useParams();
   const user = useSelector(selectUser);
+  const token = useSelector(selectToken);
 
   const { isLoading, error, responseData, sendRequest } = useHttpRequest();
   const stepperRef = useRef(); //stepperWrapper
@@ -216,7 +217,7 @@ const EditGuarantorForm = (props) => {
       JSON.stringify(formData),
       {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${user.token}`,
+        Authorization: `Bearer ${token}`,
       }
     ).then((data) => {
       if (data.status) {

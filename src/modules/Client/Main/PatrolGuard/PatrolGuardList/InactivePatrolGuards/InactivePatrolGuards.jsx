@@ -8,21 +8,27 @@ import { toast } from "react-toastify";
 import useHttpRequest from "../../../../../../shared/Hooks/HttpRequestHook";
 
 import { useDispatch, useSelector } from "react-redux";
-import { selectUser } from "../../../../../../redux/selectors/auth";
+import {
+  selectToken,
+  selectUser,
+} from "../../../../../../redux/selectors/auth";
 import {
   suspenseHide,
   suspenseShow,
 } from "../../../../../../redux/slice/suspenseSlice";
 import { useGetGuardsQuery } from "../../../../../../redux/services/guards";
+import { useGetBeatsQuery } from "../../../../../../redux/services/beats";
+import { useParams } from "react-router-dom";
 
 const duty_status = {
   OFF_DUTY: 0,
   ON_DUTY: 0,
 };
-function InactivePatrolGuards({ beat }) {
+function InactivePatrolGuards() {
   const user = useSelector(selectUser);
+  const token = useSelector(selectToken);
   const dispatch = useDispatch();
-
+  const { beatId } = useParams();
   const { responseData, sendRequest } = useHttpRequest();
 
   const [selectedGuard, setSelectedGuard] = useState(null);
@@ -34,6 +40,8 @@ function InactivePatrolGuards({ beat }) {
     refetch: refetchGuards,
     error,
   } = useGetGuardsQuery();
+  const { data: beats } = useGetBeatsQuery();
+  const selectedBeat = beats?.find((b) => b._id === beatId);
 
   const deleteGuard = async () => {
     dispatch(suspenseShow());
@@ -43,7 +51,7 @@ function InactivePatrolGuards({ beat }) {
       JSON.stringify(selectedGuard),
       {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${user.token}`,
+        Authorization: `Bearer ${token}`,
       }
     )
       .then((data) => {
@@ -55,7 +63,7 @@ function InactivePatrolGuards({ beat }) {
       .finally(dispatch(suspenseHide()));
   };
 
-  useEffect(() => {}, [user.token]);
+  useEffect(() => {}, [token]);
 
   useEffect(() => {
     if (error) {
@@ -72,7 +80,7 @@ function InactivePatrolGuards({ beat }) {
             duty_status={duty_status}
             icon_menu_dots={icon_menu_dots}
             guards={
-              beat?.guards?.filter((guard) => !guard.isactive) ||
+              selectedBeat?.guards?.filter((guard) => !guard.isactive) ||
               guards?.filter((guard) => !guard.isactive)
             }
           />
@@ -84,7 +92,7 @@ function InactivePatrolGuards({ beat }) {
           duty_status={duty_status}
           icon_menu_dots={icon_menu_dots}
           guards={
-            beat?.guards?.filter((guard) => !guard.isactive) ||
+            selectedBeat?.guards?.filter((guard) => !guard.isactive) ||
             guards?.filter((guard) => !guard.isactive)
           }
         />

@@ -136,7 +136,7 @@ const SettingPersonalInformation = () => {
                   ) : (
                     <img
                       className="cursor-pointer"
-                      src={user.image ? user.image : preview ? preview : ''}
+                      src={preview ? preview : user.image}
                       alt={fileName}
                     />
                   )}

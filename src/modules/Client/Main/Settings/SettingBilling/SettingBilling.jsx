@@ -7,7 +7,10 @@ import { FaRegTrashAlt } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import { selectToken, selectUser } from "../../../../../redux/selectors/auth";
 import { useNavigate } from "react-router-dom";
-import { useGetAllSubscriptionsQuery, useGetSubscriptionQuery } from "../../../../../redux/services/subscriptions";
+import {
+  useGetAllSubscriptionsQuery,
+  useGetSubscriptionQuery,
+} from "../../../../../redux/services/subscriptions";
 import { useGetGuardsQuery } from "../../../../../redux/services/guards";
 import { formatNumberWithCommas } from "../../../../../shared/functions/random-hex-color";
 import moment from "moment";
@@ -18,16 +21,16 @@ const savedPaymentCards = [
     title: "Mastercard",
     default: true,
     lastFourDigits: 2378,
-    brandLogo: logo_mastercard
+    brandLogo: logo_mastercard,
   },
   {
     id: "2",
     title: "VISA",
     default: false,
     lastFourDigits: 1334,
-    brandLogo: logo_visa
-  }
-]
+    brandLogo: logo_visa,
+  },
+];
 
 const SettingBilling = () => {
   const user = useSelector(selectUser);
@@ -45,30 +48,55 @@ const SettingBilling = () => {
   });
 
   const { data: guards } = useGetGuardsQuery();
-  console.log(sub)
+  console.log(sub);
   const [defaultCard, setDefaultCard] = useState({
-    id: ""
+    id: "",
   });
 
-  const {
-    data: subs,
-  } = useGetAllSubscriptionsQuery();
+  const { data: subs } = useGetAllSubscriptionsQuery();
 
-  console.log(subs)
+  console.log(subs);
 
   const [isAddNewCard, setIsAddNewCard] = useState(false);
 
   const handleDefaultCard = (e) => {
-    console.log("e.target.value: ", e.target.value)
+    console.log("e.target.value: ", e.target.value);
     setDefaultCard(e.target.value);
-  }
+  };
 
   useEffect(() => {
-    console.log("defaultCard: ", defaultCard)
-    return () => {
-
-    };
+    console.log("defaultCard: ", defaultCard);
+    return () => {};
   }, [defaultCard]);
+
+  const totalPages = subs?.length;
+  const [currentPage, setCurrentPage] = useState(1);
+  const [filteredData, setFilteredData] = useState([]);
+  const itemsPerPage = 5;
+
+  const filterData = () => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const slicedData = subs?.slice(startIndex, endIndex);
+    setFilteredData(slicedData);
+  };
+  const goToPreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const goToNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  useEffect(() => {
+    filterData();
+  }, [currentPage, subs]);
+
+  console.log(subs?.length);
   return (
     <>
       {/* setting-billing-app works! */}
@@ -81,16 +109,29 @@ const SettingBilling = () => {
           <div className="p-4 sm:p-6 bg-dark-400 text-white border border-gray-200 rounded-lg shadow">
             <ul className="flex flex-col gap-4">
               <li className="grid grid-cols-2 items-center">
-                <div className="col-span-2 sm:col-span-1 font-light">{sub?.plan} plan</div>
+                <div className="col-span-2 sm:col-span-1 font-light">
+                  {sub?.plan} plan
+                </div>
                 <div className="col-span-2 sm:col-span-1 sm:text-right">
-                  <p className="text-2xl font-bold">₦{formatNumberWithCommas(sub?.totalamount)}</p>
-                  <p className="text-xs font-light">{guards?.length} of {sub?.maxbeats*5 + sub?.maxextraguards} Guards used</p>
+                  <p className="text-2xl font-bold">
+                    ₦{formatNumberWithCommas(sub?.totalamount)}
+                  </p>
+                  <p className="text-xs font-light">
+                    {guards?.length} of{" "}
+                    {sub?.maxbeats * 5 + sub?.maxextraguards} Guards used
+                  </p>
                 </div>
               </li>
               <li className="grid grid-cols-2 items-center">
-                <div className="col-span-2 sm:col-span-1 font-light">Next billing date</div>
+                <div className="col-span-2 sm:col-span-1 font-light">
+                  Next billing date
+                </div>
                 <div className="col-span-2 sm:col-span-1 sm:text-right">
-                  <p className="font-normal">{moment(sub?.updatedat).add(sub?.plan === "monthly" ? 30 : 365, 'days').format('DD MMMM, YYYY')}</p>
+                  <p className="font-normal">
+                    {moment(sub?.updatedat)
+                      .add(sub?.plan === "monthly" ? 30 : 365, "days")
+                      .format("DD MMMM, YYYY")}
+                  </p>
                 </div>
               </li>
             </ul>
@@ -122,14 +163,14 @@ const SettingBilling = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {subs?.map((s, i) => {
+                  {filteredData?.map((s, i) => {
                     return (
                       <tr key={s._id} className="bg-white dark:bg-gray-800">
                         <th
                           scope="row"
                           className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                         >
-                          {moment(s.updatedat).format('DD MMMM, YYYY')}
+                          {moment(s.updatedat).format("DD MMMM, YYYY")}
                         </th>
                         <td className="px-6 py-4">{s.plan} plan</td>
                         <td className="px-6 py-4">Paid</td>
@@ -145,40 +186,61 @@ const SettingBilling = () => {
                     );
                   })}
                 </tbody>
+
                 <tfoot>
-                  <tr className="font-semibold text-gray-900 dark:text-white">
-                    <th
-                      scope="row"
-                      colSpan={"4"}
-                      className="px-6 py-3 text-sm font-light text-right"
-                    >
-                      <div className="inline-flex items-center justify-end gap-4">
-                        <a
-                          href="#"
-                          className="inline-flex items-center justify-center border border-gray-300 text-sm rounded-lg w-full p-1.5 font-semibold min-w-10 min-h-8"
-                        >
-                          1
-                        </a>
-                        <div>
-                          of&nbsp;<span>4</span>
+                  <tfoot>
+                    <tr className="font-semibold text-gray-900 dark:text-white">
+                      <th
+                        scope="row"
+                        colSpan={"4"}
+                        className="px-6 py-3 text-sm font-light text-right"
+                      >
+                        <div className="inline-flex items-center justify-end gap-4">
+                          {/* Render page numbers */}
+                          {subs &&
+                            [
+                              ...Array(
+                                Math.ceil(subs?.length / itemsPerPage)
+                              ).keys(),
+                            ].map((index) => (
+                              <a
+                                key={index}
+                                href="#"
+                                className={`inline-flex items-center justify-center border border-gray-300 text-sm rounded-lg w-full p-1.5 font-semibold min-w-10 min-h-8 ${
+                                  currentPage === index + 1
+                                    ? "bg-accent-200"
+                                    : ""
+                                }`}
+                                onClick={() => setCurrentPage(index + 1)}
+                              >
+                                {index + 1}
+                              </a>
+                            ))}
+                          <div>
+                            of&nbsp;<span>{totalPages}</span>
+                          </div>
+                          <div className="flex items-center">
+                            {/* Render previous button */}
+                            <a
+                              href="#"
+                              className="inline-flex items-center justify-center bg-accent-200 text-dark-70 hover:bg-accent-300 hover:text-secondary-500 border border-gray-300 text-sm rounded-s-lg w-full p-2 min-w-10 min-h-8"
+                              onClick={goToPreviousPage}
+                            >
+                              <GrPrevious />
+                            </a>
+                            {/* Render next button */}
+                            <a
+                              href="#"
+                              className="inline-flex items-center justify-center bg-accent-200 text-dark-70 hover:bg-accent-300 hover:text-secondary-500 border border-gray-300 text-sm rounded-r-lg w-full p-2 min-w-10 min-h-8"
+                              onClick={goToNextPage}
+                            >
+                              <GrNext />
+                            </a>
+                          </div>
                         </div>
-                        <div className="flex items-center">
-                          <a
-                            href="#"
-                            className="inline-flex items-center justify-center bg-accent-200 text-dark-70 hover:bg-accent-300 hover:text-secondary-500 border border-gray-300 text-sm rounded-s-lg w-full p-2 min-w-10 min-h-8"
-                          >
-                            <GrPrevious />
-                          </a>
-                          <a
-                            href="#"
-                            className="inline-flex items-center justify-center bg-accent-200 text-dark-70 hover:bg-accent-300 hover:text-secondary-500 border border-gray-300 text-sm rounded-r-lg w-full p-2 min-w-10 min-h-8"
-                          >
-                            <GrNext />
-                          </a>
-                        </div>
-                      </div>
-                    </th>
-                  </tr>
+                      </th>
+                    </tr>
+                  </tfoot>
                 </tfoot>
               </table>
             </div>

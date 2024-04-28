@@ -13,7 +13,7 @@ import { suspenseHide, suspenseShow } from "../../../redux/slice/suspenseSlice";
 
 function VerifyEmail() {
   const auth = useSelector(selectAuth);
-  const { user } = useSelector(selectAuth);
+  const { user, token } = useSelector(selectAuth);
   const dispatch = useDispatch();
 
   const navigate = useNavigate();
@@ -31,7 +31,7 @@ function VerifyEmail() {
       null,
       {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + props.token,
+        Authorization: "Bearer " + token,
       }
     );
 
@@ -39,16 +39,16 @@ function VerifyEmail() {
       setVerified(true);
       toast("already verified");
 
-      navigate("/client")
+      navigate("/client");
     }
   };
 
   useEffect(() => {
-    if (null != user.token) {
+    if (null != token) {
       //console.log(user)
       checkIfVerified(user);
     }
-  }, [user.token]);
+  }, [token]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -86,7 +86,7 @@ function VerifyEmail() {
             JSON.stringify(formData),
             {
               "Content-Type": "application/json",
-              Authorization: "Bearer " + user.token,
+              Authorization: "Bearer " + token,
             }
           );
 
