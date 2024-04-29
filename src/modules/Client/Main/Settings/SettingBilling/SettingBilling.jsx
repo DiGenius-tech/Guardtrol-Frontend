@@ -4,6 +4,7 @@ import { GrPrevious } from "react-icons/gr";
 import logo_mastercard from "../../../../../images/logo-mastercard.svg";
 import logo_visa from "../../../../../images/logo-visa.svg";
 import { FaRegTrashAlt } from "react-icons/fa";
+import { MdPeople } from "react-icons/md";
 
 const savedPaymentCards = [
   {
@@ -62,6 +63,75 @@ const SettingBilling = () => {
                 <div className="col-span-2 sm:col-span-1 font-light">Next billing date</div>
                 <div className="col-span-2 sm:col-span-1 sm:text-right">
                   <p className="font-normal">24 April, 2024</p>
+                </div>
+              </li>
+              <li className="grid grid-cols-12 items-end gap-4">
+                <div className="col-span-12 font-light">Update subscription</div>
+                <div className="col-span-12 sm:text-right">
+                  {/* <p className="font-normal">
+                    lorem20
+                  </p> */}
+                  <form className="bg-white/30 rounded-md p-4">
+                    {/*  <div>
+                     <label htmlFor="countries" className="block mb-2 text-sm font-medium text-white">Select package</label>
+                      <select id="countries" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                        <option>United States</option>
+                        <option>Canada</option>
+                        <option>France</option>
+                        <option>Germany</option>
+                      </select>
+                    </div> */}
+
+                    <fieldset>
+                      <legend className="sr-only">Select package</legend>
+                      <div className="flex items-center mb-4">
+                        <input id="per-month" type="radio" name="subscription_package" value="USA" className="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600" />
+                        <label htmlFor="per-month" className="block ms-2  text-sm font-medium text-gray-900 dark:text-gray-300">
+                          #10,000 per month
+                        </label>
+                      </div>
+
+                      <div className="flex items-center mb-4">
+                        <input id="per-year" type="radio" name="subscription_package" value="Germany" className="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600" />
+                        <label htmlFor="per-year" className="block ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                          #96,000 per year
+                        </label>
+                      </div>
+                    </fieldset>
+
+                    <div className="mb-4">
+                      <label htmlFor="email-address-icon" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                        How many beats?
+                      </label>
+                      <div className="relative">
+                        <div className="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
+                          <svg className="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 16">
+                            <path d="m10.036 8.278 9.258-7.79A1.979 1.979 0 0 0 18 0H2A1.987 1.987 0 0 0 .641.541l9.395 7.737Z" />
+                            <path d="M11.241 9.817c-.36.275-.801.425-1.255.427-.428 0-.845-.138-1.187-.395L0 2.6V14a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V2.5l-8.759 7.317Z" />
+                          </svg>
+                        </div>
+                        <input type="text" id="email-address-icon" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="name@flowbite.com" />
+                      </div>
+                    </div>
+
+                    <div className="mb-4">
+                      <label htmlFor="email-address-icon" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                        How many extra guard?
+                      </label>
+                      <div className="relative">
+                        <div className="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
+                          {/* <svg className="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 16">
+                            <path d="m10.036 8.278 9.258-7.79A1.979 1.979 0 0 0 18 0H2A1.987 1.987 0 0 0 .641.541l9.395 7.737Z" />
+                            <path d="M11.241 9.817c-.36.275-.801.425-1.255.427-.428 0-.845-.138-1.187-.395L0 2.6V14a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V2.5l-8.759 7.317Z" />
+                          </svg> */}
+                          <MdPeople color="#79716b" />
+                        </div>
+                        <input type="text" id="email-address-icon" className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="name@flowbite.com" />
+                      </div>
+                    </div>
+
+                  </form>
+
                 </div>
               </li>
             </ul>
