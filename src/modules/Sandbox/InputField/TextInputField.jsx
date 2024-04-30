@@ -15,37 +15,16 @@ const TextInputField = (props) => {
           {props.label}
         </label> */}
 
-        {props.link_text ? (
-          <div className="flex items-center justify-between mb-2">
-            <label
-              htmlFor={props.id}
-              className="block mb-2 font-medium text-gray-900 dark:text-white cursor-pointer"
-            >
-              {props.label}
-            </label>
-
-            {!props.link_text.link ? (
-              props.link_text.text
-            ) : (
-              <Link
-                to="/auth/forgot-password"
-                className="text-primary-500 font-medium"
-              >
-                {props.link_text.text}
-              </Link>
-            )}
-          </div>
-        ) : (
-          <label
-            htmlFor={props.id}
-            className={
-              (props.semibold_label ? `font-semibold ` : "") +
-              `block mb-2 font-medium text-gray-900 dark:text-white cursor-pointer`
-            }
-          >
-            {props.label}
-          </label>
-        )}
+      
+        <label
+          htmlFor={props.id}
+          className={
+            (props.semibold_label ? `font-semibold ` : "") +
+            `block mb-2 font-medium text-gray-900 dark:text-white cursor-pointer`
+          }
+        >
+          {props.label}
+        </label>
 
         {!props.passwordToggler ? (
           <>
@@ -85,7 +64,7 @@ const TextInputField = (props) => {
               className="w-8 h-full absolute inset-y-0 right-0 flex items-center pr-3"
             >
               {/* type toggler */}
-              {props.password_type !== "text" ? <Eye /> : <EyeInverse />}
+              {props.password_type === "text" ? <Eye /> : <EyeInverse />}
               {/*  */}
             </button>
             <input

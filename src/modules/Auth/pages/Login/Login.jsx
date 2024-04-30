@@ -187,15 +187,20 @@ const Login = () => {
                   required="required"
                   value={formData.password}
                   passwordToggler={true}
-                  link_text={{ text: "I Forgot My Password", link: true }}
-                  //
                   password_field_ref={password_field_ref}
                   password_type={password_type}
                   setPassword_type={setPassword_type}
                   toggle_pwd_type={toggle_pwd_type}
                 />
-                
+
                 <RegularButton text="Log In" />
+                <div className="my-2"></div>
+                <Link
+                  to="/auth/forgot-password"
+                  className="block text-primary-500 font-medium text-sm text-right"
+                >
+                  I forgot my password
+                </Link>
               </form>
             </div>
 

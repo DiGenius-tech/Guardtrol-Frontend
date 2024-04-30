@@ -23,7 +23,7 @@ const SettingPersonalInformation = () => {
   return (
     <>
       {/* setting-personal-information-app works! */}
-      <form action="" className="max-w-3xl">
+      <div className="max-w-3xl">
         <div className="grid grid-cols-12 gap-4 sm:gap-8">
           <div className="hidden sm:block col-span-12 sm:col-span-6">
             <h3 className="font-bold">Profile photo</h3>
@@ -76,10 +76,10 @@ const SettingPersonalInformation = () => {
               type="text"
               id="name"
               semibold_label={true}
-            //   error={validationErrors["name"]}
-            //   onChange={handleChange}
-            //   required="required"
-            //   value={formData.name}
+              //   error={validationErrors["name"]}
+              //   onChange={handleChange}
+              //   required="required"
+              //   value={formData.name}
             />
 
             {/* <TextInputField
@@ -117,10 +117,10 @@ const SettingPersonalInformation = () => {
               type="email"
               id="email"
               semibold_label={true}
-            //   error={validationErrors['email']}
-            //   onChange={handleChange}
-            //   required="required"
-            //   value={formData.email}
+              //   error={validationErrors['email']}
+              //   onChange={handleChange}
+              //   required="required"
+              //   value={formData.email}
             />
           </div>
           <div className="hidden sm:block col-span-12 sm:col-span-6">
@@ -137,17 +137,22 @@ const SettingPersonalInformation = () => {
               type="number"
               id="phone"
               semibold_label={true}
-            //   error={validationErrors['phone']}
-            //   onChange={handleChange}
-            //   required="required"
-            //   value={formData.phone}
+              //   error={validationErrors['phone']}
+              //   onChange={handleChange}
+              //   required="required"
+              //   value={formData.phone}
             />
           </div>
         </div>
         <div className="text-right">
-          <RegularButton text="Save Changes" width="auto" padding="px-4 py-2" textSize="text-sm" />
+          <RegularButton
+            text="Save Changes"
+            width="auto"
+            padding="px-4 py-2"
+            textSize="text-sm"
+          />
         </div>
-      </form>
+      </div>
     </>
   );
 };
