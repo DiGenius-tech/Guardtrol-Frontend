@@ -15,7 +15,7 @@ import { selectToken, selectUser } from "../../../../../redux/selectors/auth";
 import { useNavigate } from "react-router-dom";
 import {
   useGetAllSubscriptionsQuery,
-  useGetSubscriptionQuery,
+  useGetSubscriptionQuery
 } from "../../../../../redux/services/subscriptions";
 import { useGetGuardsQuery } from "../../../../../redux/services/guards";
 import { formatNumberWithCommas } from "../../../../../shared/functions/random-hex-color";
@@ -27,15 +27,15 @@ const savedPaymentCards = [
     title: "Mastercard",
     default: true,
     lastFourDigits: 2378,
-    brandLogo: logo_mastercard,
+    brandLogo: logo_mastercard
   },
   {
     id: "2",
     title: "VISA",
     default: false,
     lastFourDigits: 1334,
-    brandLogo: logo_visa,
-  },
+    brandLogo: logo_visa
+  }
 ];
 
 const SettingBilling = () => {
@@ -48,12 +48,12 @@ const SettingBilling = () => {
     isError,
 
     refetch,
-    isUninitialized,
+    isUninitialized
   } = useGetSubscriptionQuery(null, { skip: token ? false : true });
 
   const { data: guards } = useGetGuardsQuery();
   const [defaultCard, setDefaultCard] = useState({
-    id: "",
+    id: ""
   });
 
   const { data: subs } = useGetAllSubscriptionsQuery();
@@ -139,7 +139,9 @@ const SettingBilling = () => {
               </li>
               <li className="grid grid-cols-12 items-end gap-4">
                 <div className="col-span-12">
-                  {isUpdateSub ? "" : (
+                  {isUpdateSub ? (
+                    ""
+                  ) : (
                     <button
                       type="button"
                       className="w-full block text-white bg-yellow-500 hover:bg-yellow-600 focus:ring-1 focus:outline-none focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
@@ -166,39 +168,41 @@ const SettingBilling = () => {
                   <div className="col-span-12 sm:text-right">
                     <form className="bg-white/30 rounded-md p-4">
                       <fieldset className="update-plan-options">
-                        <legend className="sr-only">
-                          Select subscription package
+                        <legend className="text-center mb-4">
+                          Select Plan*
                         </legend>
-                        <div className="flex items-center mb-4">
-                          <input
-                            id="monthly"
-                            type="radio"
-                            name="plan-option"
-                            value="monthly"
-                            className="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600"
-                          />
-                          <label
-                            htmlFor="monthly"
-                            className="cursor-pointer block ms-2 text-lg font-medium text-gray-900 dark:text-gray-300"
-                          >
-                            #10,000 per month
-                          </label>
-                        </div>
+                        <div className="flex items-center justify-between gap-4 flex-wrap">
+                          <div className="flex items-center mb-4">
+                            <input
+                              id="monthly"
+                              type="radio"
+                              name="plan-option"
+                              value="monthly"
+                              className="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600"
+                            />
+                            <label
+                              htmlFor="monthly"
+                              className="cursor-pointer block ms-2 text-lg font-medium text-gray-900 dark:text-gray-300"
+                            >
+                              #10,000 per month
+                            </label>
+                          </div>
 
-                        <div className="flex items-center mb-4">
-                          <input
-                            id="yearly"
-                            type="radio"
-                            name="plan-option"
-                            value="yearly"
-                            className="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600"
-                          />
-                          <label
-                            htmlFor="yearly"
-                            className="cursor-pointer block ms-2 text-lg font-medium text-gray-900 dark:text-gray-300"
-                          >
-                            #96,000 per year
-                          </label>
+                          <div className="flex items-center mb-4">
+                            <input
+                              id="yearly"
+                              type="radio"
+                              name="plan-option"
+                              value="yearly"
+                              className="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600"
+                            />
+                            <label
+                              htmlFor="yearly"
+                              className="cursor-pointer block ms-2 text-lg font-medium text-gray-900 dark:text-gray-300"
+                            >
+                              #96,000 per year
+                            </label>
+                          </div>
                         </div>
                       </fieldset>
 
@@ -248,7 +252,9 @@ const SettingBilling = () => {
                       </button>
                     </form>
                   </div>
-                ) : ""}
+                ) : (
+                  ""
+                )}
               </li>
             </ul>
           </div>
@@ -258,111 +264,112 @@ const SettingBilling = () => {
         </div>
         <div className="col-span-12 sm:col-span-7">
           <div className="">
-            {
-              filteredData ?  <div className="relative overflow-x-auto">
-              <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                <thead className="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400">
-                  <tr>
-                    <th scope="col" className="px-6 py-3 rounded-s-lg">
-                      Date
-                    </th>
-                    <th scope="col" className="px-6 py-3">
-                      Plan
-                    </th>
-                    <th scope="col" className="px-6 py-3">
-                      Status
-                    </th>
-                    <th
-                      scope="col"
-                      className="px-6 py-3 rounded-e-lg"
-                      aria-label="action"
-                    ></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredData?.map((s, i) => {
-                    return (
-                      <tr key={s?._id} className="bg-white dark:bg-gray-800">
+            {filteredData ? (
+              <div className="relative overflow-x-auto">
+                <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                  <thead className="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400">
+                    <tr>
+                      <th scope="col" className="px-6 py-3 rounded-s-lg">
+                        Date
+                      </th>
+                      <th scope="col" className="px-6 py-3">
+                        Plan
+                      </th>
+                      <th scope="col" className="px-6 py-3">
+                        Status
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-6 py-3 rounded-e-lg"
+                        aria-label="action"
+                      ></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredData?.map((s, i) => {
+                      return (
+                        <tr key={s?._id} className="bg-white dark:bg-gray-800">
+                          <th
+                            scope="row"
+                            className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                          >
+                            {moment(s?.updatedat).format("DD MMMM, YYYY")}
+                          </th>
+                          <td className="px-6 py-4">{s?.plan} plan</td>
+                          <td className="px-6 py-4">Paid</td>
+                          <td className="px-6 py-4">
+                            <a
+                              href="#"
+                              className="font-semibold text-primary-500 whitespace-nowrap"
+                            >
+                              Get Invoice
+                            </a>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+
+                  <tfoot>
+                    <tfoot>
+                      <tr className="font-semibold text-gray-900 dark:text-white">
                         <th
                           scope="row"
-                          className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                          colSpan={"4"}
+                          className="px-6 py-3 text-sm font-light text-right"
                         >
-                          {moment(s?.updatedat).format("DD MMMM, YYYY")}
-                        </th>
-                        <td className="px-6 py-4">{s?.plan} plan</td>
-                        <td className="px-6 py-4">Paid</td>
-                        <td className="px-6 py-4">
-                          <a
-                            href="#"
-                            className="font-semibold text-primary-500 whitespace-nowrap"
-                          >
-                            Get Invoice
-                          </a>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-
-                <tfoot>
-                  <tfoot>
-                    <tr className="font-semibold text-gray-900 dark:text-white">
-                      <th
-                        scope="row"
-                        colSpan={"4"}
-                        className="px-6 py-3 text-sm font-light text-right"
-                      >
-                        <div className="inline-flex items-center justify-end gap-4">
-                          {/* Render page numbers */}
-                          {subs &&
-                            [
-                              ...Array(
-                                Math.ceil(subs?.length / itemsPerPage)
-                              ).keys(),
-                            ].map((index) => (
+                          <div className="inline-flex items-center justify-end gap-4">
+                            {/* Render page numbers */}
+                            {subs &&
+                              [
+                                ...Array(
+                                  Math.ceil(subs?.length / itemsPerPage)
+                                ).keys()
+                              ].map((index) => (
+                                <a
+                                  key={index}
+                                  href="#"
+                                  className={`inline-flex items-center justify-center border border-gray-300 text-sm rounded-lg w-full p-1.5 font-semibold min-w-10 min-h-8 ${
+                                    currentPage === index + 1
+                                      ? "bg-accent-200"
+                                      : ""
+                                  }`}
+                                  onClick={() => setCurrentPage(index + 1)}
+                                >
+                                  {index + 1}
+                                </a>
+                              ))}
+                            <div>
+                              of&nbsp;<span>{totalPages}</span>
+                            </div>
+                            <div className="flex items-center">
+                              {/* Render previous button */}
                               <a
-                                key={index}
                                 href="#"
-                                className={`inline-flex items-center justify-center border border-gray-300 text-sm rounded-lg w-full p-1.5 font-semibold min-w-10 min-h-8 ${
-                                  currentPage === index + 1
-                                    ? "bg-accent-200"
-                                    : ""
-                                }`}
-                                onClick={() => setCurrentPage(index + 1)}
+                                className="inline-flex items-center justify-center bg-accent-200 text-dark-70 hover:bg-accent-300 hover:text-secondary-500 border border-gray-300 text-sm rounded-s-lg w-full p-2 min-w-10 min-h-8"
+                                onClick={goToPreviousPage}
                               >
-                                {index + 1}
+                                <GrPrevious />
                               </a>
-                            ))}
-                          <div>
-                            of&nbsp;<span>{totalPages}</span>
+                              {/* Render next button */}
+                              <a
+                                href="#"
+                                className="inline-flex items-center justify-center bg-accent-200 text-dark-70 hover:bg-accent-300 hover:text-secondary-500 border border-gray-300 text-sm rounded-r-lg w-full p-2 min-w-10 min-h-8"
+                                onClick={goToNextPage}
+                              >
+                                <GrNext />
+                              </a>
+                            </div>
                           </div>
-                          <div className="flex items-center">
-                            {/* Render previous button */}
-                            <a
-                              href="#"
-                              className="inline-flex items-center justify-center bg-accent-200 text-dark-70 hover:bg-accent-300 hover:text-secondary-500 border border-gray-300 text-sm rounded-s-lg w-full p-2 min-w-10 min-h-8"
-                              onClick={goToPreviousPage}
-                            >
-                              <GrPrevious />
-                            </a>
-                            {/* Render next button */}
-                            <a
-                              href="#"
-                              className="inline-flex items-center justify-center bg-accent-200 text-dark-70 hover:bg-accent-300 hover:text-secondary-500 border border-gray-300 text-sm rounded-r-lg w-full p-2 min-w-10 min-h-8"
-                              onClick={goToNextPage}
-                            >
-                              <GrNext />
-                            </a>
-                          </div>
-                        </div>
-                      </th>
-                    </tr>
+                        </th>
+                      </tr>
+                    </tfoot>
                   </tfoot>
-                </tfoot>
-              </table>
-            </div> : <p>No invoice recorded!</p>
-            }
-           
+                </table>
+              </div>
+            ) : (
+              <p>No invoice recorded!</p>
+            )}
           </div>
         </div>
 
