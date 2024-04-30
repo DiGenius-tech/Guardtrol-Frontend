@@ -1,47 +1,48 @@
-import { useState, useEffect, useContext } from 'react';
-import { toast } from 'react-toastify';
+import { useState, useEffect, useContext } from "react";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { AuthContext } from '../Context/AuthContext';
+import { AuthContext } from "../Context/AuthContext";
+import { API_BASE_URL } from "../../constants/api";
 
 const useHttpRequest = () => {
-  const auth = useContext(AuthContext)
+  const auth = useContext(AuthContext);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [responseData, setResponseData] = useState(null);
 
-  const sendRequest = async (url, method = 'GET', body = null, headers = {}) => {
+  const sendRequest = async (
+    url,
+    method = "GET",
+    body = null,
+    headers = {},
+    base = true
+  ) => {
     setIsLoading(true);
     setError(null);
-    setResponseData(null)
+    setResponseData(null);
     try {
-      const response = await fetch(url, {
+      const response = await fetch(base ? API_BASE_URL + url: url, {
         method,
         body: body ? body : null,
         headers: {
-          
-          
-      
           ...headers,
         },
-        mode: 'cors'
+        mode: "cors",
       });
       const data = await response.json();
       if (!response.ok) {
-       return setError(data.message || 'Something went wrong!');
-        
+        return setError(data.message || "Something went wrong!");
       }
 
-      
-       setIsLoading(false);
-        setResponseData(data);
-       
-       return data
+      setIsLoading(false);
+      setResponseData(data);
+
+      return data;
     } catch (err) {
-      return setError(err.message || 'Something went wrong!');
-    }finally{
-      auth.loading(false)
+      return setError(err.message || "Something went wrong!");
+    } finally {
+      auth.loading(false);
     }
-    
   };
 
   return { isLoading, error, responseData, sendRequest };

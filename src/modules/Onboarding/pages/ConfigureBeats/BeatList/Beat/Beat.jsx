@@ -6,32 +6,26 @@ import { toast } from "react-toastify";
 import { useState } from "react";
 import AlertDialog from "../../../../../../shared/Dialog/AlertDialog";
 
-
-
-function Beat({setBeats, guard, status, handle_edit_beat }) {
+function Beat({ setBeats, beat, status, handle_edit_beat }) {
   const [open, setOpen] = useState(false);
 
-  
-
-  
-
   const deleteBeat = (beatname) => {
-      const beats = JSON.parse(localStorage.getItem('beats')) || [];
-      const index = beats.findIndex(beat => beat.beat_name === beatname);
+    const beats = JSON.parse(localStorage.getItem("beats")) || [];
+    const index = beats.findIndex((beat) => beat.name === beatname);
 
-      if (index !== -1) { // Check if the beat is found
-        
-        const newBeats = beats.filter((beat, i) => i!== index);
+    if (index !== -1) {
+      // Check if the beat is found
 
-        setBeats(newBeats);
+      const newBeats = beats.filter((beat, i) => i !== index);
 
-        const savedBeats = JSON.stringify(newBeats);
-        localStorage.setItem("beats", savedBeats);
-  
-      } else {
-        toast.error('Beat not found');
-      }
-  }
+      setBeats(newBeats);
+
+      const savedBeats = JSON.stringify(newBeats);
+      localStorage.setItem("beats", savedBeats);
+    } else {
+      toast.error("Beat not found");
+    }
+  };
   return (
     <>
       {/* beat-app works! */}
@@ -45,9 +39,9 @@ function Beat({setBeats, guard, status, handle_edit_beat }) {
           </div>
           <div className="col-span-9">
             <h3 className="text-dark-450 font-semibold text-base">
-              {guard?.beat_name}
+              {beat?.name}
             </h3>
-            <p className="text-sm text-gray-400">{guard?.description}</p>
+            <p className="text-sm text-gray-400">{beat?.description}</p>
           </div>
           <div className="col-span-1 text-right">
             <Dropdown
@@ -60,21 +54,23 @@ function Beat({setBeats, guard, status, handle_edit_beat }) {
                 </button>
               )}
             >
-              <Dropdown.Item onClick={() => handle_edit_beat(guard)}>
+              <Dropdown.Item onClick={() => handle_edit_beat(beat)}>
                 Edit
               </Dropdown.Item>
-              <Dropdown.Item onClick={()=> setOpen(true)}>Remove</Dropdown.Item>
+              <Dropdown.Item onClick={() => setOpen(true)}>
+                Remove
+              </Dropdown.Item>
             </Dropdown>
           </div>
         </div>
       </Card>
-      <AlertDialog 
+      <AlertDialog
         open={open}
         title="Delete Beat ?"
         description="Are You Sure You Want To Delete This Beat ?, You won't Be Able To Revert This Action"
         setOpen={setOpen}
         actionText="Delete"
-        action={() => deleteBeat(guard?.beat_name)}
+        action={() => deleteBeat(beat?.name)}
       />
     </>
   );

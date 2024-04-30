@@ -3,24 +3,42 @@ import Guard from "./Guard/Guard";
 import UpdateGuard from "../UpdateGuard/UpdateGuard";
 import { useCallback, useContext, useEffect, useState } from "react";
 import RegularButton from "../../../../Sandbox/Buttons/RegularButton";
-import { AuthContext } from "../../../../../shared/Context/AuthContext";
+
 import { toast } from "react-toastify";
 import useHttpRequest from "../../../../../shared/Hooks/HttpRequestHook";
+import { useDispatch, useSelector } from "react-redux";
+import { selectToken, selectUser } from "../../../../../redux/selectors/auth";
+import {
+  suspenseHide,
+  suspenseShow,
+} from "../../../../../redux/slice/suspenseSlice";
+import {
+  useAddGuardsMutation,
+  useGetGuardsQuery,
+} from "../../../../../redux/services/guards";
+import { selectOnboardingGuards } from "../../../../../redux/selectors/onboarding";
+import {
+  setOnboardingGuards,
+  setOnboardingLevel,
+} from "../../../../../redux/slice/onboardingSlice";
 
 const Status = {
   Success: 1,
-  Pending: 0
+  Pending: 0,
 };
 
-
-
 function GuardList() {
-  const auth = useContext(AuthContext)
-  const navigate = useNavigate()
+  const user = useSelector(selectUser);
+  const onboardingGuards = useSelector(selectOnboardingGuards);
+  const token = useSelector(selectToken);
+
+  const navigate = useNavigate();
   const { isLoading, error, responseData, sendRequest } = useHttpRequest();
   const [isEdit, setIsEdit] = useState(false);
+  const dispatch = useDispatch();
+
   const [selectedGuard, setSelectedGuard] = useState(null);
-  const [guards, setGuards] = useState([])
+  const [guards, setGuards] = useState([]);
   const [isGuardsLoaded, setIsGuardsLoaded] = useState(false);
 
   const handle_edit_guard = (guard) => {
@@ -29,73 +47,88 @@ function GuardList() {
       setSelectedGuard(guard);
     }
   };
-  const cancelEdit = ()=>{
+  const cancelEdit = () => {
     setIsEdit(false);
-  }
-  const addGuard = useCallback((guard, index) => {
-    
-    guards[index] = guard;
-    setGuards(guards);
-   
-  }, [guards, setGuards]);
+  };
+  // const addGuard = useCallback(
+  //   (guard, index) => {
+  //     guards[index] = guard;
+  //     setGuards(guards);
+  //   },
+  //   [guards, setGuards]
+  // );
 
-  useEffect(() => {
-    const savedGuards = localStorage.getItem("guards");
-    
-    if (savedGuards) {
-      const parsedGuards = JSON.parse(savedGuards);
-      if (!isGuardsLoaded) {
-        setIsGuardsLoaded(true);
-        parsedGuards.forEach( addGuard);
+  // useEffect(() => {
+  //   const savedGuards = localStorage.getItem("guards");
+
+  //   if (savedGuards) {
+  //     const parsedGuards = JSON.parse(savedGuards);
+  //     if (!isGuardsLoaded) {
+  //       setIsGuardsLoaded(true);
+  //       parsedGuards.forEach(addGuard);
+  //     }
+  //   }
+  // }, [isGuardsLoaded]);
+
+  const [addGuards] = useAddGuardsMutation();
+  const { refetch: refetchGuards } = useGetGuardsQuery();
+
+  const saveGuard = async () => {
+    if (onboardingGuards == [] || onboardingGuards.length < 1) {
+      toast.info("Add at Least One Guard To Continue");
+      return;
+    }
+
+    dispatch(suspenseShow());
+    try {
+      const data = await addGuards(onboardingGuards);
+
+      if (data) {
+        dispatch(setOnboardingGuards([]));
+        dispatch(setOnboardingLevel(3));
+        await refetchGuards();
+        //navigate("/onboarding/assign-beats");
       }
-      
+      console.log(data);
+
+      dispatch(suspenseHide());
+    } catch (error) {
+      dispatch(suspenseHide());
     }
 
-     
-  }, [isGuardsLoaded]);
-
-  const saveGuard = async (guards) => {
-    if (guards == [] || guards.length < 1) {
-      toast.info("Add at Least One Guard To Continue")
-      return
-    }
-    auth.loading(true)
-    const data = await sendRequest(
-      `http://localhost:5000/api/guard/addguard/${auth.user.userid}`,
-      'POST',
-      JSON.stringify(guards),
-      {
-        "Content-Type": "application/json",
-        'Authorization': `Bearer ${auth.token}`,
-      }
-    )
-
-    if(data){
-      localStorage.removeItem('guards')
-      localStorage.setItem("onBoardingLevel", 3)
-      navigate("/onboarding/assign-beats")
-      window.location.reload()
-    }
-  }
+    // const data = await sendRequest(
+    //   `guard/addguard/${user.userid}`,
+    //   "POST",
+    //   JSON.stringify(guards),
+    //   {
+    //     "Content-Type": "application/json",
+    //     Authorization: `Bearer ${token}`,
+    //   }
+    // ).finally(dispatch(suspenseHide()));
+  };
 
   useEffect(() => {
     if (error) {
-      toast.error(error)
+      toast.error(error);
     }
-  }, [error])
+  }, [error]);
   return (
     <>
       {/* guard-list-app works! */}
       <div className="max-w-md mx-auto block mb-20 sm:mb-16">
         {isEdit ? (
           <div className="mb-8">
-            <UpdateGuard selectedGuard={selectedGuard} cancelEdit={cancelEdit} setGuards={setGuards} />
+            <UpdateGuard
+              selectedGuard={selectedGuard}
+              cancelEdit={cancelEdit}
+              setGuards={setGuards}
+            />
           </div>
         ) : (
           <>
             <ul className="mb-4 flex flex-col gap-4">
-              {guards.map((guard) => (
-                <li key={guard.full_name}>
+              {onboardingGuards?.map((guard) => (
+                <li key={guard?.full_name}>
                   <Guard
                     setGuards={setGuards}
                     guard={guard}
@@ -113,7 +146,10 @@ function GuardList() {
             </Link>
 
             <div className="my-8"></div>
-            <RegularButton text="Continue To Assign Beats" onClick={()=> saveGuard(guards)} />
+            <RegularButton
+              text="Continue To Assign Beats"
+              onClick={() => saveGuard(guards)}
+            />
           </>
         )}
       </div>

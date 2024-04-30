@@ -1,3 +1,4 @@
+import AddGuard from "../../../Onboarding/pages/OnboardGuard/AddGuard/AddGuard";
 import ActivateGuard from "./ActivateGuard/ActivateGuard";
 import PatrolGuard from "./PatrolGuard";
 import PatrolGuardDetails from "./PatrolGuardDetails/PatrolGuardDetails";
@@ -6,44 +7,40 @@ import InactivePatrolGuards from "./PatrolGuardList/InactivePatrolGuards/Inactiv
 import PatrolGuardList from "./PatrolGuardList/PatrolGuardList";
 
 const patrol_guard_routes = {
-    path: "patrol-guard",
-    element: <PatrolGuard />,
-    children: [
-        {
-            path: "",
-            element: <PatrolGuardList />,
-            children: [
-                {
-                    path: "",
-                    element: <ActivePatrolGuards />
-                },
-                {
-                    path: "active",
-                    element: <ActivePatrolGuards />
-                },
-                {
-                    path: "inactive",
-                    element: <InactivePatrolGuards />
-                },
-            ]
-        },
-        {
-            path: "details/:guardId",
-            element: <PatrolGuardDetails />
-        },
-        {
-            path: "activate/:guardId",
-            element: <ActivateGuard />
-        }
-    ]
+  path: "patrol-guard",
+  element: <PatrolGuardList />,
+  children: [
+    {
+      path: "",
+      element: <ActivePatrolGuards />,
+    },
+    {
+      path: "active",
+      element: <ActivePatrolGuards />,
+    },
+    {
+      path: "inactive",
+      element: <InactivePatrolGuards />,
+    },
+    {
+      path: "addguard",
+      element: <AddGuard onBoarding={false} />,
+    },
 
-}
+    {
+      path: "details/:guardId",
+      element: <PatrolGuardDetails />,
+    },
+    {
+      path: "activate/:guardId",
+      element: <ActivateGuard />,
+    },
+  ],
+};
 const patrol_guard_routes_empt = {
-    path: "",
-    element: <PatrolGuard />,
-    children: [
-    ]
-
-}
+  path: "",
+  element: <PatrolGuard />,
+  children: [],
+};
 
 export default { patrol_guard_routes, patrol_guard_routes_empt };

@@ -4,18 +4,20 @@ import SelectField from "../../../../../Sandbox/SelectField/SelectField";
 import RegularButton from "../../../../../Sandbox/Buttons/RegularButton";
 import { toast } from "react-toastify";
 import useHttpRequest from "../../../../../../shared/Hooks/HttpRequestHook";
-import { AuthContext } from "../../../../../../shared/Context/AuthContext";
+
 import { useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { selectAuth } from "../../../../../../redux/selectors/auth";
 
 const sexOptions = [
   {
     name: "Male",
-    value: "male"
+    value: "male",
   },
   {
     name: "Female",
-    value: "female"
-  }
+    value: "female",
+  },
 ];
 const stateOfOriginList = [
   { name: "Abia", value: "abia" },
@@ -54,11 +56,13 @@ const stateOfOriginList = [
   { name: "Taraba", value: "taraba" },
   { name: "Yobe", value: "yobe" },
   { name: "Zamfara", value: "zamfara" },
-  { name: "FCT", value: "fct" } // Federal Capital Territory
+  { name: "FCT", value: "fct" }, // Federal Capital Territory
 ];
 const EditPersonalInformation = (props) => {
-  const {guardId} = useParams()
-  const auth = useContext(AuthContext)
+  const { guardId } = useParams();
+
+  const { user, token } = useSelector(selectAuth);
+
   const { isLoading, error, responseData, sendRequest } = useHttpRequest();
   const [validationErrors, setValidationErrors] = useState({});
   const [formData, setFormData] = useState({
@@ -68,26 +72,26 @@ const EditPersonalInformation = (props) => {
     dob: props.guard?.dob,
     sex: props.guard?.sex,
     altphone: props.guard?.altphone,
-    state: props.guard?.state
+    state: props.guard?.state,
   });
 
   useEffect(() => {
     setFormData({
       firstname: props.guard?.firstname,
-    lastname: props.guard?.lastname,
-    height: props.guard?.height,
-    dob: props.guard?.dob,
-    sex: props.guard?.sex,
-    altphone: props.guard?.altphone,
-    state: props.guard?.state
-    })
-  },[props])
- 
+      lastname: props.guard?.lastname,
+      height: props.guard?.height,
+      dob: props.guard?.dob,
+      sex: props.guard?.sex,
+      altphone: props.guard?.altphone,
+      state: props.guard?.state,
+    });
+  }, [props]);
+
   useEffect(() => {
     if (error) {
-      toast.error(error)
+      toast.error(error);
     }
-  }, [error])
+  }, [error]);
 
   const [sex, setSex] = useState(props.guard?.sex);
   const [state, setState] = useState(props.guard?.state);
@@ -105,14 +109,14 @@ const EditPersonalInformation = (props) => {
   };
 
   const save = async (e) => {
-    e.preventDefault()
-    if(!formData.sex) {
-      toast.warn("select a valid gender")
-      return
+    e.preventDefault();
+    if (!formData.sex) {
+      toast.warn("select a valid gender");
+      return;
     }
-    if(!formData.state) {
-      toast.warn("select a valid state")
-      return
+    if (!formData.state) {
+      toast.warn("select a valid state");
+      return;
     }
     const guardData = {
       firstname: formData.firstname,
@@ -122,24 +126,24 @@ const EditPersonalInformation = (props) => {
       sex: formData.sex,
       altphone: formData.altphone,
       state: formData.state,
-    }
-    
+    };
+
     const data = sendRequest(
-      `http://localhost:5000/api/guard/personalinformation/${guardId}`,
-      'PATCH',
+      `guard/personalinformation/${guardId}`,
+      "PATCH",
       JSON.stringify(guardData),
       {
         "Content-Type": "application/json",
-        'Authorization': `Bearer ${auth.token}`,
+        Authorization: `Bearer ${token}`,
       }
-    ).then(data => {
-      if(data.status){
-        toast("Personal Information Updated")
-        props.setGuard({})
-        props.handleSentRequest()
+    ).then((data) => {
+      if (data.status) {
+        toast("Personal Information Updated");
+        props.setGuard({});
+        props.handleSentRequest();
       }
-    })
-  }
+    });
+  };
 
   return (
     <>

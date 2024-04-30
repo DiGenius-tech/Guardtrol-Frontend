@@ -4,84 +4,108 @@ import PatrolGuardListMobileView from "../PatrolGuardListMobileView/PatrolGuardL
 import icon_menu_dots from "../../../../../../images/icons/icon-menu-dots.svg";
 import { toast } from "react-toastify";
 import { useContext, useEffect, useState } from "react";
-import useHttpRequest from "../../../../../../shared/Hooks/HttpRequestHook";
-import { AuthContext } from "../../../../../../shared/Context/AuthContext";
+
+import { useGetGuardsQuery } from "../../../../../../redux/services/guards";
+import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  selectToken,
+  selectUser,
+} from "../../../../../../redux/selectors/auth";
+import {
+  suspenseHide,
+  suspenseShow,
+} from "../../../../../../redux/slice/suspenseSlice";
+import { useGetBeatsQuery } from "../../../../../../redux/services/beats";
+import { useParams } from "react-router-dom";
 
 const duty_status = {
   OFF_DUTY: 0,
-  ON_DUTY: 1
+  ON_DUTY: 1,
 };
 function ActivePatrolGuards() {
-  const auth = useContext(AuthContext)
-  const { isLoading, error, responseData, sendRequest } = useHttpRequest();
-  const [guards, setGuards] = useState([])
+  const user = useSelector(selectUser);
+  const token = useSelector(selectToken);
+  const dispatch = useDispatch();
+  const { beatId } = useParams();
 
-  const [selectedGuard, setSelectedGuard] = useState(null)
-  const [open, setOpen] = useState(false)
+  const [selectedGuard, setSelectedGuard] = useState(null);
+  const [open, setOpen] = useState(false);
 
-  const handleSentRequest = () => {
-    const data = sendRequest(
-      `http://localhost:5000/api/guard/getguards/${auth.user.userid}`,
-      'GET',
-      null,
-      {
-        "Content-Type": "application/json",
-        'Authorization': `Bearer ${auth.token}`,
-      }
-    ).then(data => {
-      const activeguards = data?.filter(guard => guard.isactive)
-      setGuards(activeguards)
-    })
-  };
+  const {
+    data: guards,
+    isLoading,
+    refetch: refetchGuards,
+    isUninitialized,
+    error,
+  } = useGetGuardsQuery();
+
+  const { data: beats } = useGetBeatsQuery();
+
+  const [selectedBeat, setSelectedBeat] = useState({});
+
+  useEffect(() => {
+    setSelectedBeat(beats?.find((b) => b?._id === beatId));
+  }, [beats]);
 
   const deleteGuard = async () => {
-    auth.loading(true)
-    const data = sendRequest(
-      `http://localhost:5000/api/guard/deleteguard/${auth.user.userid}`,
-      'DELETE',
+    dispatch(suspenseShow());
+    const data = axios(
+      `guard/deleteguard/${user.userid}`,
+      "DELETE",
       JSON.stringify(selectedGuard),
       {
         "Content-Type": "application/json",
-        'Authorization': `Bearer ${auth.token}`,
+        Authorization: `Bearer ${token}`,
       }
-    ).then(data => {
-      if(data.status){
-      setGuards([])
-      handleSentRequest()
-      toast("Guard Deleted Successfully")
-      setOpen(false)
-      }
-    })
-  }
+    )
+      .then((data) => {
+        if (data.status) {
+          refetchGuards();
+          toast("Guard Deleted Successfully");
+          setOpen(false);
+        }
+      })
+      .finally(dispatch(suspenseHide()));
+  };
 
   useEffect(() => {
-    handleSentRequest();
-  }, [auth.token]);
+    if (isUninitialized) {
+      refetchGuards();
+    }
+  }, [token]);
 
   useEffect(() => {
     if (error) {
-      toast.error(error)
+      toast.error(error);
     }
-  }, [error])
+  }, [error]);
+
   return (
     <>
       {/* active-patrol-guards-app works! */}
-
       <div className="hidden sm:block">
         <Card>
           <PatrolGuardListDesktopView
             duty_status={duty_status}
             icon_menu_dots={icon_menu_dots}
-            guards={guards}
+            guards={
+              beatId
+                ? selectedBeat?.guards?.filter((guard) => guard.isactive)
+                : guards?.filter((guard) => guard.isactive)
+            }
           />
         </Card>
       </div>
-
       <div className="sm:hidden rounded-lg bg-white p-2">
         <PatrolGuardListMobileView
           duty_status={duty_status}
           icon_menu_dots={icon_menu_dots}
-          guards={guards}
+          guards={
+            beatId
+              ? selectedBeat?.guards?.filter((guard) => guard.isactive)
+              : guards?.filter((guard) => guard.isactive)
+          }
         />
       </div>
     </>

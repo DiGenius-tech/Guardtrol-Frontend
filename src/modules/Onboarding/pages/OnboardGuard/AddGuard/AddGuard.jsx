@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { Link } from "react-router-dom";
 import TextInputField from "../../../../Sandbox/InputField/TextInputField";
 import useHttpRequest from "../../../../../shared/Hooks/HttpRequestHook";
@@ -7,17 +7,41 @@ import RegularButton from "../../../../Sandbox/Buttons/RegularButton";
 import HistoryButton from "../../../../Sandbox/Buttons/HistoryButton";
 import { SubscriptionContext } from "../../../../../shared/Context/SubscriptionContext";
 import AlertDialog from "../../../../../shared/Dialog/AlertDialog";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  selectCurrentSubscription,
+  selectSubscriptionState,
+} from "../../../../../redux/selectors/subscription";
+import {
+  useAddGuardMutation,
+  useGetGuardsQuery,
+} from "../../../../../redux/services/guards";
+import { selectToken, selectUser } from "../../../../../redux/selectors/auth";
+import { selectOnboardingGuards } from "../../../../../redux/selectors/onboarding";
+import { addOnboardingGuard } from "../../../../../redux/slice/onboardingSlice";
+import { useGetSubscriptionQuery } from "../../../../../redux/services/subscriptions";
 
-function AddGuard() {
+function AddGuard({ onBoarding = true }) {
   const [isGotIt, setIsGotIt] = useState(false);
   const [validationErrors, setValidationErrors] = useState({});
   const [open, setOpen] = useState(false);
-  const navigate = useNavigate()
-  const sub = useContext(SubscriptionContext)
-  const { isLoading, error, responseData, sendRequest } = useHttpRequest();
+  const token = useSelector(selectToken);
+
+  const params = useParams();
+  const { beatId } = params;
+  const dispatch = useDispatch();
+  const onboardingGuards = useSelector(selectOnboardingGuards);
+
+  const { data: guards } = useGetGuardsQuery();
+
+  const navigate = useNavigate();
+
+  const { data: sub } = useGetSubscriptionQuery({ skip: token ? false : true });
+  const [addGuards] = useAddGuardMutation();
+
   const [guard, setGuard] = useState({
     full_name: "",
-    phone: ""
+    phone: "",
   });
 
   const handle_is_got_it = () => {
@@ -29,30 +53,42 @@ function AddGuard() {
     setValidationErrors({ ...validationErrors, [e.target.name]: "" });
   };
 
-  const saveGuard = async(e) => {
+  const saveGuard = async (e) => {
     e.preventDefault();
     if (guard.full_name === "" || guard.full_name.length < 5) {
-      setValidationErrors({ ...validationErrors, full_name: "Enter A Valid Guard Name" });
-      return
+      setValidationErrors({
+        ...validationErrors,
+        full_name: "Enter A Valid Guard Name",
+      });
+      return;
     }
-    if(guard.phone === "" || guard.phone.length < 8){
-      setValidationErrors({ ...validationErrors, phone: "Enter A Valid Phone Number" });
-      return
+    if (guard.phone === "" || guard.phone.length < 8) {
+      setValidationErrors({
+        ...validationErrors,
+        phone: "Enter A Valid Phone Number",
+      });
+      return;
     }
 
-      const existingGuards = JSON.parse(localStorage.getItem("guards")) || [];
-      if(existingGuards.length === (sub.currentSubscription?.maxbeats*5 + sub.currentSubscription?.maxextraguards)){
-        setOpen(true)
-        return
+    if (onBoarding) {
+      if (onboardingGuards?.length >= sub?.maxbeats * 5 + sub?.maxextraguards) {
+        setOpen(true);
+        return;
       }
-      const updatedGuards = [...existingGuards, guard];
-      localStorage.setItem("guards", JSON.stringify(updatedGuards));
-      
-      navigate("../")
-    
-      
-    
-  }
+
+      dispatch(addOnboardingGuard(guard));
+      navigate("../");
+    } else {
+      if (guards?.length >= sub?.maxbeats * 5 + sub?.maxextraguards) {
+        setOpen(true);
+        return;
+      } else {
+        addGuards(guard);
+        navigate("../");
+      }
+    }
+  };
+
   return (
     <>
       {/* add-guard-app works! */}
@@ -91,7 +127,13 @@ function AddGuard() {
           <div className="">
             <div className="relative">
               <div className="flex items-center justify-between">
-                <RegularButton text="Save" rounded="full" width="auto" padding="px-8 py-2.5" textSize="sm" />
+                <RegularButton
+                  text="Save"
+                  rounded="full"
+                  width="auto"
+                  padding="px-8 py-2.5"
+                  textSize="sm"
+                />
                 <HistoryButton type="button" text="Cancel" />
               </div>
               {/* static tooltip */}
@@ -119,7 +161,7 @@ function AddGuard() {
       </div>
       <div className="mb-32"></div>
 
-      <AlertDialog 
+      <AlertDialog
         open={open}
         title="OOPS!! You've Ran Out Of Guards"
         description="Would You Like To Subscribe For Another Guard ?"

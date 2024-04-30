@@ -7,7 +7,7 @@ const TextInputField = (props) => {
     <>
       {/* text-field-error-app works! */}
 
-      <div className="mb-6">
+      <div className={`${props.class || "mb-6"}`}>
         {/* <label
           htmlFor={props.id}
           className="block mb-2 font-medium text-gray-900 dark:text-white"

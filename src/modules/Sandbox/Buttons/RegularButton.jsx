@@ -1,9 +1,4 @@
-import { useContext } from "react";
-import { AuthContext } from "../../../shared/Context/AuthContext";
-
 const RegularButton = (props) => {
-  const { isloading } = useContext(AuthContext);
-
   return (
     <button
       type={props.type}
@@ -12,30 +7,34 @@ const RegularButton = (props) => {
       // font-medium rounded-lg text-sm w-full px-5 py-2.5 sm:py-3
       // text-center dark:bg-green-600 dark:hover:bg-green-700
       // dark:focus:ring-green-800"
+      style={{ cursor: "pointer" }}
       className={
         (props.width ? `w-${props.width} ` : `w-full `) +
         (props.rounded ? `rounded-${props.rounded} ` : `rounded-lg `) +
         (props.textSize ? `text-${props.textSize} ` : `text-base sm:text-lg `) +
         (props.padding ? `${props.padding} ` : `px-5 py-2.5 sm:py-3 `) +
-        (props.backgroundColor || props.disabled ? `bg-${props.backgroundColor} ` : `bg-primary-500 hover:bg-primary-600 text-white `) +
-        (props.disabled ? `bg-gray-200 text-white ` : `bg-primary-500 hover:bg-primary-600 text-white `) +
+        (props.backgroundColor || props.disabled
+          ? `bg-${props.backgroundColor} `
+          : `bg-primary-500 hover:bg-primary-600 text-white `) +
+        (props.disabled
+          ? `bg-gray-200 text-white `
+          : `bg-primary-500 hover:bg-primary-600 text-white `) +
         `focus:ring-1 focus:outline-none focus:ring-green-300
       font-medium text-center dark:bg-green-600 dark:hover:bg-green-700
-      dark:focus:ring-green-800`}
-      disabled={props.disabled || isloading}
-
-      onClick={props.onClick||null}
+      dark:focus:ring-green-800`
+      }
+      disabled={props.disabled || props?.isLoading}
+      onClick={props.onClick || null}
     >
-        {isloading ? "Please Wait" : props.text}
+      {props?.isLoading ? "Please Wait" : props.text}
     </button>
   );
 };
 
 export default RegularButton;
 
-
-
-{/* <button
+{
+  /* <button
 type="submit"
 className="text-white 
 bg-primary-500 
@@ -54,4 +53,5 @@ dark:hover:bg-green-700
 dark:focus:ring-green-800"
 >
 Save
-</button> */}
+</button> */
+}

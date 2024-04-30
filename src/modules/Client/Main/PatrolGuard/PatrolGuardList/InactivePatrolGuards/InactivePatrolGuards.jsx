@@ -6,64 +6,70 @@ import PatrolGuardListMobileView from "../PatrolGuardListMobileView/PatrolGuardL
 import { useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import useHttpRequest from "../../../../../../shared/Hooks/HttpRequestHook";
-import { AuthContext } from "../../../../../../shared/Context/AuthContext";
+
+import { useDispatch, useSelector } from "react-redux";
+import {
+  selectToken,
+  selectUser,
+} from "../../../../../../redux/selectors/auth";
+import {
+  suspenseHide,
+  suspenseShow,
+} from "../../../../../../redux/slice/suspenseSlice";
+import { useGetGuardsQuery } from "../../../../../../redux/services/guards";
+import { useGetBeatsQuery } from "../../../../../../redux/services/beats";
+import { useParams } from "react-router-dom";
 
 const duty_status = {
   OFF_DUTY: 0,
-  ON_DUTY: 0
+  ON_DUTY: 0,
 };
 function InactivePatrolGuards() {
-  const auth = useContext(AuthContext)
-  const { isLoading, error, responseData, sendRequest } = useHttpRequest();
-  const [guards, setGuards] = useState([])
+  const user = useSelector(selectUser);
+  const token = useSelector(selectToken);
+  const dispatch = useDispatch();
+  const { beatId } = useParams();
+  const { responseData, sendRequest } = useHttpRequest();
 
-  const [selectedGuard, setSelectedGuard] = useState(null)
-  const [open, setOpen] = useState(false)
+  const [selectedGuard, setSelectedGuard] = useState(null);
+  const [open, setOpen] = useState(false);
 
-  const handleSentRequest = () => {
-    const data = sendRequest(
-      `http://localhost:5000/api/guard/getguards/${auth.user.userid}`,
-      'GET',
-      null,
-      {
-        "Content-Type": "application/json",
-        'Authorization': `Bearer ${auth.token}`,
-      }
-    ).then(data => {
-      const activeguards = data?.filter(guard => !guard.isactive)
-      setGuards(activeguards)
-    })
-  };
+  const {
+    data: guards,
+    isLoading,
+    refetch: refetchGuards,
+    error,
+  } = useGetGuardsQuery();
+  const { data: beats } = useGetBeatsQuery();
+  const selectedBeat = beats?.find((b) => b._id === beatId);
 
   const deleteGuard = async () => {
-    auth.loading(true)
+    dispatch(suspenseShow());
     const data = sendRequest(
-      `http://localhost:5000/api/guard/deleteguard/${auth.user.userid}`,
-      'DELETE',
+      `guard/deleteguard/${user.userid}`,
+      "DELETE",
       JSON.stringify(selectedGuard),
       {
         "Content-Type": "application/json",
-        'Authorization': `Bearer ${auth.token}`,
+        Authorization: `Bearer ${token}`,
       }
-    ).then(data => {
-      if(data.status){
-      setGuards([])
-      handleSentRequest()
-      toast("Guard Deleted Successfully")
-      setOpen(false)
-      }
-    })
-  }
+    )
+      .then((data) => {
+        if (data.status) {
+          toast("Guard Deleted Successfully");
+          setOpen(false);
+        }
+      })
+      .finally(dispatch(suspenseHide()));
+  };
 
-  useEffect(() => {
-    handleSentRequest();
-  }, [auth.token]);
+  useEffect(() => {}, [token]);
 
   useEffect(() => {
     if (error) {
-      toast.error(error)
+      toast.error(error);
     }
-  }, [error])
+  }, [error]);
   return (
     <>
       {/* inactive-patrol-guards-app works! */}
@@ -73,7 +79,10 @@ function InactivePatrolGuards() {
           <PatrolGuardListDesktopView
             duty_status={duty_status}
             icon_menu_dots={icon_menu_dots}
-            guards={guards}
+            guards={
+              selectedBeat?.guards?.filter((guard) => !guard.isactive) ||
+              guards?.filter((guard) => !guard.isactive)
+            }
           />
         </Card>
       </div>
@@ -82,7 +91,10 @@ function InactivePatrolGuards() {
         <PatrolGuardListMobileView
           duty_status={duty_status}
           icon_menu_dots={icon_menu_dots}
-          guards={guards}
+          guards={
+            selectedBeat?.guards?.filter((guard) => !guard.isactive) ||
+            guards?.filter((guard) => !guard.isactive)
+          }
         />
       </div>
     </>

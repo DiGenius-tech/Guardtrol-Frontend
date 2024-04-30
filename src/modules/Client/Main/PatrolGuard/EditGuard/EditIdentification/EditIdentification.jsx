@@ -3,54 +3,57 @@ import TextInputField from "../../../../../Sandbox/InputField/TextInputField";
 import SelectField from "../../../../../Sandbox/SelectField/SelectField";
 import RegularButton from "../../../../../Sandbox/Buttons/RegularButton";
 import { useParams } from "react-router-dom";
-import { AuthContext } from "../../../../../../shared/Context/AuthContext";
+
 import useHttpRequest from "../../../../../../shared/Hooks/HttpRequestHook";
 import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
+import {
+  selectToken,
+  selectUser,
+} from "../../../../../../redux/selectors/auth";
 const identificationTypeOptions = [
   {
     name: "National Identification Number (NIN)",
-    value: "NIN"
+    value: "NIN",
   },
   {
     name: "Drivers Liscense",
-    value: "Drivers Liscense"
+    value: "Drivers Liscense",
   },
   {
     name: "International Passport",
-    value: "International Passport"
+    value: "International Passport",
   },
 
   {
     name: "Voter Card",
-    value: "Voter Card"
-  }
+    value: "Voter Card",
+  },
 ];
 const EditIdentification = (props) => {
-  const {guardId} = useParams()
-  const auth = useContext(AuthContext)
+  const { guardId } = useParams();
+  const user = useSelector(selectUser);
+  const token = useSelector(selectToken);
   const { isLoading, error, responseData, sendRequest } = useHttpRequest();
   const [validationErrors, setValidationErrors] = useState({});
   const [formData, setFormData] = useState({
     idnumber: "",
     idname: "",
   });
-  useEffect(()=>{
+  useEffect(() => {
     setFormData({
       idnumber: props.guard?.idnumber,
-      idname: props.guard?.idname
-    })
-  }, [props])
+      idname: props.guard?.idname,
+    });
+  }, [props]);
 
   useEffect(() => {
     if (error) {
-      toast.error(error)
+      toast.error(error);
     }
-  }, [error])
+  }, [error]);
 
-
-  const [identificationType, setIdentificationType] = useState(
-    null
-  );
+  const [identificationType, setIdentificationType] = useState(null);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -65,33 +68,33 @@ const EditIdentification = (props) => {
   };
 
   const save = async (e) => {
-    e.preventDefault()
-    if(!formData.idname) {
-      toast.warn("select a valid identification type")
-      return
+    e.preventDefault();
+    if (!formData.idname) {
+      toast.warn("select a valid identification type");
+      return;
     }
-   
+
     const guardData = {
       idname: formData.idname,
-      idnumber: formData.idnumber
-    }
-    
+      idnumber: formData.idnumber,
+    };
+
     const data = sendRequest(
-      `http://localhost:5000/api/guard/identification/${guardId}`,
-      'PATCH',
+      `guard/identification/${guardId}`,
+      "PATCH",
       JSON.stringify(guardData),
       {
         "Content-Type": "application/json",
-        'Authorization': `Bearer ${auth.token}`,
+        Authorization: `Bearer ${token}`,
       }
-    ).then(data => {
-      if(data.status){
-        toast("Identification Information Updated")
+    ).then((data) => {
+      if (data.status) {
+        toast("Identification Information Updated");
         //props.setGuard({})
-        props.handleSentRequest()
+        props.handleSentRequest();
       }
-    })
-  }
+    });
+  };
   return (
     <>
       {/* edit-identification-app works! */}
@@ -103,7 +106,7 @@ const EditIdentification = (props) => {
               Identification
             </legend>
             <div className="grid grid-cols-12 gap-x-4">
-            <div className="col-span-12">
+              <div className="col-span-12">
                 <SelectField
                   value={identificationType}
                   name="idname"
@@ -115,7 +118,7 @@ const EditIdentification = (props) => {
                   multipleSelect={false}
                 />
               </div>
-            <div className="col-span-12">
+              <div className="col-span-12">
                 <TextInputField
                   label="Identification Number"
                   semibold_label={true}
@@ -128,7 +131,6 @@ const EditIdentification = (props) => {
                   error={validationErrors["idnumber"]}
                 />
               </div>
-              
             </div>
             <RegularButton text="Update" />
           </fieldset>

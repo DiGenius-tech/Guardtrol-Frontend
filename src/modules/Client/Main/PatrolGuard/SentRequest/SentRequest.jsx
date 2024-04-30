@@ -5,67 +5,33 @@ import SentRequestDesktopView from "./SentRequestDesktopView/SentRequestDesktopV
 import SentRequestMobileView from "./SentRequestMobileView/SentRequestMobileView";
 import { Card } from "flowbite-react";
 import { toast } from "react-toastify";
-import { AuthContext } from "../../../../../shared/Context/AuthContext";
-import useHttpRequest from "../../../../../shared/Hooks/HttpRequestHook";
+
 import AlertDialog from "../../../../../shared/Dialog/AlertDialog";
+import {
+  useDeleteGuardMutation,
+  useGetGuardsQuery,
+} from "../../../../../redux/services/guards";
+import { useSelector } from "react-redux";
+import { selectUser } from "../../../../../redux/selectors/auth";
 
 function SentRequest(props) {
-  const auth = useContext(AuthContext)
-  const { isLoading, error, responseData, sendRequest } = useHttpRequest();
-  const [inActiveGuards, setInActiveGuards] = useState([])
+  const { user } = useSelector(selectUser);
 
-  const [selectedGuard, setSelectedGuard] = useState(null)
-  const [open, setOpen] = useState(false)
+  const [inActiveGuards, setInActiveGuards] = useState([]);
 
-  const handleSentRequest = () => {
-    const data = sendRequest(
-      `http://localhost:5000/api/guard/getguards/${auth.user.userid}`,
-      'GET',
-      null,
-      {
-        "Content-Type": "application/json",
-        'Authorization': `Bearer ${auth.token}`,
-      }
-    ).then(data => {
-      const inactiveguards = data.filter(guard => !guard.isactive)
-      setInActiveGuards(inactiveguards)
-      props.setSentRequestCount(inactiveguards.length)
-    })
-  };
+  const [selectedGuard, setSelectedGuard] = useState(null);
+  const [open, setOpen] = useState(false);
 
-  const deleteGuard = async () => {
-    auth.loading(true)
-    const data = sendRequest(
-      `http://localhost:5000/api/guard/deleteguard/${auth.user.userid}`,
-      'DELETE',
-      JSON.stringify(selectedGuard),
-      {
-        "Content-Type": "application/json",
-        'Authorization': `Bearer ${auth.token}`,
-      } 
-    ).then(data => {
-      if(data?.status){
-      setInActiveGuards([])
-      handleSentRequest()
-      toast("Guard Deleted Successfully")
-      setOpen(false)
-      return
-      }
-      setInActiveGuards([])
-      handleSentRequest()
-      setOpen(false)
-    })
-  }
+  const { data: guards, isLoading, error } = useGetGuardsQuery();
 
-  useEffect(() => {
-    handleSentRequest();
-  }, [auth.token]);
+  const [deleteGuard, { isLoading: isUpdating, status }] =
+    useDeleteGuardMutation();
 
   useEffect(() => {
     if (error) {
-      toast.error(error)
+      toast.error(error);
     }
-  }, [error])
+  }, [error]);
   return (
     <>
       {/* sent-request-app works! */}
@@ -82,7 +48,7 @@ function SentRequest(props) {
           />
         </Card>
       </div>
-      
+
       <div className="sm:hidden rounded-lg bg-white p-2">
         <SentRequestMobileView
           sentRequestList={inActiveGuards}
@@ -94,7 +60,7 @@ function SentRequest(props) {
         />
       </div>
 
-      <AlertDialog 
+      <AlertDialog
         open={open}
         title={`Delete Guard ?`}
         description={`Are You Sure You Want To Delete This Guard ?`}

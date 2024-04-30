@@ -2,19 +2,26 @@ import React, { useContext, useEffect, useState } from "react";
 import TextInputField from "../../../../../Sandbox/InputField/TextInputField";
 import RegularButton from "../../../../../Sandbox/Buttons/RegularButton";
 import useHttpRequest from "../../../../../../shared/Hooks/HttpRequestHook";
-import { AuthContext } from "../../../../../../shared/Context/AuthContext";
+
 import { useParams } from "react-router-dom";
 import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
+import {
+  selectAuth,
+  selectToken,
+} from "../../../../../../redux/selectors/auth";
 
 const BankDetails = (props) => {
-  const {guardId} = useParams()
-  const auth = useContext(AuthContext)
+  const { guardId } = useParams();
+  const auth = useSelector(selectAuth);
+
+  const token = useSelector(selectToken);
   const { isLoading, error, responseData, sendRequest } = useHttpRequest();
   const [validationErrors, setValidationErrors] = useState({});
   const [formData, setFormData] = useState({
     bank: "",
     accountnumber: "",
-    accountname: ""
+    accountname: "",
   });
 
   const handleChange = (e) => {
@@ -23,42 +30,39 @@ const BankDetails = (props) => {
     // console.log("formData: ", formData)
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     setFormData({
       bank: props.guard?.bank,
       accountname: props.guard?.accountname,
       accountnumber: props.guard?.accountnumber,
-    })
-  }, [props])
+    });
+  }, [props]);
 
   useEffect(() => {
     if (error) {
-      toast.error(error)
+      toast.error(error);
     }
-  }, [error])
+  }, [error]);
 
   const save = async (e) => {
-    e.preventDefault()
-    
-   
-    
-    
+    e.preventDefault();
+
     const data = sendRequest(
-      `http://localhost:5000/api/guard/banking/${guardId}`,
-      'PATCH',
+      `guard/banking/${guardId}`,
+      "PATCH",
       JSON.stringify(formData),
       {
         "Content-Type": "application/json",
-        'Authorization': `Bearer ${auth.token}`,
+        Authorization: `Bearer ${token}`,
       }
-    ).then(data => {
-      if(data.status){
-        toast("Banking Information Updated")
+    ).then((data) => {
+      if (data.status) {
+        toast("Banking Information Updated");
         //props.setGuard({})
-        props.handleSentRequest()
+        props.handleSentRequest();
       }
-    })
-  }
+    });
+  };
   return (
     <>
       {/* bank-details-app works! */}

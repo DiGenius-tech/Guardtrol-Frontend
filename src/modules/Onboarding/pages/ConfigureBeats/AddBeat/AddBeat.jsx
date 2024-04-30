@@ -7,16 +7,29 @@ import HistoryButton from "../../../../Sandbox/Buttons/HistoryButton";
 import { useNavigate } from "react-router";
 import { SubscriptionContext } from "../../../../../shared/Context/SubscriptionContext";
 import AlertDialog from "../../../../../shared/Dialog/AlertDialog";
+import {
+  useAddBeatMutation,
+  useGetBeatsQuery,
+} from "../../../../../redux/services/beats";
+import { useSelector } from "react-redux";
+import { selectToken, selectUser } from "../../../../../redux/selectors/auth";
+import { selectSubscriptionState } from "../../../../../redux/selectors/subscription";
+import { useGetSubscriptionQuery } from "../../../../../redux/services/subscriptions";
 
 function AddBeat() {
   const [validationErrors, setValidationErrors] = useState({});
-  const navigate = useNavigate()
-  const sub = useContext(SubscriptionContext)
+  const navigate = useNavigate();
+  const user = useSelector(selectUser);
+  const token = useSelector(selectToken);
+
+  const { data: sub } = useGetSubscriptionQuery(null, {
+    skip: token ? false : true,
+  });
   const [open, setOpen] = useState(false);
-  const { isLoading, error, responseData, sendRequest } = useHttpRequest();
+
   const [beat, setBeat] = useState({
     beat_name: "",
-    description: "my location"
+    description: "my location",
   });
 
   const handleChange = (e) => {
@@ -24,27 +37,34 @@ function AddBeat() {
     setValidationErrors({ ...validationErrors, [e.target.name]: "" });
   };
 
-  const saveBeat = async(e) => {
-    e.preventDefault();
-    if (beat.beat_name === "" || beat.beat_name.length < 3) {
-      setValidationErrors({ ...validationErrors, beat_name: "Use A Valid Beat Name" });
-    } else {
-      const existingBeats = JSON.parse(localStorage.getItem("beats")) || [];
-      console.log(existingBeats.length)
-      console.log(sub)
+  const [addBeat] = useAddBeatMutation();
 
-      if(existingBeats.length === sub.currentSubscription?.maxbeats){
-        setOpen(true)
-        return
+  const {
+    data: beats,
+    isLoading,
+    isUninitialized,
+    refetch: refetchBeats,
+  } = useGetBeatsQuery();
+
+  const saveBeat = async (e) => {
+    e.preventDefault();
+
+    if (beat.name === "" || beat.name.length < 3) {
+      setValidationErrors({
+        ...validationErrors,
+        name: "Use A Valid Beat Name",
+      });
+    } else {
+      if (beats?.length && sub?.maxbeats && beats?.length >= sub?.maxbeats) {
+        setOpen(true);
+        return;
       }
-      const updatedBeats = [...existingBeats, beat];
-      localStorage.setItem("beats", JSON.stringify(updatedBeats));
-      
-      navigate("../")
+      await addBeat(beat);
+      console.log(user);
+      await refetchBeats();
+      navigate("../");
     }
-      
-    
-  }
+  };
   return (
     <>
       {/* add-beat-app works! */}
@@ -53,14 +73,28 @@ function AddBeat() {
           <div className="mb-6">
             <TextInputField
               label="Beat Name"
-              name="beat_name"
+              name="name"
               type="text"
               placeholder="Beat Name"
-              id="beat_name"
-              error={validationErrors["beat_name"]}
+              id="name"
+              error={validationErrors["name"]}
               onChange={handleChange}
               required="required"
-              value={beat.beat_name}
+              value={beat.name}
+              semibold_label={true}
+            />
+          </div>
+          <div className="mb-6">
+            <TextInputField
+              label="Address"
+              name="address"
+              type="text"
+              placeholder="Beat Address"
+              id="address"
+              error={validationErrors["address"]}
+              onChange={handleChange}
+              required="required"
+              value={beat.address}
               semibold_label={true}
             />
           </div>
@@ -89,7 +123,7 @@ function AddBeat() {
           </div>
         </form>
       </div>
-      <AlertDialog 
+      <AlertDialog
         open={open}
         title="OOPS!! You've Ran Out Of Beats"
         description="Would You Like To Subscribe For Another Beat ?"

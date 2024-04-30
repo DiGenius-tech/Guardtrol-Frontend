@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import ClientToolbar from "./components/ClientToolbar/ClientToolbar";
-import ClientSidebar from "./components/ClientSidebar/ClientSidebar";
+import ClientToolbar from "./components/ClientToolbar";
+import ClientSidebar from "./components/ClientSidebar";
 import Main from "./Main/Main";
 import { Outlet, useLocation } from "react-router-dom";
 import brandLogo from "../../images/brand-logo.svg";

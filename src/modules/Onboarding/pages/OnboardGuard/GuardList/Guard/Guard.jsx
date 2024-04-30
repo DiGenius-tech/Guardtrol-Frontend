@@ -4,8 +4,14 @@ import icon_guard_avatar from "../../../../../../images/icons/icon-guard-avatar.
 import { useState } from "react";
 import { toast } from "react-toastify";
 import AlertDialog from "../../../../../../shared/Dialog/AlertDialog";
+import { useDispatch, useSelector } from "react-redux";
+import { selectOnboardingGuards } from "../../../../../../redux/selectors/onboarding";
+import { setOnboardingGuards } from "../../../../../../redux/slice/onboardingSlice";
 
-function Guard({setGuards, guard, status, handle_edit_guard }) {
+function Guard({ setGuards, guard, status, handle_edit_guard }) {
+  const onboardingGuards = useSelector(selectOnboardingGuards);
+  const dispatch = useDispatch();
+
   const [open, setOpen] = useState(false);
   const handle_status = (guard) => {
     switch (guard?.status) {
@@ -35,22 +41,22 @@ function Guard({setGuards, guard, status, handle_edit_guard }) {
   };
 
   const deleteGuard = (guardName) => {
-    const guards = JSON.parse(localStorage.getItem('guards')) || [];
-    const index = guards.findIndex(guard => guard.full_name === guardName);
+    const index = onboardingGuards?.findIndex(
+      (guard) => guard?.full_name === guardName
+    );
 
-    if (index !== -1) { // Check if the beat is found
-      
-      const newGuards = guards.filter((guard, i) => i!== index);
+    if (index !== -1) {
+      // Check if the beat is found
 
-      setGuards(newGuards);
+      const newGuards = onboardingGuards?.filter((guard, i) => i !== index);
 
-      const savedGuards = JSON.stringify(newGuards);
-      localStorage.setItem("guards", savedGuards);
-
+      dispatch(setOnboardingGuards(newGuards));
+      setOpen(false)
+      toast("Guard deleted");
     } else {
-       toast.error('Guard not found');
+      toast.error("Guard not found");
     }
-}
+  };
   return (
     <>
       {/* Guard-app works! */}
@@ -65,9 +71,7 @@ function Guard({setGuards, guard, status, handle_edit_guard }) {
             <p className="text-dark-450 font-semibold text-sm">
               {guard?.full_name}
               <br />
-              <span className="font-normal text-dark-200">
-                {guard?.phone}
-              </span>
+              <span className="font-normal text-dark-200">{guard?.phone}</span>
             </p>
           </div>
           <div className="col-span-1">
@@ -84,13 +88,15 @@ function Guard({setGuards, guard, status, handle_edit_guard }) {
               <Dropdown.Item onClick={() => handle_edit_guard(guard)}>
                 Edit
               </Dropdown.Item>
-              <Dropdown.Item onClick={()=> setOpen(true)}>Remove</Dropdown.Item>
+              <Dropdown.Item onClick={() => setOpen(true)}>
+                Remove
+              </Dropdown.Item>
             </Dropdown>
           </div>
         </div>
       </Card>
 
-      <AlertDialog 
+      <AlertDialog
         open={open}
         title="Delete Guard ?"
         description="Are You Sure You Want To Delete This Guard ?, You won't Be Able To Revert This Action"

@@ -10,6 +10,16 @@ import { FaMinus } from "react-icons/fa";
 import { FaPlus } from "react-icons/fa";
 import { FaCaretUp } from "react-icons/fa";
 import { FaCaretDown } from "react-icons/fa";
+import { useSelector } from "react-redux";
+import { selectToken, selectUser } from "../../../../../redux/selectors/auth";
+import { useNavigate } from "react-router-dom";
+import {
+  useGetAllSubscriptionsQuery,
+  useGetSubscriptionQuery,
+} from "../../../../../redux/services/subscriptions";
+import { useGetGuardsQuery } from "../../../../../redux/services/guards";
+import { formatNumberWithCommas } from "../../../../../shared/functions/random-hex-color";
+import moment from "moment";
 
 const savedPaymentCards = [
   {
@@ -17,21 +27,36 @@ const savedPaymentCards = [
     title: "Mastercard",
     default: true,
     lastFourDigits: 2378,
-    brandLogo: logo_mastercard
+    brandLogo: logo_mastercard,
   },
   {
     id: "2",
     title: "VISA",
     default: false,
     lastFourDigits: 1334,
-    brandLogo: logo_visa
-  }
+    brandLogo: logo_visa,
+  },
 ];
 
 const SettingBilling = () => {
+  const user = useSelector(selectUser);
+  const token = useSelector(selectToken);
+
+  const navigate = useNavigate();
+  const {
+    data: sub,
+    isError,
+
+    refetch,
+    isUninitialized,
+  } = useGetSubscriptionQuery(null, { skip: token ? false : true });
+
+  const { data: guards } = useGetGuardsQuery();
   const [defaultCard, setDefaultCard] = useState({
-    id: ""
+    id: "",
   });
+
+  const { data: subs } = useGetAllSubscriptionsQuery();
 
   const [isAddNewCard, setIsAddNewCard] = useState(false);
   const [isUpdateSub, setIsUpdateSub] = useState(false);
@@ -41,14 +66,40 @@ const SettingBilling = () => {
   };
 
   const handleDefaultCard = (e) => {
-    console.log("e.target.value: ", e.target.value);
     setDefaultCard(e.target.value);
   };
 
   useEffect(() => {
-    console.log("defaultCard: ", defaultCard);
     return () => {};
   }, [defaultCard]);
+
+  const totalPages = subs?.length;
+  const [currentPage, setCurrentPage] = useState(1);
+  const [filteredData, setFilteredData] = useState([]);
+  const itemsPerPage = 5;
+
+  const filterData = () => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const slicedData = subs?.slice(startIndex, endIndex);
+    setFilteredData(slicedData);
+  };
+  const goToPreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const goToNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  useEffect(() => {
+    filterData();
+  }, [currentPage, subs]);
+
   return (
     <>
       {/* setting-billing-app works! */}
@@ -62,11 +113,16 @@ const SettingBilling = () => {
             <ul className="flex flex-col gap-4">
               <li className="grid grid-cols-2 items-center">
                 <div className="col-span-2 sm:col-span-1 font-light">
-                  Monthly plan
+                  {sub?.plan} plan
                 </div>
                 <div className="col-span-2 sm:col-span-1 sm:text-right">
-                  <p className="text-2xl font-bold">₦26,000</p>
-                  <p className="text-xs font-light">5 of 7 Guards used</p>
+                  <p className="text-2xl font-bold">
+                    ₦{formatNumberWithCommas(sub?.totalamount)}
+                  </p>
+                  <p className="text-xs font-light">
+                    {guards?.length} of{" "}
+                    {sub?.maxbeats * 5 + sub?.maxextraguards} Guards used
+                  </p>
                 </div>
               </li>
               <li className="grid grid-cols-2 items-center">
@@ -74,12 +130,16 @@ const SettingBilling = () => {
                   Next billing date
                 </div>
                 <div className="col-span-2 sm:col-span-1 sm:text-right">
-                  <p className="font-normal">24 April, 2024</p>
+                  <p className="font-normal">
+                    {moment(sub?.updatedat)
+                      .add(sub?.plan === "monthly" ? 30 : 365, "days")
+                      .format("DD MMMM, YYYY")}
+                  </p>
                 </div>
               </li>
               <li className="grid grid-cols-12 items-end gap-4">
                 <div className="col-span-12">
-                  {isUpdateSub ? null : (
+                  {isUpdateSub ? "" : (
                     <button
                       type="button"
                       className="w-full block text-white bg-yellow-500 hover:bg-yellow-600 focus:ring-1 focus:outline-none focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
@@ -188,7 +248,7 @@ const SettingBilling = () => {
                       </button>
                     </form>
                   </div>
-                ) : null}
+                ) : ""}
               </li>
             </ul>
           </div>
@@ -198,7 +258,8 @@ const SettingBilling = () => {
         </div>
         <div className="col-span-12 sm:col-span-7">
           <div className="">
-            <div className="relative overflow-x-auto">
+            {
+              filteredData ?  <div className="relative overflow-x-auto">
               <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead className="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400">
                   <tr>
@@ -219,20 +280,20 @@ const SettingBilling = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {[1, 2, 3].map((e, i) => {
+                  {filteredData?.map((s, i) => {
                     return (
-                      <tr key={i} className="bg-white dark:bg-gray-800">
+                      <tr key={s?._id} className="bg-white dark:bg-gray-800">
                         <th
                           scope="row"
                           className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                         >
-                          24 Aug, 2023
+                          {moment(s?.updatedat).format("DD MMMM, YYYY")}
                         </th>
-                        <td className="px-6 py-4">Monthly plan</td>
+                        <td className="px-6 py-4">{s?.plan} plan</td>
                         <td className="px-6 py-4">Paid</td>
                         <td className="px-6 py-4">
                           <a
-                            href=""
+                            href="#"
                             className="font-semibold text-primary-500 whitespace-nowrap"
                           >
                             Get Invoice
@@ -242,47 +303,70 @@ const SettingBilling = () => {
                     );
                   })}
                 </tbody>
+
                 <tfoot>
-                  <tr className="font-semibold text-gray-900 dark:text-white">
-                    <th
-                      scope="row"
-                      colSpan={"4"}
-                      className="px-6 py-3 text-sm font-light text-right"
-                    >
-                      <div className="inline-flex items-center justify-end gap-4">
-                        <a
-                          href="#"
-                          className="inline-flex items-center justify-center border border-gray-300 text-sm rounded-lg w-full p-1.5 font-semibold min-w-10 min-h-8"
-                        >
-                          1
-                        </a>
-                        <div>
-                          of&nbsp;<span>4</span>
+                  <tfoot>
+                    <tr className="font-semibold text-gray-900 dark:text-white">
+                      <th
+                        scope="row"
+                        colSpan={"4"}
+                        className="px-6 py-3 text-sm font-light text-right"
+                      >
+                        <div className="inline-flex items-center justify-end gap-4">
+                          {/* Render page numbers */}
+                          {subs &&
+                            [
+                              ...Array(
+                                Math.ceil(subs?.length / itemsPerPage)
+                              ).keys(),
+                            ].map((index) => (
+                              <a
+                                key={index}
+                                href="#"
+                                className={`inline-flex items-center justify-center border border-gray-300 text-sm rounded-lg w-full p-1.5 font-semibold min-w-10 min-h-8 ${
+                                  currentPage === index + 1
+                                    ? "bg-accent-200"
+                                    : ""
+                                }`}
+                                onClick={() => setCurrentPage(index + 1)}
+                              >
+                                {index + 1}
+                              </a>
+                            ))}
+                          <div>
+                            of&nbsp;<span>{totalPages}</span>
+                          </div>
+                          <div className="flex items-center">
+                            {/* Render previous button */}
+                            <a
+                              href="#"
+                              className="inline-flex items-center justify-center bg-accent-200 text-dark-70 hover:bg-accent-300 hover:text-secondary-500 border border-gray-300 text-sm rounded-s-lg w-full p-2 min-w-10 min-h-8"
+                              onClick={goToPreviousPage}
+                            >
+                              <GrPrevious />
+                            </a>
+                            {/* Render next button */}
+                            <a
+                              href="#"
+                              className="inline-flex items-center justify-center bg-accent-200 text-dark-70 hover:bg-accent-300 hover:text-secondary-500 border border-gray-300 text-sm rounded-r-lg w-full p-2 min-w-10 min-h-8"
+                              onClick={goToNextPage}
+                            >
+                              <GrNext />
+                            </a>
+                          </div>
                         </div>
-                        <div className="flex items-center">
-                          <a
-                            href="#"
-                            className="inline-flex items-center justify-center bg-accent-200 text-dark-70 hover:bg-accent-300 hover:text-secondary-500 border border-gray-300 text-sm rounded-s-lg w-full p-2 min-w-10 min-h-8"
-                          >
-                            <GrPrevious />
-                          </a>
-                          <a
-                            href="#"
-                            className="inline-flex items-center justify-center bg-accent-200 text-dark-70 hover:bg-accent-300 hover:text-secondary-500 border border-gray-300 text-sm rounded-r-lg w-full p-2 min-w-10 min-h-8"
-                          >
-                            <GrNext />
-                          </a>
-                        </div>
-                      </div>
-                    </th>
-                  </tr>
+                      </th>
+                    </tr>
+                  </tfoot>
                 </tfoot>
               </table>
-            </div>
+            </div> : <p>No invoice recorded!</p>
+            }
+           
           </div>
         </div>
 
-        <div className="hidden sm:block col-span-12 sm:col-span-5">
+        {/* <div className="hidden sm:block col-span-12 sm:col-span-5">
           <h3 className="font-bold">Card details</h3>
         </div>
         <div className="col-span-12 sm:col-span-7">
@@ -433,19 +517,11 @@ const SettingBilling = () => {
                   </button>
                 </div>
               </form>
-            </div>
-          ) : (
-            <button
-              type="submit"
-              onClick={() => {
-                setIsAddNewCard(!isAddNewCard);
-              }}
-              className="text-sm font-semibold text-primary-500"
-            >
-              +&nbsp;Add Another Card
-            </button>
-          )}
-        </div>
+            </div> : <button type='submit' onClick={() => { setIsAddNewCard(!isAddNewCard) }} className="text-sm font-semibold text-primary-500">+&nbsp;Add Another Card</button>
+
+          }
+
+        </div> */}
       </div>
       {/* <div className="my-4"></div>
                 <div className="text-right">

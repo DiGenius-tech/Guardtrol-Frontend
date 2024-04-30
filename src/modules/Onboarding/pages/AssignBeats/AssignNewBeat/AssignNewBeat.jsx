@@ -1,182 +1,219 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useParams } from "react-router-dom";
 import SelectField from "../../../../Sandbox/SelectField/SelectField";
 import RegularButton from "../../../../Sandbox/Buttons/RegularButton";
 import useHttpRequest from "../../../../../shared/Hooks/HttpRequestHook";
 import { useNavigate, useLocation } from "react-router-dom";
-import { AuthContext } from "../../../../../shared/Context/AuthContext";
+
 import { toast } from "react-toastify";
 import MultiSelectField from "../../../../Sandbox/SelectField/MultiSelectField";
+import { useDispatch, useSelector } from "react-redux";
+import { selectToken, selectUser } from "../../../../../redux/selectors/auth";
+import {
+  suspenseHide,
+  suspenseShow,
+} from "../../../../../redux/slice/suspenseSlice";
+import {
+  useAssignGuardToBeatMutation,
+  useGetBeatsQuery,
+} from "../../../../../redux/services/beats";
+import { useGetGuardsQuery } from "../../../../../redux/services/guards";
+import { setOnboardingLevel } from "../../../../../redux/slice/onboardingSlice";
+import { selectOnboardingLevel } from "../../../../../redux/selectors/onboarding";
 
+function AssignNewBeat({ isOnboarding = true }) {
+  const navigate = useNavigate();
+  const user = useSelector(selectUser);
+  const token = useSelector(selectToken);
+  const dispatch = useDispatch();
 
-  
-  function AssignNewBeat() {
-    const navigate = useNavigate()
-    const auth = useContext(AuthContext)
-    const { isLoading, error, responseData, sendRequest } = useHttpRequest();
-    const [initialBeatState, setInitialBeatState] = useState([]);
-    const [initialGuardState, setInitialGuardState] = useState([]);
-    const initialFrequencyState = useState([]);
-    const [beat, setBeat] = useState(initialBeatState[0]);
-    const [guard, setGuard] = useState([]);
-    const [frequency, setFrequency] = useState(initialFrequencyState);
-    
-    const handleBeatSelection = (e) => {
-      
-      setBeat(JSON.parse(e.target.value));
-      
-    };
-  
-    const handleGuardSelection = (e) => {
-      console.log(e.target.value)
-      setGuard([...guard, JSON.parse(e.target.value)]);
-    };
-  
-    const handleFrequencySelection = (e) => {
-      setFrequency(JSON.parse(e.target.value));
-    };
+  const { beatId } = useParams();
 
-    useEffect(() => {
-      auth.loading(true)
-      const getBeats = async () => {
-        const data = await sendRequest(
-          `http://localhost:5000/api/beat/getbeats/${auth.user.userid}`,
-          "GET",
-          null,
-          {
-            "Content-Type": "application/json",
-            'Authorization': `Bearer ${auth.token}`,
-          }
-        )
-        if(!!data){
-          setInitialBeatState(data.beats);
-          setInitialGuardState(data.guards)
-          console.log(data.beats)
-        }else{  
-          toast.error("Failed To Fetch Beats")
-        }
+  const {
+    data: beats,
+    isLoading,
+    error,
+    refetch: refetchBeats,
+  } = useGetBeatsQuery();
+  const selectedBeat = beats?.find((b) => b._id === beatId);
+
+  const {
+    data: guards,
+    isLoading: isGuardsLoading,
+    error: guardsError,
+  } = useGetGuardsQuery();
+
+  const [assignToBeat] = useAssignGuardToBeatMutation();
+  const { responseData, sendRequest } = useHttpRequest();
+
+  const initialFrequencyState = useState([]);
+  const [beat, setBeat] = useState(beats?.[0]);
+
+  const [guard, setGuard] = useState([]);
+  const [frequency, setFrequency] = useState(initialFrequencyState);
+
+  const handleBeatSelection = (e) => {
+    setBeat(JSON.parse(e.target.value));
+  };
+
+  const handleGuardSelection = (e) => {
+    console.log(e.target.value);
+    setGuard([...guard, JSON.parse(e.target.value)]);
+  };
+
+  const handleFrequencySelection = (e) => {
+    setFrequency(JSON.parse(e.target.value));
+  };
+
+  // useEffect(() => {
+  //   dispatch(suspenseShow);
+  //   const getBeats = async () => {
+  //     const data = await sendRequest(
+  //       `beat/getbeats/${user.userid}`,
+  //       "GET",
+  //       null,
+  //       {
+  //         "Content-Type": "application/json",
+  //         Authorization: `Bearer ${token}`,
+  //       }
+  //     );
+  //     if (!!data) {
+  //       setInitialBeatState(data.beats);
+  //       setInitialGuardState(data.guards);
+  //       console.log(data.beats);
+  //     } else {
+  //       toast.error("Failed To Fetch Beats");
+  //     }
+  //   };
+  //   token && getBeats();
+  //   //setBeats(guardList);
+  // }, [token, user.userid]);
+
+  const checkIfGuardIsAssigned = (guard) => {
+    dispatch(suspenseShow);
+    let isGuardAssigned = { status: false, message: "" };
+
+    beats?.forEach((beat) => {
+      if (
+        beat.guards.some((assignedGuard) => assignedGuard._id === guard._id)
+      ) {
+        dispatch(suspenseHide);
+        const message = `${guard.name} has already been assigned to ${beat.name}`;
+        isGuardAssigned = { status: true, message: message };
+        //throw new Error(`${guard.name} has already been assigned to ${beat.name}`);
       }
-      auth.token && getBeats();
-      //setBeats(guardList);
-      
-    }, [auth.token, auth.user.userid]);
+    });
 
-    const checkIfGuardIsAssigned = (guard) => {
-      auth.loading(true);
-      let isGuardAssigned = {status: false, message:""};
-      
-      initialBeatState.forEach((beat) => {
-        if (beat.guards.some((assignedGuard) => assignedGuard._id === guard._id)) {
-           auth.loading(false);
-          const message  = (`${guard.name} has already been assigned to ${beat.name}`);
-          isGuardAssigned = {status: true, message: message};
-          //throw new Error(`${guard.name} has already been assigned to ${beat.name}`);
-        }
-      });
-      
-      auth.loading(false);
-      return isGuardAssigned;
-    };
-    
+    dispatch(suspenseHide);
+    return isGuardAssigned;
+  };
 
-    const save = async (e) => {
-      e.preventDefault()
-      if (!beat) {
-        toast.info('Select a Beat to Assign Guards')
-        return
-      }
-      if (guard.length<1) {
-        toast.info('Select Guards to be Assigned to Beats')
-        return
-      }
-      const check = guard.map((item)=> {
-       return checkIfGuardIsAssigned(item)
-      })
-      const c = check.some((value) => {
-       if(value.status){
-        toast.warning(value.message)
-        return true
-       }
-       
-         
-      })
-
-      if(c)return
-
-      console.log(check)
-
-      auth.loading(true)
-      const formData = {'beat': beat, 'guards': guard}
-      
-      
-      const data = await sendRequest(
-        `http://localhost:5000/api/guard/assignbeat/${auth.user.userid}`,
-          "POST",
-          JSON.stringify(formData),
-          {
-            "Content-Type": "application/json",
-            'Authorization': `Bearer ${auth.token}`,
-          }
-      )
-
-      if(data){
-        navigate('/onboarding/assign-beats')
-        window.location.reload()
-      }
-      
-
-
-      
+  const save = async (e) => {
+    e.preventDefault();
+    if (!beat && !selectedBeat) {
+      toast.info("Select a Beat to Assign Guards");
+      return;
     }
+    if (guard.length < 1) {
+      toast.info("Select Guards to be Assigned to Beats");
+      return;
+    }
+    const check = guard.map((item) => {
+      return checkIfGuardIsAssigned(item);
+    });
 
-    useEffect(() => {
-      if (error) {
-        toast.error(error)
+    const c = check.some((value) => {
+      if (value.status) {
+        toast.warning(value.message);
+        return true;
       }
-    }, [error])
+    });
+
+    if (c) return;
+
+    console.log(check);
+
+    dispatch(suspenseShow);
+
+    const formData = {
+      beat: selectedBeat ? selectedBeat : beat,
+      guards: guard,
+    };
+
+    // const data = await sendRequest(
+    //   `guard/assignbeat/${user.userid}`,
+    //   "POST",
+    //   JSON.stringify(formData),
+    //   {
+    //     "Content-Type": "application/json",
+    //     Authorization: `Bearer ${token}`,
+    //   }
+    // );
+    const data = await assignToBeat({ userid: user.userid, body: formData });
+    refetchBeats();
+    console.log(data);
+
+    if (data) {
+      toast("Assinged");
+    }
+    if (isOnboarding) {
+      navigate("/onboarding/assign-beats");
+    }
+  };
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+    }
+  }, [error]);
   return (
     <>
       {/* assign-new-beat-app works! */}
-
-      <h1 className="font-bold text-center text-2xl text-dark-450">
-        Assign Beats
-      </h1>
-      <p className="text-center mx-auto max-w-[400px] text-dark-400">
-        Select A beat And Guards To be Assigned(You Can Select Multiple Guards)
-      </p>
-
+      {isOnboarding && (
+        <>
+          <h1 className="font-bold text-center text-2xl text-dark-450">
+            Assign Beats
+          </h1>
+          <p className="text-center mx-auto max-w-[400px] text-dark-400">
+            Select A beat And Guards To be Assigned(You Can Select Multiple
+            Guards)
+          </p>
+        </>
+      )}
       <div className="max-w-md mx-auto block px-4 py-8 sm:p-8 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700 my-16">
         <form onSubmit={save}>
           {/*  */}
-          <div className="mb-6">
-            <SelectField
-              value={beat}
-              name="beat"
-              id="beat"
-              label="Select beat"
-              semibold_label={true}
-              handleChangeOption={handleBeatSelection}
-              optionList={initialBeatState}
-              multipleSelect={false}
-            />
-          </div>
+          {!selectedBeat && (
+            <div className="mb-6">
+              <SelectField
+                value={beat}
+                name="beat"
+                id="beat"
+                label="Select beat"
+                semibold_label={true}
+                handleChangeOption={handleBeatSelection}
+                optionList={beats}
+                multipleSelect={false}
+              />{" "}
+            </div>
+          )}
 
           <div className="mb-6">
             <MultiSelectField
-            selectedOptions={guard}
-            setSelectedOptions={setGuard}
+              selectedOptions={guard}
+              setSelectedOptions={setGuard}
               value={guard}
               name="guard"
               multiple={true}
               multiSelect={
-                initialBeatState.length >= 10 ? initialBeatState.length - 5 : initialBeatState.length
+                beats?.length >= 10 ? beats?.length - 5 : beats?.length
               }
               id="guard"
               multipleSelect={true}
               label="Select guard"
               semibold_label={true}
               handleChangeOption={handleGuardSelection}
-              optionList={initialGuardState}
+              optionList={guards}
             />
           </div>
 

@@ -1,80 +1,58 @@
 import "./PatrolGuardList.scss";
-import PatrolGuardListDesktopView from "./PatrolGuardListDesktopView/PatrolGuardListDesktopView";
-import PatrolGuardListMobileView from "./PatrolGuardListMobileView/PatrolGuardListMobileView";
-import icon_menu_dots from "../../../../../images/icons/icon-menu-dots.svg";
-import useHttpRequest from "../../../../../shared/Hooks/HttpRequestHook";
-import { AuthContext } from "../../../../../shared/Context/AuthContext";
+
 import { useContext, useEffect, useState } from "react";
-import { toast } from "react-toastify";
-import AlertDialog from "../../../../../shared/Dialog/AlertDialog";
-import { Card } from "flowbite-react";
+
 import { Outlet } from "react-router-dom";
 import PatrolGuardListToolbar from "./PatrolGuardListToolbar/PatrolGuardListToolbar";
+import { useDeleteGuardMutation } from "../../../../../redux/services/guards";
+import { useSelector } from "react-redux";
+import { selectToken, selectUser } from "../../../../../redux/selectors/auth";
+import { useGetBeatsQuery } from "../../../../../redux/services/beats";
+import { useParams } from "react-router-dom";
+import AddGuard from "../../../../Onboarding/pages/OnboardGuard/AddGuard/AddGuard";
 
 const duty_status = {
   OFF_DUTY: 0,
-  ON_DUTY: 1
+  ON_DUTY: 1,
 };
 
 function PatrolGuardList(props) {
-  const auth = useContext(AuthContext)
-  const { isLoading, error, responseData, sendRequest } = useHttpRequest();
-  const [guards, setGuards] = useState([])
+  const [selectedGuard, setSelectedGuard] = useState(null);
+  const [open, setOpen] = useState(false);
+  const user = useSelector(selectUser);
+  const { beatId } = useParams();
 
-  const [selectedGuard, setSelectedGuard] = useState(null)
-  const [open, setOpen] = useState(false)
+  const {
+    data: beats,
+    isLoading: beatsIsLoading,
+    error: beatsFetchError,
+  } = useGetBeatsQuery();
+  const beat = beats?.find((b) => b?._id === beatId);
 
-  const handleSentRequest = () => {
-    const data = sendRequest(
-      `http://localhost:5000/api/guard/getguards/${auth.user.userid}`,
-      'GET',
-      null,
-      {
-        "Content-Type": "application/json",
-        'Authorization': `Bearer ${auth.token}`,
-      }
-    ).then(data => {
-      const activeguards = data?.filter(guard => !guard.isactive)
-      setGuards(activeguards)
-      props.setGuardCount(activeguards?.length)
-    })
-  };
+  const [deleteGuard, { isLoading: isUpdating, status }] =
+    useDeleteGuardMutation();
 
-  const deleteGuard = async () => {
-    auth.loading(true)
-    const data = sendRequest(
-      `http://localhost:5000/api/guard/deleteguard/${auth.user.userid}`,
-      'DELETE',
-      JSON.stringify(selectedGuard),
-      {
-        "Content-Type": "application/json",
-        'Authorization': `Bearer ${auth.token}`,
-      }
-    ).then(data => {
-      if(data.status){
-      setGuards([])
-      handleSentRequest()
-      toast("Guard Deleted Successfully")
-      setOpen(false)
-      }
-    })
-  }
+  // if (status) {
+  //   toast("Guard Deleted Successfully");
+  //   setOpen(false);
+  // }
 
   // useEffect(() => {
   //   handleSentRequest();
   // }, [auth.token]);
 
-  useEffect(() => {
-    if (error) {
-      toast.error(error)
-    }
-  }, [error])
+  // useEffect(() => {
+  //   const activeguards = guards.filter((guard) => guard.isactive);
+  //   props.setGuardCount(activeguards.length);
+  // }, [guards]);
+
   return (
     <>
       {/* patrol-guard-list-app works! */}
       <PatrolGuardListToolbar />
       <div className="my-4"></div>
       <Outlet />
+
       {/* <AlertDialog 
         open={open}
         title={`Delete Guard ?`}
