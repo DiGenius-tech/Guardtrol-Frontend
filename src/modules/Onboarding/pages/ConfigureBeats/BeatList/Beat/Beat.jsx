@@ -5,26 +5,22 @@ import icon_location_marker from "../../../../../../images/icons/icon-location-m
 import { toast } from "react-toastify";
 import { useState } from "react";
 import AlertDialog from "../../../../../../shared/Dialog/AlertDialog";
+import { useDeleteBeatMutation } from "../../../../../../redux/services/beats";
 
 function Beat({ setBeats, beat, status, handle_edit_beat }) {
   const [open, setOpen] = useState(false);
 
-  const deleteBeat = (beatname) => {
-    const beats = JSON.parse(localStorage.getItem("beats")) || [];
-    const index = beats.findIndex((beat) => beat.name === beatname);
+  const [deleteBeat, { isLoading: isDeleting, deleteStatus }] =
+    useDeleteBeatMutation();
 
-    if (index !== -1) {
-      // Check if the beat is found
-
-      const newBeats = beats.filter((beat, i) => i !== index);
-
-      setBeats(newBeats);
-
-      const savedBeats = JSON.stringify(newBeats);
-      localStorage.setItem("beats", savedBeats);
-    } else {
-      toast.error("Beat not found");
-    }
+  const handleDelete = async (_id) => {
+    try {
+      console.log(_id);
+      const data = await deleteBeat({ beatId: _id });
+      setOpen(false);
+      toast("Beat deleted");
+      console.log(data);
+    } catch (error) {}
   };
   return (
     <>
@@ -70,7 +66,7 @@ function Beat({ setBeats, beat, status, handle_edit_beat }) {
         description="Are You Sure You Want To Delete This Beat ?, You won't Be Able To Revert This Action"
         setOpen={setOpen}
         actionText="Delete"
-        action={() => deleteBeat(beat?.name)}
+        action={() => handleDelete(beat?._id)}
       />
     </>
   );

@@ -69,14 +69,14 @@ const EditBeatInformation = ({ setPage }) => {
   };
   return (
     <>
-      <div className="flex justify-between flex-row my-5">
-        <h5 className="text-lg font-bold text-primary-500 dark:text-white">
+      <div className="flex justify-between flex-row mb-3">
+        <h5 className="text-md   font-medium text-primary-500 dark:text-white">
           Edit Beat
         </h5>
 
         <span
           onClick={() => setPage("ViewBeatInformation")}
-          className="text-primary-500 font-semibold text-md cursor-pointer"
+          className="text-primary-500 text-md   font-medium cursor-pointer"
         >
           Back
         </span>
@@ -85,7 +85,7 @@ const EditBeatInformation = ({ setPage }) => {
         <div className="col-span-12 ">
           <div className="h-full p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 flex flex-col gap-2">
             <div className="flex justify-between flex-row">
-              <h4 className="text-lg font-bold text-primary-500 dark:text-white">
+              <h4 className="text-md font-medium text-primary-500 dark:text-white">
                 Basic Info
               </h4>
             </div>

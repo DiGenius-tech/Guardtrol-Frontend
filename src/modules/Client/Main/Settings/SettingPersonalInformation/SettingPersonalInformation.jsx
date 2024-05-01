@@ -86,7 +86,8 @@ const SettingPersonalInformation = () => {
       dispatch(updateUser(data));
     }
   };
-
+  console.log(user?.name.split(" "));
+  console.log(user?.name.split(" ")?.[0]?.[0]);
   return (
     <>
       {/* setting-personal-information-app works! */}
@@ -131,7 +132,9 @@ const SettingPersonalInformation = () => {
 
                   {!user?.image && !preview ? (
                     <div className="bg-secondary-50 cursor-pointer rounded-full h-full w-full flex items-center justify-center text-2xl font-bold">
-                      {user?.name.split(" ")[0][0] + user?.name.split(" ")[1][0]}
+                      {`${user?.name.split(" ")?.[0]?.[0] || ""} ${
+                        user?.name.split(" ")?.[1]?.[0] || ""
+                      }`}
                     </div>
                   ) : (
                     <img
@@ -214,9 +217,8 @@ const SettingPersonalInformation = () => {
           <div className="col-span-12 sm:col-span-6">
             <TextInputField
               label="Phone Number"
-              name="phone"
               {...formik.getFieldProps("phone")}
-              type="number"
+              type="text"
               id="phone"
               semibold_label={true}
             />

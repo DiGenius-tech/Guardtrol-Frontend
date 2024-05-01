@@ -16,7 +16,7 @@ const duty_status = {
   ON_DUTY: 1,
 };
 
-function PatrolGuardList(props) {
+const PatrolGuardList = (props)  => {
   const [selectedGuard, setSelectedGuard] = useState(null);
   const [open, setOpen] = useState(false);
   const user = useSelector(selectUser);
@@ -32,6 +32,10 @@ function PatrolGuardList(props) {
   const [deleteGuard, { isLoading: isUpdating, status }] =
     useDeleteGuardMutation();
 
+    useEffect(() => {
+      console.log(props)
+    }, [props])
+    
   // if (status) {
   //   toast("Guard Deleted Successfully");
   //   setOpen(false);

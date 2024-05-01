@@ -2,7 +2,7 @@ import BeatList from "./BeatList";
 import Beats from "./Beats";
 import AddBeat from "./AddBeat";
 import BeatDetails, { BeatDetailsRouter } from "./BeatDetails";
-import BeatGaurds from "./BeatDetailsTabs/BeatGaurds";
+import BeatGaurds from "./BeatDetailsTabs/BeatGuards";
 import BeatPatrol from "./BeatDetailsTabs/BeatPatrol";
 import AssignBeat from "./AssignBeat";
 import BeatReport from "./BeatDetailsTabs/BeatReport";

@@ -4,15 +4,25 @@ import RegularButton from "../../../../Sandbox/Buttons/RegularButton";
 import TextareaField from "../../../../Sandbox/TextareaField/TextareaField";
 import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
+import { useGetBeatsQuery, useUpdateBeatMutation } from "../../../../../redux/services/beats";
+import { useDispatch, useSelector } from "react-redux";
+import { selectUser } from "../../../../../redux/selectors/auth";
+import { suspenseHide, suspenseShow } from "../../../../../redux/slice/suspenseSlice";
 
 function EditBeat(props) {
   const [validationErrors, setValidationErrors] = useState({});
   const [preBeat, setPreBeat] = useState('')
   const navigate = useNavigate()
+  const dispatch = useDispatch()
+  const user = useSelector(selectUser)
+  const { data: beats, refetch: refetchBeats } = useGetBeatsQuery();
   const [formData, setFormData] = useState({
-    beat_name: "",
+    _id: "",
+    name: "",
+    address: "",
     description: ""
   });
+  const [updateBeat] = useUpdateBeatMutation();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -21,38 +31,38 @@ function EditBeat(props) {
 
   useEffect(() => {
     setFormData({
-      beat_name: props.selectedBeat.beat_name,
-      description: props.selectedBeat.description
+      _id: props?.selectedBeat._id,
+      name: props?.selectedBeat.name,
+      address: props?.selectedBeat.address,
+      description: props?.selectedBeat.description
     });
-    setPreBeat(props.selectedBeat.beat_name)
-  }, []);
+    setPreBeat(props.selectedBeat.name)
+  }, [props]);
 
   const save = async (e) => {
     e.preventDefault();
 
-    if (formData.beat_name === "" || formData.beat_name.length < 3) {
+    if (formData.name === "" || formData.name.length < 3) {
       setValidationErrors({ ...validationErrors, beat_name: "Use A Valid Beat Name" });
     } else {
-      const beats = JSON.parse(localStorage.getItem('beats')) || [];
-      const index = beats.findIndex(beat => beat.beat_name === preBeat);
+      
+      dispatch(suspenseShow());
+      await updateBeat({ body: formData, userid: user?.userid }).then(
+        toast("Beat Updated")
+      );
+      await refetchBeats();
+      dispatch(suspenseHide());
 
-      if (index !== -1) { // Check if the beat is found
-        
-        beats[index].beat_name = formData.beat_name; 
-        beats[index].description = formData.description
-
-        localStorage.setItem('beats', JSON.stringify(beats));
-        props.setBeats(beats)
-        props.cancelEdit()
-      } else {
-        toast.error('Beat not found');
-      }
+   
+      props.cancelEdit()
+     
 
       
       
     }
       
   }
+  
   return (
     <>
       {/* add-beat-app works! */}
@@ -61,14 +71,28 @@ function EditBeat(props) {
           <div className="mb-6">
             <TextInputField
               label="Beat Name"
-              name="beat_name"
+              name="name"
               type="text"
               placeholder="Beat Name"
-              id="beat_name"
-              error={validationErrors["beat_name"]}
+              id="name"
+              error={validationErrors["name"]}
               onChange={handleChange}
               required="required"
-              value={formData.beat_name}
+              value={formData.name}
+              semibold_label={true}
+            />
+          </div>
+          <div className="mb-6">
+            <TextInputField
+              label="Beat Address"
+              name="address"
+              type="text"
+              placeholder="Beat Address"
+              id="address"
+              error={validationErrors["address"]}
+              onChange={handleChange}
+              required="required"
+              value={formData.address}
               semibold_label={true}
             />
           </div>

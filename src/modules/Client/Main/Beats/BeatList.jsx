@@ -16,6 +16,7 @@ import {
 } from "../../../../redux/services/beats";
 import { useSelector } from "react-redux";
 import { selectUser } from "../../../../redux/selectors/auth";
+import Swal from "sweetalert2";
 
 const BeatList = () => {
   const user = useSelector(selectUser);
@@ -49,20 +50,40 @@ const BeatList = () => {
       setBeatToEdit(null);
     }
   };
-  const handleDelete = async () => {
+
+  const handleDelete = async (beatToDelete) => {
     try {
-      console.log(beatToDelete);
-      const data = await deleteBeat({ beatId: beatToDelete._id });
-      setOpen(false);
-      toast("Beat deleted");
-      console.log(data);
+      Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#008080",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!",
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          console.log(beatToDelete);
+          const data = await deleteBeat({ beatId: beatToDelete._id });
+
+          Swal.fire({
+            title: "Deleted!",
+            text: `${beatToDelete?.name || "Beat"} has been deleted.`,
+            icon: "success",
+            confirmButtonColor: "#008080",
+          });
+        }
+      });
+      // console.log(beatToDelete);
+      // const data = await deleteBeat({ beatId: beatToDelete._id });
+      // setOpen(false);
+      // toast("Beat deleted");
+      // console.log(data);
     } catch (error) {}
   };
 
   return (
     <>
-      {/* beat-list-app works! */}
-
       <div className="fixed z-10 bottom-8 right-4">
         <Link
           to={"add"}

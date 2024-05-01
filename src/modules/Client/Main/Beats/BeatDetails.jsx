@@ -1,5 +1,5 @@
 import React from "react";
-import BeatGaurds from "./BeatDetailsTabs/BeatGaurds";
+import BeatGaurds from "./BeatDetailsTabs/BeatGuards";
 import BeatPatrol from "./BeatDetailsTabs/BeatPatrol";
 import { Tabs } from "flowbite-react";
 import BeatInformation from "./BeatDetailsTabs/BeatInformation";
@@ -78,16 +78,7 @@ export const BeatDetailsRouter = () => {
   const { data: beats, isLoading, error } = useGetBeatsQuery();
 
   const beat = beats?.find((b) => b._id === beatId);
-  return (
-    <Routes>
-      <Route element={<BeatDetails />}>
-        <Route path="" element={<BeatInformation beat={beat} />} />
-        <Route path="beat-guards/*" element={<BeatGaurdRouter />} />
-        <Route path="beat-patrol" element={<BeatPatrol />} />
-        <Route path="beat-report" element={<BeatReport />} />
-      </Route>
-    </Routes>
-  );
+  return <BeatDetailsHeader />;
 };
 
 export default BeatDetails;

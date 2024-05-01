@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import BeatGaurds from "./BeatDetailsTabs/BeatGaurds";
+import BeatGaurds from "./BeatDetailsTabs/BeatGuards";
 import BeatPatrol from "./BeatDetailsTabs/BeatPatrol";
 import { Tabs } from "flowbite-react";
 import BeatInformation from "./BeatDetailsTabs/BeatInformation";

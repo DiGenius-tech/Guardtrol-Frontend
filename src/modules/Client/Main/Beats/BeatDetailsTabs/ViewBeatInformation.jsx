@@ -9,14 +9,14 @@ const ViewBeatInformation = ({ setPage }) => {
   const selectedBeat = beats?.find((b) => b._id === beatId);
   return (
     <>
-      <div className="flex justify-between flex-row my-5">
-        <h4 className="text-lg font-semibold text-primary-500 dark:text-white">
+      <div className="flex justify-between flex-row mb-3">
+        <h4 className="text-md   font-medium text-primary-500 dark:text-white">
           View Beat Information
         </h4>
 
         <span
           onClick={() => setPage("EditBeatInformation")}
-          className="text-primary-500 font-semibold text-md cursor-pointer"
+          className="text-primary-500 text-md   font-medium cursor-pointer"
         >
           Edit
         </span>

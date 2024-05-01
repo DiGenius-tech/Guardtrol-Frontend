@@ -82,10 +82,12 @@ const ClientToolbar = (props) => {
                   >
                     <span className="absolute -inset-1.5"></span>
                     <span className="sr-only">Open user menu</span>
+
                     {!user?.image ? (
-                      <div className="bg-secondary-50 p-2 cursor-pointer rounded-full h-full w-full flex items-center justify-center text-lg font-bold">
-                        {user?.name.split(" ")[0][0] +
-                          user?.name.split(" ")[1][0]}
+                      <div className="bg-secondary-50  h-8 w-8 rounded-full cursor-pointer flex items-center justify-center text-2xl font-bold">
+                        {`${user?.name.split(" ")?.[0]?.[0] || ""} ${
+                          user?.name.split(" ")?.[1]?.[0] || ""
+                        }`}
                       </div>
                     ) : (
                       <img
@@ -245,18 +247,13 @@ const ClientToolbar = (props) => {
                   >
                     <span className="absolute -inset-1.5"></span>
                     <span className="sr-only">Open user menu</span>
-                    {!user?.image ? (
-                      <div className="bg-secondary-50 cursor-pointer rounded-full h-full w-full flex items-center justify-center text-2xl font-bold">
-                        {user?.name.split(" ")[0][0] +
-                          user?.name.split(" ")[1][0]}
-                      </div>
-                    ) : (
+                    {
                       <img
                         className="h-8 w-8 rounded-full cursor-pointer"
-                        src={user?.image}
+                        src={user?.image || null}
                         alt={"profile"}
                       />
-                    )}
+                    }
                   </button>
                 </div>
                 <div

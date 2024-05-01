@@ -20,6 +20,7 @@ import {
   useAddBeatMutation,
   useGetBeatsQuery,
 } from "../../../../redux/services/beats";
+import Swal from "sweetalert2";
 
 const AddBeat = () => {
   const [validationErrors, setValidationErrors] = useState({});
@@ -27,9 +28,7 @@ const AddBeat = () => {
   const token = useSelector(selectToken);
 
   const navigate = useNavigate();
-  const { data: sub } = useGetSubscriptionQuery(null, {
-    skip: token ? false : true,
-  });
+  const { data: sub } = useGetSubscriptionQuery();
 
   const dispatch = useDispatch();
 
@@ -69,6 +68,24 @@ const AddBeat = () => {
     } else {
       if (beats?.length >= sub?.maxbeats) {
         setOpen(true);
+        Swal.fire({
+          title: "OOPS!! You've Ran Out Of Beats",
+          text: "Would you like to subscribe for more beats ?",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#008080",
+          confirmButtonText: "Subscribe for more!",
+          cancelButtonColor: "#d33",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            // Swal.fire({
+            //   title: "Deleted!",
+            //   text: "Your file has been deleted.",
+            //   icon: "success",
+            // });
+          }
+        });
+
         return;
       }
       dispatch(suspenseShow());
@@ -141,14 +158,14 @@ const AddBeat = () => {
           </div>
         </form>
       </div>
-      <AlertDialog
+      {/* <AlertDialog
         open={open}
         title="OOPS!! You've Ran Out Of Beats"
         description="Would You Like To Subscribe For Another Beat ?"
         setOpen={setOpen}
         actionText="Subscribe"
         action={() => {}}
-      />
+      /> */}
     </>
   );
 };
