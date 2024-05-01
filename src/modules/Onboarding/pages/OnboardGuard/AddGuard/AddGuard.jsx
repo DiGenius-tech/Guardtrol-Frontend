@@ -20,6 +20,7 @@ import { selectToken, selectUser } from "../../../../../redux/selectors/auth";
 import { selectOnboardingGuards } from "../../../../../redux/selectors/onboarding";
 import { addOnboardingGuard } from "../../../../../redux/slice/onboardingSlice";
 import { useGetSubscriptionQuery } from "../../../../../redux/services/subscriptions";
+import Swal from "sweetalert2";
 
 function AddGuard({ onBoarding = true }) {
   const [isGotIt, setIsGotIt] = useState(false);
@@ -72,7 +73,19 @@ function AddGuard({ onBoarding = true }) {
 
     if (onBoarding) {
       if (onboardingGuards?.length >= sub?.maxbeats * 5 + sub?.maxextraguards) {
-        setOpen(true);
+        Swal.fire({
+          title: "OOPS!! You've Ran Out Of Guards",
+          text: "Would you like to subscribe for more guards ?",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#008080",
+          confirmButtonText: "Subscribe for more!",
+          cancelButtonColor: "#d33",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            // run action on confirmed
+          }
+        });
         return;
       }
 
@@ -80,7 +93,23 @@ function AddGuard({ onBoarding = true }) {
       navigate("../");
     } else {
       if (guards?.length >= sub?.maxbeats * 5 + sub?.maxextraguards) {
-        setOpen(true);
+        Swal.fire({
+          title: "OOPS!! You've Ran Out Of Beats",
+          text: "Would you like to subscribe for more beats ?",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#008080",
+          confirmButtonText: "Subscribe for more!",
+          cancelButtonColor: "#d33",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            // Swal.fire({
+            //   title: "Deleted!",
+            //   text: "Your file has been deleted.",
+            //   icon: "success",
+            // });
+          }
+        });
         return;
       } else {
         addGuards(guard);

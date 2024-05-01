@@ -97,8 +97,7 @@ function BeatsDesktopView(props) {
                       </Dropdown.Item>
                       <Dropdown.Item
                         onClick={() => {
-                          props.setBeatToDelete(beat);
-                          props.setOpen(true);
+                          props.handleDeleteBeat(beat);
                         }}
                       >
                         Delete beat
@@ -112,14 +111,14 @@ function BeatsDesktopView(props) {
         </table>
       </div>
 
-      <AlertDialog
+      {/* <AlertDialog
         open={props.open}
         title="Delete Beat ?"
         description="Are you sure you want to delete this Beat ?, you can't revert this action"
         setOpen={props.setOpen}
         actionText="Delete"
         action={props.handleDeleteBeat}
-      />
+      /> */}
     </>
   );
 }

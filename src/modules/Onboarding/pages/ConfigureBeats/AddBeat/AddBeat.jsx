@@ -15,23 +15,27 @@ import { useDispatch, useSelector } from "react-redux";
 import { selectToken, selectUser } from "../../../../../redux/selectors/auth";
 import { selectSubscriptionState } from "../../../../../redux/selectors/subscription";
 import { useGetSubscriptionQuery } from "../../../../../redux/services/subscriptions";
-import { suspenseHide, suspenseShow } from "../../../../../redux/slice/suspenseSlice";
+import {
+  suspenseHide,
+  suspenseShow,
+} from "../../../../../redux/slice/suspenseSlice";
+import Swal from "sweetalert2";
 
 function AddBeat() {
   const [validationErrors, setValidationErrors] = useState({});
   const navigate = useNavigate();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const user = useSelector(selectUser);
   const token = useSelector(selectToken);
 
   const {
     data: sub,
     isError,
-    
+
     refetch,
   } = useGetSubscriptionQuery();
 
-  console.log(sub)
+  console.log(sub);
   const [open, setOpen] = useState(false);
 
   const [beat, setBeat] = useState({
@@ -46,7 +50,6 @@ function AddBeat() {
   };
 
   const [addBeat] = useAddBeatMutation();
-
 
   const {
     data: beats,
@@ -65,14 +68,19 @@ function AddBeat() {
       });
     } else {
       if (beats?.length && sub?.maxbeats && beats?.length >= sub?.maxbeats) {
-        setOpen(true);
+        Swal.fire({
+          icon: "warning",
+          confirmButtonColor: "#008080",
+          title: "You've Run out of beats?",
+          text: "Complete onboarding process and subscribe for more?",
+        });
         return;
       }
-      dispatch(suspenseShow)
+      dispatch(suspenseShow);
       await addBeat(beat);
       console.log(user);
       await refetchBeats();
-      dispatch(suspenseHide)
+      dispatch(suspenseHide);
       navigate("../");
     }
   };
@@ -80,7 +88,7 @@ function AddBeat() {
     <>
       {/* add-beat-app works! */}
       <div className="max-w-md mx-auto block px-4 py-8 sm:p-8 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-        <form  onSubmit={saveBeat}>
+        <form onSubmit={saveBeat}>
           <div className="mb-6">
             <TextInputField
               label="Beat Name"

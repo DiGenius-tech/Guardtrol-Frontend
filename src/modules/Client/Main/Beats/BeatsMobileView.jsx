@@ -3,7 +3,7 @@ import AlertDialog from "../../../../shared/Dialog/AlertDialog";
 import { Link, useNavigate } from "react-router-dom";
 
 function BeatsMobileView(props) {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const sendBeatToUpdate = (beat) => {
     props.setOpenModal(true);
     props.setBeatToEdit(beat);
@@ -13,7 +13,7 @@ function BeatsMobileView(props) {
       {/* beats-mobile-view-app works! */}
       <div className="relative overflow-x-auto">
         <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-        <thead className="text-sm text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+          <thead className="text-sm text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>
               <th
                 scope="col"
@@ -95,8 +95,7 @@ function BeatsMobileView(props) {
                       </Dropdown.Item>
                       <Dropdown.Item
                         onClick={() => {
-                          props.setBeatToDelete(beat);
-                          props.setOpen(true);
+                          props.handleDeleteBeat(beat);
                         }}
                       >
                         Delete beat
