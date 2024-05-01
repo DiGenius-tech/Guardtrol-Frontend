@@ -4,10 +4,15 @@ import useHttpRequest from "../../../../../shared/Hooks/HttpRequestHook";
 import TextInputField from "../../../../Sandbox/InputField/TextInputField";
 import RegularButton from "../../../../Sandbox/Buttons/RegularButton";
 import { toast } from "react-toastify";
+import { useDispatch, useSelector } from "react-redux";
+import { selectOnboardingGuards } from "../../../../../redux/selectors/onboarding";
+import { setOnboardingGuards } from "../../../../../redux/slice/onboardingSlice";
 
 function UpdateGuard(props) {
   const [validationErrors, setValidationErrors] = useState({});
+  const dispatch = useDispatch()
   const { isLoading, error, responseData, sendRequest } = useHttpRequest();
+  const onboardingGuards = useSelector(selectOnboardingGuards);
   const [preGuard, setPreGuard] = useState("")
   const [formData, setFormData] = useState({
     full_name: "",
@@ -25,7 +30,7 @@ function UpdateGuard(props) {
       phone: props.selectedGuard.phone
     });
     setPreGuard(props.selectedGuard.full_name)
-  }, []);
+  }, [props]);
 
   const save = async (e) => {
     e.preventDefault();
@@ -39,17 +44,22 @@ function UpdateGuard(props) {
       return
     }
 
-      const guards = JSON.parse(localStorage.getItem('guards')) || [];
-      const index = guards.findIndex(guard => guard.full_name === preGuard);
+      
+      const index = onboardingGuards.findIndex(guard => guard.full_name === preGuard);
 
-      if (index !== -1) { // Check if the beat is found
-        
-        guards[index].full_name = formData.full_name; 
-        guards[index].phone = formData.phone
-
-        localStorage.setItem('guards', JSON.stringify(guards));
-        props.setGuards(guards)
-        props.cancelEdit()
+      if (index !== -1) {
+        // Create a new array with the updated guard object
+        const updatedGuards = [...onboardingGuards];
+        updatedGuards[index] = {
+          ...updatedGuards[index],
+          full_name: formData.full_name,
+          phone: formData.phone
+        };
+      
+        // Dispatch an action to update the state
+        dispatch(setOnboardingGuards(updatedGuards));
+        toast('Guard Updated');
+        props.cancelEdit();
       } else {
         toast.error('Guard not found');
       }

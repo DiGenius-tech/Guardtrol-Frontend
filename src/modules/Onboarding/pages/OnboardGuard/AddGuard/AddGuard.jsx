@@ -36,7 +36,7 @@ function AddGuard({ onBoarding = true }) {
 
   const navigate = useNavigate();
 
-  const { data: sub } = useGetSubscriptionQuery({ skip: token ? false : true });
+  const { data: sub } = useGetSubscriptionQuery();
   const [addGuards] = useAddGuardMutation();
 
   const [guard, setGuard] = useState({

@@ -39,10 +39,11 @@ function BeatList() {
   console.log(beats)
 
   const [beatsToedit, setBeatsToEdit] = useState(beats);
-  const handle_edit_beat = (guard) => {
-    if (guard) {
+  const handle_edit_beat = (beat) => {
+    if (beat) {
       setIsEdit(true);
-      setSelectedBeat(guard);
+      console.log(beat)
+      setSelectedBeat(beat);
     }
   };
 

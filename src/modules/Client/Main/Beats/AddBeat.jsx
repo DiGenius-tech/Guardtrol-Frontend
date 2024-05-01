@@ -27,9 +27,7 @@ const AddBeat = () => {
   const token = useSelector(selectToken);
 
   const navigate = useNavigate();
-  const { data: sub } = useGetSubscriptionQuery(null, {
-    skip: token ? false : true,
-  });
+  const { data: sub } = useGetSubscriptionQuery();
 
   const dispatch = useDispatch();
 

@@ -73,7 +73,7 @@ const PrivateRoute = ({
   }, [onboardingLevel]);
 
   if (!user) {
-    // return <Navigate to="/auth" state={{ from: location }} replace />;
+     return <Navigate to="/auth" state={{ from: location }} replace />;
   }
 
   // if (onboardingLevel === 0) {
@@ -114,21 +114,21 @@ const PrivateRoute = ({
   //   );
   // }
   if (user?.onboardingcomplete && location.pathname === "/auth") {
-    // return <Navigate to={"/client"} state={{ from: "/" }} replace />;
+     return <Navigate to={"/client"} state={{ from: "/" }} replace />;
   }
   if (
     onboarding &&
     location.pathname !== onboardingRoute &&
     !subRoutes.some((item) => location.pathname.includes(item))
   ) {
-    // return <Navigate to={onboardingRoute} />;
+     return <Navigate to={onboardingRoute} />;
   }
 
   if (
     !user?.onboardingcomplete &&
     !subRoutes2.some((item) => location.pathname.includes(item))
   ) {
-    // return <Navigate to={"/onboarding"} state={{ from: "/" }} replace />;
+     return <Navigate to={"/onboarding"} state={{ from: "/" }} replace />;
   }
 
   return <Component {...rest} />;
