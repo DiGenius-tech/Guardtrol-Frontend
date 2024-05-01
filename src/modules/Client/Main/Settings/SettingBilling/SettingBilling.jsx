@@ -12,7 +12,7 @@ import { FaCaretUp } from "react-icons/fa";
 import { FaCaretDown } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import { selectToken, selectUser } from "../../../../../redux/selectors/auth";
-import { useNavigate } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import {
   useGetAllSubscriptionsQuery,
   useGetSubscriptionQuery
@@ -70,7 +70,7 @@ const SettingBilling = () => {
   };
 
   useEffect(() => {
-    return () => {};
+    return () => { };
   }, [defaultCard]);
 
   const totalPages = subs?.length;
@@ -109,8 +109,9 @@ const SettingBilling = () => {
           <h3 className="font-bold">Current plan</h3>
         </div>
         <div className="col-span-12 sm:col-span-7">
-          <div className="p-4 sm:p-6 bg-dark-400 text-white border border-gray-200 rounded-lg shadow">
-            <ul className="flex flex-col gap-4">
+          <Outlet />
+          {/*  <div className="p-4 sm:p-6 bg-dark-400 text-white border border-gray-200 rounded-lg shadow">
+          <ul className="flex flex-col gap-4">
               <li className="grid grid-cols-2 items-center">
                 <div className="col-span-2 sm:col-span-1 font-light">
                   {sub?.plan} plan
@@ -257,7 +258,7 @@ const SettingBilling = () => {
                 )}
               </li>
             </ul>
-          </div>
+          </div> */}
         </div>
         <div className="hidden sm:block col-span-12 sm:col-span-5">
           <h3 className="font-bold">Invoices</h3>
@@ -329,11 +330,10 @@ const SettingBilling = () => {
                                 <a
                                   key={index}
                                   href="#"
-                                  className={`inline-flex items-center justify-center border border-gray-300 text-sm rounded-lg w-full p-1.5 font-semibold min-w-10 min-h-8 ${
-                                    currentPage === index + 1
+                                  className={`inline-flex items-center justify-center border border-gray-300 text-sm rounded-lg w-full p-1.5 font-semibold min-w-10 min-h-8 ${currentPage === index + 1
                                       ? "bg-accent-200"
                                       : ""
-                                  }`}
+                                    }`}
                                   onClick={() => setCurrentPage(index + 1)}
                                 >
                                   {index + 1}

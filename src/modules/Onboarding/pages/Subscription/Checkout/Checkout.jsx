@@ -32,7 +32,7 @@ const PaymentOption = {
   SECOND: "paystack",
 };
 
-const Checkout = () => {
+const Checkout = (props) => {
   const user = useSelector(selectUser);
   const psConfig = useSelector(selectPsConfig);
   const fwConfig = useSelector(selectFwConfig);
@@ -142,7 +142,7 @@ const Checkout = () => {
         navigate("/onboarding/membership/successful");
         window.location.reload();
       }
-    } catch (error) {}
+    } catch (error) { }
   };
   useEffect(() => {
     if (error) {
@@ -158,7 +158,11 @@ const Checkout = () => {
         The subscription goes towards getting access to the security software to
         help manage your security personel
       </p>
-      <div className="mx-auto max-w-[500px] my-16">
+
+      <div className={
+        (props.marginY ? `${props.marginY} ` : 'my-16 ') +
+        `mx-auto max-w-[500px]`
+      }>
         <form method="post" onSubmit={pay}>
           <fieldset className="flex flex-col gap-4 mb-4">
             <legend className="mb-4 font-semibold text-xl">
@@ -199,9 +203,8 @@ const Checkout = () => {
           </fieldset>
 
           <RegularButton
-            text={`Pay ₦${
-              selectedPlan ? formatNumberWithCommas(selectedPlan.amount) : 0
-            } Now`}
+            text={`Pay ₦${selectedPlan ? formatNumberWithCommas(selectedPlan.amount) : 0
+              } Now`}
             backgroundColor="#FB9129"
           />
         </form>

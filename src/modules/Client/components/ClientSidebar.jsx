@@ -32,7 +32,23 @@ const ClientSidebar = () => {
     "/client/beats/configure-beat",
     "/client/beats/configure-beat/",
   ];
-  const settings = ["/client/settings"];
+  const settings = ["/client/settings",
+    "/ client / settings/",
+    "/client/settings/personal-information",
+    "/client/settings/personal-information/",
+    "/client/settings/security",
+    "/client/settings/security/",
+    "/client/settings/shift-schedule",
+    "/client/settings/shift-schedule/",
+    "/client/settings/billing",
+    "/client/settings/billing/",
+    "/client/settings/billing/update-subscription",
+    "/client/settings/billing/update-subscription/",
+    "/client/settings/billing/checkout-subscription",
+    "/client/settings/billing/checkout-subscription/"
+
+
+  ];
 
   useEffect(() => {
     const queryString = window.location.search;
@@ -44,7 +60,7 @@ const ClientSidebar = () => {
       params[key] = value;
     }
 
-    return () => {};
+    return () => { };
   }, []);
 
   return (
@@ -90,7 +106,7 @@ const ClientSidebar = () => {
                 to={patrol_guard[0]}
                 className={
                   (patrol_guard.includes(location.pathname) ||
-                  use_params_keys.includes("guardId")
+                    use_params_keys.includes("guardId")
                     ? `bg-primary-50 `
                     : ``) +
                   `flex items-center p-2 text-dark-260 rounded-r-full dark:text-white hover:bg-primary-50 dark:hover:bg-primary-400 group`
@@ -107,7 +123,7 @@ const ClientSidebar = () => {
                 to={beats[0]}
                 className={
                   (beats.includes(location.pathname) ||
-                  use_params_keys.includes("beatId")
+                    use_params_keys.includes("beatId")
                     ? `bg-primary-50 `
                     : ``) +
                   `flex items-center p-2 text-dark-260 rounded-r-full dark:text-white hover:bg-primary-50 dark:hover:bg-primary-400 group`

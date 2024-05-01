@@ -1,4 +1,6 @@
 import SettingBilling from "./SettingBilling/SettingBilling";
+import CheckoutSubscription from "./SettingBilling/checkout-subscription/checkout-subscription";
+import UpdateSubscriptionPlan from "./SettingBilling/update-subscription-plan/update-subscription-plan";
 import SettingPersonalInformation from "./SettingPersonalInformation/SettingPersonalInformation";
 import SettingSecurity from "./SettingSecurity/SettingSecurity";
 import SettingShiftSchedule from "./SettingShiftSchedule/SettingShiftSchedule";
@@ -26,7 +28,21 @@ const settings_routes = {
         },
         {
             path: "billing",
-            element: <SettingBilling />
+            element: <SettingBilling />,
+            children: [
+                {
+                    path: "",
+                    element: <UpdateSubscriptionPlan />
+                },
+                {
+                    path: "update-subscription",
+                    element: <UpdateSubscriptionPlan />
+                },
+                {
+                    path: "checkout-subscription",
+                    element: <CheckoutSubscription />
+                }
+            ]
         },
     ]
 
@@ -53,7 +69,21 @@ const settings_routes_empt = {
         },
         {
             path: "billing",
-            element: <SettingBilling />
+            element: <SettingBilling />,
+            children: [
+                {
+                    path: "",
+                    element: <UpdateSubscriptionPlan />
+                },
+                {
+                    path: "update-subscription",
+                    element: <UpdateSubscriptionPlan />
+                },
+                {
+                    path: "checkout-subscription",
+                    element: <CheckoutSubscription />
+                }
+            ]
         },
     ]
 

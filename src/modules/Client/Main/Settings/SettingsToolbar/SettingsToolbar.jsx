@@ -15,7 +15,12 @@ const SettingsToolbar = () => {
     "/client/settings/shift-schedule",
     "/client/settings/shift-schedule/"
   ];
-  const billing = ["/client/settings/billing", "/client/settings/billing/"];
+  const billing = ["/client/settings/billing", "/client/settings/billing/",
+    "/client/settings/billing/checkout-subscription",
+    "/client/settings/billing/checkout-subscription/",
+    "/client/settings/billing/update-subscription",
+    "/client/settings/billing/update-subscription/"
+  ];
 
   return (
     <>

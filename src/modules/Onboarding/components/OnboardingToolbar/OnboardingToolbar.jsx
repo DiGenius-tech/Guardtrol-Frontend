@@ -55,7 +55,7 @@ const OnboardingToolbar = () => {
                     <span className="sr-only">Open user menu</span>
                     <img
                       className="h-8 w-8 rounded-full"
-                      src={user.image || null}
+                      src={user?.image || null}
                       alt=""
                     />
                   </button>
