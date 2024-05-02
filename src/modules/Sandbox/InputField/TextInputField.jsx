@@ -3,6 +3,13 @@ import Eye from "../../../shared/icons/Eye";
 import EyeInverse from "../../../shared/icons/EyeInverse";
 
 const TextInputField = (props) => {
+  // console.log("props.togglePwdType: ", props.togglePwdType);
+  const handleClick = () => {
+    console.log("clicked!", props.label);
+    if (props.togglePwdType) {
+      props.togglePwdType();
+    }
+  };
   return (
     <>
       {/* text-field-error-app works! */}
@@ -15,7 +22,6 @@ const TextInputField = (props) => {
           {props.label}
         </label> */}
 
-      
         <label
           htmlFor={props.id}
           className={
@@ -58,18 +64,29 @@ const TextInputField = (props) => {
           </>
         ) : (
           <div className="relative w-full">
-            <button
-              type="button"
-              onClick={props.toggle_pwd_type}
-              className="w-8 h-full absolute inset-y-0 right-0 flex items-center pr-3"
-            >
-              {/* type toggler */}
-              {props.password_type === "text" ? <Eye /> : <EyeInverse />}
-              {/*  */}
-            </button>
+            {props.passwordType === "text" ? (
+              <button
+                type="button"
+                // onClick={props.togglePwdType}
+                onClick={handleClick}
+                aria-label="toggle password visibility"
+                className="w-8 h-full absolute inset-y-0 right-0 flex items-center pr-3"
+              >
+                <Eye />
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={handleClick}
+                aria-label="toggle password visibility"
+                className="w-8 h-full absolute inset-y-0 right-0 flex items-center pr-3"
+              >
+                <EyeInverse />
+              </button>
+            )}
             <input
               // ref={props.password_field_ref}
-              type={props.password_type}
+              type={props.passwordType}
               id={props.id}
               name={props.name}
               className={
