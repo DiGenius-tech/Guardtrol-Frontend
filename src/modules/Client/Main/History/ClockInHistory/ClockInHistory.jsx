@@ -42,7 +42,7 @@ const ClockIn = () => {
       <div className="hidden sm:block">
         <Card>
           {patrols.length ? (
-            <div className="overflow-auto">
+            <div className="overflow-auto remove-scrollbar">
               <Table>
                 <Table.Head>
                   <Table.HeadCell>Guard name</Table.HeadCell>

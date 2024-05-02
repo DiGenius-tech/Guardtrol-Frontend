@@ -38,7 +38,7 @@ const Patrols = () => {
               <Table.HeadCell>Guard name</Table.HeadCell>
               <Table.HeadCell className="hidden sm:block">Time</Table.HeadCell>
               <Table.HeadCell>Status</Table.HeadCell>
-              <Table.HeadCell className="hidden sm:block">
+              <Table.HeadCell className="hidden sm:table-cell">
                 <span className="sr-only"></span>
               </Table.HeadCell>
             </Table.Head>
@@ -71,8 +71,8 @@ const Patrols = () => {
                         <span className="text-red-400">Not completed</span>
                       )}
                       {/* <span className="block sm:hidden"> */}
-                        <br />
-                        <span className="whitespace-nowrap">{patrol.beat}</span>
+                      <br />
+                      <span className="whitespace-nowrap">{patrol.beat}</span>
                       {/* </span> */}
                     </Table.Cell>
                     <Table.Cell className="hidden sm:block">
