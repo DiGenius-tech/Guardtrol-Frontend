@@ -16,6 +16,7 @@ const History = () => {
       <div className="py-4">
         <Outlet />
       </div>
+
     </>
   );
 };
