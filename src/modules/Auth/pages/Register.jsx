@@ -307,37 +307,9 @@ const Register = () => {
           </div>
         </div>
       </div>
-
-      <hr className="my-32" />
-      <MyComponent />
     </>
   );
 };
 
-const MyComponent = () => {
-  const handleFirstClick = () => {
-    console.log("First button clicked");
-  };
-
-  const handleSecondClick = () => {
-    console.log("Second button clicked");
-  };
-
-  return (
-    <div>
-      <Button press={handleFirstClick} label="Click me" />
-      <Button press={handleSecondClick} label="Or click me" />
-    </div>
-  );
-};
-const Button = (props) => {
-  const handleClick = () => {
-    if (props.press) {
-      props.press();
-    }
-  };
-
-  return <button onClick={handleClick}>{props.label}</button>;
-};
 
 export default Register;

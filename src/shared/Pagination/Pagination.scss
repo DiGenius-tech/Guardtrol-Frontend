@@ -1,0 +1,15 @@
+.icon-btn {
+  svg {
+    polygon {
+      fill: #C9CFD4;
+    }
+  }
+
+  &:hover{
+    svg {
+      polygon {
+        fill: #656B76;
+      }
+    }
+  }
+}
