@@ -1,5 +1,6 @@
 import { Card, Select, Table } from "flowbite-react";
 import React from "react";
+import Pagination from "../../../../../shared/Pagination/Pagination";
 
 const patrols = [
   {
@@ -75,6 +76,10 @@ const OutOnBreakHistory = () => {
             No Patrol
           </p>
         )}
+      </div>
+      <div className="my-32"></div>
+      <div className="flex justify-end">
+        <Pagination />
       </div>
     </>
   );

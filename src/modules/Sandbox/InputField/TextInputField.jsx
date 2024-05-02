@@ -68,10 +68,10 @@ const TextInputField = (props) => {
               className="w-8 h-full absolute inset-y-0 right-0 flex items-center justify-center pr-3"
             >
               {props.passwordType === "text" ? (
-                <img src={eyeRegular} alt="eye" />
+                <img src={eyeRegular} alt="exposed password" />
               )
                 : (
-                  <img src={eyeSlashRegular} alt="inverse" />
+                  <img src={eyeSlashRegular} alt="conceal password" />
                 )
               }
             </button>

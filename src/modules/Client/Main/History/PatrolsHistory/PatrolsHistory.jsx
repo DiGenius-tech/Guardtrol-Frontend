@@ -1,6 +1,7 @@
 import React from "react";
 import Patrols from "../../Dashboard/Patrols/Patrols";
 import { Card, Table } from "flowbite-react";
+import Pagination from "../../../../../shared/Pagination/Pagination";
 
 const patrols = [
   {
@@ -40,6 +41,10 @@ const PatrolsHistory = () => {
       <div className="sm:hidden rounded-lg bg-white p-2">
         {/* <Patrols /> */}
         <PatrolData />
+      </div>
+      <div className="my-32"></div>
+      <div className="flex justify-end">
+        <Pagination />
       </div>
     </>
   );
