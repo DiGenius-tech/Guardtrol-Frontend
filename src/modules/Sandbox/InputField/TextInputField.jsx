@@ -1,11 +1,8 @@
-import { Link } from "react-router-dom";
-import Eye from "../../../shared/icons/Eye";
-import EyeInverse from "../../../shared/icons/EyeInverse";
+import eyeRegular from "../../../images/icons/eye-regular.svg";
+import eyeSlashRegular from "../../../images/icons/eye-slash-regular.svg";
 
 const TextInputField = (props) => {
-  // console.log("props.togglePwdType: ", props.togglePwdType);
   const handleClick = () => {
-    console.log("clicked!", props.label);
     if (props.togglePwdType) {
       props.togglePwdType();
     }
@@ -64,26 +61,21 @@ const TextInputField = (props) => {
           </>
         ) : (
           <div className="relative w-full">
-            {props.passwordType === "text" ? (
-              <button
-                type="button"
-                // onClick={props.togglePwdType}
-                onClick={handleClick}
-                aria-label="toggle password visibility"
-                className="w-8 h-full absolute inset-y-0 right-0 flex items-center pr-3"
-              >
-                <Eye />
-              </button>
-            ) : (
-              <button
-                type="button"
-                onClick={handleClick}
-                aria-label="toggle password visibility"
-                className="w-8 h-full absolute inset-y-0 right-0 flex items-center pr-3"
-              >
-                <EyeInverse />
-              </button>
-            )}
+            <button
+              type="button"
+              onClick={handleClick}
+              aria-label="toggle password visibility"
+              className="w-8 h-full absolute inset-y-0 right-0 flex items-center justify-center pr-3"
+            >
+              {props.passwordType === "text" ? (
+                <img src={eyeRegular} alt="eye" />
+              )
+                : (
+                  <img src={eyeSlashRegular} alt="inverse" />
+                )
+              }
+            </button>
+
             <input
               // ref={props.password_field_ref}
               type={props.passwordType}
@@ -114,7 +106,7 @@ const TextInputField = (props) => {
             <span className="font-medium">{props.error}</span>
           </p>
         )}
-      </div>
+      </div >
     </>
   );
 };

@@ -45,14 +45,12 @@ const Register = () => {
   // const [isPassword, setIsPassword] = useState(true);
 
   const toggle_pwd_type = () => {
-    console.log("password");
     password_type === "password"
       ? setPassword_type("text")
       : setPassword_type("password");
   };
 
   const toggle_confirm_pwd_type = () => {
-    console.log("confirm password");
     confirm_password_type === "password"
       ? setConfirm_password_type("text")
       : setConfirm_password_type("password");
@@ -173,7 +171,7 @@ const Register = () => {
     try {
       const response = await sendRequest(
         "https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=" +
-          accessToken,
+        accessToken,
         "GET",
         null,
         {},
