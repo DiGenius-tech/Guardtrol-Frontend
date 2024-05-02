@@ -25,7 +25,7 @@ const UpdateSubscriptionPlan = () => {
 
         refetch,
         isUninitialized
-    } = useGetSubscriptionQuery(null, { skip: token ? false : true });
+    } = useGetSubscriptionQuery();
 
     const { data: guards } = useGetGuardsQuery();
     const [defaultCard, setDefaultCard] = useState({

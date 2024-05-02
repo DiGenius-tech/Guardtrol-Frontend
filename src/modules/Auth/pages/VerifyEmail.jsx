@@ -10,6 +10,7 @@ import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import { selectAuth } from "../../../redux/selectors/auth";
 import { suspenseHide, suspenseShow } from "../../../redux/slice/suspenseSlice";
+import { updateUser } from "../../../redux/slice/authSlice";
 
 function VerifyEmail() {
   const auth = useSelector(selectAuth);
@@ -37,6 +38,7 @@ function VerifyEmail() {
 
     if (data.isverified) {
       setVerified(true);
+      dispatch(updateUser({...user, emailverified:true}))
       toast("already verified");
 
       navigate("/client");
@@ -92,8 +94,9 @@ function VerifyEmail() {
 
           if (null != data) {
             toast(data.message);
-            navigate("/client/dashboard", { replace: true });
-            window.location.reload();
+            dispatch(updateUser({...user, emailverified:true}))
+            //navigate("/client/dashboard", { replace: true });
+            
           }
         } catch (err) {
           console.log(err);
