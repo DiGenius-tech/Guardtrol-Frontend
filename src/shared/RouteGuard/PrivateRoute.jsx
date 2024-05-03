@@ -5,9 +5,10 @@ import LoadingSpinner from "../LoadingSpinner/LoadingSpinner";
 import { useDispatch, useSelector } from "react-redux";
 import { selectToken, selectUser } from "../../redux/selectors/auth";
 import { selectOnboardingLevel } from "../../redux/selectors/onboarding";
-import { suspenseHide } from "../../redux/slice/suspenseSlice";
+import { suspenseHide, suspenseShow } from "../../redux/slice/suspenseSlice";
 import { setOnboardingLevel } from "../../redux/slice/onboardingSlice";
 import { useGetBeatsQuery } from "../../redux/services/beats";
+import useHttpRequest from "../Hooks/HttpRequestHook";
 
 const PrivateRoute = ({
   component: Component,
@@ -15,16 +16,13 @@ const PrivateRoute = ({
   ...rest
 }) => {
   const onboardingLevel = useSelector(selectOnboardingLevel);
-
+  const { isLoading, error, responseData, sendRequest } = useHttpRequest();
   const user = useSelector(selectUser);
   const token = useSelector(selectToken);
 
   const dispatch = useDispatch();
-  const [isLoading, setIsLoading] = useState(true);
 
-  const [onboardingRoute, setOnboardingRoute] = useState(
-    "/onboarding/membership"
-  );
+  const [onboardingRoute, setOnboardingRoute] = useState("");
   const location = useLocation();
 
   const {
@@ -68,12 +66,44 @@ const PrivateRoute = ({
       case 4:
         return setOnboardingRoute("/onboarding/complete");
       default:
-        return setOnboardingRoute("/onboarding/membership");
+        return;
     }
   }, [onboardingLevel]);
 
+  useEffect(() => {
+    if (token && !user.onboardingcomplete) {
+      dispatch(suspenseShow());
+      sendRequest(`users/getuser/${user.userid}`, "GET", null, {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      }).then((response) => {
+        if (response) {
+          console.log(response);
+          if (response?.subscriptions?.length > 0) {
+            if (response.beats.length > 0) {
+              if (response?.guards?.length > 0) {
+                if (response?.beats?.some((beat) => beat?.guards?.length > 0)) {
+                  dispatch(setOnboardingLevel(4));
+                } else {
+                  dispatch(setOnboardingLevel(3));
+                }
+              } else {
+                dispatch(setOnboardingLevel(2));
+              }
+            } else {
+              dispatch(setOnboardingLevel(1));
+            }
+          } else {
+            dispatch(setOnboardingLevel(0));
+          }
+        }
+      });
+      dispatch(suspenseHide());
+    }
+  }, [token]);
+
   if (!user) {
-     return <Navigate to="/auth" state={{ from: location }} replace />;
+    return <Navigate to="/auth" state={{ from: location }} replace />;
   }
 
   // if (onboardingLevel === 0) {
@@ -114,23 +144,22 @@ const PrivateRoute = ({
   //   );
   // }
   if (user?.onboardingcomplete && location.pathname === "/auth") {
-     return <Navigate to={"/client"} state={{ from: "/" }} replace />;
+    return <Navigate to={"/client"} state={{ from: "/" }} replace />;
   }
   if (
     onboarding &&
     location.pathname !== onboardingRoute &&
     !subRoutes.some((item) => location.pathname.includes(item))
   ) {
-     return <Navigate to={onboardingRoute} />;
+    return <Navigate to={onboardingRoute} />;
   }
 
   if (
     !user?.onboardingcomplete &&
     !subRoutes2.some((item) => location.pathname.includes(item))
   ) {
-     return <Navigate to={"/onboarding"} state={{ from: "/" }} replace />;
+    return <Navigate to={"/onboarding"} state={{ from: "/" }} replace />;
   }
-
   return <Component {...rest} />;
 };
 

@@ -85,7 +85,7 @@ const OnboardingComplete = () => {
           <RegularButton
             text={"Proceed to Dashboard"}
             onClick={() => {
-              dispatch(setOnboardingLevel(0));
+              dispatch(setOnboardingLevel(null));
               navigate("/client/dashboard");
             }}
           />

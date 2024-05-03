@@ -51,13 +51,12 @@ const Checkout = () => {
 
   const [paymentMethod, setPaymentMethod] = useState("flutterwave");
   const navigate = useNavigate();
+
   useEffect(() => {
     if (plan && plan.amount) {
       setSelectedPlan(plan);
     }
-
-    dispatch(suspenseHide());
-  }, [suspenseState, plan]);
+  }, [plan]);
 
   const handleCheck = (e) => {
     setPaymentMethod(e);
@@ -76,6 +75,7 @@ const Checkout = () => {
       payWithPaystack();
     }
   };
+
   const payWithFlutterwave = async () => {
     dispatch(suspenseShow());
 
@@ -86,7 +86,7 @@ const Checkout = () => {
           createSubscription(response);
         }
         closePaymentModal();
-        //dispatch(suspenseHide())
+        dispatch(suspenseHide());
       },
       onClose: () => {
         toast.warn("Payment Window Closed, Payment Cancelled");
@@ -101,14 +101,12 @@ const Checkout = () => {
 
   const payWithPaystack = async () => {
     dispatch(suspenseShow());
-
     handlePaystackPayment({
       onSuccess: (response) => {
         createSubscription(response);
       },
       onClose: () => {
         toast.warn("Payment Window Closed, Payment Cancelled");
-        dispatch(suspenseHide());
       },
     });
   };
@@ -120,7 +118,7 @@ const Checkout = () => {
         plan: selectedPlan,
         paymentgateway: paymentMethod,
       };
-      dispatch(suspenseShow());
+
       const data = await sendRequest(
         `users/subscribe/${user.userid}`,
         "POST",
@@ -140,9 +138,11 @@ const Checkout = () => {
         dispatch(setCurrentSubscription(data.subscription));
         console.log("first");
         navigate("/onboarding/membership/successful");
-        window.location.reload();
       }
-    } catch (error) {}
+    } catch (error) {
+    } finally {
+      window.location.reload();
+    }
   };
   useEffect(() => {
     if (error) {
@@ -171,7 +171,6 @@ const Checkout = () => {
                   name="payment_option"
                   id="flutterwave"
                   value={paymentMethod}
-                  checked
                 />
                 <label htmlFor="flutterwave" className="cursor-pointer block">
                   {/* Flutterwave */}

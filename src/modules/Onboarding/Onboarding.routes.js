@@ -12,23 +12,26 @@ import PaymentFailure from "./pages/Subscription/PaymentFailure/PaymentFailure";
 import Subscription from "./pages/Subscription/Subscription";
 import assign_beats_routes from "./pages/AssignBeats/AssignBeats.routes";
 import OnboardingComplete from "./pages/Complete/CompleteOnboarding";
+import LoadingSpinner from "../../shared/LoadingSpinner/LoadingSpinner";
+import AddBeat from "./pages/ConfigureBeats/AddBeat/AddBeat";
 
-const { subscription_routes, subscription_routes_empt } = subscriptionRoutes
+const { subscription_routes, subscription_routes_empt } = subscriptionRoutes;
 
 const onboarding_routes = {
-    path: "/onboarding",
-    element: <PrivateRoute component={Onboarding} onboarding={true} />,
-    children: [
-        {
-            path: "/onboarding/complete",
-            element: <OnboardingComplete />,
-        },
-        subscription_routes_empt,
-        subscription_routes,
-        configure_beats_routes,
-        onboard_guard_routes,
-        assign_beats_routes
-    ]
-}
+  path: "/onboarding",
+  element: <PrivateRoute component={Onboarding} onboarding={true} />,
+  children: [
+    {
+      path: "/onboarding/complete",
+      element: <OnboardingComplete />,
+    },
+
+    subscription_routes_empt,
+    subscription_routes,
+    configure_beats_routes,
+    onboard_guard_routes,
+    assign_beats_routes,
+  ],
+};
 
 export default onboarding_routes;

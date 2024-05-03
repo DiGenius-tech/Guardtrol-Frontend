@@ -6,8 +6,8 @@ function PatrolGuardListMobileView(props) {
     <>
       {/* patrol-guard-list-mobile-view-app works! */}
       {props?.guards?.length < 1 ? (
-        <div class="bg-white p-8 rounded ">
-          <p class="text-gray-700 text-center">No Guards Here Yet</p>
+        <div className="bg-white p-8 rounded ">
+          <p className="text-gray-700 text-center">No Guards Here Yet</p>
         </div>
       ) : (
         <div className="relative overflow-x-auto">
@@ -86,11 +86,9 @@ function PatrolGuardListMobileView(props) {
                                 Edit guard
                               </Link>
                             </Dropdown.Item>
-                            
                           </Dropdown>
                         </div>
                       </div>
-                   
                     </td>
                   </tr>
                 );

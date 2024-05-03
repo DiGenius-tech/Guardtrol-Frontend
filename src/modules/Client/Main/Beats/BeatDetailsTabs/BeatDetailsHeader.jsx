@@ -23,7 +23,6 @@ function BeatDetailsHeader() {
   const { data: beats, refetch: refetchBeats } = useGetBeatsQuery();
 
   const selectedBeat = beats?.find((b) => b._id === beatId);
-  console.log(selectedBeat);
   return (
     <>
       <div className="flex justify-between flex-row my-2">

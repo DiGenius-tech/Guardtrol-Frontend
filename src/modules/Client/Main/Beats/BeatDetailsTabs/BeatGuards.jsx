@@ -7,6 +7,8 @@ import AddGuard from "../../../../Onboarding/pages/OnboardGuard/AddGuard/AddGuar
 import { Link, useLocation, useParams } from "react-router-dom";
 import ActivePatrolGuards from "../../PatrolGuard/PatrolGuardList/ActivePatrolGuards/ActivePatrolGuards";
 import InactivePatrolGuards from "../../PatrolGuard/PatrolGuardList/InactivePatrolGuards/InactivePatrolGuards";
+import AssignBeat from "../AssignBeat";
+import AssignNewBeat from "../../../../Onboarding/pages/AssignBeats/AssignNewBeat/AssignNewBeat";
 
 const BeatGuards = () => {
   const location = useLocation();
@@ -68,7 +70,7 @@ const BeatGuards = () => {
         {active.includes(location.pathname) && <ActivePatrolGuards />}
         {inactive.includes(location.pathname) && <InactivePatrolGuards />}
         {addguard.includes(location.pathname) && (
-          <AddGuard onBoarding={false} />
+          <AssignNewBeat isOnboarding={false} />
         )}
       </div>
     </>

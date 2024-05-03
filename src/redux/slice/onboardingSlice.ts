@@ -6,12 +6,12 @@ import { TSubscription } from "../../types/subscription";
 import { PURGE } from "redux-persist";
 
 interface Subscription {
-  onboardingLevel: number;
+  onboardingLevel: number | null;
   guards: any;
 }
 
 const initialState: Subscription | null = {
-  onboardingLevel: 0,
+  onboardingLevel: null,
   guards: [],
 };
 

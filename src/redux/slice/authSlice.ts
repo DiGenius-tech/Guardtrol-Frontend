@@ -13,6 +13,7 @@ interface Auth {
         email: string;
         image: string;
         name: string;
+        phone: string;
         emailverified: boolean;
         onboardingcomplete: true;
         token: string;
@@ -42,6 +43,7 @@ const authSlice = createSlice({
         email: string;
         image: string;
         name: string;
+        phone: string;
         emailverified: boolean;
         onboardingcomplete: true;
         token: string;
@@ -49,6 +51,7 @@ const authSlice = createSlice({
       }>
     ) {
       state.isAuthenticated = true;
+      console.log(action.payload);
       state.user = action.payload;
       state.token = action.payload.token;
     },

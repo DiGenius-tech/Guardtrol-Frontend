@@ -15,11 +15,12 @@ import { selectToken, selectUser } from "../../../../../redux/selectors/auth";
 import { useNavigate } from "react-router-dom";
 import {
   useGetAllSubscriptionsQuery,
-  useGetSubscriptionQuery
+  useGetSubscriptionQuery,
 } from "../../../../../redux/services/subscriptions";
 import { useGetGuardsQuery } from "../../../../../redux/services/guards";
 import { formatNumberWithCommas } from "../../../../../shared/functions/random-hex-color";
 import moment from "moment";
+import { RenewSubscription } from "../RenewSubscription";
 
 const savedPaymentCards = [
   {
@@ -27,39 +28,39 @@ const savedPaymentCards = [
     title: "Mastercard",
     default: true,
     lastFourDigits: 2378,
-    brandLogo: logo_mastercard
+    brandLogo: logo_mastercard,
   },
   {
     id: "2",
     title: "VISA",
     default: false,
     lastFourDigits: 1334,
-    brandLogo: logo_visa
-  }
+    brandLogo: logo_visa,
+  },
 ];
 
 const SettingBilling = () => {
+  const navigate = useNavigate();
+
   const user = useSelector(selectUser);
   const token = useSelector(selectToken);
 
-  const navigate = useNavigate();
+  const [isAddNewCard, setIsAddNewCard] = useState(false);
+  const [isUpdateSub, setIsUpdateSub] = useState(false);
+  const [openRenewalModal, setOpenRenewalModal] = useState(true);
+
   const {
     data: sub,
     isError,
-
     refetch,
-    isUninitialized
-  } = useGetSubscriptionQuery();
+    isUninitialized,
+  } = useGetSubscriptionQuery(null, { skip: token ? false : true });
 
   const { data: guards } = useGetGuardsQuery();
   const [defaultCard, setDefaultCard] = useState({
-    id: ""
+    id: "",
   });
-
   const { data: subs } = useGetAllSubscriptionsQuery();
-
-  const [isAddNewCard, setIsAddNewCard] = useState(false);
-  const [isUpdateSub, setIsUpdateSub] = useState(false);
 
   const toggleIsUpdateSub = () => {
     setIsUpdateSub(!isUpdateSub);
@@ -103,7 +104,11 @@ const SettingBilling = () => {
   return (
     <>
       {/* setting-billing-app works! */}
-
+      <RenewSubscription
+        subscription={sub}
+        openModal={openRenewalModal}
+        setRenewalModal={setOpenRenewalModal}
+      />
       <div className="sm:max-w-4xl grid grid-cols-12 gap-4 sm:gap-8">
         <div className="hidden sm:block col-span-12 sm:col-span-5">
           <h3 className="font-bold">Current plan</h3>
@@ -143,6 +148,7 @@ const SettingBilling = () => {
                     ""
                   ) : (
                     <button
+                      onClick={() => setOpenRenewalModal(true)}
                       type="button"
                       className="w-full block text-white bg-yellow-500 hover:bg-yellow-600 focus:ring-1 focus:outline-none focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                     >
@@ -324,7 +330,7 @@ const SettingBilling = () => {
                               [
                                 ...Array(
                                   Math.ceil(subs?.length / itemsPerPage)
-                                ).keys()
+                                ).keys(),
                               ].map((index) => (
                                 <a
                                   key={index}

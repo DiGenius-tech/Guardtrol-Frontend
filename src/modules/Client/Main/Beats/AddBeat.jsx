@@ -88,14 +88,15 @@ const AddBeat = () => {
 
         return;
       }
+      console.log("creating.......");
       dispatch(suspenseShow());
 
-      const { data } = await addBeat(beat).finally(dispatch(suspenseHide()));
+      const { data } = await addBeat(beat);
 
       if (data && data.status) {
         toast("Beat Created Successfully");
         navigate("/client/beats");
-        // window.location.reload();
+        dispatch(suspenseHide());
       }
     }
   };

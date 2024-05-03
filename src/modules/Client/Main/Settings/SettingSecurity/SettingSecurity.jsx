@@ -7,6 +7,10 @@ import { post, put } from "../../../../../lib/methods";
 import { useDispatch, useSelector } from "react-redux";
 import { selectToken, selectUser } from "../../../../../redux/selectors/auth";
 import { errorHandler } from "../../../../../lib/errorHandler";
+import {
+  suspenseHide,
+  suspenseShow,
+} from "../../../../../redux/slice/suspenseSlice";
 
 const securityDataSchema = Yup.object().shape({
   currentPassword: Yup.string()
@@ -46,6 +50,7 @@ const SettingSecurity = () => {
   });
 
   const handleSecurityData = async (values) => {
+    dispatch(suspenseShow());
     const data = await put(
       "auth/update-password",
       values,
@@ -53,7 +58,7 @@ const SettingSecurity = () => {
       true,
       "Password updated"
     );
-    console.log(data);
+    dispatch(suspenseHide());
   };
 
   return (

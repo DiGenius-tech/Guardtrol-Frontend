@@ -24,13 +24,12 @@ import {
   setPlan,
   setPsConfig,
 } from "../../../../../redux/slice/selectedPlanSlice";
+import { useGetSubscriptionQuery } from "../../../../../redux/services/subscriptions";
 
 const Shop = () => {
   const user = useSelector(selectUser);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const location = useLocation();
-  const onBoardingLevel = useSelector(selectOnboardingLevel);
   const token = useSelector(selectToken);
 
   const [validationErrors, setValidationErrors] = useState({});
@@ -42,40 +41,17 @@ const Shop = () => {
   });
   const [isModalOpen, setIsModalOpen] = useState(false); // State variable to control modal visibility
 
-  useEffect(() => {
-    if (token) {
-      const data = sendRequest(`users/getuser/${user.userid}`, "GET", null, {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      }).then((response) => {
-        if (response?.subscriptions.length > 0) {
-          dispatch(setOnboardingLevel(1));
+  // useEffect(() => {
+  //   const plan = JSsubscriptionsON.parse(localStorage.getItem("selectedPlan"));
 
-          if (response.beats.length > 0) {
-            dispatch(setOnboardingLevel(2));
-            if (response.guards.length > 0) {
-              dispatch(setOnboardingLevel(3));
-              if (response.beats.some((beat) => beat.guards.length > 0)) {
-                dispatch(setOnboardingLevel(4));
-              }
-            }
-          }
-        }
-      });
-    }
-  }, [token]);
-
-  useEffect(() => {
-    const plan = JSON.parse(localStorage.getItem("selectedPlan"));
-
-    if (plan && plan.amount) {
-      setSelectedPlan(plan);
-      setPlanFormData({
-        numberofbeats: plan.numberofbeats,
-        extraguards: plan.extraguards,
-      });
-    }
-  }, [setSelectedPlan, setPlanFormData]);
+  //   if (plan && plan.amount) {
+  //     setSelectedPlan(plan);
+  //     setPlanFormData({
+  //       numberofbeats: plan.numberofbeats,
+  //       extraguards: plan.extraguards,
+  //     });
+  //   }
+  // }, [setSelectedPlan, setPlanFormData]);
 
   const handleChange = (e) => {
     setPlanFormData({ ...planFormData, [e.target.name]: e.target.value });

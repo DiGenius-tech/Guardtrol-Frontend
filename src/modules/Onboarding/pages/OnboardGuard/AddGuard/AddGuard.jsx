@@ -21,6 +21,10 @@ import { selectOnboardingGuards } from "../../../../../redux/selectors/onboardin
 import { addOnboardingGuard } from "../../../../../redux/slice/onboardingSlice";
 import { useGetSubscriptionQuery } from "../../../../../redux/services/subscriptions";
 import Swal from "sweetalert2";
+import {
+  suspenseHide,
+  suspenseShow,
+} from "../../../../../redux/slice/suspenseSlice";
 
 function AddGuard({ onBoarding = true }) {
   const [isGotIt, setIsGotIt] = useState(false);
@@ -112,8 +116,13 @@ function AddGuard({ onBoarding = true }) {
         });
         return;
       } else {
-        addGuards(guard);
-        navigate("../");
+        dispatch(suspenseShow());
+        const { data } = await addGuards(guard);
+        if (data) {
+          console.log(data);
+          navigate(-1);
+          dispatch(suspenseHide());
+        }
       }
     }
   };

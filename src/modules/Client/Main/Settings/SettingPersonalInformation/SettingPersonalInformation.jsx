@@ -8,6 +8,10 @@ import { useFormik } from "formik";
 import { post, put } from "../../../../../lib/methods";
 import { updateUser } from "../../../../../redux/slice/authSlice";
 import zIndex from "@mui/material/styles/zIndex";
+import {
+  suspenseHide,
+  suspenseShow,
+} from "../../../../../redux/slice/suspenseSlice";
 
 const PersonalInformationSchema = Yup.object().shape({
   name: Yup.string().required("Fullname is required"),
@@ -60,6 +64,7 @@ const SettingPersonalInformation = () => {
   });
 
   const handleUpdateProfile = async (values) => {
+    dispatch(suspenseShow());
     const data = await put(
       "settings/personal-information",
       values,
@@ -67,13 +72,14 @@ const SettingPersonalInformation = () => {
       true,
       "Profile information updated"
     );
-    console.log(data);
     if (data) {
       dispatch(updateUser(data));
     }
+    dispatch(suspenseHide());
   };
 
   const handleUpdateImage = async (values) => {
+    dispatch(suspenseShow());
     const data = await put(
       "settings/personal-image",
       { image: `data:image/png;base64,${base}` },
@@ -85,9 +91,9 @@ const SettingPersonalInformation = () => {
     if (data) {
       dispatch(updateUser(data));
     }
+    dispatch(suspenseHide());
   };
-  console.log(user?.name.split(" "));
-  console.log(user?.name.split(" ")?.[0]?.[0]);
+
   return (
     <>
       {/* setting-personal-information-app works! */}

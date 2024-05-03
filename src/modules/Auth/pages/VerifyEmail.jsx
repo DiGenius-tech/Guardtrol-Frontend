@@ -35,7 +35,7 @@ function VerifyEmail() {
       }
     );
 
-    if (data.isverified) {
+    if (data?.isverified) {
       setVerified(true);
       toast("already verified");
 
@@ -44,8 +44,7 @@ function VerifyEmail() {
   };
 
   useEffect(() => {
-    if (null != token) {
-      //console.log(user)
+    if (token && user) {
       checkIfVerified(user);
     }
   }, [token]);

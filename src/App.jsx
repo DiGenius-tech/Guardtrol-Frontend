@@ -5,6 +5,7 @@ import "./App.scss";
 import {
   Navigate,
   RouterProvider,
+  Routes,
   createBrowserRouter,
   useNavigate,
 } from "react-router-dom";
@@ -35,6 +36,7 @@ function App() {
 
   const [psConfig, setPsConfig] = useState({});
   const [fwConfig, setFwConfig] = useState({});
+  const [suspenseState, setSuspenseState] = useState(suspense);
 
   // const login = useCallback((data) => {
   //   setToken(data.token);
@@ -158,10 +160,15 @@ function App() {
     }
   }, [error]);
 
+  useEffect(() => {
+    setSuspenseState(suspense);
+  }, [suspense]);
+
+  console.log("suspense", suspense);
   return (
     <Provider store={store}>
       <PersistGate persistor={persistor}>
-        {suspense && <LoadingSpinner />}
+        {suspenseState && <LoadingSpinner />}
         <RouterProvider router={router} />
       </PersistGate>
     </Provider>

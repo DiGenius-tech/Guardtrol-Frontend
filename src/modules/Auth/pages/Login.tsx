@@ -70,7 +70,7 @@ const Login = () => {
         const data: any = await post("users/signin", JSON.stringify(formData));
 
         if (data) {
-          dispatch(setOnboardingLevel(0));
+          dispatch(setOnboardingLevel(null));
           dispatch(setOnboardingGuards([]));
 
           dispatch(loginSuccess(data));
@@ -105,7 +105,7 @@ const Login = () => {
       );
 
       if (null != data) {
-        dispatch(setOnboardingLevel(0));
+        dispatch(setOnboardingLevel(null));
         dispatch(setOnboardingGuards([]));
         dispatch(setCurrentSubscription(null));
         dispatch(loginSuccess(data));
