@@ -9,7 +9,7 @@ import {
   createBrowserRouter,
   useNavigate,
 } from "react-router-dom";
-import { Provider, useSelector } from "react-redux";
+import { Provider, useDispatch, useSelector } from "react-redux";
 import { useCallback, useContext, useEffect, useState } from "react";
 
 import sandbox_routes from "./modules/Sandbox/sandbox.routes";
@@ -27,6 +27,7 @@ import { persistor, store } from "./redux/store";
 import { useGetSubscriptionQuery } from "./redux/services/subscriptions";
 import { selectToken, selectUser } from "./redux/selectors/auth";
 import { selectSuspenseShow } from "./redux/selectors/suspense";
+import { logout } from "./redux/slice/authSlice";
 
 function App() {
   const token = useSelector(selectToken);
@@ -130,29 +131,10 @@ function App() {
   }
 
   useEffect(() => {
-    // const getSub = async () => {
-    //   const data = await u(
-    //     `users/getsubscription/${user.userid}`,
-    //     "GET",
-    //     null,
-    //     {
-    //       "Content-Type": "application/json",
-    //       Authorization: `Bearer ${token}`,
-    //     }
-    //   );
-    //   if (data && data.status) {
-    //     await setCurrentSubscription(data.subscription);
-    //   } else {
-    //   }
-    // };
     if (token && isUninitialized) {
       refetch();
     }
   }, [token]);
-
-  // const setCurrentSubscription = async (data) => {
-  //   return setSubscription(data);
-  // };
 
   useEffect(() => {
     if (error) {

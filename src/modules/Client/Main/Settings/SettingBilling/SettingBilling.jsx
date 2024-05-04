@@ -20,7 +20,7 @@ import {
 import { useGetGuardsQuery } from "../../../../../redux/services/guards";
 import { formatNumberWithCommas } from "../../../../../shared/functions/random-hex-color";
 import moment from "moment";
-import { RenewSubscription } from "../RenewSubscription";
+import RenewSubscription from "../RenewSubscription";
 
 const savedPaymentCards = [
   {
