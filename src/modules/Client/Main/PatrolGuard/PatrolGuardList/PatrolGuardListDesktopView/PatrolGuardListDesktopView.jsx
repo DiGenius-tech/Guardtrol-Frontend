@@ -1,5 +1,6 @@
 import { Dropdown } from "flowbite-react";
 import { Link, useNavigate } from "react-router-dom";
+import { ASSET_URL } from "../../../../../../constants/api";
 
 function PatrolGuardListDesktopView(props) {
   const navigate = useNavigate();
@@ -45,7 +46,15 @@ function PatrolGuardListDesktopView(props) {
                         <Link to={`/client/patrol-guard/details/${guard._id}`}>
                           <div className="flex items-center gap-2">
                             <div className="h-8 w-8 rounded-full overflow-hidden">
-                              <img src={guard.profileImage} alt={guard.name} />
+                              <img
+                                src={`${
+                                  guard.profileImage
+                                    ? ASSET_URL + guard.profileImage
+                                    : ""
+                                }`}
+                                className=" h-full w-full"
+                                alt={guard.name}
+                              />
                             </div>
                             {guard.name}
                             <span className="block sm:hidden">

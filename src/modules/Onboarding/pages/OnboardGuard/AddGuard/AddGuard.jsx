@@ -76,6 +76,8 @@ function AddGuard({ onBoarding = true }) {
     }
 
     if (onBoarding) {
+      console.log(sub);
+      console.log(guards);
       if (onboardingGuards?.length >= sub?.maxbeats * 5 + sub?.maxextraguards) {
         Swal.fire({
           title: "OOPS!! You've Ran Out Of Guards",

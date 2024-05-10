@@ -1,5 +1,6 @@
 import { Dropdown } from "flowbite-react";
 import { Link } from "react-router-dom";
+import { ASSET_URL } from "../../../../../../constants/api";
 
 function PatrolGuardListMobileView(props) {
   return (
@@ -37,7 +38,15 @@ function PatrolGuardListMobileView(props) {
                       className="p-2 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                     >
                       <div className="h-8 w-8 rounded-full overflow-hidden">
-                        <img src={guard.profileImage} alt={guard.name} />
+                        <img
+                          src={`${
+                            guard.profileImage
+                              ? ASSET_URL + guard.profileImage
+                              : ""
+                          }`}
+                          className=" h-full w-full"
+                          alt={guard.name}
+                        />
                       </div>
                     </th>
                     <td className="p-2">

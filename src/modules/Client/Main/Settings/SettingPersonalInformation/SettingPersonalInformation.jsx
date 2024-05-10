@@ -157,7 +157,7 @@ const SettingPersonalInformation = () => {
                     </div>
                   ) : (
                     <img
-                      className="cursor-pointer"
+                      className="cursor-pointer h-full w-full"
                       src={preview ? preview : `${ASSET_URL + user?.image}`}
                       alt={fileName}
                     />

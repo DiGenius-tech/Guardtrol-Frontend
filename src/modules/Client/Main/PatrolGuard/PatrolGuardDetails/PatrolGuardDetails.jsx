@@ -25,6 +25,7 @@ import {
 } from "../../../../../redux/slice/suspenseSlice";
 import { API_BASE_URL, ASSET_URL } from "../../../../../constants/api";
 import axios from "axios";
+import { updateUser } from "../../../../../redux/slice/authSlice";
 
 const PatrolGuardDetails = () => {
   const dispatch = useDispatch();
@@ -62,32 +63,50 @@ const PatrolGuardDetails = () => {
   };
 
   const handleUpdateImage = async () => {
-    dispatch(suspenseShow());
+    try {
+      dispatch(suspenseShow());
 
-    const formData = new FormData();
-    console.log(profile);
+      const formData = new FormData();
+      console.log(profile);
 
-    formData.append("profile", profile);
-    formData.append("guardId", guardId)
+      formData.append("profile", profile);
+      formData.append("guardId", guardId);
 
-    const { data } = await axios.put(
-      `${API_BASE_URL}guard/image`,
-      formData,
-      {
-        headers: {
-          Authorization: `${"Bearer " + token}`,
-          "Content-Type": "multipart/form-data",
-        },
+      const { data } = await axios.put(
+        `${API_BASE_URL}guard/${guardId}/image`,
+        formData,
+        {
+          headers: {
+            Authorization: `${"Bearer " + token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      if (data) {
+        refetchGuards();
       }
-    );
-
-    if (data) {
-      console.log(data);
-      
+      dispatch(suspenseHide());
+    } catch (error) {
+      dispatch(suspenseHide());
     }
-    dispatch(suspenseHide());
   };
 
+  const getSelectedFile = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      setFileName(file.name);
+      setProfile(event.target.files[0]);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreview(reader.result);
+        setBase(reader.result.split(",")[1]);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setFileName("");
+    }
+  };
 
   // const handleUpdateImage = async (values) => {
   //   dispatch(suspenseShow());
@@ -128,7 +147,7 @@ const PatrolGuardDetails = () => {
         Authorization: `Bearer ${token}`,
       }
     ).then((data) => {
-      if (data.status) {
+      if (data?.status) {
         toast("Comment Updated");
         setIsComment(false);
         setGuard({});
@@ -136,24 +155,6 @@ const PatrolGuardDetails = () => {
       }
     });
   };
-
-  const getSelectedFile = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      setFileName(file.name);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreview(reader.result);
-        setBase(reader.result.split(",")[1]);
-        console.log(reader.result.split(",")[1]);
-      };
-      reader.readAsDataURL(file);
-    } else {
-      setFileName("");
-    }
-  };
-
-  
 
   // const getSelectedFile = (event) => {
   //   const file = event.target.files[0];
@@ -206,7 +207,7 @@ const PatrolGuardDetails = () => {
         <div className="col-span-12 sm:col-span-4">
           <div className="h-full p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
             <div>
-              <div className=" relative h-20 w-20 min-h-20 min-w-20 rounded-full overflow-hidden">
+              <div className="mb-2 relative h-20 w-20 min-h-20 min-w-20 rounded-full overflow-hidden">
                 <label
                   style={{
                     position: "absolute",
@@ -239,13 +240,14 @@ const PatrolGuardDetails = () => {
 
                 {!guard?.profileImage && !preview ? (
                   <div className="bg-secondary-50 cursor-pointer rounded-full h-full w-full flex items-center justify-center text-2xl font-bold">
-                    {guard?.name?.split(" ")[0][0] +
-                      guard?.name?.split(" ")[1][0]}
+                    {`${guard?.name?.split(" ")?.[0]?.[0] || ""} ${
+                      guard?.name?.split(" ")?.[1]?.[0] || ""
+                    }`}
                   </div>
                 ) : (
                   <img
-                    className="cursor-pointer"
-                    src={preview ? preview : guard?.profileImage}
+                    className="cursor-pointer h-full w-full "
+                    src={preview ? preview : ASSET_URL + guard.profileImage}
                     alt={fileName}
                   />
                 )}
@@ -260,7 +262,7 @@ const PatrolGuardDetails = () => {
                         onClick={() => handleUpdateImage()}
                         className="cursor-pointer text-primary-500 font-semibold whitespace-nowrap"
                       >
-                        Change my photo
+                        Update Profile
                       </span>
                       <strong className="block text-xs mt-2">{fileName}</strong>{" "}
                     </>

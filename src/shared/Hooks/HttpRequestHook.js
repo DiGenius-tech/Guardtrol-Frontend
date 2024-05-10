@@ -25,7 +25,7 @@ const useHttpRequest = () => {
     setError(null);
     setResponseData(null);
     try {
-      const response = await axios(base ? API_BASE_URL + url : url, {
+      const { data } = await axios(base ? API_BASE_URL + url : url, {
         method,
         body: body ? body : null,
         headers: {
@@ -33,8 +33,8 @@ const useHttpRequest = () => {
         },
         mode: "cors",
       });
-      const data = await response.json();
-      if (!response.ok) {
+      console.log(data);
+      if (!data) {
         return setError(data.message || "Something went wrong!");
       }
 
@@ -43,11 +43,11 @@ const useHttpRequest = () => {
 
       return data;
     } catch (err) {
-      console.log(err.response);
+      console.log(err);
       if (
-        err.response.data?.message ==
+        err?.response?.data?.message ==
           "Authentication Error TokenExpiredError: jwt expired" ||
-        err.response.data?.message ===
+        err?.response?.data?.message ===
           "Authentication Error JsonWebTokenError: invalid signature"
       ) {
         persistor.purge();
