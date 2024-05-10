@@ -138,10 +138,8 @@ const Register = () => {
       const userData = await getUserInfo(accessToken);
 
       console.log(userData);
-      const data = await post(
-        "users/signupwithgoogle",
-        JSON.stringify(userData)
-      );
+      const data = await post("users/signupwithgoogle", userData);
+
       if (null != data) {
         if (data) {
           dispatch(setOnboardingLevel(0));
