@@ -10,16 +10,24 @@ import { useParams } from "react-router-dom";
 import useHttpRequest from "../../../../../shared/Hooks/HttpRequestHook";
 
 import moment from "moment";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { selectToken, selectUser } from "../../../../../redux/selectors/auth";
 import {
   useActivateGuardMutation,
   useGetGuardsQuery,
+  useUpdateGuardMutation,
 } from "../../../../../redux/services/guards";
 import { useGetBeatsQuery } from "../../../../../redux/services/beats";
 import { put } from "../../../../../lib/methods";
+import {
+  suspenseHide,
+  suspenseShow,
+} from "../../../../../redux/slice/suspenseSlice";
+import { API_BASE_URL, ASSET_URL } from "../../../../../constants/api";
+import axios from "axios";
 
 const PatrolGuardDetails = () => {
+  const dispatch = useDispatch();
   const [isComment, setIsComment] = useState(false);
   const auth = useSelector(selectUser);
   const { isLoading, error, responseData, sendRequest } = useHttpRequest();
@@ -29,6 +37,7 @@ const PatrolGuardDetails = () => {
   const [fileName, setFileName] = useState("");
   const [preview, setPreview] = useState("");
   const [base, setBase] = useState("");
+  const [profile, setProfile] = useState();
 
   const { guardId } = useParams();
   const [guard, setGuard] = useState({});
@@ -52,18 +61,47 @@ const PatrolGuardDetails = () => {
     });
   };
 
-  const handleUpdateImage = async (values) => {
-    const data = await put(
-      "guard/image",
-      { guardId, image: `data:image/png;base64,${base}` },
-      token,
-      true,
-      "Profile image updated"
+  const handleUpdateImage = async () => {
+    dispatch(suspenseShow());
+
+    const formData = new FormData();
+    console.log(profile);
+
+    formData.append("profile", profile);
+    formData.append("guardId", guardId)
+
+    const { data } = await axios.put(
+      `${API_BASE_URL}guard/image`,
+      formData,
+      {
+        headers: {
+          Authorization: `${"Bearer " + token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      }
     );
-    console.log(data);
+
     if (data) {
+      console.log(data);
+      
     }
+    dispatch(suspenseHide());
   };
+
+
+  // const handleUpdateImage = async (values) => {
+  //   dispatch(suspenseShow());
+  //   const data = await put(
+  //     "guard/image",
+  //     { guardId, image: `data:image/png;base64,${base}` },
+  //     token,
+  //     true,
+  //     "Profile image updated"
+  //   );
+  //   console.log(data);
+  //   if (data) {
+  //   }
+  // };
   useEffect(() => {
     handleSentRequest();
   }, [token, guardId]);
@@ -114,6 +152,24 @@ const PatrolGuardDetails = () => {
       setFileName("");
     }
   };
+
+  
+
+  // const getSelectedFile = (event) => {
+  //   const file = event.target.files[0];
+  //   if (file) {
+  //     setFileName(file.name);
+  //     setProfile(event.target.files[0]);
+  //     const reader = new FileReader();
+  //     reader.onloadend = () => {
+  //       setPreview(reader.result);
+  //       setBase(reader.result.split(",")[1]);
+  //     };
+  //     reader.readAsDataURL(file);
+  //   } else {
+  //     setFileName("");
+  //   }
+  // };
 
   const verify = async (e) => {
     const statusData = {
