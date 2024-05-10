@@ -15,7 +15,7 @@ import { API_BASE_URL } from "../../../constants/api";
 import { loginSuccess } from "../../../redux/slice/authSlice";
 import {
   setOnboardingGuards,
-  setOnboardingLevel,
+  setOnboardingLevel
 } from "../../../redux/slice/onboardingSlice";
 import { setCurrentSubscription } from "../../../redux/slice/subscriptionSlice";
 
@@ -31,18 +31,29 @@ const Register = () => {
     email: "",
     phone: "",
     password: "",
-    password_confirmation: "",
+    password_confirmation: ""
   });
   const [isLoading, setIsLoading] = useState(false);
 
   /**toggle password field type */
   const password_field_ref = useRef();
   const [password_type, setPassword_type] = useState("password");
+  const [confirm_password_type, setConfirm_password_type] =
+    useState("password");
+
+  // const [isPassword_confirm, setIsPassword_confirm] = useState(true);
+  // const [isPassword, setIsPassword] = useState(true);
 
   const toggle_pwd_type = () => {
     password_type === "password"
       ? setPassword_type("text")
       : setPassword_type("password");
+  };
+
+  const toggle_confirm_pwd_type = () => {
+    confirm_password_type === "password"
+      ? setConfirm_password_type("text")
+      : setConfirm_password_type("password");
   };
 
   const handleChange = (e) => {
@@ -89,7 +100,7 @@ const Register = () => {
           "POST",
           JSON.stringify(formData),
           {
-            "Content-Type": "application/json",
+            "Content-Type": "application/json"
           }
         );
 
@@ -121,7 +132,7 @@ const Register = () => {
   }, [error]);
 
   const signUp = useGoogleLogin({
-    onSuccess: (response) => handleSignupSuccess(response),
+    onSuccess: (response) => handleSignupSuccess(response)
   });
 
   const handleSignupSuccess = async (response) => {
@@ -137,7 +148,7 @@ const Register = () => {
         "POST",
         JSON.stringify(userData),
         {
-          "Content-type": "application/json",
+          "Content-type": "application/json"
         }
       );
       if (null != data) {
@@ -147,7 +158,6 @@ const Register = () => {
           dispatch(setCurrentSubscription(null));
           dispatch(loginSuccess(data));
           toast("Signup Successful");
-         
         }
       }
     } catch (err) {
@@ -161,7 +171,7 @@ const Register = () => {
     try {
       const response = await sendRequest(
         "https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=" +
-          accessToken,
+        accessToken,
         "GET",
         null,
         {},
@@ -249,9 +259,9 @@ const Register = () => {
                   passwordToggler={true}
                   //
                   password_field_ref={password_field_ref}
-                  password_type={password_type}
+                  passwordType={password_type}
                   setPassword_type={setPassword_type}
-                  toggle_pwd_type={toggle_pwd_type}
+                  togglePwdType={toggle_pwd_type}
                 />
 
                 <TextInputField
@@ -264,6 +274,11 @@ const Register = () => {
                   onChange={handleChange}
                   required="required"
                   value={formData.password_confirmation}
+                  //
+                  passwordToggler={true}
+                  passwordType={confirm_password_type}
+                  setPassword_type={setConfirm_password_type}
+                  togglePwdType={toggle_confirm_pwd_type}
                 />
                 <RegularButton text="Create An Account" />
               </form>
@@ -295,5 +310,6 @@ const Register = () => {
     </>
   );
 };
+
 
 export default Register;

@@ -5,7 +5,7 @@ import {
   HiClipboardList,
   HiHome,
   HiOutlineCog,
-  HiUser,
+  HiUser
 } from "react-icons/hi";
 import { customTheme } from "../../../flowbite-theme";
 import { Link, useLocation, useParams } from "react-router-dom";
@@ -24,15 +24,41 @@ const ClientSidebar = () => {
 
   /**URLS */
   const dashboard = ["/client", "/client/"];
-  const history = ["/client/history", "/client/history/"];
+  const history = [
+    "/client/history",
+    "/client/history/",
+    "/client/history/clock-in",
+    "/client/history/clock-in/",
+    "/client/history/clock-out",
+    "/client/history/clock-out/",
+    "/client/history/out-on-break",
+    "/client/history/out-on-break/",
+    "/client/history/patrols",
+    "/client/history/patrols/"
+  ];
   const patrol_guard = ["/client/patrol-guard", "/client/patrol-guard/"];
   const beats = [
     "/client/beats",
     "/client/beats/",
     "/client/beats/configure-beat",
-    "/client/beats/configure-beat/",
+    "/client/beats/configure-beat/"
   ];
-  const settings = ["/client/settings"];
+  const settings = [
+    "/client/settings",
+    "/ client / settings/",
+    "/client/settings/personal-information",
+    "/client/settings/personal-information/",
+    "/client/settings/security",
+    "/client/settings/security/",
+    "/client/settings/shift-schedule",
+    "/client/settings/shift-schedule/",
+    "/client/settings/billing",
+    "/client/settings/billing/",
+    "/client/settings/billing/update-subscription",
+    "/client/settings/billing/update-subscription/",
+    "/client/settings/billing/checkout-subscription",
+    "/client/settings/billing/checkout-subscription/"
+  ];
 
   useEffect(() => {
     const queryString = window.location.search;

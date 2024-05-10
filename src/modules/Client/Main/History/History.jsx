@@ -4,28 +4,19 @@ import ClockInHistory from "./ClockInHistory/ClockInHistory";
 import ClockOutHistory from "./ClockOutHistory/ClockOutHistory";
 import OutOnBreakHistory from "./OutOnBreakHistory/OutOnBreakHistory";
 import PatrolsHistory from "./PatrolsHistory/PatrolsHistory";
+import HistoryToolbar from "./HistoryToolbar/HistoryToolbar";
+import { Outlet } from "react-router-dom";
 
 const History = () => {
   return (
     <>
       {/* history-app works! */}
 
-      <div className="tab flex-tabs flex-tab-nowrap">
-        <Tabs aria-label="Tabs with underline" style="underline">
-          <Tabs.Item active title="Clock in">
-            <ClockInHistory />
-          </Tabs.Item>
-          <Tabs.Item title="Clock out">
-            <ClockOutHistory />
-          </Tabs.Item>
-          <Tabs.Item title="Out on break">
-            <OutOnBreakHistory />
-          </Tabs.Item>
-          <Tabs.Item title="Patrols">
-            <PatrolsHistory />
-          </Tabs.Item>
-        </Tabs>
+      <HistoryToolbar />
+      <div className="py-4">
+        <Outlet />
       </div>
+
     </>
   );
 };

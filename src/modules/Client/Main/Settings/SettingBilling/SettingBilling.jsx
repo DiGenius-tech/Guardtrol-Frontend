@@ -12,7 +12,7 @@ import { FaCaretUp } from "react-icons/fa";
 import { FaCaretDown } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import { selectToken, selectUser } from "../../../../../redux/selectors/auth";
-import { useNavigate } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import {
   useGetAllMySubscriptionsQuery,
   useGetAllSubscriptionsQuery,
@@ -137,8 +137,9 @@ const SettingBilling = () => {
           <h3 className="font-bold">Current plan</h3>
         </div>
         <div className="col-span-12 sm:col-span-7">
-          <div className="p-4 sm:p-6 bg-dark-400 text-white border border-gray-200 rounded-lg shadow">
-            <ul className="flex flex-col gap-4">
+          <Outlet />
+          {/*  <div className="p-4 sm:p-6 bg-dark-400 text-white border border-gray-200 rounded-lg shadow">
+          <ul className="flex flex-col gap-4">
               <li className="grid grid-cols-2 items-center">
                 <div className="col-span-2 sm:col-span-1 font-light">
                   {sub?.plan} plan
@@ -219,7 +220,7 @@ const SettingBilling = () => {
                 {isUpdateSub ? <UpdateSubscription /> : ""}
               </li>
             </ul>
-          </div>
+          </div> */}
         </div>
         <div className="hidden sm:block col-span-12 sm:col-span-5">
           <h3 className="font-bold">Invoices</h3>
