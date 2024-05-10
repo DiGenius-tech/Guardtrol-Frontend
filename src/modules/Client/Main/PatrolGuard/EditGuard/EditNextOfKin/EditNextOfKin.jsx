@@ -8,6 +8,7 @@ import useHttpRequest from "../../../../../../shared/Hooks/HttpRequestHook";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 import { selectAuth } from "../../../../../../redux/selectors/auth";
+import { patch } from "../../../../../../lib/methods";
 
 const identificationTypeOptions = [
   {
@@ -80,14 +81,11 @@ const EditNextOfKin = (props) => {
       return;
     }
 
-    const data = sendRequest(
+    const data = patch(
       `guard/nextofkin/${guardId}`,
-      "PATCH",
+
       JSON.stringify(formData),
-      {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      }
+      token
     ).then((data) => {
       if (data.status) {
         toast("Next Of Kin Information Updated");

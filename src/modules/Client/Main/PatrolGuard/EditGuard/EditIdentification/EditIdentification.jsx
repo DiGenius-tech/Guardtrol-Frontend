@@ -11,6 +11,7 @@ import {
   selectToken,
   selectUser,
 } from "../../../../../../redux/selectors/auth";
+import { patch } from "../../../../../../lib/methods";
 const identificationTypeOptions = [
   {
     name: "National Identification Number (NIN)",
@@ -79,14 +80,11 @@ const EditIdentification = (props) => {
       idnumber: formData.idnumber,
     };
 
-    const data = sendRequest(
+    const data = patch(
       `guard/identification/${guardId}`,
-      "PATCH",
+
       JSON.stringify(guardData),
-      {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      }
+      token
     ).then((data) => {
       if (data.status) {
         toast("Identification Information Updated");

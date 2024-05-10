@@ -18,7 +18,7 @@ import {
   useUpdateGuardMutation,
 } from "../../../../../redux/services/guards";
 import { useGetBeatsQuery } from "../../../../../redux/services/beats";
-import { put } from "../../../../../lib/methods";
+import { get, put } from "../../../../../lib/methods";
 import {
   suspenseHide,
   suspenseShow,
@@ -53,10 +53,7 @@ const PatrolGuardDetails = () => {
   } = useGetGuardsQuery();
 
   const handleSentRequest = () => {
-    const data = sendRequest(`guard/getguard/${guardId}`, "GET", null, {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    }).then((data) => {
+    const data = get(`guard/getguard/${guardId}`, token).then((data) => {
       console.log(data);
       setGuard(data);
     });

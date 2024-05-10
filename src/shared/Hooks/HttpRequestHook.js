@@ -31,7 +31,6 @@ const useHttpRequest = () => {
         headers: {
           ...headers,
         },
-        mode: "cors",
       });
       console.log(data);
       if (!data) {

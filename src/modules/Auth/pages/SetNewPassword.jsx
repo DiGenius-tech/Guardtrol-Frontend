@@ -11,6 +11,7 @@ import { useContext, useEffect, useState } from "react";
 import { selectUser } from "../../../redux/selectors/auth";
 import { useDispatch, useSelector } from "react-redux";
 import { suspenseHide, suspenseShow } from "../../../redux/slice/suspenseSlice";
+import { patch, post } from "../../../lib/methods";
 
 function SetNewPassword() {
   const { token } = useParams();
@@ -68,13 +69,9 @@ function SetNewPassword() {
         dispatch(suspenseShow());
 
         try {
-          const data = await sendRequest(
+          const data = await patch(
             `users/resetpassword`,
-            "PATCH",
-            JSON.stringify(formData),
-            {
-              "Content-Type": "application/json",
-            }
+            JSON.stringify(formData)
           );
 
           if (null != data) {

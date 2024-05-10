@@ -8,6 +8,7 @@ import useHttpRequest from "../../../../../../shared/Hooks/HttpRequestHook";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { selectAuth } from "../../../../../../redux/selectors/auth";
+import { patch } from "../../../../../../lib/methods";
 
 const sexOptions = [
   {
@@ -128,14 +129,10 @@ const EditPersonalInformation = (props) => {
       state: formData.state,
     };
 
-    const data = sendRequest(
+    const data = patch(
       `guard/personalinformation/${guardId}`,
-      "PATCH",
       JSON.stringify(guardData),
-      {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      }
+      token
     ).then((data) => {
       if (data.status) {
         toast("Personal Information Updated");

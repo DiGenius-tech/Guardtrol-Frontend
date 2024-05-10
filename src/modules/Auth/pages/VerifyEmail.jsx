@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { selectAuth } from "../../../redux/selectors/auth";
 import { suspenseHide, suspenseShow } from "../../../redux/slice/suspenseSlice";
 import { updateUser } from "../../../redux/slice/authSlice";
+import { get, post } from "../../../lib/methods";
 
 function VerifyEmail() {
   const auth = useSelector(selectAuth);
@@ -27,15 +28,7 @@ function VerifyEmail() {
 
   const checkIfVerified = async (props) => {
     try {
-      const data = await sendRequest(
-        `users/${props.userid}/checkverifyemail`,
-        "get",
-        null,
-        {
-          "Content-Type": "application/json",
-          Authorization: "Bearer " + token,
-        }
-      );
+      const data = await get(`users/${props.userid}/checkverifyemail`, token);
 
       if (data?.isverified) {
         setVerified(true);
@@ -89,14 +82,10 @@ function VerifyEmail() {
         // Form is valid, handle submission
         dispatch(suspenseShow());
         try {
-          const data = await sendRequest(
+          const data = await post(
             `users/${user?.userid}/verifyemail`,
-            "POST",
             JSON.stringify(formData),
-            {
-              "Content-Type": "application/json",
-              Authorization: "Bearer " + token,
-            }
+            token
           );
 
           if (null != data) {

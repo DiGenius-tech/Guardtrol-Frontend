@@ -26,6 +26,7 @@ import {
   selectPsConfig,
 } from "../../../../../redux/selectors/selectedPlan";
 import selectedPlanSlice from "../../../../../redux/slice/selectedPlanSlice";
+import { post } from "../../../../../lib/methods";
 
 const PaymentOption = {
   FIRST: "flutterwave",
@@ -39,7 +40,9 @@ const Checkout = (props) => {
   const plan = useSelector(selectPlan);
   const token = useSelector(selectToken);
 
-  const { data: sub } = useGetSubscriptionQuery({ skip: token ? false : true });
+  const { data: sub, refetch: refetchActiveSub } = useGetSubscriptionQuery({
+    skip: token ? false : true,
+  });
   const suspenseState = useSelector(selectSuspenseShow);
 
   const dispatch = useDispatch();
@@ -119,26 +122,24 @@ const Checkout = (props) => {
         paymentgateway: paymentMethod,
       };
 
-      const data = await sendRequest(
+      const data = await post(
         `users/subscribe/${user.userid}`,
-        "POST",
         JSON.stringify(reqData),
-        {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        }
+        token
       );
-      console.log(1);
       if (data && data.message === "subscribed") {
         console.log(2);
 
         localStorage.removeItem("selectedPlan");
         localStorage.setItem("paymentComplete", true);
         localStorage.setItem("onBoardingLevel", 1);
+
         dispatch(setCurrentSubscription(data.subscription));
-        console.log("first");
+
         navigate("/onboarding/membership/successful");
+        window.location.reload();
       }
+      refetchActiveSub();
     } catch (error) {}
   };
   useEffect(() => {

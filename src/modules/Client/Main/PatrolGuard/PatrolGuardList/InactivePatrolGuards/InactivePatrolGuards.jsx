@@ -19,6 +19,7 @@ import {
 import { useGetGuardsQuery } from "../../../../../../redux/services/guards";
 import { useGetBeatsQuery } from "../../../../../../redux/services/beats";
 import { useParams } from "react-router-dom";
+import { del } from "../../../../../../lib/methods";
 
 const duty_status = {
   OFF_DUTY: 0,
@@ -42,26 +43,6 @@ function InactivePatrolGuards() {
   } = useGetGuardsQuery();
   const { data: beats } = useGetBeatsQuery();
   const selectedBeat = beats?.find((b) => b._id === beatId);
-
-  const deleteGuard = async () => {
-    dispatch(suspenseShow());
-    const data = sendRequest(
-      `guard/deleteguard/${user.userid}`,
-      "DELETE",
-      JSON.stringify(selectedGuard),
-      {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      }
-    )
-      .then((data) => {
-        if (data.status) {
-          toast("Guard Deleted Successfully");
-          setOpen(false);
-        }
-      })
-      .finally(dispatch(suspenseHide()));
-  };
 
   useEffect(() => {}, [token]);
 

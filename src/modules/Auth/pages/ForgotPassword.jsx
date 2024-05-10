@@ -10,6 +10,7 @@ import RegularButton from "../../Sandbox/Buttons/RegularButton";
 import { useDispatch, useSelector } from "react-redux";
 import { selectUser } from "../../../redux/selectors/auth";
 import { suspenseHide, suspenseShow } from "../../../redux/slice/suspenseSlice";
+import { post } from "../../../lib/methods";
 
 const ForgotPassword = () => {
   const user = useSelector(selectUser);
@@ -52,13 +53,9 @@ const ForgotPassword = () => {
         dispatch(suspenseShow());
 
         try {
-          const data = await sendRequest(
+          const data = await post(
             `users/forgotpassword`,
-            "POST",
-            JSON.stringify(formData),
-            {
-              "Content-Type": "application/json",
-            }
+            JSON.stringify(formData)
           );
 
           if (null != data) {

@@ -7,8 +7,13 @@ import { useParams } from "react-router-dom";
 
 import useHttpRequest from "../../../../../../shared/Hooks/HttpRequestHook";
 import { toast } from "react-toastify";
-import { selectToken, selectUser } from "../../../../../../redux/selectors/auth";
+import {
+  selectToken,
+  selectUser,
+} from "../../../../../../redux/selectors/auth";
 import { useSelector } from "react-redux";
+import axios from "axios";
+import { patch } from "../../../../../../lib/methods";
 
 const titleOptions = [
   {
@@ -211,14 +216,10 @@ const EditGuarantorForm = (props) => {
       toast.warn("select a valid identification type");
       return;
     }
-    const data = sendRequest(
-      `http://localhost:5000/api/guard/guarantor/${guardId}`,
-      "PATCH",
+    const data = patch(
+      `guard/guarantor/${guardId}`,
       JSON.stringify(formData),
-      {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      }
+      token
     ).then((data) => {
       if (data.status) {
         toast("Guarantor Information Updated");

@@ -9,6 +9,7 @@ import { suspenseHide, suspenseShow } from "../../redux/slice/suspenseSlice";
 import { setOnboardingLevel } from "../../redux/slice/onboardingSlice";
 import { useGetBeatsQuery } from "../../redux/services/beats";
 import useHttpRequest from "../Hooks/HttpRequestHook";
+import { get } from "../../lib/methods";
 
 const PrivateRoute = ({
   component: Component,
@@ -75,10 +76,7 @@ const PrivateRoute = ({
       dispatch(suspenseShow());
 
       try {
-        sendRequest(`users/getuser/${user.userid}`, "GET", null, {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        }).then((response) => {
+        get(`users/getuser/${user.userid}`, token).then((response) => {
           if (response) {
             console.log(response);
             if (response?.subscriptions?.length > 0) {

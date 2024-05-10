@@ -15,9 +15,11 @@ import { API_BASE_URL } from "../../../constants/api";
 import { loginSuccess } from "../../../redux/slice/authSlice";
 import {
   setOnboardingGuards,
-  setOnboardingLevel
+  setOnboardingLevel,
 } from "../../../redux/slice/onboardingSlice";
 import { setCurrentSubscription } from "../../../redux/slice/subscriptionSlice";
+import { post } from "../../../lib/methods";
+import axios from "axios";
 
 const Register = () => {
   const user = useSelector(selectUser);
@@ -31,7 +33,7 @@ const Register = () => {
     email: "",
     phone: "",
     password: "",
-    password_confirmation: ""
+    password_confirmation: "",
   });
   const [isLoading, setIsLoading] = useState(false);
 
@@ -95,14 +97,7 @@ const Register = () => {
       // Form is valid, handle submission
       setIsLoading(true);
       try {
-        const data = await sendRequest(
-          "users/signup",
-          "POST",
-          JSON.stringify(formData),
-          {
-            "Content-Type": "application/json"
-          }
-        );
+        const data = await post("users/signup", JSON.stringify(formData));
 
         if (null != data) {
           if (data) {
@@ -132,7 +127,7 @@ const Register = () => {
   }, [error]);
 
   const signUp = useGoogleLogin({
-    onSuccess: (response) => handleSignupSuccess(response)
+    onSuccess: (response) => handleSignupSuccess(response),
   });
 
   const handleSignupSuccess = async (response) => {
@@ -143,13 +138,9 @@ const Register = () => {
       const userData = await getUserInfo(accessToken);
 
       console.log(userData);
-      const data = await sendRequest(
+      const data = await post(
         "users/signupwithgoogle",
-        "POST",
-        JSON.stringify(userData),
-        {
-          "Content-type": "application/json"
-        }
+        JSON.stringify(userData)
       );
       if (null != data) {
         if (data) {
@@ -169,13 +160,9 @@ const Register = () => {
 
   const getUserInfo = async (accessToken) => {
     try {
-      const response = await sendRequest(
+      const response = await axios.get(
         "https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=" +
-        accessToken,
-        "GET",
-        null,
-        {},
-        false
+          accessToken
       );
       return response;
     } catch (error) {
@@ -310,6 +297,5 @@ const Register = () => {
     </>
   );
 };
-
 
 export default Register;

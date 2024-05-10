@@ -10,6 +10,7 @@ import {
   selectAuth,
   selectToken,
 } from "../../../../../../redux/selectors/auth";
+import { patch } from "../../../../../../lib/methods";
 
 const BankDetails = (props) => {
   const { guardId } = useParams();
@@ -47,21 +48,15 @@ const BankDetails = (props) => {
   const save = async (e) => {
     e.preventDefault();
 
-    const data = sendRequest(
-      `guard/banking/${guardId}`,
-      "PATCH",
-      JSON.stringify(formData),
-      {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
+    const data = patch(`guard/banking/${guardId}`, formData, token).then(
+      (data) => {
+        if (data.status) {
+          toast("Banking Information Updated");
+          //props.setGuard({})
+          props.handleSentRequest();
+        }
       }
-    ).then((data) => {
-      if (data.status) {
-        toast("Banking Information Updated");
-        //props.setGuard({})
-        props.handleSentRequest();
-      }
-    });
+    );
   };
   return (
     <>
