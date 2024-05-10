@@ -71,33 +71,41 @@ const PrivateRoute = ({
   }, [onboardingLevel]);
 
   useEffect(() => {
-    if (token && !user.onboardingcomplete) {
+    if (token && !user?.onboardingcomplete) {
       dispatch(suspenseShow());
-      sendRequest(`users/getuser/${user.userid}`, "GET", null, {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      }).then((response) => {
-        if (response) {
-          console.log(response);
-          if (response?.subscriptions?.length > 0) {
-            if (response.beats.length > 0) {
-              if (response?.guards?.length > 0) {
-                if (response?.beats?.some((beat) => beat?.guards?.length > 0)) {
-                  dispatch(setOnboardingLevel(4));
+
+      try {
+        sendRequest(`users/getuser/${user.userid}`, "GET", null, {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        }).then((response) => {
+          if (response) {
+            console.log(response);
+            if (response?.subscriptions?.length > 0) {
+              if (response.beats.length > 0) {
+                if (response?.guards?.length > 0) {
+                  if (
+                    response?.beats?.some((beat) => beat?.guards?.length > 0)
+                  ) {
+                    dispatch(setOnboardingLevel(4));
+                  } else {
+                    dispatch(setOnboardingLevel(3));
+                  }
                 } else {
-                  dispatch(setOnboardingLevel(3));
+                  dispatch(setOnboardingLevel(2));
                 }
               } else {
-                dispatch(setOnboardingLevel(2));
+                dispatch(setOnboardingLevel(1));
               }
             } else {
-              dispatch(setOnboardingLevel(1));
+              dispatch(setOnboardingLevel(0));
             }
-          } else {
-            dispatch(setOnboardingLevel(0));
           }
-        }
-      });
+        });
+      } catch (error) {
+        console.log(error);
+      }
+
       dispatch(suspenseHide());
     }
   }, [token]);

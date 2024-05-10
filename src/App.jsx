@@ -28,6 +28,7 @@ import { useGetSubscriptionQuery } from "./redux/services/subscriptions";
 import { selectToken, selectUser } from "./redux/selectors/auth";
 import { selectSuspenseShow } from "./redux/selectors/suspense";
 import { logout } from "./redux/slice/authSlice";
+import { api } from "./redux/services/api";
 
 function App() {
   const token = useSelector(selectToken);
@@ -68,6 +69,9 @@ function App() {
   //   }
   //   loading(false);
   // }, [login, loading]);
+
+  // persistor.purge();
+  // api.util.resetApiState();
 
   const init = (selectedPlan) => {
     const psConfig = {

@@ -7,6 +7,7 @@ import { selectUser } from "../../../../redux/selectors/auth";
 import { api } from "../../../../redux/services/api";
 import { persistor } from "../../../../redux/store";
 import { PURGE } from "redux-persist";
+import { ASSET_URL } from "../../../../constants/api";
 
 const OnboardingToolbar = () => {
   const user = useSelector(selectUser);
@@ -55,7 +56,7 @@ const OnboardingToolbar = () => {
                     <span className="sr-only">Open user menu</span>
                     <img
                       className="h-8 w-8 rounded-full"
-                      src={user.image || null}
+                      src={`${ASSET_URL + user?.image}` || null}
                       alt=""
                     />
                   </button>

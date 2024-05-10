@@ -25,21 +25,25 @@ function VerifyEmail() {
   });
 
   const checkIfVerified = async (props) => {
-    const data = await sendRequest(
-      `users/${props.userid}/checkverifyemail`,
-      "get",
-      null,
-      {
-        "Content-Type": "application/json",
-        Authorization: "Bearer " + token,
+    try {
+      const data = await sendRequest(
+        `users/${props.userid}/checkverifyemail`,
+        "get",
+        null,
+        {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + token,
+        }
+      );
+
+      if (data?.isverified) {
+        setVerified(true);
+        toast("already verified");
+
+        navigate("/client");
       }
-    );
-
-    if (data?.isverified) {
-      setVerified(true);
-      toast("already verified");
-
-      navigate("/client");
+    } catch (error) {
+      console.log(error);
     }
   };
 

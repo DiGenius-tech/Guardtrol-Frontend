@@ -12,6 +12,8 @@ import {
   suspenseHide,
   suspenseShow,
 } from "../../../../../redux/slice/suspenseSlice";
+import { API_BASE_URL, ASSET_URL } from "../../../../../constants/api";
+import axios from "axios";
 
 const PersonalInformationSchema = Yup.object().shape({
   name: Yup.string().required("Fullname is required"),
@@ -28,16 +30,17 @@ const SettingPersonalInformation = () => {
   const [fileName, setFileName] = useState("");
   const [preview, setPreview] = useState("");
   const [base, setBase] = useState("");
+  const [profile, setProfile] = useState();
 
   const getSelectedFile = (event) => {
     const file = event.target.files[0];
     if (file) {
       setFileName(file.name);
+      setProfile(event.target.files[0]);
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreview(reader.result);
         setBase(reader.result.split(",")[1]);
-        console.log(reader.result.split(",")[1]);
       };
       reader.readAsDataURL(file);
     } else {
@@ -78,17 +81,27 @@ const SettingPersonalInformation = () => {
     dispatch(suspenseHide());
   };
 
-  const handleUpdateImage = async (values) => {
+  const handleUpdateImage = async () => {
     dispatch(suspenseShow());
-    const data = await put(
-      "settings/personal-image",
-      { image: `data:image/png;base64,${base}` },
-      token,
-      true,
-      "Profile image updated"
+
+    const formData = new FormData();
+    console.log(profile);
+
+    formData.append("profile", profile);
+
+    const { data } = await axios.put(
+      `${API_BASE_URL}/settings/personal-image`,
+      formData,
+      {
+        headers: {
+          Authorization: `${"Bearer " + token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      }
     );
-    console.log(data);
+
     if (data) {
+      console.log(data);
       dispatch(updateUser(data));
     }
     dispatch(suspenseHide());
@@ -145,7 +158,7 @@ const SettingPersonalInformation = () => {
                   ) : (
                     <img
                       className="cursor-pointer"
-                      src={preview ? preview : user?.image}
+                      src={preview ? preview : `${ASSET_URL + user?.image}`}
                       alt={fileName}
                     />
                   )}

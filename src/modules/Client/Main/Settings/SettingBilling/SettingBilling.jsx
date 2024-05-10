@@ -14,6 +14,7 @@ import { useSelector } from "react-redux";
 import { selectToken, selectUser } from "../../../../../redux/selectors/auth";
 import { useNavigate } from "react-router-dom";
 import {
+  useGetAllMySubscriptionsQuery,
   useGetAllSubscriptionsQuery,
   useGetSubscriptionQuery,
 } from "../../../../../redux/services/subscriptions";
@@ -21,6 +22,8 @@ import { useGetGuardsQuery } from "../../../../../redux/services/guards";
 import { formatNumberWithCommas } from "../../../../../shared/functions/random-hex-color";
 import moment from "moment";
 import RenewSubscription from "../RenewSubscription";
+import { get } from "../../../../../lib/methods";
+import UpdateSubscription from "../UpdateSubscription";
 
 const savedPaymentCards = [
   {
@@ -47,7 +50,16 @@ const SettingBilling = () => {
 
   const [isAddNewCard, setIsAddNewCard] = useState(false);
   const [isUpdateSub, setIsUpdateSub] = useState(false);
-  const [openRenewalModal, setOpenRenewalModal] = useState(true);
+  const [openRenewalModal, setOpenRenewalModal] = useState(false);
+
+  const [subscriptionsState, setSubscriptionsState] = useState();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [filteredData, setFilteredData] = useState([]);
+  const [defaultCard, setDefaultCard] = useState({
+    id: "",
+  });
+
+  const itemsPerPage = 5;
 
   const {
     data: sub,
@@ -57,10 +69,10 @@ const SettingBilling = () => {
   } = useGetSubscriptionQuery(null, { skip: token ? false : true });
 
   const { data: guards } = useGetGuardsQuery();
-  const [defaultCard, setDefaultCard] = useState({
-    id: "",
-  });
   const { data: subs } = useGetAllSubscriptionsQuery();
+  const totalPages = subs?.length;
+
+  const { data: mySuscriptions } = useGetAllMySubscriptionsQuery();
 
   const toggleIsUpdateSub = () => {
     setIsUpdateSub(!isUpdateSub);
@@ -69,15 +81,6 @@ const SettingBilling = () => {
   const handleDefaultCard = (e) => {
     setDefaultCard(e.target.value);
   };
-
-  useEffect(() => {
-    return () => {};
-  }, [defaultCard]);
-
-  const totalPages = subs?.length;
-  const [currentPage, setCurrentPage] = useState(1);
-  const [filteredData, setFilteredData] = useState([]);
-  const itemsPerPage = 5;
 
   const filterData = () => {
     const startIndex = (currentPage - 1) * itemsPerPage;
@@ -96,6 +99,23 @@ const SettingBilling = () => {
       setCurrentPage(currentPage + 1);
     }
   };
+  useEffect(() => {
+    setSubscriptionsState(mySuscriptions);
+  }, [mySuscriptions]);
+
+  const getNextBillingDate = (subscriptions) => {
+    const mutableSubscriptions = [...subscriptions];
+    const sortedSubscriptions = mutableSubscriptions.sort(
+      (a, b) => new Date(b?.expiresat) - new Date(a?.expiresat)
+    );
+
+    const latestSubscription = sortedSubscriptions?.[0];
+    const a = latestSubscription
+      ? moment(new Date(latestSubscription.expiresat)).format("DD MMMM, YYYY")
+      : null;
+
+    return a;
+  };
 
   useEffect(() => {
     filterData();
@@ -104,11 +124,14 @@ const SettingBilling = () => {
   return (
     <>
       {/* setting-billing-app works! */}
-      <RenewSubscription
-        subscription={sub}
-        openModal={openRenewalModal}
-        setRenewalModal={setOpenRenewalModal}
-      />
+      {(sub || sub === null) && (
+        <RenewSubscription
+          subscription={sub}
+          openModal={openRenewalModal}
+          setRenewalModal={setOpenRenewalModal}
+        />
+      )}
+
       <div className="sm:max-w-4xl grid grid-cols-12 gap-4 sm:gap-8">
         <div className="hidden sm:block col-span-12 sm:col-span-5">
           <h3 className="font-bold">Current plan</h3>
@@ -121,27 +144,50 @@ const SettingBilling = () => {
                   {sub?.plan} plan
                 </div>
                 <div className="col-span-2 sm:col-span-1 sm:text-right">
-                  <p className="text-2xl font-bold">
-                    ₦{formatNumberWithCommas(sub?.totalamount)}
-                  </p>
-                  <p className="text-xs font-light">
-                    {guards?.length} of{" "}
-                    {sub?.maxbeats * 5 + sub?.maxextraguards} Guards used
-                  </p>
+                  {sub ? (
+                    <p className="text-2xl font-bold">
+                      ₦{formatNumberWithCommas(sub?.totalamount)}
+                    </p>
+                  ) : (
+                    <p className="text-base font-bold">
+                      No Active Subscription
+                    </p>
+                  )}
+                  {sub && (
+                    <p className="text-xs font-light">
+                      {guards?.length} of{" "}
+                      {sub?.maxbeats * 5 + sub?.maxextraguards} Guards used
+                    </p>
+                  )}
                 </div>
               </li>
-              <li className="grid grid-cols-2 items-center">
-                <div className="col-span-2 sm:col-span-1 font-light">
-                  Next billing date
-                </div>
-                <div className="col-span-2 sm:col-span-1 sm:text-right">
-                  <p className="font-normal">
-                    {moment(sub?.updatedat)
-                      .add(sub?.plan === "monthly" ? 30 : 365, "days")
-                      .format("DD MMMM, YYYY")}
-                  </p>
-                </div>
-              </li>
+
+              {sub ? (
+                <li className="grid grid-cols-2 items-center">
+                  <div className="col-span-2 sm:col-span-1 font-light">
+                    Next billing date
+                  </div>
+                  <div className="col-span-2 sm:col-span-1 sm:text-right">
+                    <p className="font-normal">
+                      {mySuscriptions && getNextBillingDate(mySuscriptions)}
+                    </p>
+                  </div>
+                </li>
+              ) : (
+                <li className="grid grid-cols-2 items-center">
+                  <div className="col-span-2 sm:col-span-1 font-light">
+                    Last Expiry Date
+                  </div>
+                  <div className="col-span-2 sm:col-span-1 sm:text-right">
+                    <p className="font-normal">
+                      {moment(mySuscriptions?.[0].expiresat).format(
+                        "DD MMMM, YYYY"
+                      )}
+                    </p>
+                  </div>
+                </li>
+              )}
+
               <li className="grid grid-cols-12 items-end gap-4">
                 <div className="col-span-12">
                   {isUpdateSub ? (
@@ -170,97 +216,7 @@ const SettingBilling = () => {
                     )}
                   </button>
                 </div>
-                {isUpdateSub ? (
-                  <div className="col-span-12 sm:text-right">
-                    <form className="bg-white/30 rounded-md p-4">
-                      <fieldset className="update-plan-options">
-                        <legend className="text-center mb-4">
-                          Select Plan*
-                        </legend>
-                        <div className="flex items-center justify-between gap-4 flex-wrap">
-                          <div className="flex items-center mb-4">
-                            <input
-                              id="monthly"
-                              type="radio"
-                              name="plan-option"
-                              value="monthly"
-                              className="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600"
-                            />
-                            <label
-                              htmlFor="monthly"
-                              className="cursor-pointer block ms-2 text-lg font-medium text-gray-900 dark:text-gray-300"
-                            >
-                              #10,000 per month
-                            </label>
-                          </div>
-
-                          <div className="flex items-center mb-4">
-                            <input
-                              id="yearly"
-                              type="radio"
-                              name="plan-option"
-                              value="yearly"
-                              className="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600"
-                            />
-                            <label
-                              htmlFor="yearly"
-                              className="cursor-pointer block ms-2 text-lg font-medium text-gray-900 dark:text-gray-300"
-                            >
-                              #96,000 per year
-                            </label>
-                          </div>
-                        </div>
-                      </fieldset>
-
-                      <div className="mb-4">
-                        <label
-                          htmlFor="email-address-icon"
-                          className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                        >
-                          How many beats?
-                        </label>
-                        <div className="relative">
-                          <div className="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
-                            <MdAddHomeWork color="#79716b" />
-                          </div>
-                          <input
-                            type="number"
-                            id="email-address-icon"
-                            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full ps-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500"
-                          />
-                        </div>
-                      </div>
-
-                      <div className="mb-4">
-                        <label
-                          htmlFor="email-address-icon"
-                          className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                        >
-                          How many extra guard?
-                        </label>
-                        <div className="relative">
-                          <div className="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
-                            <MdPeople color="#79716b" />
-                          </div>
-                          <input
-                            type="number"
-                            id="email-address-icon"
-                            className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full ps-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500"
-                          />
-                        </div>
-                      </div>
-                      <button
-                        type="submit"
-                        class="w-full block text-white bg-green-700 hover:bg-green-800 focus:ring-1 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
-                      >
-                        Continue to pay{" "}
-                        <span className="text-lg font-semibold">#30,000</span>
-                      </button>
-                    </form>
-                  </div>
-                ) : (
-                  ""
-                )}
+                {isUpdateSub ? <UpdateSubscription /> : ""}
               </li>
             </ul>
           </div>
@@ -278,12 +234,15 @@ const SettingBilling = () => {
                       <th scope="col" className="px-6 py-3 rounded-s-lg">
                         Date
                       </th>
-                      <th scope="col" className="px-6 py-3">
+                      <th scope="col" className="px-6 py-3 ">
+                        Expires
+                      </th>
+                      {/* <th scope="col" className="px-6 py-3">
                         Plan
-                      </th>
-                      <th scope="col" className="px-6 py-3">
+                      </th> */}
+                      {/* <th scope="col" className="px-6 py-3">
                         Status
-                      </th>
+                      </th> */}
                       <th
                         scope="col"
                         className="px-6 py-3 rounded-e-lg"
@@ -292,7 +251,7 @@ const SettingBilling = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {filteredData?.map((s, i) => {
+                    {mySuscriptions?.map((s, i) => {
                       return (
                         <tr key={s?._id} className="bg-white dark:bg-gray-800">
                           <th
@@ -301,8 +260,14 @@ const SettingBilling = () => {
                           >
                             {moment(s?.updatedat).format("DD MMMM, YYYY")}
                           </th>
-                          <td className="px-6 py-4">{s?.plan} plan</td>
-                          <td className="px-6 py-4">Paid</td>
+                          <th
+                            scope="row"
+                            className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                          >
+                            {moment(s?.expiresat).format("DD MMMM, YYYY")}
+                          </th>
+                          {/* <td className="px-6 py-4">{s?.plan} plan</td> */}
+                          {/* <td className="px-6 py-4">Paid</td> */}
                           <td className="px-6 py-4">
                             <a
                               href="#"
@@ -317,59 +282,57 @@ const SettingBilling = () => {
                   </tbody>
 
                   <tfoot>
-                    <tfoot>
-                      <tr className="font-semibold text-gray-900 dark:text-white">
-                        <th
-                          scope="row"
-                          colSpan={"4"}
-                          className="px-6 py-3 text-sm font-light text-right"
-                        >
-                          <div className="inline-flex items-center justify-end gap-4">
-                            {/* Render page numbers */}
-                            {subs &&
-                              [
-                                ...Array(
-                                  Math.ceil(subs?.length / itemsPerPage)
-                                ).keys(),
-                              ].map((index) => (
-                                <a
-                                  key={index}
-                                  href="#"
-                                  className={`inline-flex items-center justify-center border border-gray-300 text-sm rounded-lg w-full p-1.5 font-semibold min-w-10 min-h-8 ${
-                                    currentPage === index + 1
-                                      ? "bg-accent-200"
-                                      : ""
-                                  }`}
-                                  onClick={() => setCurrentPage(index + 1)}
-                                >
-                                  {index + 1}
-                                </a>
-                              ))}
-                            <div>
-                              of&nbsp;<span>{totalPages}</span>
-                            </div>
-                            <div className="flex items-center">
-                              {/* Render previous button */}
+                    <tr className="font-semibold text-gray-900 dark:text-white">
+                      <th
+                        scope="row"
+                        colSpan={"4"}
+                        className="px-6 py-3 text-sm font-light text-right"
+                      >
+                        <div className="inline-flex items-center justify-end gap-4">
+                          {/* Render page numbers */}
+                          {subs &&
+                            [
+                              ...Array(
+                                Math.ceil(subs?.length / itemsPerPage)
+                              ).keys(),
+                            ].map((index) => (
                               <a
+                                key={index}
                                 href="#"
-                                className="inline-flex items-center justify-center bg-accent-200 text-dark-70 hover:bg-accent-300 hover:text-secondary-500 border border-gray-300 text-sm rounded-s-lg w-full p-2 min-w-10 min-h-8"
-                                onClick={goToPreviousPage}
+                                className={`inline-flex items-center justify-center border border-gray-300 text-sm rounded-lg w-full p-1.5 font-semibold min-w-10 min-h-8 ${
+                                  currentPage === index + 1
+                                    ? "bg-accent-200"
+                                    : ""
+                                }`}
+                                onClick={() => setCurrentPage(index + 1)}
                               >
-                                <GrPrevious />
+                                {index + 1}
                               </a>
-                              {/* Render next button */}
-                              <a
-                                href="#"
-                                className="inline-flex items-center justify-center bg-accent-200 text-dark-70 hover:bg-accent-300 hover:text-secondary-500 border border-gray-300 text-sm rounded-r-lg w-full p-2 min-w-10 min-h-8"
-                                onClick={goToNextPage}
-                              >
-                                <GrNext />
-                              </a>
-                            </div>
+                            ))}
+                          <div>
+                            of&nbsp;<span>{totalPages}</span>
                           </div>
-                        </th>
-                      </tr>
-                    </tfoot>
+                          <div className="flex items-center">
+                            {/* Render previous button */}
+                            <a
+                              href="#"
+                              className="inline-flex items-center justify-center bg-accent-200 text-dark-70 hover:bg-accent-300 hover:text-secondary-500 border border-gray-300 text-sm rounded-s-lg w-full p-2 min-w-10 min-h-8"
+                              onClick={goToPreviousPage}
+                            >
+                              <GrPrevious />
+                            </a>
+                            {/* Render next button */}
+                            <a
+                              href="#"
+                              className="inline-flex items-center justify-center bg-accent-200 text-dark-70 hover:bg-accent-300 hover:text-secondary-500 border border-gray-300 text-sm rounded-r-lg w-full p-2 min-w-10 min-h-8"
+                              onClick={goToNextPage}
+                            >
+                              <GrNext />
+                            </a>
+                          </div>
+                        </div>
+                      </th>
+                    </tr>
                   </tfoot>
                 </table>
               </div>

@@ -1,0 +1,60 @@
+import { retry } from "@reduxjs/toolkit/query/react";
+import { api } from "./api";
+import { TPatrol } from "../../types/patrol";
+
+export const PatrolsApi = api.injectEndpoints({
+  endpoints: (build) => ({
+    getPatrols: build.query<TPatrol[], void>({
+      query: () => ({ url: `patrols` }),
+      providesTags: (result = []) => [
+        ...result.map(({ _id }) => ({ type: "Patrols", _id } as const)),
+        { type: "Patrols" as const, id: "LIST" },
+      ],
+    }),
+
+    createPatrol: build.mutation<TPatrol, Partial<any>>({
+      query: (body) => {
+        return {
+          url: `patrols`,
+          method: "POST",
+          body: body,
+        };
+      },
+      invalidatesTags: [{ type: "Patrols", id: "LIST" }],
+    }),
+
+    updatePatrols: build.mutation<TPatrol, Partial<TPatrol>>({
+      query(data) {
+        const { _id, ...body } = data;
+        return {
+          url: `patrols/${_id}`,
+          method: "PUT",
+          body,
+        };
+      },
+      invalidatesTags: (shift) => [{ type: "Patrols", id: shift?._id }],
+    }),
+
+    deletePatrols: build.mutation<{ success: boolean; _id: number }, number>({
+      query(_id) {
+        return {
+          url: `patrols/${_id}`,
+          method: "DELETE",
+        };
+      },
+      invalidatesTags: (shift) => [{ type: "Patrols", _id: shift?._id }],
+    }),
+    getErrorProne: build.query<{ success: boolean }, void>({
+      query: () => "error-prone",
+    }),
+  }),
+  overrideExisting: true,
+});
+
+export const {
+  useCreatePatrolMutation,
+  useDeletePatrolsMutation,
+  useGetPatrolsQuery,
+  useUpdatePatrolsMutation,
+  useGetErrorProneQuery,
+} = PatrolsApi;

@@ -8,143 +8,85 @@ import {
 import { selectToken, selectUser } from "../../../../redux/selectors/auth";
 import { usePaystackPayment } from "react-paystack";
 import { toast } from "react-toastify";
-import { suspenseShow } from "../../../../redux/slice/suspenseSlice";
+import {
+  suspenseHide,
+  suspenseShow,
+} from "../../../../redux/slice/suspenseSlice";
 import RegularButton from "../../../Sandbox/Buttons/RegularButton";
+import { useFlutterwave, closePaymentModal } from "flutterwave-react-v3";
+import { post } from "../../../../lib/methods";
+import Swal from "sweetalert2";
+import { useGetGuardsQuery } from "../../../../redux/services/guards";
+import { useGetBeatsQuery } from "../../../../redux/services/beats";
+import {
+  useAddSubscriptionMutation,
+  useGetAllMySubscriptionsQuery,
+  useGetSubscriptionQuery,
+} from "../../../../redux/services/subscriptions";
+import { BEAT_PRICE, GUARD_PRICE } from "../../../../constants/static";
 
 // Constants for pricing
-const BEAT_PRICE = 10000;
-const GUARD_PRICE = 2000; // Replace with the actual price of a guard
 
-const RenewSubscription = ({ openModal, setRenewalModal, subscription }) => {
+function parseDate(dateString) {
+  return new Date(dateString);
+}
+
+const RenewSubscription = ({ openModal, setRenewalModal }) => {
+  const token = useSelector(selectToken);
+  const {
+    data: subscription,
+    isError,
+    refetch: refetchActiveSubscription,
+    isUninitialized,
+  } = useGetSubscriptionQuery(null, { skip: token ? false : true });
+
+  if (!isUninitialized) {
+    // refetchActiveSubscription();
+  }
   const dispatch = useDispatch();
-
+  const [isLoading, setIsLoading] = useState(false);
   const psConfig = useSelector(selectPsConfig);
   const user = useSelector(selectUser);
-  const fwConfig = useSelector(selectFwConfig);
-  const token = useSelector(selectToken);
 
-  const {
-    plan,
-    maxbeats,
-    maxextraguards,
-    totalamount,
-    paymentstatus,
-    paymentgateway,
-    transactionid,
-    expiresat,
-  } = subscription;
+  const fwConfig = useSelector(selectFwConfig);
+
+  const currentDate = new Date();
+
+  const { data: availableGuards } = useGetGuardsQuery();
+  const { data: availableBeats } = useGetBeatsQuery();
+  const { data: mySuscriptions, refetch: refetchAllMySubscriptions } =
+    useGetAllMySubscriptionsQuery();
+  const [createSubscription] = useAddSubscriptionMutation();
+
+  const activeSubscriptions = mySuscriptions?.filter(
+    (subscription) => parseDate(subscription?.expiresat) > currentDate
+  );
+
+  // Check if the user has more than one active or future subscription
+  const hasTooManyActiveSubscriptions = activeSubscriptions?.length > 1;
 
   const [isPaymentInitiated, setIsPaymentInitiated] = useState(false);
-  const [currentSubscription, setCurrentSubscription] = useState(plan);
-  const [newSubscription, setNewSubscription] = useState(plan);
-  const [paymentOption, setPaymentOption] = useState(paymentgateway);
+  const [currentSubscription, setCurrentSubscription] = useState(
+    subscription?.plan
+  );
+  const [newSubscription, setNewSubscription] = useState(subscription?.plan);
+  const [paymentOption, setPaymentOption] = useState(
+    subscription?.paymentgateway
+  );
   const [newSubscriptionExpirationDate, setNewSubscriptionExpirationDate] =
-    useState(new Date(expiresat).toLocaleDateString());
-  const [newSubscriptionTotalAmount, setNewSubscriptionTotalAmount] =
-    useState(totalamount);
-  const [newMaxBeats, setNewMaxBeats] = useState(maxbeats);
-  const [newMaxExtraGuards, setNewMaxExtraGuards] = useState(maxextraguards);
-  const [subscriptionAction, setSubscriptionAction] = useState("renew");
-
-  const handlePaystackPayment = usePaystackPayment(psConfig);
-
-  const subscriptionOptions = [
-    "Select Option",
-    "1 Month",
-    "3 Months",
-    "6 Months",
-    "1 Year",
-    "2 Years",
-  ];
-
-  const subscriptionActions = [
-    { value: "reduce", label: "Reduce" },
-    { value: "renewal", label: "Renewal" },
-    { value: "increase", label: "Increase" },
-  ];
-
-  // Initialize the usePaystackPayment hook outside the component function
-
-  const renewWithPaystack = async () => {
-    dispatch(suspenseShow());
-  };
-
-  const pay = async (e) => {
-    e.preventDefault();
-
-    if (paymentOption === "paystack") {
-      handlePaystackPayment();
-    }
-  };
-  const paymentOptions = [
-    { value: "paystack", label: "Paystack" },
-    { value: "paypal", label: "PayPal" },
-    { value: "flutterwave", label: "Flutter wave" },
-    { value: "bankTransfer", label: "Bank Transfer" },
-  ];
-
-  useEffect(() => {
-    const currentExpirationDate = new Date(expiresat);
-    const subscriptionPeriod = {
-      "1 Month": 1,
-      "3 Months": 3,
-      "6 Months": 6,
-      "1 Year": 12,
-      "2 Years": 24,
-      "Select Option": 24,
-    };
-    if ("Select Option" === newSubscription) {
-      setNewSubscriptionExpirationDate(new Date().toLocaleDateString());
-      setNewSubscriptionTotalAmount(0);
-      return;
-    }
-    const months = subscriptionPeriod[newSubscription];
-    if (!months) return;
-    const newExpirationDate = new Date(
-      currentExpirationDate.setMonth(currentExpirationDate.getMonth() + months)
+    useState(
+      subscription
+        ? new Date(subscription?.expiresat).toLocaleDateString()
+        : "--"
     );
-    setNewSubscriptionExpirationDate(newExpirationDate.toLocaleDateString());
-
-    let beatCost = 0;
-    let guardCost = 0;
-    let newTotalBeats = 0;
-    let newTotalGuards = 0;
-    if (subscriptionAction === "renewal") {
-      setNewSubscriptionTotalAmount(totalamount * months);
-      return;
-    }
-    if (subscriptionAction === "reduce") {
-      if (newMaxBeats) {
-        beatCost = newMaxBeats * BEAT_PRICE;
-      }
-      if (newMaxExtraGuards) {
-        guardCost = newMaxExtraGuards * GUARD_PRICE;
-      }
-    } else if (subscriptionAction === "increase") {
-      newTotalGuards = newMaxExtraGuards + maxextraguards;
-      newTotalBeats = newMaxBeats + maxbeats;
-
-      if (newMaxBeats) {
-        beatCost = newTotalBeats * BEAT_PRICE;
-      } else {
-        beatCost = maxbeats * BEAT_PRICE;
-      }
-      if (newMaxExtraGuards) {
-        guardCost = maxextraguards * GUARD_PRICE;
-      } else {
-      }
-    }
-    setNewSubscriptionTotalAmount(months * beatCost + guardCost);
-  }, [
-    newSubscription,
-    expiresat,
-    totalamount,
-    newMaxBeats,
-    newMaxExtraGuards,
-    subscriptionAction,
-    maxbeats,
-    maxextraguards,
-  ]);
+  const [newSubscriptionTotalAmount, setNewSubscriptionTotalAmount] = useState(
+    subscription?.totalamount
+  );
+  const [newMaxBeats, setNewMaxBeats] = useState(subscription?.maxbeats);
+  const [newMaxExtraGuards, setNewMaxExtraGuards] = useState(
+    subscription?.maxextraguards
+  );
+  const [subscriptionAction, setSubscriptionAction] = useState("renew");
 
   const handleBeatChange = (e) => {
     const newBeats = parseInt(e.target.value);
@@ -154,7 +96,7 @@ const RenewSubscription = ({ openModal, setRenewalModal, subscription }) => {
     } else if (subscriptionAction === "increase") {
       setNewMaxBeats(newBeats);
     } else {
-      setNewMaxBeats(maxbeats);
+      setNewMaxBeats(subscription?.maxbeats);
     }
   };
 
@@ -165,9 +107,200 @@ const RenewSubscription = ({ openModal, setRenewalModal, subscription }) => {
     } else if (subscriptionAction === "increase") {
       setNewMaxExtraGuards(newGuards);
     } else {
-      setNewMaxExtraGuards(maxextraguards);
+      setNewMaxExtraGuards(subscription?.maxextraguards);
     }
   };
+
+  const subscriptionOptions = [
+    "Select Option",
+    "1 Month",
+    "3 Months",
+    "6 Months",
+    "1 Year",
+    "2 Years",
+  ];
+  const subscriptionActions = [
+    { value: "reduce", label: "Reduce" },
+    { value: "renewal", label: "Renewal" },
+    { value: "increase", label: "Increase" },
+  ];
+  const paymentOptions = [
+    { value: "paystack", label: "Paystack" },
+    { value: "flutterwave", label: "Flutter wave" },
+  ];
+
+  const handleFlutterPayment = useFlutterwave(fwConfig);
+
+  const handlePaystackPayment = usePaystackPayment({
+    ...psConfig,
+    email: user.email,
+    amount: newSubscriptionTotalAmount * 100,
+  });
+
+  const payWithFlutterwave = async () => {
+    dispatch(suspenseShow());
+
+    handleFlutterPayment({
+      callback: (response) => {
+        if (response.status === "successful") {
+          console.log(response);
+          updateSubscription(response);
+        }
+        closePaymentModal();
+      },
+      onClose: () => {
+        dispatch(suspenseHide());
+        toast.warn("Payment Window Closed, Payment Cancelled");
+      },
+    });
+  };
+
+  const payWithPaystack = async () => {
+    dispatch(suspenseShow());
+    handlePaystackPayment({
+      onSuccess: (response) => {
+        updateSubscription(response).then(dispatch(suspenseHide()));
+      },
+      onClose: () => {
+        dispatch(suspenseHide());
+        toast.warn("Payment Window Closed, Payment Cancelled");
+      },
+    });
+  };
+
+  const pay = async (e) => {
+    if (subscriptionAction === "reduce") {
+      if (availableGuards > newMaxExtraGuards) {
+        Swal.fire({
+          title: "Invalid Input",
+          text: `Your entered amount of guards is less than your available gurads, Delete gaurds!, your availble guards must not be more than ${newMaxExtraGuards}`,
+          icon: "warning",
+          confirmButtonColor: "#008080",
+        });
+        return;
+      }
+      if (availableBeats?.length > newMaxBeats) {
+        Swal.fire({
+          title: "Invalid Input",
+          text: `Your entered amount of beats is less than your available beats, Delete beats!, your availble beats must not be more than ${newMaxBeats}`,
+          icon: "warning",
+          cancelButtonText: "OK",
+          confirmButtonColor: "#008080",
+        });
+        return;
+      }
+    }
+    e?.preventDefault();
+    setIsLoading(true);
+    if (paymentOption === "flutterwave") {
+      payWithFlutterwave();
+    } else {
+      payWithPaystack();
+    }
+    setIsLoading(false);
+  };
+
+  const updateSubscription = async (response) => {
+    try {
+      const reqData = {
+        ...response,
+        transactionid: response.transaction,
+        maxbeats:
+          subscriptionAction === "renewal"
+            ? subscription?.maxbeats
+            : newMaxBeats,
+        maxextraguards:
+          subscriptionAction === "renewal"
+            ? subscription?.maxextraguards
+            : newMaxExtraGuards,
+        totalamount: newSubscriptionTotalAmount,
+        paymentstatus: "complete",
+        plan: newSubscription,
+        expiresat: newSubscriptionExpirationDate,
+        paymentgateway: paymentOption,
+      };
+      console.log(reqData);
+      const { data } = await createSubscription(reqData);
+
+      refetchAllMySubscriptions();
+      refetchActiveSubscription();
+      setRenewalModal(false);
+      dispatch(suspenseHide());
+
+      if (data) {
+        Swal.fire({
+          title: "Renewal succefull",
+          text: `Your subscription has been updated!`,
+          icon: "success",
+          confirmButtonColor: "#008080",
+        });
+      }
+    } catch (error) {
+    } finally {
+    }
+  };
+
+  useEffect(() => {
+    const currentExpirationDate = new Date(mySuscriptions?.[0]?.expiresat);
+    console.log(currentExpirationDate);
+    const subscriptionPeriod = {
+      "1 Month": 1,
+      "3 Months": 3,
+      "6 Months": 6,
+      "1 Year": 12,
+      "2 Years": 24,
+      "Select Option": 24,
+    };
+    if ("Select Option" === newSubscription || "" === newSubscription) {
+      console.log("first");
+      // setNewSubscriptionExpirationDate(new Date().toLocaleDateString());
+      setNewSubscriptionTotalAmount(0);
+      return;
+    }
+    const months = subscriptionPeriod[newSubscription];
+    if (!months) return;
+    const newExpirationDate = new Date(
+      currentExpirationDate.setMonth(currentExpirationDate.getMonth() + months)
+    );
+    // setNewSubscriptionExpirationDate(newExpirationDate.toLocaleDateString());
+
+    let beatCost = 0;
+    let guardCost = 0;
+    let newTotalBeats = 0;
+    let newTotalGuards = 0;
+    if (subscriptionAction === "renewal") {
+      setNewSubscriptionTotalAmount(mySuscriptions?.[0]?.totalamount * months);
+      return;
+    }
+    if (subscriptionAction === "reduce") {
+      if (newMaxBeats) {
+        beatCost = newMaxBeats * BEAT_PRICE;
+      }
+      if (newMaxExtraGuards) {
+        guardCost = newMaxExtraGuards * GUARD_PRICE;
+      }
+    } else if (subscriptionAction === "increase") {
+      newTotalGuards = newMaxExtraGuards + subscription?.maxextraguards;
+      newTotalBeats = newMaxBeats + subscription?.maxbeats;
+
+      if (newMaxBeats) {
+        beatCost = newTotalBeats * BEAT_PRICE;
+      } else {
+        beatCost = subscription?.maxbeats * BEAT_PRICE;
+      }
+      if (newMaxExtraGuards) {
+        guardCost = subscription?.maxextraguards * GUARD_PRICE;
+      } else {
+      }
+    }
+    setNewSubscriptionTotalAmount(months * beatCost + guardCost);
+  }, [
+    newSubscription,
+    newMaxBeats,
+    newMaxExtraGuards,
+    subscriptionAction,
+    subscription,
+  ]);
 
   return (
     <Modal dismissible show={openModal} onClose={() => setRenewalModal(false)}>
@@ -180,168 +313,213 @@ const RenewSubscription = ({ openModal, setRenewalModal, subscription }) => {
               className=" text-md"
               value="Current Subscription"
             />
-            <span className=" text-gray-500 ">{`Expires on ${new Date(
-              expiresat
-            ).toLocaleDateString()}`}</span>
+            <span className=" text-gray-500 ">{`${
+              subscription
+                ? `Expires on ${new Date(
+                    subscription?.expiresat
+                  ).toLocaleDateString()}`
+                : "No Active Subscription"
+            }`}</span>
           </div>
           <hr />
-          <div className=" flex flex-row justify-between items-center">
-            <fieldset className="flex max-w-md flex-col gap-4">
-              <legend className="mb-4 font-medium">
-                Select renewal information
-              </legend>
-              <div className="flex flex-row  gap-4">
-                {subscriptionActions.map((action) => (
-                  <div className="flex items-center gap-2">
-                    <Radio
-                      key={action.value}
-                      value={action.value}
-                      id={action.value}
-                      onClick={(event) =>
-                        setSubscriptionAction(event.target.value)
-                      }
-                      name="subscriptionActions"
-                    />
-                    <Label htmlFor={action.value}> {action.label}</Label>
-                  </div>
+          {hasTooManyActiveSubscriptions && (
+            <>
+              {activeSubscriptions
+                .filter((active) => active._id !== subscription?._id)
+                .map((activesub) => (
+                  <>
+                    <div
+                      key={activesub._id}
+                      className=" flex flex-row justify-between items-center"
+                    >
+                      <Label
+                        htmlFor="currentSubscription"
+                        className=" text-md"
+                        value="Next Subscription"
+                      />
+                      <span className=" text-gray-500 ">{`Expires on ${new Date(
+                        activesub.expiresat
+                      ).toLocaleDateString()}`}</span>
+                    </div>
+                    <hr />
+                  </>
                 ))}
-              </div>
-            </fieldset>
-          </div>
-          {(subscriptionAction === "reduce" ||
-            subscriptionAction === "increase") && (
-            <div className="grid grid-cols-2 gap-4">
-              <div className="">
-                <Label
-                  htmlFor="newMaxBeats"
-                  value={
-                    subscriptionAction === "reduce"
-                      ? "New total beats"
-                      : "New additional beats"
-                  }
-                />
-                <TextInput
-                  id="newMaxBeats"
-                  type="number"
-                  placeholder={
-                    subscriptionAction === "reduce"
-                      ? "Enter beats you would like have"
-                      : "Enter beats you would like to add"
-                  }
-                  value={newMaxBeats}
-                  onChange={handleBeatChange}
-                />
-              </div>
-              <div className="">
-                <Label
-                  htmlFor="newMaxExtraGuards"
-                  value={
-                    subscriptionAction === "reduce"
-                      ? "New extra-guards"
-                      : "New additional extra-guards"
-                  }
-                />
-                <TextInput
-                  id="newMaxExtraGuards"
-                  type="number"
-                  placeholder={
-                    subscriptionAction === "reduce"
-                      ? "Enter extra guards you would like have"
-                      : "Enter extra guards you would like to add"
-                  }
-                  value={newMaxExtraGuards}
-                  onChange={handleGuardChange}
-                />
-              </div>
-            </div>
+            </>
           )}
-          <div>
-            <Label htmlFor="newSubscription" value="New Subscription" />
-            <Select
-              id="newSubscription"
-              value={newSubscription}
-              onChange={(event) => setNewSubscription(event.target.value)}
-            >
-              {subscriptionOptions.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </Select>
-          </div>
-          <hr />
-          <div className="text-lg font-medium mt-1">
-            New Subscription details
-          </div>
-          <div className=" flex flex-row justify-between items-center">
-            <Label
-              className=" text-md"
-              htmlFor="newSubscription"
-              value="After renewal next subscription will be due on"
-            />
-            <span className=" text-gray-500 ">
-              {newSubscriptionExpirationDate
-                ? newSubscriptionExpirationDate
-                : "-"}
-            </span>
-          </div>
-          {(subscriptionAction === "reduce" ||
-            subscriptionAction === "increase") && (
+          {!hasTooManyActiveSubscriptions && (
             <>
               <div className=" flex flex-row justify-between items-center">
-                <Label className=" text-md" value="New total beats" />
-                <span className=" text-gray-500 ">
-                  {subscriptionAction !== "renewal"
-                    ? subscriptionAction === "reduce"
-                      ? newMaxBeats || "0"
-                      : maxbeats
-                    : maxbeats + newMaxBeats || maxbeats}
-                </span>
+                <fieldset className="flex max-w-md flex-col gap-4">
+                  <legend className="mb-4 font-medium">
+                    Select renewal information
+                  </legend>
+                  <div className="flex flex-row  gap-4">
+                    {subscriptionActions.map((action, i) => (
+                      <div key={i} className="flex items-center gap-2">
+                        <Radio
+                          key={action.value}
+                          value={action.value}
+                          style={{ color: "#008080" }}
+                          id={action.value}
+                          onClick={(event) =>
+                            setSubscriptionAction(event.target.value)
+                          }
+                          name="subscriptionActions"
+                        />
+                        <Label htmlFor={action.value}> {action.label}</Label>
+                      </div>
+                    ))}
+                  </div>
+                </fieldset>
+              </div>
+              {(subscriptionAction === "reduce" ||
+                subscriptionAction === "increase") && (
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="">
+                    <Label
+                      htmlFor="newMaxBeats"
+                      value={
+                        subscriptionAction === "reduce"
+                          ? "New total beats"
+                          : "New additional beats"
+                      }
+                    />
+                    <TextInput
+                      id="newMaxBeats"
+                      type="number"
+                      placeholder={
+                        subscriptionAction === "reduce"
+                          ? "Enter beats you would like have"
+                          : "Enter beats you would like to add"
+                      }
+                      value={newMaxBeats}
+                      onChange={handleBeatChange}
+                    />
+                  </div>
+                  <div className="">
+                    <Label
+                      htmlFor="newMaxExtraGuards"
+                      value={
+                        subscriptionAction === "reduce"
+                          ? "New extra-guards"
+                          : "New additional extra-guards"
+                      }
+                    />
+                    <TextInput
+                      id="newMaxExtraGuards"
+                      type="number"
+                      placeholder={
+                        subscriptionAction === "reduce"
+                          ? "Enter extra guards you would like have"
+                          : "Enter extra guards you would like to add"
+                      }
+                      value={newMaxExtraGuards}
+                      onChange={handleGuardChange}
+                    />
+                  </div>
+                </div>
+              )}
+              <div>
+                <Label htmlFor="newSubscription" value="New Subscription" />
+                <Select
+                  id="newSubscription"
+                  value={newSubscription}
+                  onChange={(event) => setNewSubscription(event.target.value)}
+                >
+                  {subscriptionOptions.map((option) => (
+                    <option key={option} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </Select>
+              </div>
+              <hr />
+              <div className="text-lg font-medium mt-1">
+                New Subscription details
               </div>
               <div className=" flex flex-row justify-between items-center">
-                <Label className=" text-md" value="New extra guards" />
+                <Label
+                  className=" text-md"
+                  htmlFor="newSubscription"
+                  value="After renewal next subscription will be due on"
+                />
                 <span className=" text-gray-500 ">
-                  {subscriptionAction !== "renewal"
-                    ? subscriptionAction === "reduce"
-                      ? newMaxExtraGuards || "0"
-                      : maxextraguards + newMaxExtraGuards || maxextraguards
-                    : maxextraguards}
+                  {newSubscriptionExpirationDate
+                    ? newSubscriptionExpirationDate
+                    : "-"}
                 </span>
+              </div>
+              {(subscriptionAction === "reduce" ||
+                subscriptionAction === "increase") && (
+                <>
+                  <div className=" flex flex-row justify-between items-center">
+                    <Label className=" text-md" value="New total beats" />
+                    <span className=" text-gray-500 ">
+                      {subscriptionAction !== "renewal"
+                        ? subscriptionAction === "reduce"
+                          ? newMaxBeats || "0"
+                          : subscription?.maxbeats
+                        : subscription?.maxbeats + newMaxBeats ||
+                          subscription?.maxbeats}
+                    </span>
+                  </div>
+                  <div className=" flex flex-row justify-between items-center">
+                    <Label className=" text-md" value="New extra guards" />
+                    <span className=" text-gray-500 ">
+                      {subscriptionAction !== "renewal"
+                        ? subscriptionAction === "reduce"
+                          ? newMaxExtraGuards || "0"
+                          : subscription?.maxextraguards + newMaxExtraGuards ||
+                            subscription?.maxextraguards
+                        : subscription?.maxextraguards}
+                    </span>
+                  </div>
+                </>
+              )}
+              <div className=" flex flex-row justify-between items-center">
+                <span className="text-lg font-semibold">Total Amount</span>
+                <span className=" text-lg font-semibold">{`₦ ${
+                  newSubscriptionTotalAmount
+                    ? newSubscriptionTotalAmount.toLocaleString()
+                    : 0
+                }`}</span>
+              </div>
+              <div>
+                <Label htmlFor="paymentOption" value="Payment Option" />
+                <Select
+                  id="paymentOption"
+                  value={paymentOption}
+                  onChange={(event) => {
+                    setPaymentOption(event.target.value);
+                  }}
+                >
+                  {paymentOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </Select>
               </div>
             </>
           )}
-          <div className=" flex flex-row justify-between items-center">
-            <span className="text-lg font-semibold">Total Amount</span>
-            <span className=" text-lg font-semibold">{`₦ ${
-              newSubscriptionTotalAmount
-                ? newSubscriptionTotalAmount.toLocaleString()
-                : 0
-            }`}</span>
-          </div>
-          <div>
-            <Label htmlFor="paymentOption" value="Payment Option" />
-            <Select
-              id="paymentOption"
-              value={paymentOption}
-              onChange={(event) => {
-                setPaymentOption(event.target.value);
-              }}
-            >
-              {paymentOptions.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </Select>
-          </div>{" "}
         </form>
       </Modal.Body>
-      <Modal.Footer>
-        <RegularButton color="blue">Renew</RegularButton>
-        <Button color="gray" onClick={() => setRenewalModal(false)}>
-          Cancel
-        </Button>
-      </Modal.Footer>{" "}
+      {!hasTooManyActiveSubscriptions && (
+        <Modal.Footer>
+          <Button
+            isProcessing={isLoading}
+            disabled={isLoading}
+            onClick={() => pay()}
+            style={{ backgroundColor: "#008080" }}
+            type="submit"
+          >
+            Renew
+          </Button>
+          <Button color="gray" onClick={() => setRenewalModal(false)}>
+            Cancel
+          </Button>
+        </Modal.Footer>
+      )}
     </Modal>
   );
 };

@@ -27,7 +27,12 @@ const BeatList = () => {
   const [beatToEdit, setBeatToEdit] = useState(null);
   const [beatToDelete, setBeatToDelete] = useState(null);
 
-  const { data: beats, isLoading, error } = useGetBeatsQuery();
+  const {
+    data: beats,
+    refetch: refetchBeats,
+    isLoading,
+    error,
+  } = useGetBeatsQuery();
 
   const [deleteBeat, { isLoading: isDeleting, deleteStatus }] =
     useDeleteBeatMutation();
@@ -63,15 +68,17 @@ const BeatList = () => {
         confirmButtonText: "Yes, delete it!",
       }).then(async (result) => {
         if (result.isConfirmed) {
-          console.log(beatToDelete);
-          const data = await deleteBeat({ beatId: beatToDelete._id });
-
-          Swal.fire({
-            title: "Deleted!",
-            text: `${beatToDelete?.name || "Beat"} has been deleted.`,
-            icon: "success",
-            confirmButtonColor: "#008080",
-          });
+          const { data } = await deleteBeat({ beatId: beatToDelete._id });
+          console.log(data);
+          refetchBeats();
+          if (data?.status) {
+            Swal.fire({
+              title: "Deleted!",
+              text: `${beatToDelete?.name || "Beat"} has been deleted.`,
+              icon: "success",
+              confirmButtonColor: "#008080",
+            });
+          }
         }
       });
       // console.log(beatToDelete);

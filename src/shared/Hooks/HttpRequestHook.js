@@ -3,6 +3,10 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { AuthContext } from "../Context/AuthContext";
 import { API_BASE_URL } from "../../constants/api";
+import { persistor } from "../../redux/store";
+import { api } from "../../redux/services/api";
+import { logout } from "../../redux/slice/authSlice";
+import axios from "axios";
 
 const useHttpRequest = () => {
   const auth = useContext(AuthContext);
@@ -21,7 +25,7 @@ const useHttpRequest = () => {
     setError(null);
     setResponseData(null);
     try {
-      const response = await fetch(base ? API_BASE_URL + url: url, {
+      const response = await axios(base ? API_BASE_URL + url : url, {
         method,
         body: body ? body : null,
         headers: {
@@ -39,6 +43,16 @@ const useHttpRequest = () => {
 
       return data;
     } catch (err) {
+      console.log(err.response);
+      if (
+        err.response.data?.message ==
+          "Authentication Error TokenExpiredError: jwt expired" ||
+        err.response.data?.message ===
+          "Authentication Error JsonWebTokenError: invalid signature"
+      ) {
+        persistor.purge();
+        api.util.resetApiState();
+      }
       return setError(err.message || "Something went wrong!");
     } finally {
       auth.loading(false);

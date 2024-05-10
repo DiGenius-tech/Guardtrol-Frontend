@@ -13,6 +13,7 @@ import { api } from "../../../redux/services/api";
 import { persistor, store } from "../../../redux/store";
 import { ScreenRotationSharp } from "@mui/icons-material";
 import { PURGE } from "redux-persist";
+import { API_BASE_URL, ASSET_URL } from "../../../constants/api";
 
 const ClientToolbar = (props) => {
   const navigate = useNavigate();
@@ -92,7 +93,7 @@ const ClientToolbar = (props) => {
                     ) : (
                       <img
                         className="h-8 w-8 rounded-full cursor-pointer"
-                        src={user?.image}
+                        src={`${ASSET_URL + user?.image}`}
                         alt={"profile"}
                       />
                     )}
@@ -250,7 +251,7 @@ const ClientToolbar = (props) => {
                     {
                       <img
                         className="h-8 w-8 rounded-full cursor-pointer"
-                        src={user?.image || null}
+                        src={`${ASSET_URL + user?.image}` || null}
                         alt={"profile"}
                       />
                     }

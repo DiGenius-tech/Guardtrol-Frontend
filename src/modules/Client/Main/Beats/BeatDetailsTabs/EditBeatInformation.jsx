@@ -67,6 +67,7 @@ const EditBeatInformation = ({ setPage }) => {
     await refetchBeats();
     dispatch(suspenseHide());
   };
+
   return (
     <>
       <div className="flex justify-between flex-row mb-3">

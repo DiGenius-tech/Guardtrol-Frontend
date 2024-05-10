@@ -27,7 +27,7 @@ function BeatDetailsHeader() {
     <>
       <div className="flex justify-between flex-row my-2">
         <h5 className="text-lg   font-medium text-primary-500 dark:text-white">
-          {selectedBeat.name}
+          {selectedBeat?.name}
         </h5>
       </div>
       <div className="overflow-x-auto">

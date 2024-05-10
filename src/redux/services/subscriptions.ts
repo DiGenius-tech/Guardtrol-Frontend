@@ -4,10 +4,9 @@ import { TSubscription } from "../../types/subscription";
 
 export const SubscriptionApi = api.injectEndpoints({
   endpoints: (build) => ({
-    getSubscription: build.query<TSubscription[], void>({
-      query: () => ({ url: `users/getsubscription` }),
+    getSubscription: build.query<TSubscription, void>({
+      query: () => ({ url: `subscriptions/user/active` }),
       providesTags: ["Subscription"],
-      transformResponse: (response: any, meta, arg) => response.subscription,
     }),
 
     getAllSubscriptions: build.query<TSubscription[], void>({
@@ -16,26 +15,32 @@ export const SubscriptionApi = api.injectEndpoints({
       transformResponse: (response: any, meta, arg) => response.subscriptions,
     }),
 
+    getAllMySubscriptions: build.query<TSubscription[], void>({
+      query: () => ({ url: `subscriptions` }),
+      providesTags: ["UserSubscriptions"],
+    }),
+
     addSubscription: build.mutation<TSubscription, Partial<TSubscription>>({
       query: (body) => ({
-        url: `subscription/addsubscription`,
-        method: "PATCH",
+        url: `subscriptions`,
+        method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: "Subscription", id: "LIST" }],
+      invalidatesTags: [{ type: "UserSubscriptions", id: "LIST" }],
     }),
 
     updateSubscription: build.mutation<TSubscription, Partial<TSubscription>>({
-      query(data) {
-        const { _id, ...body } = data;
+      query(body) {
         return {
-          url: `editsubscription/${_id}`,
+          url: `subscriptions`,
           method: "PATCH",
           body,
         };
       },
-      invalidatesTags: (student) => [
-        { type: "Subscription", id: student?._id },
+      invalidatesTags: (subscription) => [
+        { type: "Subscription", id: subscription?._id },
+        { type: "Subscriptions", id: subscription?._id },
+        { type: "UserSubscriptions", id: subscription?._id },
       ],
     }),
 
@@ -49,8 +54,8 @@ export const SubscriptionApi = api.injectEndpoints({
           method: "DELETE",
         };
       },
-      invalidatesTags: (student) => [
-        { type: "Subscription", _id: student?._id },
+      invalidatesTags: (subscription) => [
+        { type: "Subscription", _id: subscription?._id },
       ],
     }),
     getErrorProne: build.query<{ success: boolean }, void>({
@@ -67,4 +72,5 @@ export const {
   useGetAllSubscriptionsQuery,
   useUpdateSubscriptionMutation,
   useGetErrorProneQuery,
+  useGetAllMySubscriptionsQuery,
 } = SubscriptionApi;
