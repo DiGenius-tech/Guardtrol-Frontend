@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { GrNext } from "react-icons/gr";
 import { GrPrevious } from "react-icons/gr";
 import logo_mastercard from "../../../../../images/logo-mastercard.svg";
@@ -24,6 +24,10 @@ import moment from "moment";
 import RenewSubscription from "../RenewSubscription";
 import { get } from "../../../../../lib/methods";
 import UpdateSubscription from "../UpdateSubscription";
+import { useGetInvoicesQuery } from "../../../../../redux/services/invoice";
+import Invoice from "../../../../../components/invoice";
+import { useReactToPrint } from "react-to-print";
+import ViewInvoice from "../ViewInvoice";
 
 const savedPaymentCards = [
   {
@@ -51,6 +55,7 @@ const SettingBilling = () => {
   const [isAddNewCard, setIsAddNewCard] = useState(false);
   const [isUpdateSub, setIsUpdateSub] = useState(false);
   const [openRenewalModal, setOpenRenewalModal] = useState(false);
+  const [openViewInvoice, setOpenViewInvoice] = useState(false);
 
   const [subscriptionsState, setSubscriptionsState] = useState();
   const [currentPage, setCurrentPage] = useState(1);
@@ -68,8 +73,15 @@ const SettingBilling = () => {
     isUninitialized,
   } = useGetSubscriptionQuery(null, { skip: token ? false : true });
 
-  const { data: guards } = useGetGuardsQuery();
-  const { data: subs } = useGetAllSubscriptionsQuery();
+  const { data: guards } = useGetGuardsQuery(null, {
+    skip: token ? false : true,
+  });
+  const { data: subs } = useGetAllSubscriptionsQuery(null, {
+    skip: token ? false : true,
+  });
+  const { data: invoices } = useGetInvoicesQuery(null, {
+    skip: token ? false : true,
+  });
   const totalPages = subs?.length;
 
   const { data: mySuscriptions } = useGetAllMySubscriptionsQuery();
@@ -80,6 +92,13 @@ const SettingBilling = () => {
 
   const handleDefaultCard = (e) => {
     setDefaultCard(e.target.value);
+  };
+
+  const [selectedInvoice, setSelectedInvoice] = useState(null);
+
+  const handleInvoiceClick = async (invoice) => {
+    setSelectedInvoice(invoice);
+    setOpenViewInvoice(true);
   };
 
   const filterData = () => {
@@ -131,15 +150,20 @@ const SettingBilling = () => {
           setRenewalModal={setOpenRenewalModal}
         />
       )}
-
+      {selectedInvoice && (
+        <ViewInvoice
+          openModal={openViewInvoice}
+          setViewInvoiceModal={setOpenViewInvoice}
+          invoice={selectedInvoice}
+        />
+      )}
       <div className="sm:max-w-4xl grid grid-cols-12 gap-4 sm:gap-8">
         <div className="hidden sm:block col-span-12 sm:col-span-5">
           <h3 className="font-bold">Current plan</h3>
         </div>
         <div className="col-span-12 sm:col-span-7">
-          <Outlet />
-          {/*  <div className="p-4 sm:p-6 bg-dark-400 text-white border border-gray-200 rounded-lg shadow">
-          <ul className="flex flex-col gap-4">
+          <div className="p-4 sm:p-6 bg-dark-400 text-white border border-gray-200 rounded-lg shadow">
+            <ul className="flex flex-col gap-4">
               <li className="grid grid-cols-2 items-center">
                 <div className="col-span-2 sm:col-span-1 font-light">
                   {sub?.plan} plan
@@ -220,7 +244,7 @@ const SettingBilling = () => {
                 {isUpdateSub ? <UpdateSubscription /> : ""}
               </li>
             </ul>
-          </div> */}
+          </div>
         </div>
         <div className="hidden sm:block col-span-12 sm:col-span-5">
           <h3 className="font-bold">Invoices</h3>
@@ -252,30 +276,38 @@ const SettingBilling = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {mySuscriptions?.map((s, i) => {
+                    {invoices?.map((invoice, i) => {
                       return (
-                        <tr key={s?._id} className="bg-white dark:bg-gray-800">
+                        <tr
+                          key={invoice?._id}
+                          className="bg-white dark:bg-gray-800"
+                        >
                           <th
                             scope="row"
                             className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                           >
-                            {moment(s?.updatedat).format("DD MMMM, YYYY")}
+                            {moment(invoice?.subscription?.updatedat).format(
+                              "DD MMMM, YYYY"
+                            )}
                           </th>
                           <th
                             scope="row"
                             className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                           >
-                            {moment(s?.expiresat).format("DD MMMM, YYYY")}
+                            {moment(invoice?.subscription?.expiresat).format(
+                              "DD MMMM, YYYY"
+                            )}
                           </th>
                           {/* <td className="px-6 py-4">{s?.plan} plan</td> */}
                           {/* <td className="px-6 py-4">Paid</td> */}
                           <td className="px-6 py-4">
-                            <a
+                            <span
+                              onClick={() => handleInvoiceClick(invoice)}
                               href="#"
-                              className="font-semibold text-primary-500 whitespace-nowrap"
+                              className=" cursor-pointer font-semibold text-primary-500 whitespace-nowrap"
                             >
                               Get Invoice
-                            </a>
+                            </span>
                           </td>
                         </tr>
                       );

@@ -8,6 +8,7 @@ import {
 import { selectToken, selectUser } from "../../../../redux/selectors/auth";
 import { usePaystackPayment } from "react-paystack";
 import { toast } from "react-toastify";
+import moment from "moment";
 import {
   suspenseHide,
   suspenseShow,
@@ -70,9 +71,7 @@ const RenewSubscription = ({ openModal, setRenewalModal }) => {
     subscription?.plan
   );
   const [newSubscription, setNewSubscription] = useState(subscription?.plan);
-  const [paymentOption, setPaymentOption] = useState(
-    subscription?.paymentgateway
-  );
+  const [paymentOption, setPaymentOption] = useState("paystack");
   const [newSubscriptionExpirationDate, setNewSubscriptionExpirationDate] =
     useState(
       subscription
@@ -157,15 +156,16 @@ const RenewSubscription = ({ openModal, setRenewalModal }) => {
 
   const payWithPaystack = async () => {
     dispatch(suspenseShow());
-    handlePaystackPayment({
+    await handlePaystackPayment({
       onSuccess: (response) => {
         updateSubscription(response).then(dispatch(suspenseHide()));
       },
       onClose: () => {
-        dispatch(suspenseHide());
         toast.warn("Payment Window Closed, Payment Cancelled");
       },
     });
+
+    dispatch(suspenseHide());
   };
 
   const pay = async (e) => {
@@ -239,10 +239,9 @@ const RenewSubscription = ({ openModal, setRenewalModal }) => {
     } finally {
     }
   };
-
+  console.log(mySuscriptions);
   useEffect(() => {
-    const currentExpirationDate = new Date(mySuscriptions?.[0]?.expiresat);
-    console.log(currentExpirationDate);
+    const currentExpirationDate = new Date(activeSubscriptions?.[0]?.expiresat);
     const subscriptionPeriod = {
       "1 Month": 1,
       "3 Months": 3,
@@ -252,8 +251,9 @@ const RenewSubscription = ({ openModal, setRenewalModal }) => {
       "Select Option": 24,
     };
     if ("Select Option" === newSubscription || "" === newSubscription) {
-      console.log("first");
-      // setNewSubscriptionExpirationDate(new Date().toLocaleDateString());
+      setNewSubscriptionExpirationDate(
+        moment(new Date()).format("DD MMMM, YYYY")
+      );
       setNewSubscriptionTotalAmount(0);
       return;
     }
@@ -262,7 +262,10 @@ const RenewSubscription = ({ openModal, setRenewalModal }) => {
     const newExpirationDate = new Date(
       currentExpirationDate.setMonth(currentExpirationDate.getMonth() + months)
     );
-    // setNewSubscriptionExpirationDate(newExpirationDate.toLocaleDateString());
+    console.log(newExpirationDate.toLocaleDateString());
+    setNewSubscriptionExpirationDate(
+      moment(new Date(newExpirationDate)).format("DD MMMM, YYYY")
+    );
 
     let beatCost = 0;
     let guardCost = 0;
@@ -315,9 +318,9 @@ const RenewSubscription = ({ openModal, setRenewalModal }) => {
             />
             <span className=" text-gray-500 ">{`${
               subscription
-                ? `Expires on ${new Date(
-                    subscription?.expiresat
-                  ).toLocaleDateString()}`
+                ? `Expires on ${moment(
+                    new Date(subscription?.expiresat)
+                  ).format("DD MMMM, YYYY")}`
                 : "No Active Subscription"
             }`}</span>
           </div>

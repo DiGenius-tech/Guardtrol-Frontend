@@ -6,47 +6,38 @@ import historyRoutes from "./Main/History/history.routes";
 import patrolGuardRoutes from "./Main/PatrolGuard/patrol-guard.routes";
 import beatsRoutes from "./Main/Beats/beats.routes";
 import settingsRoutes from "./Main/Settings/settings.routes";
-const {
-    dashboard_routes,
-    dashboard_routes_empt
-} = dashboardRoutes
-const {
-    history_routes,
-    history_routes_empt
-} = historyRoutes
-const {
-    patrol_guard_routes,
-    patrol_guard_routes_empt
-} = patrolGuardRoutes
-const {
-    beats_routes,
-    beats_routes_empt
-} = beatsRoutes
-const {
-    settings_routes,
-    settings_routes_empt
-} = settingsRoutes
+import Receipt from "../../components/invoice";
+import Invoice from "../../components/invoice";
 
+const { dashboard_routes, dashboard_routes_empt } = dashboardRoutes;
+const { history_routes, history_routes_empt } = historyRoutes;
+const { patrol_guard_routes, patrol_guard_routes_empt } = patrolGuardRoutes;
+const { beats_routes, beats_routes_empt } = beatsRoutes;
+const { settings_routes, settings_routes_empt } = settingsRoutes;
 
 const client_routes = {
-    path: "/client",
-    element: <PrivateRoute component={Client} />,
-    children: [
-        dashboard_routes_empt,
-        dashboard_routes,
-        history_routes_empt,
-        history_routes,
-        patrol_guard_routes,
-        patrol_guard_routes_empt,
-        beats_routes,
-        beats_routes_empt,
-        settings_routes,
-        settings_routes_empt,
-        {
-            path: "loading-spinner",
-            element: <LoadingSpinner />
-        }
-    ]
-}
+  path: "/client",
+  element: <PrivateRoute component={Client} />,
+  children: [
+    dashboard_routes_empt,
+    dashboard_routes,
+    history_routes_empt,
+    history_routes,
+    patrol_guard_routes,
+    patrol_guard_routes_empt,
+    beats_routes,
+    beats_routes_empt,
+    settings_routes,
+    settings_routes_empt,
+    {
+      path: "loading-spinner",
+      element: <LoadingSpinner />,
+    },
+    {
+      path: "invoice",
+      element: <Invoice />,
+    },
+  ],
+};
 
 export default client_routes;

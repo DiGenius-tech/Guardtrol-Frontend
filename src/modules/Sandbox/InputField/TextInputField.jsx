@@ -48,7 +48,6 @@ const TextInputField = (props) => {
                   : `border border-gray-300 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 sm:py-4 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500`)
               }
               placeholder={props.placeholder}
-              autoComplete="off"
               required={props.required ? true : false}
               value={props.value}
               onChange={props.onChange}
@@ -69,11 +68,9 @@ const TextInputField = (props) => {
             >
               {props.passwordType === "text" ? (
                 <img src={eyeRegular} alt="exposed password" />
-              )
-                : (
-                  <img src={eyeSlashRegular} alt="conceal password" />
-                )
-              }
+              ) : (
+                <img src={eyeSlashRegular} alt="conceal password" />
+              )}
             </button>
 
             <input
@@ -93,7 +90,6 @@ const TextInputField = (props) => {
                   : `border border-gray-300 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 sm:py-4 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500`
               }
               placeholder={props.placeholder}
-              autoComplete="off"
               required={props.required ? true : false}
               value={props.value}
               onChange={props.onChange}
@@ -106,7 +102,7 @@ const TextInputField = (props) => {
             <span className="font-medium">{props.error}</span>
           </p>
         )}
-      </div >
+      </div>
     </>
   );
 };

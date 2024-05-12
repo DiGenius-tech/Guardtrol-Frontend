@@ -55,6 +55,7 @@ const UpdateSubscription = () => {
 
   const handleFlutterPayment = useFlutterwave(fwConfig);
 
+  console.log(totalCost);
   const handlePaystackPayment = usePaystackPayment({
     publicKey: psConfigState.publicKey,
     email: user.email,
@@ -146,7 +147,6 @@ const UpdateSubscription = () => {
   };
 
   useEffect(() => {
-    // Calculate the remaining days based on the current subscription's expiration date
     const today = new Date();
     const expirationDate = new Date(currentSubscription?.expiresat);
     const diffInDays = Math.ceil(
@@ -160,7 +160,7 @@ const UpdateSubscription = () => {
     const beatCost = additionalBeats * BEAT_PRICE * (remainingDays / 30);
     const guardCost = additionalGuards * GUARD_PRICE * (remainingDays / 30);
 
-    setTotalCost(beatCost + guardCost);
+    setTotalCost(Math.ceil(beatCost + guardCost));
   }, [
     additionalBeats,
     additionalGuards,
