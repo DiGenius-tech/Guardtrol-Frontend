@@ -1,54 +1,47 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import brandLogo from "../images/brand-logo.svg";
 import { Table } from "flowbite-react";
-import ReactToPrint from "react-to-print";
 
-const Invoice = () => {
-  const invoiceDate = new Date("2024-05-11");
-  const expiryDate = new Date("2024-06-10");
-  const componentRef = useRef();
-  const handlePrint = () => {
-    window.print();
-  };
+import { BEAT_PRICE, GUARD_PRICE } from "../constants/static";
+import { useReactToPrint } from "react-to-print";
+
+const Invoice = ({ invoice, componentRef }) => {
+  const invoiceDate = new Date(invoice?.createdAt);
+  const expiryDate = new Date(invoice?.subscription?.expiresat);
 
   const invoiceItems = [
     {
       item: "Beats",
-      description: "Music production beats",
-      quantity: 10,
-      rate: 10000,
+      quantity: invoice?.subscription?.maxbeats,
+      rate: BEAT_PRICE,
     },
     {
       item: "Extra Guards",
-      description: "Security guards for event",
-      quantity: 5,
-      rate: 2000,
+      quantity: invoice?.subscription?.maxextraguards,
+      rate: GUARD_PRICE,
     },
   ];
 
   const calculateTotal = () => {
     return invoiceItems.reduce(
-      (total, item) => total + item.quantity * item.rate,
+      (total, item) => total + item?.quantity * item?.rate,
       0
     );
   };
 
   const formatDate = (date) => {
-    return date.toLocaleDateString("en-US", {
+    const fdate = new Date(date);
+    return fdate?.toLocaleDateString("en-US", {
       year: "numeric",
       month: "long",
       day: "numeric",
     });
   };
   const formatCurrency = (amount) => {
-    return `₦${amount.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, "$&,")}`;
+    return `₦${amount?.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, "$&,")}`;
   };
   return (
     <>
-      <ReactToPrint
-        trigger={() => <button>Print Receipt</button>}
-        content={() => componentRef.current}
-      />
       <div
         ref={componentRef}
         className=" min-h-screen w-screen bg-gray-50 px-10 py-5"
@@ -80,14 +73,13 @@ const Invoice = () => {
                 <div className="grid grid-cols-2 w-full my-5">
                   <div className="grid grid-cols-1">
                     <h6 className="font-semibold">Bill To:</h6>
-                    <p>John Doe</p>
-                    <p>123 Main Street Cityville, State 12345</p>
-                    <p> john.doe@example.com</p>
+                    <p>{invoice?.user?.name}</p>
+                    <p> {invoice?.user?.email}</p>
                   </div>
                   <div className="grid grid-cols-1 text-right leading-3 gap-x-0">
                     <h6 className="font-bold text-lg">Invoice </h6>
-                    <p> INV0012345</p>
-                    <p> {formatDate(invoiceDate)}</p>
+                    <p> {invoice?._id}</p>
+                    <p> {formatDate(invoice?.createdAt)}</p>
                     <div> </div>
                   </div>
                 </div>
@@ -95,9 +87,9 @@ const Invoice = () => {
 
                 <h6 className="mt-5 text-xl font-semi-bold">Order Details</h6>
                 <p className="my-2">
-                  Invoice for subcription from {formatDate(invoiceDate)}
+                  Invoice for subcription from {formatDate(invoice?.createdAt)}
                   {" to "}
-                  {formatDate(expiryDate)}
+                  {formatDate(invoice?.subscription?.expiresat)}
                 </p>
                 <Table striped className="">
                   <Table.Head>
@@ -107,41 +99,35 @@ const Invoice = () => {
                     <Table.HeadCell>Amount</Table.HeadCell>
                   </Table.Head>
                   <Table.Body>
-                    {invoiceItems.map((item, index) => (
+                    {invoiceItems?.map((item, index) => (
                       <Table.Row key={index}>
-                        <Table.Cell>{item.item}</Table.Cell>
-                        <Table.Cell>{item.quantity}</Table.Cell>
+                        <Table.Cell>{item?.item}</Table.Cell>
+                        <Table.Cell>{item?.quantity}</Table.Cell>
                         <Table.Cell>{formatCurrency(item.rate)}</Table.Cell>
                         <Table.Cell>
-                          {formatCurrency(item.quantity * item.rate)}
+                          {formatCurrency(item?.quantity * item?.rate)}
                         </Table.Cell>
                       </Table.Row>
                     ))}
                   </Table.Body>
                 </Table>
-                <div className="grid grid-cols-2 bg-[#008080] text-white p-5">
+                <div className="grid grid-cols-1 bg-[#008080] text-white p-5">
                   <div className="grid grid-cols-2">
-                    <h6>Payment </h6>
-                    <p>Complete</p>
-                    <h6>Payment Method </h6>
-                    <p>Paysack</p>
-                  </div>
-                  <div className="">
                     <h6>Total</h6>
-                    <h4 className="font-bold text-xl">
+                    <h4 className="font-bold text-xl text-center ml-36">
                       {formatCurrency(calculateTotal())}
                     </h4>
                   </div>
                 </div>
                 <hr className="my-5" />
-                <h6 className=" text-xl font-semi-bold">
-                  Payment Information{" "}
-                </h6>
+                <h6 className=" text-xl font-semi-bold">Payment Information</h6>
                 <Table striped className="">
                   <Table.Head>
                     <Table.HeadCell>Method</Table.HeadCell>
                     <Table.HeadCell>Amount Paid</Table.HeadCell>
+                    <Table.HeadCell>Transaction Ref</Table.HeadCell>
                     <Table.HeadCell>Transaction ID</Table.HeadCell>
+                    <Table.HeadCell>Status</Table.HeadCell>
                   </Table.Head>
                   <Table.Body>
                     <Table.Row>
@@ -149,13 +135,15 @@ const Invoice = () => {
                       <Table.Cell>
                         {formatCurrency(calculateTotal())}
                       </Table.Cell>
-                      <Table.Cell>221QADFD</Table.Cell>
+                      <Table.Cell>{invoice?.trxref}</Table.Cell>
+                      <Table.Cell> {invoice?.transactionid} </Table.Cell>
+                      <Table.Cell> Paid </Table.Cell>
                     </Table.Row>
                   </Table.Body>
                 </Table>
                 {/* <hr className="my-5" />
                 <h6 className=" text-xl font-semi-bold">
-                  Subscription Details
+                  invoice?.Subscription Details
                 </h6>
                 <Table striped className="">
                   <Table.Head>

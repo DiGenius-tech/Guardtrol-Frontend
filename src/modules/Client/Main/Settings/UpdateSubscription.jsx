@@ -60,8 +60,6 @@ const UpdateSubscription = () => {
     publicKey: psConfigState.publicKey,
     email: user.email,
     amount: totalCost * 100,
-    plan: "your_subscription_plan_code",
-    subscription: true,
   });
 
   const payWithFlutterwave = async () => {

@@ -71,9 +71,7 @@ const RenewSubscription = ({ openModal, setRenewalModal }) => {
     subscription?.plan
   );
   const [newSubscription, setNewSubscription] = useState(subscription?.plan);
-  const [paymentOption, setPaymentOption] = useState(
-    subscription?.paymentgateway
-  );
+  const [paymentOption, setPaymentOption] = useState("paystack");
   const [newSubscriptionExpirationDate, setNewSubscriptionExpirationDate] =
     useState(
       subscription
