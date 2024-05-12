@@ -221,6 +221,7 @@ const PatrolGuardDetails = () => {
                 <input
                   type="file"
                   id="profile_image"
+                  accept="image/*"
                   name="profile_image"
                   className="absolute h-full w-full"
                   style={{
