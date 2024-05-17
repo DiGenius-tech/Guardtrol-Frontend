@@ -19,6 +19,7 @@ const PersonalInformationSchema = Yup.object().shape({
   name: Yup.string().required("Fullname is required"),
   email: Yup.string().required("Email is required"),
   phone: Yup.string().required("PhoneNumber is required"),
+  address: Yup.string().required("Address is required"),
 });
 
 const SettingPersonalInformation = () => {
@@ -245,6 +246,29 @@ const SettingPersonalInformation = () => {
               {formik.touched.phone && formik.errors.phone && (
                 <div className="">
                   <div className=" text-red-500">{formik.errors.phone}</div>
+                </div>
+              )}
+            </div>
+          </div>
+          <div className="hidden sm:block col-span-12 sm:col-span-6">
+            <h3 className="font-bold">Address</h3>
+            <p>
+              Your contact address is used a billing informationon invoice and
+              subcriptions
+            </p>
+          </div>
+          <div className="col-span-12 sm:col-span-6">
+            <TextInputField
+              label="Address"
+              {...formik.getFieldProps("address")}
+              type="text"
+              id="address"
+              semibold_label={true}
+            />
+            <div className="mb-3">
+              {formik.touched.address && formik.errors.address && (
+                <div className="">
+                  <div className=" text-red-500">{formik.errors.address}</div>
                 </div>
               )}
             </div>

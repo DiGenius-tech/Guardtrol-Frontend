@@ -1,7 +1,6 @@
 import { Button, Modal, Label, TextInput, Select, Radio } from "flowbite-react";
 import { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import PaystackPop from "@paystack/inline-js";
 import {
   selectFwConfig,
   selectPsConfig,
@@ -27,7 +26,6 @@ import {
 } from "../../../../redux/services/subscriptions";
 import { BEAT_PRICE, GUARD_PRICE } from "../../../../constants/static";
 import axios from "axios";
-import { useGetInvoicesQuery } from "../../../../redux/services/invoice";
 
 // Constants for pricing
 
@@ -63,12 +61,6 @@ const RenewSubscription = ({ openModal, setRenewalModal }) => {
   const { data: mySuscriptions, refetch: refetchAllMySubscriptions } =
     useGetAllMySubscriptionsQuery();
   const [createSubscription] = useAddSubscriptionMutation();
-  const { data: invoices, refetch: refetchInvoices } = useGetInvoicesQuery(
-    null,
-    {
-      skip: token ? false : true,
-    }
-  );
 
   const activeSubscriptions = mySuscriptions?.filter(
     (subscription) => parseDate(subscription?.expiresat) > currentDate
@@ -132,6 +124,10 @@ const RenewSubscription = ({ openModal, setRenewalModal }) => {
     { name: "1 Year", value: "annually" },
   ];
 
+  const paymentTypes = [
+    { name: "One Time", value: "onetime" },
+    { name: "Recuring", value: "recuring" },
+  ];
   const subscriptionActions = [
     { value: "reduce", label: "Reduce" },
     { value: "renewal", label: "Renewal" },
@@ -145,12 +141,12 @@ const RenewSubscription = ({ openModal, setRenewalModal }) => {
   const handleFlutterPayment = useFlutterwave(fwConfig);
 
   const handleCreatePlan = async () => {
-    const { data } = await axios.post(
+    const data = await axios.post(
       "https://api.paystack.co/plan",
       {
         name: `${user.name}-${new Date()}-${newSubscription}`,
         interval: newSubscription,
-        amount: newSubscriptionTotalAmount * 100,
+        amount: newSubscriptionTotalAmount,
       },
       {
         headers: {
@@ -159,7 +155,7 @@ const RenewSubscription = ({ openModal, setRenewalModal }) => {
       }
     );
 
-    return data;
+    console.log(data);
   };
 
   const handlePaystackPayment = usePaystackPayment({
@@ -175,7 +171,7 @@ const RenewSubscription = ({ openModal, setRenewalModal }) => {
       callback: (response) => {
         if (response.status === "successful") {
           console.log(response);
-          updateSubscription(response.transaction);
+          updateSubscription(response);
         }
         closePaymentModal();
       },
@@ -187,52 +183,21 @@ const RenewSubscription = ({ openModal, setRenewalModal }) => {
   };
 
   const payWithPaystack = async () => {
+    // if (paymentType === "recuring") {
+    //   handleCreatePlan();
+    //   return;
+    // }
     dispatch(suspenseShow());
-    const { data: planData } = await handleCreatePlan();
-
-    const paymentData = {
-      key: psConfig.publicKey,
-      email: "user@example.com",
-
-      channels: ["card"],
-      metadata: {
-        custom_fields: [
-          {
-            display_name: "Beats",
-            variable_name: "beats",
-            value: 5,
-          },
-          {
-            display_name: "Guards",
-            variable_name: "guards",
-            value: 3,
-          },
-        ],
+    handlePaystackPayment({
+      onSuccess: (response) => {
+        updateSubscription(response).then(dispatch(suspenseHide()));
       },
-      plan: planData?.plan_code,
-      onSuccess: (transaction) => {
-        console.log("Payment successful:", transaction);
-        Swal.fire({
-          title: "Renewal succefull",
-          text: `Your subscription has been updated!`,
-          icon: "success",
-          confirmButtonColor: "#008080",
-        });
-        setRenewalModal(false);
-        updateSubscription(transaction);
-
-        dispatch(suspenseHide());
+      onClose: () => {
+        toast.warn("Payment Window Closed, Payment Cancelled");
       },
-      onCancel: () => {
-        console.log("Payment canceled");
-      },
-    };
-    const initiatePayment = () => {
-      const paystack = new PaystackPop();
-      paystack.newTransaction(paymentData);
-    };
+    });
 
-    initiatePayment();
+    dispatch(suspenseHide());
   };
 
   const pay = async (e) => {
@@ -267,10 +232,11 @@ const RenewSubscription = ({ openModal, setRenewalModal }) => {
     setIsLoading(false);
   };
 
-  const updateSubscription = async (transaction) => {
+  const updateSubscription = async (response) => {
     try {
       const reqData = {
-        ...transaction,
+        ...response,
+        transactionid: response.transaction,
         maxbeats:
           subscriptionAction === "renewal"
             ? subscription?.maxbeats
@@ -290,7 +256,6 @@ const RenewSubscription = ({ openModal, setRenewalModal }) => {
 
       refetchAllMySubscriptions();
       refetchActiveSubscription();
-      refetchInvoices();
       setRenewalModal(false);
       dispatch(suspenseHide());
 
@@ -328,7 +293,8 @@ const RenewSubscription = ({ openModal, setRenewalModal }) => {
     }
 
     const months = subscriptionPeriod[newSubscription];
-
+    console.log(newSubscription);
+    console.log(subscriptionPeriod);
     if (!months) return;
 
     console.log(currentExpirationDate);
@@ -445,7 +411,30 @@ const RenewSubscription = ({ openModal, setRenewalModal }) => {
                   </div>
                 </fieldset>
               </div>
-
+              <div className=" flex flex-row justify-between items-center">
+                <fieldset className="flex max-w-md flex-col gap-4">
+                  <legend className="mb-4 font-medium">
+                    Select payment type
+                  </legend>
+                  <div className="flex flex-row  gap-4">
+                    {paymentTypes.map((action, i) => (
+                      <div key={i} className="flex items-center gap-2">
+                        <Radio
+                          key={action.value}
+                          value={action.value}
+                          style={{ color: "#008080" }}
+                          id={action.value}
+                          onClick={(event) =>
+                            setPaymentType(event.target.value)
+                          }
+                          name="paymentType"
+                        />
+                        <Label htmlFor={action.value}> {action.name}</Label>
+                      </div>
+                    ))}
+                  </div>
+                </fieldset>
+              </div>
               {(subscriptionAction === "reduce" ||
                 subscriptionAction === "increase") && (
                 <div className="grid grid-cols-2 gap-4">
@@ -501,7 +490,7 @@ const RenewSubscription = ({ openModal, setRenewalModal }) => {
                   onChange={(event) => setNewSubscription(event.target.value)}
                 >
                   {subscriptionOptions.map((option) => (
-                    <option key={option.value} value={option.value}>
+                    <option key={option.value} value={option.name}>
                       {option.name}
                     </option>
                   ))}
@@ -534,9 +523,9 @@ const RenewSubscription = ({ openModal, setRenewalModal }) => {
                       {subscriptionAction !== "renewal"
                         ? subscriptionAction === "reduce"
                           ? newMaxBeats || "0"
-                          : subscription?.maxbeats + newMaxBeats ||
-                            subscription?.maxbeats
-                        : subscription?.maxbeats}
+                          : subscription?.maxbeats
+                        : subscription?.maxbeats + newMaxBeats ||
+                          subscription?.maxbeats}
                     </span>
                   </div>
                   <div className=" flex flex-row justify-between items-center">

@@ -7,9 +7,6 @@ import "react-toastify/dist/ReactToastify.css";
 
 const api = axios.create({
   baseURL: API_BASE_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
 });
 
 export const get = async <T>(
@@ -35,9 +32,13 @@ export const post = async <T>(
   prompt?: string
 ): Promise<T | undefined> => {
   try {
-    const response: AxiosResponse<T> = await api.post(url, data, {
-      ...(token && { headers: { Authorization: `Bearer ${token}` } }),
-    });
+    const response: AxiosResponse<T> = await axios.post(
+      API_BASE_URL + "/" + url,
+      data,
+      {
+        ...(token && { headers: { Authorization: `Bearer ${token}` } }),
+      }
+    );
 
     if (isPrompt) {
       toast(prompt);
