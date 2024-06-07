@@ -17,6 +17,7 @@ import {
 import { useSelector } from "react-redux";
 import { selectUser } from "../../../../redux/selectors/auth";
 import Swal from "sweetalert2";
+import Pagination from "../../../../shared/Pagination/Pagination";
 
 const BeatList = () => {
   const user = useSelector(selectUser);
@@ -26,6 +27,8 @@ const BeatList = () => {
   const [openModal, setOpenModal] = useState(false);
   const [beatToEdit, setBeatToEdit] = useState(null);
   const [beatToDelete, setBeatToDelete] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [entriesPerPage, setEntriesPerPage] = useState(5);
 
   const {
     data: beats,
@@ -88,9 +91,12 @@ const BeatList = () => {
       // console.log(data);
     } catch (error) {}
   };
-
+  const paginatedBeats = beats?.slice(
+    (currentPage - 1) * entriesPerPage,
+    currentPage * entriesPerPage
+  );
   return (
-    <>
+    <div className="relative pb-16">
       <div className="fixed z-10 bottom-8 right-4">
         <Link
           to={"add"}
@@ -135,6 +141,13 @@ const BeatList = () => {
         />
       </div>
 
+      <Pagination
+        totalEntries={beats?.length || 0}
+        entriesPerPage={entriesPerPage}
+        currentPage={currentPage}
+        onPageChange={setCurrentPage}
+        onEntriesPerPageChange={setEntriesPerPage}
+      />
       <EditBeat
         openModal={openModal}
         setOpenModal={setOpenModal}
@@ -142,7 +155,7 @@ const BeatList = () => {
         setBeatToEdit={setBeatToEdit}
         handleUpdateBeat={handleUpdateBeat}
       />
-    </>
+    </div>
   );
 };
 

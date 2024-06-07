@@ -131,8 +131,6 @@ function AssignNewBeat({ isOnboarding = true }) {
 
     if (c) return;
 
-    console.log(check);
-
     dispatch(suspenseShow);
 
     const formData = {
@@ -213,7 +211,9 @@ function AssignNewBeat({ isOnboarding = true }) {
               label="Select guard"
               semibold_label={true}
               handleChangeOption={handleGuardSelection}
-              optionList={guards}
+              optionList={guards.filter(
+                (g) => !selectedBeat.guards.find((gu) => gu._id === g._id)
+              )}
             />
           </div>
 

@@ -42,18 +42,37 @@ export const BeatApi = api.injectEndpoints({
           body: data.body,
         };
       },
-      invalidatesTags: [{ type: "Beats", id: "LIST" }],
+      invalidatesTags: [
+        { type: "Beats", id: "LIST" },
+        { type: "TimelineLogs" },
+      ],
     }),
 
     assignGuardToBeat: build.mutation<TBeat, Partial<any>>({
       query(data) {
         return {
-          url: `guard/assignbeat/${data.userid}`,
+          url: `guard/assignbeat`,
           method: "POST",
           body: data.body,
         };
       },
-      invalidatesTags: (beat) => [{ type: "Beats", id: beat?._id }],
+      invalidatesTags: (beat) => [
+        { type: "Beats", id: beat?._id },
+        { type: "TimelineLogs" },
+      ],
+    }),
+    unAssignFromGuardToBeat: build.mutation<TBeat, Partial<any>>({
+      query(data) {
+        return {
+          url: `guard/unassignguard`,
+          method: "POST",
+          body: data,
+        };
+      },
+      invalidatesTags: (beat) => [
+        { type: "Beats", id: beat?._id },
+        { type: "TimelineLogs" },
+      ],
     }),
 
     deleteBeat: build.mutation<{ success: boolean; _id: number }, any>({
@@ -64,7 +83,10 @@ export const BeatApi = api.injectEndpoints({
           body: body,
         };
       },
-      invalidatesTags: (beat) => [{ type: "Beats", _id: beat?._id }],
+      invalidatesTags: (beat) => [
+        { type: "Beats", _id: beat?._id },
+        { type: "TimelineLogs" },
+      ],
     }),
     getErrorProne: build.query<{ success: boolean }, void>({
       query: () => "error-prone",
@@ -74,6 +96,7 @@ export const BeatApi = api.injectEndpoints({
 });
 
 export const {
+  useUnAssignFromGuardToBeatMutation,
   useAddBeatMutation,
   useDeleteBeatMutation,
   useGetBeatsQuery,

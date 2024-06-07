@@ -5,7 +5,10 @@ import icon_menu_dots from "../../../../../../images/icons/icon-menu-dots.svg";
 import { toast } from "react-toastify";
 import { useContext, useEffect, useState } from "react";
 
-import { useGetGuardsQuery } from "../../../../../../redux/services/guards";
+import {
+  useDeleteGuardMutation,
+  useGetGuardsQuery,
+} from "../../../../../../redux/services/guards";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -16,13 +19,19 @@ import {
   suspenseHide,
   suspenseShow,
 } from "../../../../../../redux/slice/suspenseSlice";
-import { useGetBeatsQuery } from "../../../../../../redux/services/beats";
+import {
+  useGetBeatsQuery,
+  useUnAssignFromGuardToBeatMutation,
+} from "../../../../../../redux/services/beats";
 import { useParams } from "react-router-dom";
+import Pagination from "../../../../../../shared/Pagination/Pagination";
+import Swal from "sweetalert2";
 
 const duty_status = {
   OFF_DUTY: 0,
   ON_DUTY: 1,
 };
+
 function ActivePatrolGuards() {
   const user = useSelector(selectUser);
   const token = useSelector(selectToken);
@@ -31,6 +40,9 @@ function ActivePatrolGuards() {
 
   const [selectedGuard, setSelectedGuard] = useState(null);
   const [open, setOpen] = useState(false);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [entriesPerPage, setEntriesPerPage] = useState(5);
 
   const {
     data: guards,
@@ -48,25 +60,65 @@ function ActivePatrolGuards() {
     setSelectedBeat(beats?.find((b) => b?._id === beatId));
   }, [beats]);
 
-  const deleteGuard = async () => {
-    dispatch(suspenseShow());
-    const data = axios(
-      `guard/deleteguard/${user.userid}`,
-      "DELETE",
-      JSON.stringify(selectedGuard),
-      {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      }
-    )
-      .then((data) => {
-        if (data.status) {
+  const [deleteGuard] = useDeleteGuardMutation();
+  const [UnAssignGuard] = useUnAssignFromGuardToBeatMutation();
+
+  const handleDeleteGuard = (guardToDelete) => {
+    try {
+      Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#008080",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!",
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          const { data } = await deleteGuard(guardToDelete);
+          console.log(data);
           refetchGuards();
-          toast("Guard Deleted Successfully");
-          setOpen(false);
+          if (data?.status) {
+            Swal.fire({
+              title: "Deleted!",
+              text: `${guardToDelete?.name || "Guard"} has been deleted.`,
+              icon: "success",
+              confirmButtonColor: "#008080",
+            });
+          }
         }
-      })
-      .finally(dispatch(suspenseHide()));
+      });
+    } catch (error) {}
+  };
+  const handleUnAssignGuard = (guardToUnassign) => {
+    try {
+      Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#008080",
+        cancelButtonColor: "#d33",
+        confirmButtonText: " Unassign",
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          const { data } = await UnAssignGuard({
+            beat: selectedBeat,
+            guard: guardToUnassign,
+          });
+          console.log(data);
+          refetchGuards();
+          if (data?.status) {
+            Swal.fire({
+              title: "Unassigned!",
+              text: `${guardToUnassign?.name || "Guard"} has been unassigned.`,
+              icon: "success",
+              confirmButtonColor: "#008080",
+            });
+          }
+        }
+      });
+    } catch (error) {}
   };
 
   useEffect(() => {
@@ -81,34 +133,46 @@ function ActivePatrolGuards() {
     }
   }, [error]);
 
+  const activeGuards = beatId
+    ? selectedBeat?.guards?.filter((guard) => guard.isactive)
+    : guards?.filter((guard) => guard.isactive);
+
+  const paginatedGuards = activeGuards?.slice(
+    (currentPage - 1) * entriesPerPage,
+    currentPage * entriesPerPage
+  );
+
   return (
-    <>
+    <div className="relative pb-16">
       {/* active-patrol-guards-app works! */}
       <div className="hidden sm:block">
         <Card>
           <PatrolGuardListDesktopView
             duty_status={duty_status}
             icon_menu_dots={icon_menu_dots}
-            guards={
-              beatId
-                ? selectedBeat?.guards?.filter((guard) => guard.isactive)
-                : guards?.filter((guard) => guard.isactive)
-            }
+            handleDeleteGuard={handleDeleteGuard}
+            handleUnAssignGuard={handleUnAssignGuard}
+            guards={paginatedGuards}
           />
         </Card>
       </div>
       <div className="sm:hidden rounded-lg bg-white p-2">
         <PatrolGuardListMobileView
           duty_status={duty_status}
+          handleDeleteGuard={handleDeleteGuard}
           icon_menu_dots={icon_menu_dots}
-          guards={
-            beatId
-              ? selectedBeat?.guards?.filter((guard) => guard.isactive)
-              : guards?.filter((guard) => guard.isactive)
-          }
+          guards={paginatedGuards}
         />
       </div>
-    </>
+
+      <Pagination
+        totalEntries={activeGuards?.length || 0}
+        entriesPerPage={entriesPerPage}
+        currentPage={currentPage}
+        onPageChange={setCurrentPage}
+        onEntriesPerPageChange={setEntriesPerPage}
+      />
+    </div>
   );
 }
 

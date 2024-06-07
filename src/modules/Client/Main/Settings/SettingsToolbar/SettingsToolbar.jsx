@@ -8,18 +8,20 @@ const SettingsToolbar = () => {
     "/client/settings",
     "/client/settings/",
     "/client/settings/personal-information",
-    "/client/settings/personal-information/"
+    "/client/settings/personal-information/",
   ];
   const settings = ["/client/settings/security", "/client/settings/security/"];
   const shiftSchedule = [
     "/client/settings/shift-schedule",
-    "/client/settings/shift-schedule/"
+    "/client/settings/shift-schedule/",
   ];
-  const billing = ["/client/settings/billing", "/client/settings/billing/",
+  const billing = [
+    "/client/settings/billing",
+    "/client/settings/billing/",
     "/client/settings/billing/checkout-subscription",
     "/client/settings/billing/checkout-subscription/",
     "/client/settings/billing/update-subscription",
-    "/client/settings/billing/update-subscription/"
+    "/client/settings/billing/update-subscription/",
   ];
 
   return (
@@ -76,6 +78,19 @@ const SettingsToolbar = () => {
               }
             >
               Billing
+            </Link>
+          </li>
+          <li>
+            <Link
+              to={`notification`}
+              className={
+                (location.pathname.includes("notification")
+                  ? `active font-semibold border-primary-500 text-primary-500 hover:border-primary-400 hover:text-primary-400 `
+                  : `border-transparent `) +
+                `flex items-center justify-center whitespace-nowrap p-4 text-sm font-medium first:ml-0 disabled:cursor-not-allowed disabled:text-gray-400 disabled:dark:text-gray-500 rounded-t-lg border-b-2 text-gray-500 hover:border-gray-300 hover:text-gray-600`
+              }
+            >
+              Notification
             </Link>
           </li>
         </ul>

@@ -48,6 +48,7 @@ export const api = createApi({
     "Invoices",
     "UserSubscriptions",
     "Points",
+    "TimelineLogs",
     "Shifts",
     "Patrols",
   ],

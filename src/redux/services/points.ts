@@ -20,7 +20,10 @@ export const PointsApi = api.injectEndpoints({
           body: body,
         };
       },
-      invalidatesTags: [{ type: "Points", id: "LIST" }],
+      invalidatesTags: [
+        { type: "Points", id: "LIST" },
+        { type: "TimelineLogs" },
+      ],
     }),
 
     updatePoints: build.mutation<TPoint, Partial<TPoint>>({
@@ -32,7 +35,10 @@ export const PointsApi = api.injectEndpoints({
           body,
         };
       },
-      invalidatesTags: (shift) => [{ type: "Points", id: shift?._id }],
+      invalidatesTags: (shift) => [
+        { type: "Points", id: shift?._id },
+        { type: "TimelineLogs" },
+      ],
     }),
 
     deletePoints: build.mutation<{ success: boolean; _id: number }, number>({
@@ -42,7 +48,10 @@ export const PointsApi = api.injectEndpoints({
           method: "DELETE",
         };
       },
-      invalidatesTags: (shift) => [{ type: "Points", _id: shift?._id }],
+      invalidatesTags: (shift) => [
+        { type: "Points", _id: shift?._id },
+        { type: "TimelineLogs" },
+      ],
     }),
     getErrorProne: build.query<{ success: boolean }, void>({
       query: () => "error-prone",

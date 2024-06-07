@@ -5,5 +5,5 @@ export type TPoint = {
   name: string;
   coordinate: string;
   _id: string;
-  imageUrl: TUser;
+  image: TUser;
 };

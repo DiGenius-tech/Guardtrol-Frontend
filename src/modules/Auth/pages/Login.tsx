@@ -67,7 +67,7 @@ const Login = () => {
       // Form is valid, handle submission
       setIsLoading(true);
       try {
-        const data: any = await post("users/signin", JSON.stringify(formData));
+        const data: any = await post("users/signin", formData);
 
         if (data) {
           dispatch(setOnboardingLevel(null));

@@ -20,7 +20,10 @@ export const GuardApi = api.injectEndpoints({
           body: body,
         };
       },
-      invalidatesTags: [{ type: "Guards", id: "LIST" }],
+      invalidatesTags: [
+        { type: "Guards", id: "LIST" },
+        { type: "TimelineLogs" },
+      ],
     }),
     addGuard: build.mutation<TGuard, Partial<any>>({
       query: (body) => {
@@ -30,7 +33,10 @@ export const GuardApi = api.injectEndpoints({
           body: body,
         };
       },
-      invalidatesTags: [{ type: "Guards", id: "LIST" }],
+      invalidatesTags: [
+        { type: "Guards", id: "LIST" },
+        { type: "TimelineLogs" },
+      ],
     }),
     activateGuard: build.mutation<TGuard, Partial<any>>({
       query: (data) => {
@@ -40,7 +46,10 @@ export const GuardApi = api.injectEndpoints({
           body: data.statusData,
         };
       },
-      invalidatesTags: [{ type: "Guards", id: "LIST" }],
+      invalidatesTags: [
+        { type: "Guards", id: "LIST" },
+        { type: "TimelineLogs" },
+      ],
     }),
 
     updateGuard: build.mutation<TGuard, Partial<TGuard>>({
@@ -52,17 +61,23 @@ export const GuardApi = api.injectEndpoints({
           body,
         };
       },
-      invalidatesTags: (guard) => [{ type: "Guards", id: guard?._id }],
+      invalidatesTags: (guard) => [
+        { type: "Guards", id: guard?._id },
+        { type: "TimelineLogs" },
+      ],
     }),
 
-    deleteGuard: build.mutation<{ success: boolean; _id: number }, number>({
-      query(_id) {
+    deleteGuard: build.mutation<{ success: boolean; _id: number }, TGuard>({
+      query(body) {
         return {
-          url: `guard/deleteguard/${_id}`,
+          url: `guard/deleteguard/${body?._id}`,
           method: "DELETE",
         };
       },
-      invalidatesTags: (guard) => [{ type: "Guards", _id: guard?._id }],
+      invalidatesTags: (guard) => [
+        { type: "Guards", _id: guard?._id },
+        { type: "TimelineLogs" },
+      ],
     }),
     getErrorProne: build.query<{ success: boolean }, void>({
       query: () => "error-prone",

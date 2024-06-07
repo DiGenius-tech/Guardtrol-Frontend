@@ -60,6 +60,27 @@ function AddGuard({ onBoarding = true }) {
 
   const saveGuard = async (e) => {
     e.preventDefault();
+    if (
+      guards.find(
+        (g) =>
+          g.name?.toLocaleLowerCase() === guard.full_name?.toLocaleLowerCase()
+      )
+    ) {
+      setValidationErrors({
+        ...validationErrors,
+        full_name: "Guard with this name already exists",
+      });
+      return;
+    }
+    console.log(guards);
+
+    if (guards.find((g) => g.phone === guard.phone)) {
+      setValidationErrors({
+        ...validationErrors,
+        full_name: "Guard with this phone number already exists",
+      });
+      return;
+    }
     if (guard.full_name === "" || guard.full_name.length < 5) {
       setValidationErrors({
         ...validationErrors,
@@ -76,8 +97,6 @@ function AddGuard({ onBoarding = true }) {
     }
 
     if (onBoarding) {
-      console.log(sub);
-      console.log(guards);
       if (onboardingGuards?.length >= sub?.maxbeats * 5 + sub?.maxextraguards) {
         Swal.fire({
           title: "OOPS!! You've Ran Out Of Guards",
@@ -94,7 +113,6 @@ function AddGuard({ onBoarding = true }) {
         });
         return;
       }
-
       dispatch(addOnboardingGuard(guard));
       navigate("../");
     } else {

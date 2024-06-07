@@ -1,57 +1,48 @@
 import { retry } from "@reduxjs/toolkit/query/react";
 import { api } from "./api";
-import { TShift } from "../../types/shift";
+import { TTimelineLogs } from "../../types/timelineLogs";
 
 export const ShiftApi = api.injectEndpoints({
   endpoints: (build) => ({
-    getShifts: build.query<TShift[], void>({
-      query: () => ({ url: `shifts` }),
+    getTimelineLogs: build.query<TTimelineLogs[], void>({
+      query: () => ({ url: `logs` }),
       providesTags: (result = []) => [
-        ...result.map(({ _id }) => ({ type: "Shifts", _id } as const)),
-        { type: "Shifts" as const, id: "LIST" },
+        ...result.map(({ _id }) => ({ type: "TimelineLogs", _id } as const)),
+        { type: "TimelineLogs" as const, id: "LIST" },
       ],
     }),
 
-    createShifts: build.mutation<TShift, Partial<any>>({
+    createTimelineLogs: build.mutation<TTimelineLogs, Partial<any>>({
       query: (body) => {
         return {
-          url: `shifts`,
+          url: `logs`,
           method: "POST",
           body: body,
         };
       },
-      invalidatesTags: [
-        { type: "Shifts", id: "LIST" },
-        { type: "TimelineLogs" },
-      ],
+      invalidatesTags: [{ type: "TimelineLogs", id: "LIST" }],
     }),
 
-    updateShift: build.mutation<TShift, Partial<TShift>>({
+    updateShift: build.mutation<TTimelineLogs, Partial<TTimelineLogs>>({
       query(data) {
         const { _id, ...body } = data;
         return {
-          url: `shifts/${_id}`,
+          url: `logs/${_id}`,
           method: "PUT",
           body,
         };
       },
-      invalidatesTags: (shift) => [
-        { type: "Shifts", id: shift?._id },
-        { type: "TimelineLogs" },
-      ],
+      invalidatesTags: (shift) => [{ type: "TimelineLogs", id: shift?._id }],
     }),
 
     deleteShift: build.mutation<{ success: boolean; _id: number }, number>({
       query(_id) {
         return {
-          url: `shifts/${_id}`,
+          url: `logs/${_id}`,
           method: "DELETE",
         };
       },
-      invalidatesTags: (shift) => [
-        { type: "Shifts", _id: shift?._id },
-        { type: "TimelineLogs" },
-      ],
+      invalidatesTags: (shift) => [{ type: "TimelineLogs", _id: shift?._id }],
     }),
     getErrorProne: build.query<{ success: boolean }, void>({
       query: () => "error-prone",
@@ -61,9 +52,9 @@ export const ShiftApi = api.injectEndpoints({
 });
 
 export const {
-  useCreateShiftsMutation,
+  useCreateTimelineLogsMutation,
   useDeleteShiftMutation,
-  useGetShiftsQuery,
+  useGetTimelineLogsQuery,
   useUpdateShiftMutation,
   useGetErrorProneQuery,
 } = ShiftApi;

@@ -364,7 +364,7 @@ const PatrolGuardDetails = () => {
         <Tabs aria-label="Tabs with underline" style="fullWidth">
           <Tabs.Item active title="Personal information">
             <EditPersonalInformation
-              guard={guard?.personalinformation}
+              guard={guard}
               setGuard={setGuard}
               handleSentRequest={handleSentRequest}
             />

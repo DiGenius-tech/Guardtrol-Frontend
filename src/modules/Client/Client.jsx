@@ -22,14 +22,14 @@ const Client = () => {
     <>
       {/* client-app works! */}
 
-      <div className="layout">
+      <div className="layout h-screen">
         <div className="sticky top-0 left-0 right-0 z-40">
           <ClientToolbar
             handleOpenSidenav={handleOpenSidenav}
             isOpenSidenav={isOpenSidenav}
           />
         </div>
-        <div className="grid grid-cols-12 sm:h-full">
+        <div className="client-body grid grid-cols-12 ">
           <div className="col-span-12 md:col-span-2">
             {isOpenSidenav ? (
               <div
@@ -59,9 +59,7 @@ const Client = () => {
             </div>
           </div>
           <div className="col-span-12 md:col-span-10">
-            <div className="main p-2 sm:p-4">
-              <Main />
-            </div>
+            <Main />
           </div>
         </div>
       </div>

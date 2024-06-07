@@ -8,6 +8,7 @@ import beatsRoutes from "./Main/Beats/beats.routes";
 import settingsRoutes from "./Main/Settings/settings.routes";
 import Receipt from "../../components/invoice";
 import Invoice from "../../components/invoice";
+import { ReportRouter } from "./Main/Reports/report-router";
 
 const { dashboard_routes, dashboard_routes_empt } = dashboardRoutes;
 const { history_routes, history_routes_empt } = historyRoutes;
@@ -32,6 +33,10 @@ const client_routes = {
     {
       path: "loading-spinner",
       element: <LoadingSpinner />,
+    },
+    {
+      path: "reports/*",
+      element: <ReportRouter />,
     },
     {
       path: "invoice",

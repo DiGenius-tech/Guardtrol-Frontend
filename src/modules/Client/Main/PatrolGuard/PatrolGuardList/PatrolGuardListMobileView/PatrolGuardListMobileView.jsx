@@ -1,8 +1,9 @@
 import { Dropdown } from "flowbite-react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { ASSET_URL } from "../../../../../../constants/api";
 
 function PatrolGuardListMobileView(props) {
+  const location = useLocation();
   return (
     <>
       {/* patrol-guard-list-mobile-view-app works! */}
@@ -93,6 +94,24 @@ function PatrolGuardListMobileView(props) {
                                 to={`/client/patrol-guard/details/${guard._id}`}
                               >
                                 Edit guard
+                              </Link>
+                            </Dropdown.Item>
+                            {location.pathname.includes("/beats/details/") && (
+                              <Dropdown.Item>
+                                <button
+                                  onClick={() =>
+                                    props.handleUnAssignGuard(guard)
+                                  }
+                                >
+                                  Unassign Guard
+                                </button>
+                              </Dropdown.Item>
+                            )}
+                            <Dropdown.Item>
+                              <Link
+                                onClick={() => props.handleDeleteGuard(guard)}
+                              >
+                                Delete Guard
                               </Link>
                             </Dropdown.Item>
                           </Dropdown>

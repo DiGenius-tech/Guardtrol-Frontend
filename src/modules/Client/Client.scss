@@ -1,5 +1,8 @@
 .layout {
-  height: 100vh;
-  min-height: 100vh;
+  height: 100%;
+  min-height: 100%;
   width: 100%;
+}
+.client-body {
+  height: calc(100% - 64px);
 }

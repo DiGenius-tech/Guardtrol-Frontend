@@ -13,7 +13,10 @@ import {
 } from "../../../../../../redux/slice/suspenseSlice";
 import { put } from "../../../../../../lib/methods";
 import RegularButton from "../../../../../Sandbox/Buttons/RegularButton";
-import { useCreateShiftsMutation } from "../../../../../../redux/services/shifts";
+import {
+  useCreateShiftsMutation,
+  useGetShiftsQuery,
+} from "../../../../../../redux/services/shifts";
 
 const ShiftInformationSchema = Yup.object().shape({
   name: Yup.string().required("Shift title is required"),
@@ -26,9 +29,11 @@ const ShiftConfigForm = (props) => {
   const token = useSelector(selectToken);
 
   const dispatch = useDispatch();
-
+  const { data: shifts } = useGetShiftsQuery();
   const [shiftToEdit, setShiftToEdit] = useState(false);
   const [isloading, setIsLoading] = useState(false);
+
+  const [validationErrors, setValidationErrors] = useState({});
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
   const [selectedRange, setSelectedRange] = useState("");
@@ -43,17 +48,26 @@ const ShiftConfigForm = (props) => {
     },
     validationSchema: ShiftInformationSchema,
     onSubmit: (values) => {
-      console.log(values);
       setIsLoading(true);
       try {
+        console.log(shifts);
+        if (shifts?.find((s) => s.name === values.name)) {
+          setValidationErrors({
+            ...validationErrors,
+            name: "Shift already exists with this name",
+          });
+          return;
+        }
         createShift(values);
       } catch (error) {
         console.log(error);
       } finally {
         setIsLoading(false);
+        formik.resetForm();
       }
     },
   });
+  console.log(formik.errors);
 
   const handleUpdateProfile = async (values) => {
     dispatch(suspenseShow());
@@ -100,15 +114,11 @@ const ShiftConfigForm = (props) => {
               label="Name of shift"
               {...formik.getFieldProps("name")}
               type="text"
+              error={validationErrors["name"]}
               placeholder="Enter Shift Name"
               id="name"
               semibold_label={true}
             />
-            {formik.touched.name && formik.errors.name && (
-              <div className="">
-                <div className="  text-red-500">{formik.errors.name}</div>
-              </div>
-            )}
           </div>
           <div className="col-span-12 sm:col-span-6">
             <fieldset>

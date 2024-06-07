@@ -3,6 +3,7 @@ import React, { useEffect } from "react";
 import {
   HiChartPie,
   HiClipboardList,
+  HiFilter,
   HiHome,
   HiOutlineCog,
   HiUser,
@@ -40,6 +41,7 @@ const ClientSidebar = () => {
     "/client/beats/configure-beat",
     "/client/beats/configure-beat/",
   ];
+  const reports = ["/client/reports", "/client/reports/"];
   const settings = [
     "/client/settings",
     "/client/settings/",
@@ -135,6 +137,22 @@ const ClientSidebar = () => {
                 <HiHome fontSize={"1.5rem"} />
                 <span className="flex items-center ms-3 h-5 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white">
                   Beats
+                </span>
+              </Link>
+            </li>
+            <li>
+              <Link
+                to={reports[0]}
+                className={
+                  (reports.includes(location.pathname)
+                    ? `bg-primary-50 `
+                    : ``) +
+                  `flex items-center p-2 text-dark-260 rounded-r-full dark:text-white hover:bg-primary-50 dark:hover:bg-primary-400 group`
+                }
+              >
+                <HiFilter fontSize={"1.5rem"} />
+                <span className="flex items-center ms-3 h-5 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white">
+                  Reports
                 </span>
               </Link>
             </li>

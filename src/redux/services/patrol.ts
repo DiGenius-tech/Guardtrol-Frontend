@@ -20,7 +20,10 @@ export const PatrolsApi = api.injectEndpoints({
           body: body,
         };
       },
-      invalidatesTags: [{ type: "Patrols", id: "LIST" }],
+      invalidatesTags: [
+        { type: "Patrols", id: "LIST" },
+        { type: "TimelineLogs" },
+      ],
     }),
 
     updatePatrols: build.mutation<TPatrol, Partial<TPatrol>>({
@@ -32,7 +35,10 @@ export const PatrolsApi = api.injectEndpoints({
           body,
         };
       },
-      invalidatesTags: (shift) => [{ type: "Patrols", id: shift?._id }],
+      invalidatesTags: (shift) => [
+        { type: "Patrols", id: shift?._id },
+        { type: "TimelineLogs" },
+      ],
     }),
 
     deletePatrols: build.mutation<{ success: boolean; _id: number }, number>({
@@ -42,7 +48,10 @@ export const PatrolsApi = api.injectEndpoints({
           method: "DELETE",
         };
       },
-      invalidatesTags: (shift) => [{ type: "Patrols", _id: shift?._id }],
+      invalidatesTags: (shift) => [
+        { type: "Patrols", _id: shift?._id },
+        { type: "TimelineLogs" },
+      ],
     }),
     getErrorProne: build.query<{ success: boolean }, void>({
       query: () => "error-prone",

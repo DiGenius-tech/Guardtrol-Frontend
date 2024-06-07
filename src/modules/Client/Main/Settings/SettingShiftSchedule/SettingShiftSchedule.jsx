@@ -1,84 +1,33 @@
 import React, { useEffect, useState } from "react";
-import TextInputField from "../../../../Sandbox/InputField/TextInputField";
-import RegularButton from "../../../../Sandbox/Buttons/RegularButton";
 import { Dropdown } from "flowbite-react";
-import icon_menu_dots from "../../../../../images/icons/icon-menu-dots.svg";
-import ShiftConfigForm from "./ShiftConfigForm/ShiftConfigForm";
+import Swal from "sweetalert2";
 import {
   useDeleteShiftMutation,
   useGetShiftsQuery,
 } from "../../../../../redux/services/shifts";
-import { useDeleteBeatMutation } from "../../../../../redux/services/beats";
-import Swal from "sweetalert2";
+import ShiftConfigForm from "./ShiftConfigForm/ShiftConfigForm";
 import EditShiftModal from "./EditShift";
-
-const list_of_shifts = [
-  {
-    id: "1",
-    name: "Early morning shift",
-    startTime: "06:30 am",
-    endTime: "09:30 am",
-  },
-  {
-    id: "2",
-    name: "Night shift",
-    startTime: "09:00 pm",
-    endTime: "06:00 am",
-  },
-];
+import icon_menu_dots from "../../../../../images/icons/icon-menu-dots.svg";
+import Pagination from "../../../../../shared/Pagination/Pagination";
 
 const SettingShiftSchedule = () => {
-  const [listOfShifts, setlistOfShifts] = useState(list_of_shifts);
   const [shiftToEdit, setShiftToEdit] = useState();
   const [openEditShiftModal, setEditShiftModal] = useState(false);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [entriesPerPage, setEntriesPerPage] = useState(5);
 
   const { data: shifts, refetch: refetchShifts } = useGetShiftsQuery();
   const [deleteShift] = useDeleteShiftMutation();
 
-  const handleEditShift = (editshift) => {
-    setShiftToEdit(editshift);
+  const handleEditShift = (editShift) => {
+    setShiftToEdit(editShift);
     setEditShiftModal(true);
   };
+
   const handleEditShiftClose = () => {
     setEditShiftModal(false);
     setShiftToEdit();
-  };
-
-  const [shift, setShift] = useState({
-    name: "",
-    startTime: "",
-    endTime: "",
-  });
-  const [formData, setFormData] = useState({
-    numberOfShift: "",
-    shift: [],
-  });
-
-  const handleNumberOfShiftChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleShiftData = (e) => {
-    setShift({ ...shift, [e.target.name]: e.target.value });
-  };
-
-  const handleAddShiftToList = (e) => {
-    e.preventDefault();
-    for (const key in shift) {
-      if (Object.hasOwnProperty.call(shift, key)) {
-        const element = shift[key];
-        if (!element) return;
-      }
-    }
-    setlistOfShifts([
-      ...listOfShifts,
-      { id: (listOfShifts?.length + 1).toString(), ...shift },
-    ]);
-    setShift({
-      name: "",
-      startTime: "",
-      endTime: "",
-    });
   };
 
   const handleDelete = async (shiftToDelete) => {
@@ -94,7 +43,6 @@ const SettingShiftSchedule = () => {
       }).then(async (result) => {
         if (result.isConfirmed) {
           const { data } = await deleteShift(shiftToDelete._id);
-          console.log(data);
           refetchShifts();
           if (data?.status) {
             Swal.fire({
@@ -109,6 +57,11 @@ const SettingShiftSchedule = () => {
     } catch (error) {}
   };
 
+  const paginatedShifts = shifts?.slice(
+    (currentPage - 1) * entriesPerPage,
+    currentPage * entriesPerPage
+  );
+
   return (
     <>
       {shiftToEdit && (
@@ -118,79 +71,79 @@ const SettingShiftSchedule = () => {
           closeEditShiftModal={handleEditShiftClose}
         />
       )}
-      {/* setting-shift-schedule-app works! */}
-      <div className="max-w-4xl">
-        <div className="grid grid-cols-12 gap-4 sm:gap-8">
-          <div className="hidden sm:block col-span-12 sm:col-span-5">
+      <div className="pr-2 max-h-[58vh] overflow-y-scroll w-full">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-8">
+          <div className="">
             <h3 className="font-bold">Create Shift</h3>
           </div>
-          <div className="col-span-12 sm:col-span-7">
+          <div className="">
             <ShiftConfigForm />
           </div>
-          <div className="hidden sm:block col-span-12 sm:col-span-5">
+          <div className="">
             <h3 className="font-bold">Shifts List</h3>
           </div>
-          <div className="col-span-12 sm:col-span-7">
-            <div className="grid grid-cols-12 gap-4">
+          <div className="">
+            <div className="grid grid-cols-12 gap-4 relative pb-16">
               <div className="col-span-12">
-                {/* list of configured shifts */}
-                {shifts?.length > 0 ? (
+                {paginatedShifts?.length > 0 ? (
                   <ul className="grid grid-cols-1 gap-2">
-                    {shifts?.map((shift) => {
-                      return (
-                        <li key={shift._id} className="col-span-1">
-                          <div className="p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-                            <div className="flex items-center justify-between text-sm">
-                              <div>
-                                <h3 className="font-bold">{shift?.name}</h3>
-                                <p className="text-dark-200">
-                                  {shift?.start}&nbsp;-&nbsp;{shift?.end}
-                                </p>
-                              </div>
-                              <Dropdown
-                                label=""
-                                placement="right"
-                                dismissOnClick={false}
-                                renderTrigger={() => (
-                                  <button
-                                    type="button"
-                                    className="flex w-8 justify-end"
-                                  >
-                                    <img src={icon_menu_dots} alt="menu" />
-                                  </button>
-                                )}
-                              >
-                                <Dropdown.Item
-                                  onClick={() => handleEditShift(shift)}
-                                >
-                                  Edit
-                                </Dropdown.Item>
-                                <Dropdown.Item
-                                  onClick={() => handleDelete(shift)}
-                                >
-                                  Remove
-                                </Dropdown.Item>
-                              </Dropdown>
+                    {paginatedShifts?.map((shift) => (
+                      <li key={shift._id} className="col-span-1">
+                        <div className="p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+                          <div className="flex items-center justify-between text-sm">
+                            <div>
+                              <h3 className="font-bold">{shift?.name}</h3>
+                              <p className="text-dark-200">
+                                {shift?.start}&nbsp;-&nbsp;{shift?.end}
+                              </p>
                             </div>
+                            <Dropdown
+                              label=""
+                              placement="right"
+                              dismissOnClick={false}
+                              renderTrigger={() => (
+                                <button
+                                  type="button"
+                                  className="flex w-8 justify-end"
+                                >
+                                  <img src={icon_menu_dots} alt="menu" />
+                                </button>
+                              )}
+                            >
+                              <Dropdown.Item
+                                onClick={() => handleEditShift(shift)}
+                              >
+                                Edit
+                              </Dropdown.Item>
+                              <Dropdown.Item
+                                onClick={() => handleDelete(shift)}
+                              >
+                                Remove
+                              </Dropdown.Item>
+                            </Dropdown>
                           </div>
-                        </li>
-                      );
-                    })}
+                        </div>
+                      </li>
+                    ))}
                   </ul>
                 ) : (
-                  <div className=" h-28 w-full flex flex-row justify-center items-center">
-                    <span className=" text-gray-400  font-medium text-md">
+                  <div className="h-28 w-full flex flex-row justify-center items-center">
+                    <span className="text-gray-400 font-medium text-md">
                       No Shifts
                     </span>
                   </div>
                 )}
               </div>
+              <Pagination
+                totalEntries={shifts?.length || 0}
+                entriesPerPage={entriesPerPage}
+                currentPage={currentPage}
+                onPageChange={setCurrentPage}
+                onEntriesPerPageChange={setEntriesPerPage}
+              />
             </div>
-
-            {/* Shift configuration form */}
           </div>
         </div>
-        <div className="my-4"></div>
       </div>
     </>
   );

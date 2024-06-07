@@ -66,25 +66,26 @@ const EditPersonalInformation = (props) => {
 
   const { isLoading, error, responseData, sendRequest } = useHttpRequest();
   const [validationErrors, setValidationErrors] = useState({});
+
+  console.log(props.guard?.personalinformation?.height);
+
   const [formData, setFormData] = useState({
-    firstname: props.guard?.firstname,
-    lastname: props.guard?.lastname,
-    height: props.guard?.height,
-    dob: props.guard?.dob,
-    sex: props.guard?.sex,
-    altphone: props.guard?.altphone,
-    state: props.guard?.state,
+    name: "",
+    height: "",
+    dob: "",
+    sex: "",
+    altphone: "",
+    state: "",
   });
 
   useEffect(() => {
     setFormData({
-      firstname: props.guard?.firstname,
-      lastname: props.guard?.lastname,
-      height: props.guard?.height,
-      dob: props.guard?.dob,
-      sex: props.guard?.sex,
-      altphone: props.guard?.altphone,
-      state: props.guard?.state,
+      name: props.guard?.name,
+      height: props.guard?.personalinformation?.height,
+      dob: props.guard?.personalinformation?.dob,
+      sex: props.guard?.personalinformation?.sex,
+      altphone: props.guard?.personalinformation?.altphone,
+      state: props.guard?.personalinformation?.state,
     });
   }, [props]);
 
@@ -93,9 +94,6 @@ const EditPersonalInformation = (props) => {
       toast.error(error);
     }
   }, [error]);
-
-  const [sex, setSex] = useState(props.guard?.sex);
-  const [state, setState] = useState(props.guard?.state);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -120,18 +118,19 @@ const EditPersonalInformation = (props) => {
       return;
     }
     const guardData = {
-      firstname: formData.firstname,
-      lastname: formData.lastname,
-      height: formData.height,
-      dob: formData.dob,
-      sex: formData.sex,
-      altphone: formData.altphone,
-      state: formData.state,
+      name: formData.name,
+      personalinformation: {
+        height: formData?.height,
+        dob: formData.dob,
+        sex: formData.sex,
+        altphone: formData.altphone,
+        state: formData.state,
+      },
     };
 
     const data = patch(
       `guard/personalinformation/${guardId}`,
-      JSON.stringify(guardData),
+      guardData,
       token
     ).then((data) => {
       if (data.status) {
@@ -155,30 +154,18 @@ const EditPersonalInformation = (props) => {
             <div className="grid grid-cols-12 gap-x-4">
               <div className="col-span-12 sm:col-span-6">
                 <TextInputField
-                  label="First Name"
+                  label="Name"
                   semibold_label={true}
                   type="text"
-                  id="firstname"
+                  id="name"
                   required="required"
-                  name="firstname"
-                  value={formData.firstname}
+                  name="name"
+                  value={formData.name}
                   onChange={handleChange}
-                  error={validationErrors["firstname"]}
+                  error={validationErrors["name"]}
                 />
               </div>
-              <div className="col-span-12 sm:col-span-6">
-                <TextInputField
-                  label="Last Name"
-                  semibold_label={true}
-                  type="text"
-                  id="lastname"
-                  required="required"
-                  name="lastname"
-                  value={formData.lastname}
-                  onChange={handleChange}
-                  error={validationErrors["lastname"]}
-                />
-              </div>
+
               <div className="col-span-12 sm:col-span-6">
                 <TextInputField
                   label="Date Of Birth"
@@ -206,28 +193,32 @@ const EditPersonalInformation = (props) => {
                 />
               </div>
               <div className="col-span-12 sm:col-span-6">
-                <SelectField
-                  value={sex}
-                  name="sex"
-                  id="sex"
-                  label="Sex"
-                  semibold_label={true}
-                  handleChangeOption={handleSelectChange}
-                  optionList={sexOptions}
-                  multipleSelect={false}
-                />
+                {formData?.sex && (
+                  <SelectField
+                    name="sex"
+                    id="sex"
+                    value={formData?.sex || ""}
+                    label="Sex"
+                    semibold_label={true}
+                    handleChangeOption={handleSelectChange}
+                    optionList={sexOptions}
+                    multipleSelect={false}
+                  />
+                )}
               </div>
               <div className="col-span-12 sm:col-span-6">
-                <SelectField
-                  value={state}
-                  name="state"
-                  id="state"
-                  label="State of origin"
-                  semibold_label={true}
-                  handleChangeOption={handleSelectChange}
-                  optionList={stateOfOriginList}
-                  multipleSelect={false}
-                />
+                {formData?.sex && (
+                  <SelectField
+                    value={formData?.state || ""}
+                    name="state"
+                    id="state"
+                    label="State of origin"
+                    semibold_label={true}
+                    handleChangeOption={handleSelectChange}
+                    optionList={stateOfOriginList}
+                    multipleSelect={false}
+                  />
+                )}
               </div>
               <div className="col-span-12">
                 <TextInputField

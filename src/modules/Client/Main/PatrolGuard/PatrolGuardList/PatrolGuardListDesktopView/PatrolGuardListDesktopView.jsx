@@ -1,10 +1,12 @@
 import { Dropdown } from "flowbite-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { ASSET_URL } from "../../../../../../constants/api";
 
 function PatrolGuardListDesktopView(props) {
   const navigate = useNavigate();
+  console.log(useLocation());
 
+  const location = useLocation();
   return (
     <>
       {/* patrol-guard-list-desktop-view-app works! */}
@@ -67,11 +69,13 @@ function PatrolGuardListDesktopView(props) {
                       <td className="px-6 py-4"> {guard.phone}</td>
                       {/* <td className="px-6 py-4"> {guard.email}</td> */}
                       <td className="px-6 py-4">
-                        {guard.status === "off-duty" ? (
+                        {guard.status === "off-duty" ||
+                        guard.status === "off duty" ? (
                           <span className="text-yellow-300 font-semibold">
                             Off Duty
                           </span>
-                        ) : guard.status === "on-duty" ? (
+                        ) : guard.status === "on-duty" ||
+                          guard.status === "on duty" ? (
                           <span className="text-green-300 font-semibold">
                             On Duty
                           </span>
@@ -98,6 +102,22 @@ function PatrolGuardListDesktopView(props) {
                             >
                               Edit guard
                             </Link>
+                          </Dropdown.Item>
+                          {location.pathname.includes("/beats/details/") && (
+                            <Dropdown.Item>
+                              <button
+                                onClick={() => props.handleUnAssignGuard(guard)}
+                              >
+                                Unassign Guard
+                              </button>
+                            </Dropdown.Item>
+                          )}
+                          <Dropdown.Item>
+                            <button
+                              onClick={() => props.handleDeleteGuard(guard)}
+                            >
+                              Delete Guard
+                            </button>
                           </Dropdown.Item>
                           {/* <Dropdown.Item>Assign guard to beat</Dropdown.Item> */}
                         </Dropdown>

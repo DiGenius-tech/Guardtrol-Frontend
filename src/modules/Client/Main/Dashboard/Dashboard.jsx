@@ -1,47 +1,208 @@
 import { Card, Label, Select } from "flowbite-react";
-import React from "react";
+import React, { useState } from "react";
 import Activities from "./Activities/Activities";
 import Patrols from "./Patrols/Patrols";
 import "./Dashboard.scss";
 import { Link, Outlet } from "react-router-dom";
 import MobileDisplay from "./MobileDisplay/MobileDisplay";
+import { FaUser, FaMap } from "react-icons/fa"; // Import the icons you want to use
+import { useGetTimelineLogsQuery } from "../../../../redux/services/timelinelogs";
+import { format } from "date-fns";
+import { useGetGuardsQuery } from "../../../../redux/services/guards";
+import { useGetBeatsQuery } from "../../../../redux/services/beats";
+import userEvent from "@testing-library/user-event";
+import { useSelector } from "react-redux";
+import { selectUser } from "../../../../redux/selectors/auth";
 
 const Dashboard = () => {
+  const user = useSelector(selectUser);
+  const { data: timelineLogs } = useGetTimelineLogsQuery();
+  const formatDate = (date) => format(new Date(date), "yyyy-MM-dd HH:mm:ss");
+  const [filterStatus, setFilterStatus] = useState("All");
+  const [filterDate, setFilterDate] = useState("Today");
+  const { data: guards } = useGetGuardsQuery();
+  const { data: beats } = useGetBeatsQuery();
+  // Function to render timeline logs
+  const filteredLogs = () => {
+    if (!timelineLogs) return [];
+
+    let filtered = timelineLogs;
+
+    if (filterStatus === "All") {
+      return timelineLogs;
+    }
+
+    if (filterStatus === "Clock Action") {
+      console.log("first");
+      filtered = filtered.filter((log) => {
+        return filterStatus === "Clock Action"
+          ? log.type === "Clock Action"
+          : true;
+      });
+
+      return filtered;
+    }
+
+    if (filterDate !== "All") {
+      const today = new Date();
+      const yesterday = new Date(today);
+      yesterday.setDate(yesterday.getDate() - 1);
+
+      filtered = filtered.filter((log) => {
+        const logDate = new Date(log.createdAt);
+        if (filterDate === "Today") {
+          return logDate.toDateString() === today.toDateString();
+        } else if (filterDate === "Yesterday") {
+          return logDate.toDateString() === yesterday.toDateString();
+        } else {
+          // Assuming filterDate is a specific date in "yyyy-MM-dd" format
+          return logDate.toDateString() === new Date(filterDate).toDateString();
+        }
+      });
+    }
+
+    return filtered;
+  };
+
+  // Function to render timeline logs
+  const renderLogs = () => {
+    const logs = filteredLogs();
+
+    return (
+      <>
+        {logs?.length !== 0 ? (
+          <>
+            {logs.map((log) => (
+              <li key={log._id} className="horizontal-liner">
+                <div className="activity">
+                  <div className="grid grid-cols-12">
+                    <div className="col-span-12 md:col-span-3 md:p-[15px]">
+                      <div className="text-sm font-semibold">
+                        {formatDate(log.createdAt)}
+                      </div>
+                    </div>
+                    <div className="hidden md:block dot-wrap | col-span-2 p-[20px]">
+                      <div className="dot"></div>
+                    </div>
+                    <div className="col-span-12 md:col-span-7">
+                      <div className="body">
+                        <div
+                          style={{ borderWidth: "1px" }}
+                          className={`text-xs me-2 
+                            px-3 py-1.5 rounded-lg dark:bg-gray-700 
+                            ${
+                              log.type === "Clock Action"
+                                ? "bg-blue-50 text-blue-800  border-blue-900"
+                                : "bg-gray-50 text-gray-800"
+                            }`}
+                          role="alert"
+                        >
+                          <h3 className="title font-semibold">
+                            {log.message.includes("clocked in")
+                              ? "Clock in"
+                              : log.message.includes("clockedout")
+                              ? "Clock out"
+                              : log.type}
+                          </h3>
+                          <p className="body">{log.message}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </li>
+            ))}
+          </>
+        ) : (
+          <>
+            <li className="w-full text-center py-28">
+              <p className="body text-gray-600">No Activity</p>
+            </li>
+          </>
+        )}
+      </>
+    );
+  };
+
   return (
     <>
-      {/* dashboard-app works! */}
       <div className="md:hidden">
         <MobileDisplay />
       </div>
+      <div className="flex flex-col md:flex-row md:justify-between items-center mb-6">
+        <h1 className="text-4xl font-bold tracking-tight text-gray-900 dark:text-white">
+          Welcome, {user?.name || "User"}!
+        </h1>
+      </div>
       <div className="hidden md:grid grid-cols-12 gap-4">
-        <div className="col-span-12 lg:col-span-5">
+        <div className="grid grid-cols-4 col-span-12 gap-4">
+          <div className="">
+            <StatsCard>
+              <h2 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
+                Number of Guards
+              </h2>
+              <div className="flex items-center mt-2">
+                <FaUser className="text-gray-600 dark:text-gray-400 text-2xl mr-2 mb-1" />
+                <p className="text-3xl  font-semibold text-gray-800 dark:text-gray-200">
+                  {guards?.length}
+                </p>
+              </div>
+            </StatsCard>
+          </div>
+          <div className="">
+            <StatsCard>
+              <h2 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
+                Number of Beats
+              </h2>
+              <div className="flex items-center mt-2">
+                <FaMap className="text-gray-600 mb-1 dark:text-gray-400 text-2xl mr-2" />
+                <p className="text-3xl font-semibold text-gray-800 dark:text-gray-200">
+                  {beats?.length}
+                </p>
+              </div>
+            </StatsCard>
+          </div>
+        </div>
+        <div className="col-span-12 lg:col-span-6">
           <Card>
             <h1 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
               Timeline of Activities
             </h1>
             <div className="flex items-center gap-2">
               <div className="max-w-md">
-                <Select id="dates" required>
-                  <option value={""} defaultValue>
-                    Today
-                  </option>
-                  <option value={""}>...</option>
+                <Select
+                  id="dates"
+                  required
+                  value={filterDate}
+                  onChange={(e) => setFilterDate(e.target.value)}
+                >
+                  <option value="Today">Today</option>
+                  <option value="Yesterday">Yesterday</option>
+                  {/* Add other date options as needed */}
                 </Select>
               </div>
-
               <div className="max-w-md">
-                <Select id="statuses" required>
-                  <option value={""} defaultValue>
-                    All Statuses
-                  </option>
-                  <option value={""}>...</option>
+                <Select
+                  id="statuses"
+                  required
+                  value={filterStatus}
+                  onChange={(e) => setFilterStatus(e.target.value)}
+                >
+                  <option value="All">All Types</option>
+                  <option value="Clock Action">Clock Action</option>
+                  <option value="Patrol Action">Patrol Action</option>
+                  <option value="Guard Action">Guard Action</option>
+                  <option value="Shift Action">Shift Action</option>
+                  {/* Add other status options as needed */}
                 </Select>
               </div>
             </div>
-            <Activities />
+            <ul className="activities | text-sm max-h-64  overflow-y-scroll">
+              {renderLogs()}
+            </ul>
           </Card>
         </div>
-        <div className="col-span-12 lg:col-span-7">
+        <div className="col-span-12 lg:col-span-6">
           <Card>
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
@@ -79,6 +240,14 @@ const Dashboard = () => {
         </div>
       </div>
     </>
+  );
+};
+
+const StatsCard = ({ children }) => {
+  return (
+    <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-4">
+      {children}
+    </div>
   );
 };
 
