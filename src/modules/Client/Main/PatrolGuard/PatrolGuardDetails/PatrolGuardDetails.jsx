@@ -138,7 +138,7 @@ const PatrolGuardDetails = () => {
     const data = sendRequest(
       `guard/comment/${guardId}`,
       "PATCH",
-      JSON.stringify(commentData),
+     commentData,
       {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,

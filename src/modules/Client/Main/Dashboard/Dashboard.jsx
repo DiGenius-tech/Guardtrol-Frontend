@@ -43,6 +43,34 @@ const Dashboard = () => {
       return filtered;
     }
 
+    if (filterStatus === "Guard Action") {
+      filtered = filtered.filter((log) => {
+        return filterStatus === "Guard Action"
+          ? log.type === "Guard Action"
+          : true;
+      });
+
+      return filtered;
+    }
+    if (filterStatus === "Patrol Action") {
+      filtered = filtered.filter((log) => {
+        return filterStatus === "Patrol Action"
+          ? log.type === "Patrol Action"
+          : true;
+      });
+
+      return filtered;
+    }
+    if (filterStatus === "Shift Action") {
+      filtered = filtered.filter((log) => {
+        return filterStatus === "Shift Action"
+          ? log.type === "Shift Action"
+          : true;
+      });
+
+      return filtered;
+    }
+
     if (filterDate !== "All") {
       const today = new Date();
       const yesterday = new Date(today);
@@ -129,7 +157,7 @@ const Dashboard = () => {
       <div className="md:hidden">
         <MobileDisplay />
       </div>
-      <div className="flex flex-col md:flex-row md:justify-between items-center mb-6">
+      <div className="flex flex-col md:flex-row md:justify-between items-center">
         <h1 className="text-4xl font-bold tracking-tight text-gray-900 dark:text-white">
           Welcome, {user?.name || "User"}!
         </h1>
@@ -164,7 +192,7 @@ const Dashboard = () => {
           </div>
         </div>
         <div className="col-span-12 lg:col-span-6">
-          <Card>
+          <Card className="h-[415px]">
             <h1 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
               Timeline of Activities
             </h1>
@@ -197,13 +225,13 @@ const Dashboard = () => {
                 </Select>
               </div>
             </div>
-            <ul className="activities | text-sm max-h-64  overflow-y-scroll">
+            <ul className="activities | text-sm max-h-64  overflow-y-scroll min-h-64">
               {renderLogs()}
             </ul>
           </Card>
         </div>
         <div className="col-span-12 lg:col-span-6">
-          <Card>
+          <Card className="">
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
                 Patrols

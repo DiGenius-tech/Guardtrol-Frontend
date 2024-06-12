@@ -12,6 +12,7 @@ interface Auth {
         clientid: string;
         email: string;
         image: string;
+        organization: string;
         name: string;
         phone: string;
         emailverified: boolean;
@@ -43,6 +44,7 @@ const authSlice = createSlice({
         email: string;
         image: string;
         name: string;
+        organization: string;
         phone: string;
         emailverified: boolean;
         onboardingcomplete: true;

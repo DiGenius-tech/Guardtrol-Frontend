@@ -84,7 +84,7 @@ function VerifyEmail() {
         try {
           const data = await post(
             `users/${user?.userid}/verifyemail`,
-            JSON.stringify(formData),
+            formData,
             token
           );
 

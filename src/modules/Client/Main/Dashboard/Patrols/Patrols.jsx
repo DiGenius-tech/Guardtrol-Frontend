@@ -32,7 +32,7 @@ const Patrols = () => {
       {/* patrols-app works! */}
 
       {patrols.length ? (
-        <div className="overflow-auto">
+        <div className="overflow-auto min-h-64 " >
           <Table>
             <Table.Head>
               <Table.HeadCell>Guard name</Table.HeadCell>

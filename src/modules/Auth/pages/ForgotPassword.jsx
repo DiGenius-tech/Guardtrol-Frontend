@@ -53,10 +53,7 @@ const ForgotPassword = () => {
         dispatch(suspenseShow());
 
         try {
-          const data = await post(
-            `users/forgotpassword`,
-            JSON.stringify(formData)
-          );
+          const data = await post(`users/forgotpassword`, formData);
 
           if (null != data) {
             setEmailSent(true);

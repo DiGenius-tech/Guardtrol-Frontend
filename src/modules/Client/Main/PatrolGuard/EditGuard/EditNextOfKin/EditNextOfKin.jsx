@@ -84,7 +84,7 @@ const EditNextOfKin = (props) => {
     const data = patch(
       `guard/nextofkin/${guardId}`,
 
-      JSON.stringify(formData),
+      formData,
       token
     ).then((data) => {
       if (data.status) {

@@ -1,4 +1,5 @@
 function SelectField(props) {
+  console.log(props?.value);
   return (
     <>
       {/* select-field-app works! */}
@@ -15,7 +16,7 @@ function SelectField(props) {
         </label>
         <select
           required
-          defaultValue={props?.value}
+          defaultValue={JSON.stringify(props?.value)}
           name={props.name}
           multiple={props?.multiple}
           size={props?.multiSelect ? props?.multiSelect : 0}

@@ -69,10 +69,7 @@ function SetNewPassword() {
         dispatch(suspenseShow());
 
         try {
-          const data = await patch(
-            `users/resetpassword`,
-            JSON.stringify(formData)
-          );
+          const data = await patch(`users/resetpassword`, formData);
 
           if (null != data) {
             toast(data.message);

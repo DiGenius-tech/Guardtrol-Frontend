@@ -3,7 +3,9 @@ import { TGuard } from "./guad";
 import { TSubscription } from "./subscription";
 
 export type TUser = {
+  _id: string;
   name: string;
+  organization: string;
   email: string;
   emailverified: boolean;
   temporarycode?: number | null;

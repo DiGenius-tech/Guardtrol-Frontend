@@ -101,7 +101,7 @@ const Login = () => {
 
       const data: any = await post(
         "users/signinwithgoogle",
-        JSON.stringify(userData)
+        userData
       );
 
       if (null != data) {

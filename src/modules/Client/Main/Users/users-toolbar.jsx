@@ -1,6 +1,6 @@
 import { Link, useLocation, useParams } from "react-router-dom";
 
-function ReportToolbar() {
+function UsersToolbar() {
   const location = useLocation();
   const { beatId } = useParams();
   /**URLS */
@@ -56,4 +56,4 @@ function ReportToolbar() {
   );
 }
 
-export default ReportToolbar;
+export default UsersToolbar;

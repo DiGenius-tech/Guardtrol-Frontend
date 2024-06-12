@@ -83,7 +83,7 @@ const EditIdentification = (props) => {
     const data = patch(
       `guard/identification/${guardId}`,
 
-      JSON.stringify(guardData),
+      guardData,
       token
     ).then((data) => {
       if (data.status) {

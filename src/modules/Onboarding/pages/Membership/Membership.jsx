@@ -77,7 +77,7 @@ const Membership = () => {
       //   const data = await sendRequest(
       //     "users/signup",
       //     "POST",
-      //     JSON.stringify(formData),
+      //     formData,
       //     {
       //       "Content-Type": "application/json"
       //     }

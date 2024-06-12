@@ -97,7 +97,7 @@ const Register = () => {
       // Form is valid, handle submission
       setIsLoading(true);
       try {
-        const data = await post("users/signup", JSON.stringify(formData));
+        const data = await post("users/signup", formData);
 
         if (null != data) {
           if (data) {

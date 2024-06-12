@@ -95,7 +95,7 @@ function AssignNewBeat({ isOnboarding = true }) {
 
     beats?.forEach((beat) => {
       if (
-        beat.guards.some((assignedGuard) => assignedGuard._id === guard._id)
+        beat?.guards?.some((assignedGuard) => assignedGuard._id === guard._id)
       ) {
         dispatch(suspenseHide);
         const message = `${guard.name} has already been assigned to ${beat.name}`;
@@ -211,8 +211,8 @@ function AssignNewBeat({ isOnboarding = true }) {
               label="Select guard"
               semibold_label={true}
               handleChangeOption={handleGuardSelection}
-              optionList={guards.filter(
-                (g) => !selectedBeat.guards.find((gu) => gu._id === g._id)
+              optionList={guards?.filter(
+                (g) => !selectedBeat?.guards?.find((gu) => gu._id === g._id)
               )}
             />
           </div>

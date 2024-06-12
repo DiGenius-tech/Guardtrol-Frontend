@@ -122,20 +122,17 @@ const Checkout = (props) => {
         paymentgateway: paymentMethod,
       };
 
-      const data = await post(
-        `users/subscribe/${user.userid}`,
-        JSON.stringify(reqData),
-        token
-      );
+      const data = await post(`users/subscribe/${user.userid}`, reqData, token);
       if (data && data.message === "subscribed") {
         console.log(2);
 
-        localStorage.removeItem("selectedPlan");
-        localStorage.setItem("paymentComplete", true);
-        localStorage.setItem("onBoardingLevel", 1);
+        // localStorage.removeItem("selectedPlan");
+        // localStorage.setItem("paymentComplete", true);
+        // localStorage.setItem("onBoardingLevel", 1);
+        console.log(data.subscription);
 
-        dispatch(setCurrentSubscription(data.subscription));
-
+        // dispatch(setCurrentSubscription(data.subscription));
+        console.log("first");
         navigate("/onboarding/membership/successful");
         window.location.reload();
       }

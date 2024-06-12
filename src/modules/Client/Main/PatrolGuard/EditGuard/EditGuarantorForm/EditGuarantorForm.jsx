@@ -216,18 +216,16 @@ const EditGuarantorForm = (props) => {
       toast.warn("select a valid identification type");
       return;
     }
-    const data = patch(
-      `guard/guarantor/${guardId}`,
-      JSON.stringify(formData),
-      token
-    ).then((data) => {
-      if (data.status) {
-        toast("Guarantor Information Updated");
-        //props.setGuard({})
-        props.handleSentRequest();
-        handleNext(formContent.IDENTIFICATION);
+    const data = patch(`guard/guarantor/${guardId}`, formData, token).then(
+      (data) => {
+        if (data.status) {
+          toast("Guarantor Information Updated");
+          //props.setGuard({})
+          props.handleSentRequest();
+          handleNext(formContent.IDENTIFICATION);
+        }
       }
-    });
+    );
   };
 
   return (
