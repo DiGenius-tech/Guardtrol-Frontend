@@ -17,7 +17,7 @@ import { selectToken, selectUser } from "../../../../redux/selectors/auth";
 import UserListDesktopView from "./all-users-desktop";
 import UserListMobileView from "./all-users-mobile";
 
-const roles = ["Supervisor", "Administrative", "HR"];
+const roles = ["Supervisor", "Manager", "Owner"];
 
 function OrganizationUsers() {
   const token = useSelector(selectToken);
@@ -43,6 +43,7 @@ function OrganizationUsers() {
   const [userForm, setUserForm] = useState({
     name: "",
     email: "",
+    password: "Password",
     role: "",
   });
 
@@ -189,6 +190,14 @@ function OrganizationUsers() {
               value={userForm.email}
               onChange={handleChange}
               placeholder="Enter user email"
+              required
+            />
+            <TextInput
+              label="Password"
+              name="password"
+              value={userForm.password}
+              onChange={handleChange}
+              placeholder="Enter user password"
               required
             />
             <Select

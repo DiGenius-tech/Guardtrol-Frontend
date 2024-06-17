@@ -102,8 +102,7 @@ const EditPersonalInformation = (props) => {
   };
 
   const handleSelectChange = (e) => {
-    let sex = JSON.parse(e.target.value);
-    setFormData({ ...formData, [e.target.name]: sex.value });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
     setValidationErrors({ ...validationErrors, [e.target.name]: "" });
   };
 
@@ -193,34 +192,30 @@ const EditPersonalInformation = (props) => {
                 />
               </div>
               <div className="col-span-12 sm:col-span-6">
-                {formData?.sex && (
-                  <SelectField
-                    name="sex"
-                    id="sex"
-                    value={formData?.sex || ""}
-                    label="Sex"
-                    semibold_label={true}
-                    handleChangeOption={handleSelectChange}
-                    optionList={sexOptions}
-                    multipleSelect={false}
-                  />
-                )}
+                <SelectField
+                  name="sex"
+                  id="sex"
+                  value={formData?.sex || ""}
+                  label="Sex"
+                  semibold_label={true}
+                  handleChangeOption={handleSelectChange}
+                  optionList={sexOptions}
+                  multipleSelect={false}
+                />
               </div>
               <div className="col-span-12 sm:col-span-6">
-                {formData?.sex && (
-                  <SelectField
-                    value={formData?.state || ""}
-                    name="state"
-                    id="state"
-                    label="State of origin"
-                    semibold_label={true}
-                    handleChangeOption={handleSelectChange}
-                    optionList={stateOfOriginList}
-                    multipleSelect={false}
-                  />
-                )}
+                <SelectField
+                  value={formData?.state || ""}
+                  name="state"
+                  id="state"
+                  label="State of origin"
+                  semibold_label={true}
+                  handleChangeOption={handleSelectChange}
+                  optionList={stateOfOriginList}
+                  multipleSelect={false}
+                />
               </div>
-              <div className="col-span-12">
+              {/* <div className="col-span-12">
                 <TextInputField
                   label="Alternate phone"
                   semibold_label={true}
@@ -232,7 +227,7 @@ const EditPersonalInformation = (props) => {
                   onChange={handleChange}
                   error={validationErrors["altphone"]}
                 />
-              </div>
+              </div> */}
             </div>
             <RegularButton text="Update" />
           </fieldset>

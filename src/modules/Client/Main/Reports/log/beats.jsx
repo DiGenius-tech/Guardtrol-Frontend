@@ -55,7 +55,7 @@ const BeatsLog = () => {
     });
 
     setFilteredLogs(newFilteredLogs);
-  }, [startDate, endDate, selectedType]);
+  }, [startDate, endDate, selectedType, selectedBeat]);
 
   const handleTypeChange = (e) => {
     setSelectedType(e.target.value);
@@ -140,7 +140,7 @@ const BeatsLog = () => {
         </select>
         <select
           defaultValue={selectedBeat}
-          // onChange={handleTypeChange}
+          onChange={(e) => setSelectedBeat(e.target.value)}
           className="border px-2 h-[41.6px] rounded m-0 w-full sm:w-[48%] md:w-auto"
         >
           <option value="">Select Beat</option>
@@ -161,7 +161,7 @@ const BeatsLog = () => {
         <Table>
           <Table.Head>
             <Table.HeadCell>Date</Table.HeadCell>
-            <Table.HeadCell>User</Table.HeadCell>
+            {/* <Table.HeadCell>User</Table.HeadCell> */}
             <Table.HeadCell>Message</Table.HeadCell>
             <Table.HeadCell>Beat</Table.HeadCell>
             <Table.HeadCell>Type</Table.HeadCell>
@@ -172,7 +172,7 @@ const BeatsLog = () => {
                 <Table.Cell>
                   {format(new Date(log.createdAt), "yyyy-MM-dd HH:mm:ss")}
                 </Table.Cell>
-                <Table.Cell>{log.user?.name || "Unknown"}</Table.Cell>
+                {/* <Table.Cell>{log.user?.name || "Unknown"}</Table.Cell> */}
                 <Table.Cell>{log.message}</Table.Cell>
                 <Table.Cell>{log.beat?.name || "Unknown"}</Table.Cell>
                 <Table.Cell>{log.type}</Table.Cell>

@@ -11,10 +11,12 @@ import {
 } from "react-icons/hi";
 import { customTheme } from "../../../flowbite-theme";
 import { Link, useLocation, useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { selectUser } from "../../../redux/selectors/auth";
 
 const ClientSidebar = () => {
   const location = useLocation();
-
+  const user = useSelector(selectUser);
   let use_params = useParams();
   /**QUERIES */
   const use_params_keys = [];
@@ -131,23 +133,25 @@ const ClientSidebar = () => {
                 </span>
               </Link>
             </li>
-            <li>
-              <Link
-                to={"/client/users"}
-                className={
-                  (location.pathname.includes("/client/users") ||
-                  use_params_keys.includes("userId")
-                    ? `bg-primary-50 `
-                    : ``) +
-                  `flex items-center p-2 text-dark-260 rounded-r-full dark:text-white hover:bg-primary-50 dark:hover:bg-primary-400 group`
-                }
-              >
-                <HiUsers fontSize={"1.5rem"} />
-                <span className="flex items-center ms-3 h-5 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white">
-                  Users
-                </span>
-              </Link>
-            </li>
+            {user.role === "Owner" && (
+              <li>
+                <Link
+                  to={"/client/users"}
+                  className={
+                    (location.pathname.includes("/client/users") ||
+                    use_params_keys.includes("userId")
+                      ? `bg-primary-50 `
+                      : ``) +
+                    `flex items-center p-2 text-dark-260 rounded-r-full dark:text-white hover:bg-primary-50 dark:hover:bg-primary-400 group`
+                  }
+                >
+                  <HiUsers fontSize={"1.5rem"} />
+                  <span className="flex items-center ms-3 h-5 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white">
+                    Users
+                  </span>
+                </Link>
+              </li>
+            )}
             <li>
               <Link
                 to={beats[0]}
@@ -181,22 +185,24 @@ const ClientSidebar = () => {
                 </span>
               </Link>
             </li>
-            <li>
-              <Link
-                to={settings[0]}
-                className={
-                  (settings.includes(location.pathname)
-                    ? `bg-primary-50 `
-                    : ``) +
-                  `flex items-center p-2 text-dark-260 rounded-r-full dark:text-white hover:bg-primary-50 dark:hover:bg-primary-400 group`
-                }
-              >
-                <HiOutlineCog fontSize={"1.5rem"} />
-                <span className="flex items-center ms-3 h-5 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white">
-                  Settings
-                </span>
-              </Link>
-            </li>
+            {(user.role === "Owner" || user.role === "Manager") && (
+              <li>
+                <Link
+                  to={settings[0]}
+                  className={
+                    (settings.includes(location.pathname)
+                      ? `bg-primary-50 `
+                      : ``) +
+                    `flex items-center p-2 text-dark-260 rounded-r-full dark:text-white hover:bg-primary-50 dark:hover:bg-primary-400 group`
+                  }
+                >
+                  <HiOutlineCog fontSize={"1.5rem"} />
+                  <span className="flex items-center ms-3 h-5 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white">
+                    Settings
+                  </span>
+                </Link>
+              </li>
+            )}
           </ul>
         </div>
       </aside>

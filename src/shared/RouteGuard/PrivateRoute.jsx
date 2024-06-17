@@ -72,7 +72,7 @@ const PrivateRoute = ({
   }, [onboardingLevel]);
 
   useEffect(() => {
-    if (token && !user?.onboardingcomplete) {
+    if (token && !user?.onboardingcomplete && !user?.subAccount) {
       dispatch(suspenseShow());
 
       try {
@@ -155,14 +155,16 @@ const PrivateRoute = ({
   if (
     onboarding &&
     location.pathname !== onboardingRoute &&
-    !subRoutes.some((item) => location.pathname.includes(item))
+    !subRoutes.some((item) => location.pathname.includes(item)) &&
+    !user?.subAccount
   ) {
     return <Navigate to={onboardingRoute} />;
   }
 
   if (
     !user?.onboardingcomplete &&
-    !subRoutes2.some((item) => location.pathname.includes(item))
+    !subRoutes2.some((item) => location.pathname.includes(item)) &&
+    !user?.subAccount
   ) {
     return <Navigate to={"/onboarding"} state={{ from: "/" }} replace />;
   }
