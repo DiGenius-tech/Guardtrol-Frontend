@@ -3,17 +3,17 @@ import { Card, Button, Modal, TextInput, Select } from "flowbite-react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 
-import icon_menu_dots from "../../../../images/icons/icon-menu-dots.svg";
+import icon_menu_dots from "../../../../../images/icons/icon-menu-dots.svg";
 
 import Swal from "sweetalert2";
-import Pagination from "../../../../shared/Pagination/Pagination";
+import Pagination from "../../../../../shared/Pagination/Pagination";
 import {
   useAddUserMutation,
   useDeleteUserMutation,
   useGetUsersQuery,
   useUpdateUserMutation,
-} from "../../../../redux/services/organization-users";
-import { selectToken, selectUser } from "../../../../redux/selectors/auth";
+} from "../../../../../redux/services/organization-users";
+import { selectToken, selectUser } from "../../../../../redux/selectors/auth";
 import UserListDesktopView from "./all-users-desktop";
 import UserListMobileView from "./all-users-mobile";
 

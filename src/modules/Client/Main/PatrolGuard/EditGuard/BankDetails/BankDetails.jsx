@@ -53,7 +53,6 @@ const BankDetails = (props) => {
         if (data.status) {
           toast("Banking Information Updated");
           //props.setGuard({})
-          props.handleSentRequest();
         }
       }
     );

@@ -41,7 +41,6 @@ const PatrolGuardDetails = () => {
   const [profile, setProfile] = useState();
 
   const { guardId } = useParams();
-  const [guard, setGuard] = useState({});
 
   const [comment, setComment] = useState("");
   const [activateGuard] = useActivateGuardMutation();
@@ -52,19 +51,19 @@ const PatrolGuardDetails = () => {
     isUninitialized,
   } = useGetGuardsQuery();
 
-  const handleSentRequest = () => {
-    const data = get(`guard/getguard/${guardId}`, token).then((data) => {
-      console.log(data);
-      setGuard(data);
-    });
-  };
+  const guard = guards.find((g) => g._id === guardId);
+
+  // const handleSentRequest = () => {
+  //   const data = get(`guard/getguard/${guardId}`, token).then((data) => {
+
+  //   });
+  // };
 
   const handleUpdateImage = async () => {
     try {
       dispatch(suspenseShow());
 
       const formData = new FormData();
-      console.log(profile);
 
       formData.append("profile", profile);
       formData.append("guardId", guardId);
@@ -92,6 +91,21 @@ const PatrolGuardDetails = () => {
   const getSelectedFile = (event) => {
     const file = event.target.files[0];
     if (file) {
+      const fileSizeInKB = file.size / 1024;
+      if (fileSizeInKB > 512) {
+        alert(
+          `File size exceeds the maximum limit of ${512} KB. Please select a smaller file.`
+        );
+        // Clear the input
+        event.target.value = null;
+        return;
+      }
+
+      // Proceed with the file
+      console.log("Selected file:", file);
+      // Add your logic to handle the file here
+    }
+    if (file) {
       setFileName(file.name);
       setProfile(event.target.files[0]);
       const reader = new FileReader();
@@ -114,13 +128,12 @@ const PatrolGuardDetails = () => {
   //     true,
   //     "Profile image updated"
   //   );
-  //   console.log(data);
   //   if (data) {
   //   }
   // };
-  useEffect(() => {
-    handleSentRequest();
-  }, [token, guardId]);
+  // useEffect(() => {
+  //   handleSentRequest();
+  // }, [token, guardId]);
 
   useEffect(() => {
     if (error) {
@@ -135,20 +148,15 @@ const PatrolGuardDetails = () => {
       updatedat: Date.now(),
     };
 
-    const data = sendRequest(
-      `guard/comment/${guardId}`,
-      "PATCH",
-     commentData,
-      {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      }
-    ).then((data) => {
+    const data = sendRequest(`guard/comment/${guardId}`, "PATCH", commentData, {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    }).then((data) => {
       if (data?.status) {
         toast("Comment Updated");
         setIsComment(false);
-        setGuard({});
-        handleSentRequest();
+        // setGuard({});
+        // handleSentRequest();
       }
     });
   };
@@ -170,13 +178,13 @@ const PatrolGuardDetails = () => {
   // };
 
   const verify = async (e) => {
+    console.log(guard?.isactive);
     const statusData = {
       status: !guard?.isactive,
     };
 
     await activateGuard({ guardId, statusData });
     toast("Guard Status Updated");
-    await handleSentRequest();
     await refetchBeats();
     await refetchGuards();
     // const data = sendRequest(
@@ -222,6 +230,7 @@ const PatrolGuardDetails = () => {
                   type="file"
                   id="profile_image"
                   accept="image/*"
+                  max={512}
                   name="profile_image"
                   className="absolute h-full w-full"
                   style={{
@@ -252,8 +261,8 @@ const PatrolGuardDetails = () => {
               </div>
               <div>
                 <p className="text-sm">
-                  We accept files in PNG or JPG format, with a maximum size of 5
-                  MB.{" "}
+                  We accept files in PNG or JPG format, with a maximum size of
+                  512 KB.{" "}
                   {fileName && (
                     <>
                       <span
@@ -284,7 +293,7 @@ const PatrolGuardDetails = () => {
                   name="verification"
                   className="sr-only peer"
                   onClick={() => verify()}
-                  checked={guard?.isactive}
+                  value={guard?.isactive}
                 />
                 <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 dark:peer-focus:ring-green-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary-600"></div>
                 <span className="ms-3 text-sm font-semibold text-gray-900 dark:text-gray-300">
@@ -365,36 +374,36 @@ const PatrolGuardDetails = () => {
           <Tabs.Item active title="Personal information">
             <EditPersonalInformation
               guard={guard}
-              setGuard={setGuard}
-              handleSentRequest={handleSentRequest}
+              // // setGuard={setGuard}
+              // handleSentRequest={handleSentRequest}
             />
           </Tabs.Item>
           <Tabs.Item title="Guarantor form">
             <EditGuarantorForm
               guard={guard?.guarantor}
-              setGuard={setGuard}
-              handleSentRequest={handleSentRequest}
+              // // setGuard={setGuard}
+              // // handleSentRequest={handleSentRequest}
             />
           </Tabs.Item>
           <Tabs.Item title="Identification">
             <EditIdentification
               guard={guard?.identification}
-              setGuard={setGuard}
-              handleSentRequest={handleSentRequest}
+              // // setGuard={setGuard}
+              // // handleSentRequest={handleSentRequest}
             />
           </Tabs.Item>
           <Tabs.Item title="Next of kin">
             <EditNextOfKin
               guard={guard?.nextofkin}
-              setGuard={setGuard}
-              handleSentRequest={handleSentRequest}
+              // // setGuard={setGuard}
+              // // handleSentRequest={handleSentRequest}
             />
           </Tabs.Item>
           <Tabs.Item title="Bank details">
             <BankDetails
               guard={guard?.banking}
-              setGuard={setGuard}
-              handleSentRequest={handleSentRequest}
+              // // setGuard={setGuard}
+              // // handleSentRequest={handleSentRequest}
             />
           </Tabs.Item>
         </Tabs>

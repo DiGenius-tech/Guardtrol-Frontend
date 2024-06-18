@@ -43,7 +43,7 @@ const BeatsHistory = () => {
         </button>
       </div>
       <div className="overflow-x-auto mt-5">
-        <Table striped>
+        {/* <Table striped>
           <Table.Head>
             <Table.HeadCell>Guard name</Table.HeadCell>
             <Table.HeadCell>Avg Patrols</Table.HeadCell>
@@ -76,7 +76,7 @@ const BeatsHistory = () => {
               <Table.Cell>6:39pm</Table.Cell>
             </Table.Row>
           </Table.Body>
-        </Table>
+        </Table> */}
       </div>
     </div>
   );

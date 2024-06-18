@@ -53,7 +53,7 @@ function AssignNewBeat({ isOnboarding = true }) {
   const [frequency, setFrequency] = useState(initialFrequencyState);
 
   const handleBeatSelection = (e) => {
-    setBeat(JSON.parse(e.target.value));
+    setBeat(e.target.value);
   };
 
   const handleGuardSelection = (e) => {

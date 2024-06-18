@@ -6,6 +6,7 @@ import SettingPersonalInformation from "./SettingPersonalInformation/SettingPers
 import SettingSecurity from "./SettingSecurity/SettingSecurity";
 import SettingShiftSchedule from "./SettingShiftSchedule/SettingShiftSchedule";
 import Settings from "./Settings";
+import OrganizationUsers from "./Users/all-users";
 
 const settings_routes = {
   path: "settings",
@@ -30,6 +31,10 @@ const settings_routes = {
     {
       path: "notification",
       element: <SettingNotifications />,
+    },
+    {
+      path: "users",
+      element: <OrganizationUsers />,
     },
     {
       path: "billing",

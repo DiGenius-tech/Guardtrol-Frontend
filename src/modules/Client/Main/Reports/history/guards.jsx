@@ -117,8 +117,8 @@ const GuardsHistory = () => {
       >
         Export to PDF
       </button>
-      <div className="overflow-x-auto mt-5">
-        <Table striped>
+      <div className=" max-h-80 mt-5">
+        {/* <Table striped>
           <Table.Head>
             <Table.HeadCell>Guard name</Table.HeadCell>
             <Table.HeadCell>Avg Patrols</Table.HeadCell>
@@ -151,7 +151,7 @@ const GuardsHistory = () => {
               <Table.Cell>6:39pm</Table.Cell>
             </Table.Row>
           </Table.Body>
-        </Table>
+        </Table> */}
       </div>
     </div>
   );

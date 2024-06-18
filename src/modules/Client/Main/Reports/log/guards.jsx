@@ -129,7 +129,7 @@ const GuardsLog = () => {
         </button>
       </div>
 
-      <div className="overflow-x-auto mt-5">
+      <div className="overflow-x-scroll max-h-96 mt-5">
         <Table>
           <Table.Head>
             <Table.HeadCell>Date</Table.HeadCell>

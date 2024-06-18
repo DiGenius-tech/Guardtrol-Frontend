@@ -72,7 +72,6 @@ function AddGuard({ onBoarding = true }) {
       });
       return;
     }
-    console.log(guards);
 
     if (guards.find((g) => g.phone === guard.phone)) {
       setValidationErrors({
@@ -97,6 +96,20 @@ function AddGuard({ onBoarding = true }) {
     }
 
     if (onBoarding) {
+      if (
+        onboardingGuards.find((g) => {
+          return (
+            g.full_name?.toLocaleLowerCase() ===
+            guard.full_name?.toLocaleLowerCase()
+          );
+        })
+      ) {
+        setValidationErrors({
+          ...validationErrors,
+          full_name: "Guard with this name already exists",
+        });
+        return;
+      }
       if (onboardingGuards?.length >= sub?.maxbeats * 5 + sub?.maxextraguards) {
         Swal.fire({
           title: "OOPS!! You've Ran Out Of Guards",
@@ -114,7 +127,7 @@ function AddGuard({ onBoarding = true }) {
         return;
       }
       dispatch(addOnboardingGuard(guard));
-      navigate("../");
+      // navigate("../");
     } else {
       if (guards?.length >= sub?.maxbeats * 5 + sub?.maxextraguards) {
         Swal.fire({

@@ -1,5 +1,4 @@
 function SelectField(props) {
-  console.log(props?.value);
   return (
     <>
       {/* select-field-app works! */}

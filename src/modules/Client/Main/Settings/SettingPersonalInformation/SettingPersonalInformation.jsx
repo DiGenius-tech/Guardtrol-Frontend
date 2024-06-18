@@ -36,6 +36,19 @@ const SettingPersonalInformation = () => {
   const getSelectedFile = (event) => {
     const file = event.target.files[0];
     if (file) {
+      const fileSizeInKB = file.size / 1024;
+      if (fileSizeInKB > 512) {
+        alert(
+          `File size exceeds the maximum limit of ${512} KB. Please select a smaller file.`
+        );
+        // Clear the input
+        event.target.value = null;
+        return;
+      }
+
+      console.log("Selected file:", file);
+    }
+    if (file) {
       setFileName(file.name);
       setProfile(event.target.files[0]);
       const reader = new FileReader();
@@ -111,180 +124,184 @@ const SettingPersonalInformation = () => {
   return (
     <>
       {/* setting-personal-information-app works! */}
-      <form onSubmit={formik.handleSubmit} className="max-w-3xl">
-        <div className="grid grid-cols-12 gap-4 sm:gap-8">
-          <div className="hidden sm:block col-span-12 sm:col-span-6">
-            <h3 className="font-bold">Profile photo</h3>
-          </div>
-          <div className="col-span-12 sm:col-span-6">
-            <div className="flex items-start gap-4">
-              <div>
-                <div className=" relative h-20 w-20 min-h-20 min-w-20 rounded-full overflow-hidden">
-                  <label
-                    style={{
-                      position: "absolute",
-                      top: 0,
-                      fontSize: 2,
-                      right: 1,
-                      zIndex: 100,
-                    }}
-                    htmlFor="profile_image"
-                    className="cursor-pointer h-full w-full text-primary-500 text-xs font-semibold whitespace-nowrap"
-                  >
-                    Change my photo
-                  </label>
-                  <input
-                    type="file"
-                    id="profile_image"
-                    name="profile_image"
-                    className="absolute h-full w-full"
-                    style={{
-                      position: "absolute",
-                      top: 0,
-                      fontSize: 2,
-                      right: 1,
-                      zIndex: 100,
-                    }}
-                    hidden
-                    ref={profilePhotoControlRef}
-                    onChange={(e) => getSelectedFile(e)}
-                  />
-
-                  {!user?.image && !preview ? (
-                    <div className="bg-secondary-50 cursor-pointer rounded-full h-full w-full flex items-center justify-center text-2xl font-bold">
-                      {`${user?.name.split(" ")?.[0]?.[0] || ""} ${
-                        user?.name.split(" ")?.[1]?.[0] || ""
-                      }`}
-                    </div>
-                  ) : (
-                    <img
-                      className="cursor-pointer h-full w-full"
-                      src={preview ? preview : `${ASSET_URL + user?.image}`}
-                      alt={fileName}
+      <div className="p-4 sm:p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+        <form onSubmit={formik.handleSubmit} className="max-w-3xl">
+          <div className="grid grid-cols-12 gap-4 sm:gap-8">
+            <div className="hidden sm:block col-span-12 sm:col-span-6">
+              <h3 className="font-bold">Profile photo</h3>
+            </div>
+            <div className="col-span-12 sm:col-span-6">
+              <div className="flex items-start gap-4">
+                <div>
+                  <div className=" relative h-20 w-20 min-h-20 min-w-20 rounded-full overflow-hidden">
+                    <label
+                      style={{
+                        position: "absolute",
+                        top: 0,
+                        fontSize: 2,
+                        right: 1,
+                        zIndex: 100,
+                      }}
+                      htmlFor="profile_image"
+                      className="cursor-pointer h-full w-full text-primary-500 text-xs font-semibold whitespace-nowrap"
+                    >
+                      Change my photo
+                    </label>
+                    <input
+                      type="file"
+                      id="profile_image"
+                      name="profile_image"
+                      className="absolute h-full w-full"
+                      style={{
+                        position: "absolute",
+                        top: 0,
+                        fontSize: 2,
+                        right: 1,
+                        zIndex: 100,
+                      }}
+                      hidden
+                      ref={profilePhotoControlRef}
+                      onChange={(e) => getSelectedFile(e)}
                     />
-                  )}
+
+                    {!user?.image && !preview ? (
+                      <div className="bg-secondary-50 cursor-pointer rounded-full h-full w-full flex items-center justify-center text-2xl font-bold">
+                        {`${user?.name.split(" ")?.[0]?.[0] || ""} ${
+                          user?.name.split(" ")?.[1]?.[0] || ""
+                        }`}
+                      </div>
+                    ) : (
+                      <img
+                        className="cursor-pointer h-full w-full"
+                        src={preview ? preview : `${ASSET_URL + user?.image}`}
+                        alt={fileName}
+                      />
+                    )}
+                  </div>
+                </div>
+                <div>
+                  <p className="text-sm">
+                    We accept files in PNG or JPG format, with a maximum size of
+                    512 KB.{" "}
+                    {fileName && (
+                      <>
+                        <span
+                          onClick={() => handleUpdateImage()}
+                          className="cursor-pointer text-primary-500 font-semibold whitespace-nowrap"
+                        >
+                          Change my photo
+                        </span>
+                        <strong className="block text-xs mt-2">
+                          {fileName}
+                        </strong>{" "}
+                      </>
+                    )}
+                  </p>
                 </div>
               </div>
-              <div>
-                <p className="text-sm">
-                  We accept files in PNG or JPG format, with a maximum size of 5
-                  MB.{" "}
-                  {fileName && (
-                    <>
-                      <span
-                        onClick={() => handleUpdateImage()}
-                        className="cursor-pointer text-primary-500 font-semibold whitespace-nowrap"
-                      >
-                        Change my photo
-                      </span>
-                      <strong className="block text-xs mt-2">{fileName}</strong>{" "}
-                    </>
-                  )}
-                </p>
+            </div>
+            <div className="hidden sm:block col-span-12 sm:col-span-6">
+              <h3 className="font-bold">Name</h3>
+              <p>Changes cannot be made to your name after account creation.</p>
+            </div>
+            <div className="col-span-12 sm:col-span-6">
+              <TextInputField
+                label="Full Name"
+                type="text"
+                id="name"
+                {...formik.getFieldProps("name")}
+                semibold_label={true}
+              />
+              <div className="mb-3">
+                {formik.touched.name && formik.errors.name && (
+                  <div className="">
+                    <div className="  text-red-500">{formik.errors.name}</div>
+                  </div>
+                )}
+              </div>
+            </div>
+            <div className="hidden sm:block col-span-12 sm:col-span-6">
+              <h3 className="font-bold">Email Address</h3>
+              <p>
+                All communications and activity notifications will be sent to
+                your email address.
+              </p>
+            </div>
+            <div className="col-span-12 sm:col-span-6">
+              <TextInputField
+                label="Email Address"
+                type="email"
+                id="email"
+                {...formik.getFieldProps("email")}
+                semibold_label={true}
+              />
+              <div className="mb-3">
+                {formik.touched.email && formik.errors.email && (
+                  <div className="">
+                    <div className="  text-red-500">{formik.errors.email}</div>
+                  </div>
+                )}
+              </div>
+            </div>
+            <div className="hidden sm:block col-span-12 sm:col-span-6">
+              <h3 className="font-bold">Phone Number</h3>
+              <p>
+                Your phone number can be used as a security measure to validate
+                some actions on the account.
+              </p>
+            </div>
+            <div className="col-span-12 sm:col-span-6">
+              <TextInputField
+                label="Phone Number"
+                {...formik.getFieldProps("phone")}
+                type="text"
+                id="phone"
+                semibold_label={true}
+              />
+              <div className="mb-3">
+                {formik.touched.phone && formik.errors.phone && (
+                  <div className="">
+                    <div className=" text-red-500">{formik.errors.phone}</div>
+                  </div>
+                )}
+              </div>
+            </div>
+            <div className="hidden sm:block col-span-12 sm:col-span-6">
+              <h3 className="font-bold">Address</h3>
+              <p>
+                Your contact address is used a billing informationon invoice and
+                subcriptions
+              </p>
+            </div>
+            <div className="col-span-12 sm:col-span-6">
+              <TextInputField
+                label="Address"
+                {...formik.getFieldProps("address")}
+                type="text"
+                id="address"
+                semibold_label={true}
+              />
+              <div className="mb-3">
+                {formik.touched.address && formik.errors.address && (
+                  <div className="">
+                    <div className=" text-red-500">{formik.errors.address}</div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
-          <div className="hidden sm:block col-span-12 sm:col-span-6">
-            <h3 className="font-bold">Name</h3>
-            <p>Changes cannot be made to your name after account creation.</p>
-          </div>
-          <div className="col-span-12 sm:col-span-6">
-            <TextInputField
-              label="Full Name"
-              type="text"
-              id="name"
-              {...formik.getFieldProps("name")}
-              semibold_label={true}
+          <div className="text-right">
+            <RegularButton
+              disable={loading}
+              type={"submit"}
+              text="Save Changes"
+              width="auto"
+              padding="px-4 py-2"
+              textSize="text-sm"
             />
-            <div className="mb-3">
-              {formik.touched.name && formik.errors.name && (
-                <div className="">
-                  <div className="  text-red-500">{formik.errors.name}</div>
-                </div>
-              )}
-            </div>
           </div>
-          <div className="hidden sm:block col-span-12 sm:col-span-6">
-            <h3 className="font-bold">Email Address</h3>
-            <p>
-              All communications and activity notifications will be sent to your
-              email address.
-            </p>
-          </div>
-          <div className="col-span-12 sm:col-span-6">
-            <TextInputField
-              label="Email Address"
-              type="email"
-              id="email"
-              {...formik.getFieldProps("email")}
-              semibold_label={true}
-            />
-            <div className="mb-3">
-              {formik.touched.email && formik.errors.email && (
-                <div className="">
-                  <div className="  text-red-500">{formik.errors.email}</div>
-                </div>
-              )}
-            </div>
-          </div>
-          <div className="hidden sm:block col-span-12 sm:col-span-6">
-            <h3 className="font-bold">Phone Number</h3>
-            <p>
-              Your phone number can be used as a security measure to validate
-              some actions on the account.
-            </p>
-          </div>
-          <div className="col-span-12 sm:col-span-6">
-            <TextInputField
-              label="Phone Number"
-              {...formik.getFieldProps("phone")}
-              type="text"
-              id="phone"
-              semibold_label={true}
-            />
-            <div className="mb-3">
-              {formik.touched.phone && formik.errors.phone && (
-                <div className="">
-                  <div className=" text-red-500">{formik.errors.phone}</div>
-                </div>
-              )}
-            </div>
-          </div>
-          <div className="hidden sm:block col-span-12 sm:col-span-6">
-            <h3 className="font-bold">Address</h3>
-            <p>
-              Your contact address is used a billing informationon invoice and
-              subcriptions
-            </p>
-          </div>
-          <div className="col-span-12 sm:col-span-6">
-            <TextInputField
-              label="Address"
-              {...formik.getFieldProps("address")}
-              type="text"
-              id="address"
-              semibold_label={true}
-            />
-            <div className="mb-3">
-              {formik.touched.address && formik.errors.address && (
-                <div className="">
-                  <div className=" text-red-500">{formik.errors.address}</div>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-        <div className="text-right">
-          <RegularButton
-            disable={loading}
-            type={"submit"}
-            text="Save Changes"
-            width="auto"
-            padding="px-4 py-2"
-            textSize="text-sm"
-          />
-        </div>
-      </form>
+        </form>
+      </div>
     </>
   );
 };

@@ -62,57 +62,58 @@ const SettingNotifications = () => {
   return (
     <>
       {/* setting-security-app works! */}
-
-      <form onSubmit={formik.handleSubmit} className="max-w-3xl">
-        <div className="grid grid-cols-12 gap-4 sm:gap-8">
-          <div className="hidden sm:block col-span-12 sm:col-span-6">
-            <h3 className="font-bold">Whatsapp Number</h3>
-            <p>
-              This number would be you to recieve notifications on whatsapp.
-            </p>
-          </div>
-          <div className="col-span-12 sm:col-span-6">
-            <div className="grid grid-cols-1">
-              <div className="col-span-1">
-                <TextInputField
-                  label="Whatsapp Number"
-                  name="whatsappNumber"
-                  type="text"
-                  placeholder="Enter Whatsapp Number"
-                  class="mb-1"
-                  {...formik.getFieldProps("whatsappNumber")}
-                  id="whatsappNumber"
-                  semibold_label={true}
-                  //   error={validationErrors["whatsappNumber"]}
-                  //   onChange={handleChange}
-                  //   required="required"
-                  //   value={formData.whatsappNumber}
-                />
-                <div className="mb-3">
-                  {formik.touched.whatsappNumber &&
-                    formik.errors.whatsappNumber && (
-                      <div className="">
-                        <div className="  text-red-500">
-                          {formik.errors.whatsappNumber}
+      <div className="p-4 sm:p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+        <form onSubmit={formik.handleSubmit} className="max-w-3xl">
+          <div className="grid grid-cols-12 gap-4 sm:gap-8">
+            <div className="hidden sm:block col-span-12 sm:col-span-6">
+              <h3 className="font-bold">Whatsapp Number</h3>
+              <p>
+                This number would be you to recieve notifications on whatsapp.
+              </p>
+            </div>
+            <div className="col-span-12 sm:col-span-6">
+              <div className="grid grid-cols-1">
+                <div className="col-span-1">
+                  <TextInputField
+                    label="Whatsapp Number"
+                    name="whatsappNumber"
+                    type="text"
+                    placeholder="Enter Whatsapp Number"
+                    class="mb-1"
+                    {...formik.getFieldProps("whatsappNumber")}
+                    id="whatsappNumber"
+                    semibold_label={true}
+                    //   error={validationErrors["whatsappNumber"]}
+                    //   onChange={handleChange}
+                    //   required="required"
+                    //   value={formData.whatsappNumber}
+                  />
+                  <div className="mb-3">
+                    {formik.touched.whatsappNumber &&
+                      formik.errors.whatsappNumber && (
+                        <div className="">
+                          <div className="  text-red-500">
+                            {formik.errors.whatsappNumber}
+                          </div>
                         </div>
-                      </div>
-                    )}
+                      )}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-        <div className="sm:text-right">
-          <RegularButton
-            disable={loading}
-            type={"submit"}
-            text="Update"
-            width="auto"
-            padding="px-4 py-2"
-            textSize="text-sm"
-          />
-        </div>
-      </form>
+          <div className="sm:text-right">
+            <RegularButton
+              disable={loading}
+              type={"submit"}
+              text="Update"
+              width="auto"
+              padding="px-4 py-2"
+              textSize="text-sm"
+            />
+          </div>
+        </form>
+      </div>
     </>
   );
 };

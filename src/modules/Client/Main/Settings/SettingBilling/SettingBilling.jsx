@@ -157,225 +157,226 @@ const SettingBilling = () => {
           invoice={selectedInvoice}
         />
       )}
-      <div className="sm:max-w-4xl grid grid-cols-12 gap-4 sm:gap-8">
-        <div className="hidden sm:block col-span-12 sm:col-span-5">
-          <h3 className="font-bold">Current plan</h3>
-        </div>
-        <div className="col-span-12 sm:col-span-7">
-          <div className="p-4 sm:p-6 bg-dark-400 text-white border border-gray-200 rounded-lg shadow">
-            <ul className="flex flex-col gap-4">
-              <li className="grid grid-cols-2 items-center">
-                <div className="col-span-2 sm:col-span-1 font-light">
-                  {sub?.plan} plan
-                </div>
-                <div className="col-span-2 sm:col-span-1 sm:text-right">
-                  {sub ? (
-                    <p className="text-2xl font-bold">
-                      ₦{formatNumberWithCommas(sub?.totalamount)}
-                    </p>
-                  ) : (
-                    <p className="text-base font-bold">
-                      No Active Subscription
-                    </p>
-                  )}
-                  {sub && (
-                    <p className="text-xs font-light">
-                      {guards?.length} of{" "}
-                      {sub?.maxbeats * 5 + sub?.maxextraguards} Guards used
-                    </p>
-                  )}
-                </div>
-              </li>
-
-              {sub ? (
-                <li className="grid grid-cols-2 items-center">
-                  <div className="col-span-2 sm:col-span-1 font-light">
-                    Next billing date
-                  </div>
-                  <div className="col-span-2 sm:col-span-1 sm:text-right">
-                    <p className="font-normal">
-                      {mySuscriptions && getNextBillingDate(mySuscriptions)}
-                    </p>
-                  </div>
-                </li>
-              ) : (
-                <li className="grid grid-cols-2 items-center">
-                  <div className="col-span-2 sm:col-span-1 font-light">
-                    Last Expiry Date
-                  </div>
-                  <div className="col-span-2 sm:col-span-1 sm:text-right">
-                    <p className="font-normal">
-                      {moment(mySuscriptions?.[0].expiresat).format(
-                        "DD MMMM, YYYY"
-                      )}
-                    </p>
-                  </div>
-                </li>
-              )}
-
-              <li className="grid grid-cols-12 items-end gap-4">
-                <div className="col-span-12">
-                  {isUpdateSub ? (
-                    ""
-                  ) : (
-                    <button
-                      onClick={() => setOpenRenewalModal(true)}
-                      type="button"
-                      className="w-full block text-white bg-yellow-500 hover:bg-yellow-600 focus:ring-1 focus:outline-none focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
-                    >
-                      Renew current subscription
-                    </button>
-                  )}
-
-                  <div className="my-4"></div>
-                  <button
-                    type="button"
-                    onClick={toggleIsUpdateSub}
-                    className="w-full flex items-center gap-2 font-light"
-                  >
-                    Update subscription
-                    {isUpdateSub ? (
-                      <FaCaretUp size={14} />
-                    ) : (
-                      <FaCaretDown size={14} />
-                    )}
-                  </button>
-                </div>
-                {isUpdateSub ? <UpdateSubscription /> : ""}
-              </li>
-            </ul>
+      <div className="p-4 sm:p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+        <div className="sm:max-w-4xl grid grid-cols-12 gap-4 sm:gap-8">
+          <div className="hidden sm:block col-span-12 sm:col-span-5">
+            <h3 className="font-bold">Current plan</h3>
           </div>
-        </div>
-        <div className="hidden sm:block col-span-12 sm:col-span-5">
-          <h3 className="font-bold">Invoices</h3>
-        </div>
-        <div className="col-span-12 sm:col-span-7">
-          <div className="">
-            {filteredData ? (
-              <div className="relative overflow-x-auto">
-                <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                  <thead className="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400">
-                    <tr>
-                      <th scope="col" className="px-6 py-3 rounded-s-lg">
-                        Date
-                      </th>
-                      <th scope="col" className="px-6 py-3 ">
-                        Expires
-                      </th>
-                      {/* <th scope="col" className="px-6 py-3">
+          <div className="col-span-12 sm:col-span-7">
+            <div className="p-4 sm:p-6 bg-dark-400 text-white border border-gray-200 rounded-lg shadow">
+              <ul className="flex flex-col gap-4">
+                <li className="grid grid-cols-2 items-center">
+                  <div className="col-span-2 sm:col-span-1 font-light">
+                    {sub?.plan} plan
+                  </div>
+                  <div className="col-span-2 sm:col-span-1 sm:text-right">
+                    {sub ? (
+                      <p className="text-2xl font-bold">
+                        ₦{formatNumberWithCommas(sub?.totalamount)}
+                      </p>
+                    ) : (
+                      <p className="text-base font-bold">
+                        No Active Subscription
+                      </p>
+                    )}
+                    {sub && (
+                      <p className="text-xs font-light">
+                        {guards?.length} of{" "}
+                        {sub?.maxbeats * 5 + sub?.maxextraguards} Guards used
+                      </p>
+                    )}
+                  </div>
+                </li>
+
+                {sub ? (
+                  <li className="grid grid-cols-2 items-center">
+                    <div className="col-span-2 sm:col-span-1 font-light">
+                      Next billing date
+                    </div>
+                    <div className="col-span-2 sm:col-span-1 sm:text-right">
+                      <p className="font-normal">
+                        {mySuscriptions && getNextBillingDate(mySuscriptions)}
+                      </p>
+                    </div>
+                  </li>
+                ) : (
+                  <li className="grid grid-cols-2 items-center">
+                    <div className="col-span-2 sm:col-span-1 font-light">
+                      Last Expiry Date
+                    </div>
+                    <div className="col-span-2 sm:col-span-1 sm:text-right">
+                      <p className="font-normal">
+                        {moment(mySuscriptions?.[0].expiresat).format(
+                          "DD MMMM, YYYY"
+                        )}
+                      </p>
+                    </div>
+                  </li>
+                )}
+
+                <li className="grid grid-cols-12 items-end gap-4">
+                  <div className="col-span-12">
+                    {isUpdateSub ? (
+                      ""
+                    ) : (
+                      <button
+                        onClick={() => setOpenRenewalModal(true)}
+                        type="button"
+                        className="w-full block text-white bg-yellow-500 hover:bg-yellow-600 focus:ring-1 focus:outline-none focus:ring-yellow-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                      >
+                        Renew current subscription
+                      </button>
+                    )}
+
+                    <div className="my-4"></div>
+                    <button
+                      type="button"
+                      onClick={toggleIsUpdateSub}
+                      className="w-full flex items-center gap-2 font-light"
+                    >
+                      Update subscription
+                      {isUpdateSub ? (
+                        <FaCaretUp size={14} />
+                      ) : (
+                        <FaCaretDown size={14} />
+                      )}
+                    </button>
+                  </div>
+                  {isUpdateSub ? <UpdateSubscription /> : ""}
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div className="hidden sm:block col-span-12 sm:col-span-5">
+            <h3 className="font-bold">Invoices</h3>
+          </div>
+          <div className="col-span-12 sm:col-span-7">
+            <div className="">
+              {filteredData ? (
+                <div className="relative overflow-x-auto">
+                  <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                    <thead className="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400">
+                      <tr>
+                        <th scope="col" className="px-6 py-3 rounded-s-lg">
+                          Date
+                        </th>
+                        <th scope="col" className="px-6 py-3 ">
+                          Expires
+                        </th>
+                        {/* <th scope="col" className="px-6 py-3">
                         Plan
                       </th> */}
-                      {/* <th scope="col" className="px-6 py-3">
+                        {/* <th scope="col" className="px-6 py-3">
                         Status
                       </th> */}
-                      <th
-                        scope="col"
-                        className="px-6 py-3 rounded-e-lg"
-                        aria-label="action"
-                      ></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {invoices?.map((invoice, i) => {
-                      return (
-                        <tr
-                          key={invoice?._id}
-                          className="bg-white dark:bg-gray-800"
-                        >
-                          <th
-                            scope="row"
-                            className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                        <th
+                          scope="col"
+                          className="px-6 py-3 rounded-e-lg"
+                          aria-label="action"
+                        ></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {invoices?.map((invoice, i) => {
+                        return (
+                          <tr
+                            key={invoice?._id}
+                            className="bg-white dark:bg-gray-800"
                           >
-                            {moment(invoice?.subscription?.updatedat).format(
-                              "DD MMMM, YYYY"
-                            )}
-                          </th>
-                          <th
-                            scope="row"
-                            className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                          >
-                            {moment(invoice?.subscription?.expiresat).format(
-                              "DD MMMM, YYYY"
-                            )}
-                          </th>
-                          {/* <td className="px-6 py-4">{s?.plan} plan</td> */}
-                          {/* <td className="px-6 py-4">Paid</td> */}
-                          <td className="px-6 py-4">
-                            <span
-                              onClick={() => handleInvoiceClick(invoice)}
-                              href="#"
-                              className=" cursor-pointer font-semibold text-primary-500 whitespace-nowrap"
+                            <th
+                              scope="row"
+                              className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                             >
-                              Get Invoice
-                            </span>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-
-                  <tfoot>
-                    <tr className="font-semibold text-gray-900 dark:text-white">
-                      <th
-                        scope="row"
-                        colSpan={"4"}
-                        className="px-6 py-3 text-sm font-light text-right"
-                      >
-                        <div className="inline-flex items-center justify-end gap-4">
-                          {/* Render page numbers */}
-                          {subs &&
-                            [
-                              ...Array(
-                                Math.ceil(subs?.length / itemsPerPage)
-                              ).keys(),
-                            ].map((index) => (
-                              <a
-                                key={index}
+                              {moment(invoice?.subscription?.updatedat).format(
+                                "DD MMMM, YYYY"
+                              )}
+                            </th>
+                            <th
+                              scope="row"
+                              className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                            >
+                              {moment(invoice?.subscription?.expiresat).format(
+                                "DD MMMM, YYYY"
+                              )}
+                            </th>
+                            {/* <td className="px-6 py-4">{s?.plan} plan</td> */}
+                            {/* <td className="px-6 py-4">Paid</td> */}
+                            <td className="px-6 py-4">
+                              <span
+                                onClick={() => handleInvoiceClick(invoice)}
                                 href="#"
-                                className={`inline-flex items-center justify-center border border-gray-300 text-sm rounded-lg w-full p-1.5 font-semibold min-w-10 min-h-8 ${
-                                  currentPage === index + 1
-                                    ? "bg-accent-200"
-                                    : ""
-                                }`}
-                                onClick={() => setCurrentPage(index + 1)}
+                                className=" cursor-pointer font-semibold text-primary-500 whitespace-nowrap"
                               >
-                                {index + 1}
-                              </a>
-                            ))}
-                          <div>
-                            of&nbsp;<span>{totalPages}</span>
-                          </div>
-                          <div className="flex items-center">
-                            {/* Render previous button */}
-                            <a
-                              href="#"
-                              className="inline-flex items-center justify-center bg-accent-200 text-dark-70 hover:bg-accent-300 hover:text-secondary-500 border border-gray-300 text-sm rounded-s-lg w-full p-2 min-w-10 min-h-8"
-                              onClick={goToPreviousPage}
-                            >
-                              <GrPrevious />
-                            </a>
-                            {/* Render next button */}
-                            <a
-                              href="#"
-                              className="inline-flex items-center justify-center bg-accent-200 text-dark-70 hover:bg-accent-300 hover:text-secondary-500 border border-gray-300 text-sm rounded-r-lg w-full p-2 min-w-10 min-h-8"
-                              onClick={goToNextPage}
-                            >
-                              <GrNext />
-                            </a>
-                          </div>
-                        </div>
-                      </th>
-                    </tr>
-                  </tfoot>
-                </table>
-              </div>
-            ) : (
-              <p>No invoice recorded!</p>
-            )}
-          </div>
-        </div>
+                                Get Invoice
+                              </span>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
 
-        {/* <div className="hidden sm:block col-span-12 sm:col-span-5">
+                    <tfoot>
+                      <tr className="font-semibold text-gray-900 dark:text-white">
+                        <th
+                          scope="row"
+                          colSpan={"4"}
+                          className="px-6 py-3 text-sm font-light text-right"
+                        >
+                          <div className="inline-flex items-center justify-end gap-4">
+                            {/* Render page numbers */}
+                            {subs &&
+                              [
+                                ...Array(
+                                  Math.ceil(subs?.length / itemsPerPage)
+                                ).keys(),
+                              ].map((index) => (
+                                <a
+                                  key={index}
+                                  href="#"
+                                  className={`inline-flex items-center justify-center border border-gray-300 text-sm rounded-lg w-full p-1.5 font-semibold min-w-10 min-h-8 ${
+                                    currentPage === index + 1
+                                      ? "bg-accent-200"
+                                      : ""
+                                  }`}
+                                  onClick={() => setCurrentPage(index + 1)}
+                                >
+                                  {index + 1}
+                                </a>
+                              ))}
+                            <div>
+                              of&nbsp;<span>{totalPages}</span>
+                            </div>
+                            <div className="flex items-center">
+                              {/* Render previous button */}
+                              <a
+                                href="#"
+                                className="inline-flex items-center justify-center bg-accent-200 text-dark-70 hover:bg-accent-300 hover:text-secondary-500 border border-gray-300 text-sm rounded-s-lg w-full p-2 min-w-10 min-h-8"
+                                onClick={goToPreviousPage}
+                              >
+                                <GrPrevious />
+                              </a>
+                              {/* Render next button */}
+                              <a
+                                href="#"
+                                className="inline-flex items-center justify-center bg-accent-200 text-dark-70 hover:bg-accent-300 hover:text-secondary-500 border border-gray-300 text-sm rounded-r-lg w-full p-2 min-w-10 min-h-8"
+                                onClick={goToNextPage}
+                              >
+                                <GrNext />
+                              </a>
+                            </div>
+                          </div>
+                        </th>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+              ) : (
+                <p>No invoice recorded!</p>
+              )}
+            </div>
+          </div>
+
+          {/* <div className="hidden sm:block col-span-12 sm:col-span-5">
           <h3 className="font-bold">Card details</h3>
         </div>
         <div className="col-span-12 sm:col-span-7">
@@ -531,11 +532,12 @@ const SettingBilling = () => {
           }
 
         </div> */}
-      </div>
-      {/* <div className="my-4"></div>
+        </div>
+        {/* <div className="my-4"></div>
                 <div className="text-right">
                     <RegularButton text="Save Changes" width="auto" padding="px-4 py-2" textSize="text-sm" />
                 </div> */}
+      </div>
     </>
   );
 };

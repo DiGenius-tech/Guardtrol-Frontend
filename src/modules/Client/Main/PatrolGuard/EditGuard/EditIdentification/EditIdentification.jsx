@@ -18,8 +18,8 @@ const identificationTypeOptions = [
     value: "NIN",
   },
   {
-    name: "Drivers Liscense",
-    value: "Drivers Liscense",
+    name: "Drivers License",
+    value: "Drivers License",
   },
   {
     name: "International Passport",
@@ -89,7 +89,6 @@ const EditIdentification = (props) => {
       if (data.status) {
         toast("Identification Information Updated");
         //props.setGuard({})
-        props.handleSentRequest();
       }
     });
   };

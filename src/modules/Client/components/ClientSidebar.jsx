@@ -133,7 +133,7 @@ const ClientSidebar = () => {
                 </span>
               </Link>
             </li>
-            {user.role === "Owner" && (
+            {/* {user.role === "Owner" && (
               <li>
                 <Link
                   to={"/client/users"}
@@ -151,7 +151,7 @@ const ClientSidebar = () => {
                   </span>
                 </Link>
               </li>
-            )}
+            )} */}
             <li>
               <Link
                 to={beats[0]}

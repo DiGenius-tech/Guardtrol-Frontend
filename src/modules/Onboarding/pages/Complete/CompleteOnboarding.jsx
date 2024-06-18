@@ -36,8 +36,9 @@ const OnboardingComplete = () => {
         Onboarding Complete
       </h1>
       <p className="text-sm text-center mx-auto max-w-[400px] text-dark-400">
-        Congratulations!!! You Have Successfully Completed Your On-Boarding
-        Process
+        Congratulations!!!
+        <br />
+        You Have Successfully Completed Your On-Boarding Process
       </p>
 
       <div className="mx-auto max-w-[500px] my-16">

@@ -67,8 +67,6 @@ const EditPersonalInformation = (props) => {
   const { isLoading, error, responseData, sendRequest } = useHttpRequest();
   const [validationErrors, setValidationErrors] = useState({});
 
-  console.log(props.guard?.personalinformation?.height);
-
   const [formData, setFormData] = useState({
     name: "",
     height: "",
@@ -134,8 +132,7 @@ const EditPersonalInformation = (props) => {
     ).then((data) => {
       if (data.status) {
         toast("Personal Information Updated");
-        props.setGuard({});
-        props.handleSentRequest();
+        // props.setGuard({});
       }
     });
   };
@@ -157,6 +154,7 @@ const EditPersonalInformation = (props) => {
                   semibold_label={true}
                   type="text"
                   id="name"
+                  placeholder="Enter name"
                   required="required"
                   name="name"
                   value={formData.name}
@@ -183,6 +181,7 @@ const EditPersonalInformation = (props) => {
                   label="Height"
                   semibold_label={true}
                   type="text"
+                  placeholder="Enter height"
                   id="height"
                   required="required"
                   name="height"
@@ -215,19 +214,19 @@ const EditPersonalInformation = (props) => {
                   multipleSelect={false}
                 />
               </div>
-              {/* <div className="col-span-12">
+              <div className="col-span-6">
                 <TextInputField
                   label="Alternate phone"
                   semibold_label={true}
                   type="tel"
+                  placeholder="Enter alternate phone"
                   id="altphone"
-                  required="required"
                   name="altphone"
                   value={formData.altphone}
                   onChange={handleChange}
                   error={validationErrors["altphone"]}
                 />
-              </div> */}
+              </div>
             </div>
             <RegularButton text="Update" />
           </fieldset>

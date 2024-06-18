@@ -9,8 +9,8 @@ import settingsRoutes from "./Main/Settings/settings.routes";
 import Receipt from "../../components/invoice";
 import Invoice from "../../components/invoice";
 import { ReportRouter } from "./Main/Reports/report-router";
-import { UsersRouter } from "./Main/Users/users-router";
-import OrganizationUsers from "./Main/Users/all-users";
+import { UsersRouter } from "./Main/Settings/Users/users-router";
+import OrganizationUsers from "./Main/Settings/Users/all-users";
 
 const { dashboard_routes, dashboard_routes_empt } = dashboardRoutes;
 const { history_routes, history_routes_empt } = historyRoutes;
@@ -43,10 +43,6 @@ const client_routes = {
     {
       path: "invoice",
       element: <Invoice />,
-    },
-    {
-      path: "users",
-      element: <OrganizationUsers />,
     },
   ],
 };

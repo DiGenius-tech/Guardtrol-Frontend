@@ -221,7 +221,6 @@ const EditGuarantorForm = (props) => {
         if (data.status) {
           toast("Guarantor Information Updated");
           //props.setGuard({})
-          props.handleSentRequest();
           handleNext(formContent.IDENTIFICATION);
         }
       }

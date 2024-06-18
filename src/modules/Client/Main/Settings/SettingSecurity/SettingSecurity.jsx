@@ -64,103 +64,105 @@ const SettingSecurity = () => {
   return (
     <>
       {/* setting-security-app works! */}
-
-      <form onSubmit={formik.handleSubmit} className="max-w-3xl">
-        <div className="grid grid-cols-12 gap-4 sm:gap-8">
-          <div className="hidden sm:block col-span-12 sm:col-span-6">
-            <h3 className="font-bold">Change password</h3>
-            <p>Passwords must be at least 8 characters long.</p>
-          </div>
-          <div className="col-span-12 sm:col-span-6">
-            <div className="grid grid-cols-1">
-              <div className="col-span-1">
-                <TextInputField
-                  label="Current Pasword"
-                  name="curentPassword"
-                  type="text"
-                  class="mb-1"
-                  {...formik.getFieldProps("currentPassword")}
-                  id="cuurentPassword"
-                  semibold_label={true}
-                  //   error={validationErrors["currentPassword"]}
-                  //   onChange={handleChange}
-                  //   required="required"
-                  //   value={formData.currentPassword}
-                />
-                <div className="mb-3">
-                  {formik.touched.currentPassword &&
-                    formik.errors.currentPassword && (
-                      <div className="">
-                        <div className="  text-red-500">
-                          {formik.errors.currentPassword}
+      <div className="p-4 sm:p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+        <form onSubmit={formik.handleSubmit} className="max-w-3xl">
+          <div className="grid grid-cols-12 gap-4 sm:gap-8">
+            <div className="hidden sm:block col-span-12 sm:col-span-6">
+              <h3 className="font-bold">Change password</h3>
+              <p>Passwords must be at least 8 characters long.</p>
+            </div>
+            <div className="col-span-12 sm:col-span-6">
+              <div className="grid grid-cols-1">
+                <div className="col-span-1">
+                  <TextInputField
+                    label="Current Pasword"
+                    name="curentPassword"
+                    type="text"
+                    class="mb-1"
+                    {...formik.getFieldProps("currentPassword")}
+                    id="cuurentPassword"
+                    semibold_label={true}
+                    //   error={validationErrors["currentPassword"]}
+                    //   onChange={handleChange}
+                    //   required="required"
+                    //   value={formData.currentPassword}
+                  />
+                  <div className="mb-3">
+                    {formik.touched.currentPassword &&
+                      formik.errors.currentPassword && (
+                        <div className="">
+                          <div className="  text-red-500">
+                            {formik.errors.currentPassword}
+                          </div>
                         </div>
-                      </div>
-                    )}
+                      )}
+                  </div>
                 </div>
-              </div>
-              <div className="col-span-1">
-                <TextInputField
-                  label="New Pasword"
-                  name="newPassword"
-                  {...formik.getFieldProps("newPassword")}
-                  type="text"
-                  class="mb-1"
-                  id="newPassword"
-                  semibold_label={true}
-                  //   error={validationErrors["newPassword"]}
-                  //   onChange={handleChange}
-                  //   required="required"
-                  //   value={formData.newPassword}
-                />
-                <div className="mb-3">
-                  {formik.touched.newPassword && formik.errors.newPassword && (
-                    <div className="">
-                      <div className="  text-red-500">
-                        {formik.errors.newPassword}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-              <div className="col-span-1">
-                <TextInputField
-                  label="Confirm Pasword"
-                  name="confirmPassword"
-                  type="text"
-                  class="mb-1"
-                  {...formik.getFieldProps("confirmPassword")}
-                  id="confirmPassword"
-                  semibold_label={true}
-                  //   error={validationErrors["confirmPassword"]}
-                  //   onChange={handleChange}
-                  //   required="required"
-                  //   value={formData.confirmPassword}
-                />{" "}
-                <div className="mb-3">
-                  {formik.touched.confirmPassword &&
-                    formik.errors.confirmPassword && (
-                      <div className="">
-                        <div className="  text-red-500">
-                          {formik.errors.confirmPassword}
+                <div className="col-span-1">
+                  <TextInputField
+                    label="New Pasword"
+                    name="newPassword"
+                    {...formik.getFieldProps("newPassword")}
+                    type="text"
+                    class="mb-1"
+                    id="newPassword"
+                    semibold_label={true}
+                    //   error={validationErrors["newPassword"]}
+                    //   onChange={handleChange}
+                    //   required="required"
+                    //   value={formData.newPassword}
+                  />
+                  <div className="mb-3">
+                    {formik.touched.newPassword &&
+                      formik.errors.newPassword && (
+                        <div className="">
+                          <div className="  text-red-500">
+                            {formik.errors.newPassword}
+                          </div>
                         </div>
-                      </div>
-                    )}
+                      )}
+                  </div>
+                </div>
+                <div className="col-span-1">
+                  <TextInputField
+                    label="Confirm Pasword"
+                    name="confirmPassword"
+                    type="text"
+                    class="mb-1"
+                    {...formik.getFieldProps("confirmPassword")}
+                    id="confirmPassword"
+                    semibold_label={true}
+                    //   error={validationErrors["confirmPassword"]}
+                    //   onChange={handleChange}
+                    //   required="required"
+                    //   value={formData.confirmPassword}
+                  />{" "}
+                  <div className="mb-3">
+                    {formik.touched.confirmPassword &&
+                      formik.errors.confirmPassword && (
+                        <div className="">
+                          <div className="  text-red-500">
+                            {formik.errors.confirmPassword}
+                          </div>
+                        </div>
+                      )}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-        <div className="sm:text-right">
-          <RegularButton
-            disable={loading}
-            type={"submit"}
-            text="Change Password"
-            width="auto"
-            padding="px-4 py-2"
-            textSize="text-sm"
-          />
-        </div>
-      </form>
+          <div className="sm:text-right">
+            <RegularButton
+              disable={loading}
+              type={"submit"}
+              text="Change Password"
+              width="auto"
+              padding="px-4 py-2"
+              textSize="text-sm"
+            />
+          </div>
+        </form>
+      </div>
     </>
   );
 };

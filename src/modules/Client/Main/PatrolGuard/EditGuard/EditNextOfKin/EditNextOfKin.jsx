@@ -90,7 +90,6 @@ const EditNextOfKin = (props) => {
       if (data.status) {
         toast("Next Of Kin Information Updated");
         //props.setGuard({})
-        props.handleSentRequest();
       }
     });
   };

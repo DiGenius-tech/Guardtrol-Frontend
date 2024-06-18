@@ -52,7 +52,7 @@ function ActivePatrolGuards() {
     error,
   } = useGetGuardsQuery();
 
-  const { data: beats } = useGetBeatsQuery();
+  const { data: beats, refetch: refetchBeats } = useGetBeatsQuery();
 
   const [selectedBeat, setSelectedBeat] = useState({});
 
@@ -108,6 +108,7 @@ function ActivePatrolGuards() {
           });
           console.log(data);
           refetchGuards();
+          refetchBeats();
           if (data?.status) {
             Swal.fire({
               title: "Unassigned!",

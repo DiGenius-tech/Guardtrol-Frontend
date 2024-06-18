@@ -52,7 +52,7 @@ const PaymentSuccess = () => {
       </h1>
       <p className="text-sm text-center mx-auto max-w-[400px] text-dark-400">
         The subscription goes towards getting access to the security software to
-        help manage your security personel
+        help manage your security personnel
       </p>
 
       <div className="mx-auto max-w-[500px] my-16">
