@@ -131,16 +131,19 @@ const EditGuarantorForm = (props) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     setValidationErrors({ ...validationErrors, [e.target.name]: "" });
   };
+
   const handleSelectChange = (e) => {
     setStepperError("");
-    let _title = JSON.parse(e.target.value);
-    setFormData({ ...formData, [e.target.name]: _title.value });
+    let _title = e.target.value;
+
+    setFormData({ ...formData, [e.target.name]: _title });
     setValidationErrors({ ...validationErrors, [e.target.name]: "" });
   };
 
   const handleNext = (content) => {
     switch (content) {
       case formContent.PERSONAL_INFO:
+        console.log(formData);
         if (
           formData.title &&
           formData.firstName &&

@@ -63,7 +63,7 @@ const EditIdentification = (props) => {
   };
 
   const handleSelectChange = (e) => {
-    let type = JSON.parse(e.target.value);
+    let type = e.target;
     setFormData({ ...formData, [e.target.name]: type.value });
     setValidationErrors({ ...validationErrors, [e.target.name]: "" });
   };

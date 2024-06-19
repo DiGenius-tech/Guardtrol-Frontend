@@ -53,7 +53,8 @@ function AssignNewBeat({ isOnboarding = true }) {
   const [frequency, setFrequency] = useState(initialFrequencyState);
 
   const handleBeatSelection = (e) => {
-    setBeat(e.target.value);
+    console.log(e.target.value);
+    setBeat(beats.find((b) => b._id === e.target.value));
   };
 
   const handleGuardSelection = (e) => {
@@ -132,7 +133,6 @@ function AssignNewBeat({ isOnboarding = true }) {
     if (c) return;
 
     dispatch(suspenseShow);
-
     const formData = {
       beat: selectedBeat ? selectedBeat : beat,
       guards: guard,
@@ -184,13 +184,15 @@ function AssignNewBeat({ isOnboarding = true }) {
           {!selectedBeat && (
             <div className="mb-6">
               <SelectField
-                value={beat}
+                value={beat._id}
                 name="beat"
                 id="beat"
                 label="Select beat"
                 semibold_label={true}
                 handleChangeOption={handleBeatSelection}
-                optionList={beats}
+                optionList={beats.map((b) => {
+                  return { value: b._id, name: b.name };
+                })}
                 multipleSelect={false}
               />{" "}
             </div>

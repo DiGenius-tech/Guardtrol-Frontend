@@ -23,6 +23,7 @@ function SelectField(props) {
             if (e.target.value === "def") {
               return;
             }
+
             props.handleChangeOption(e);
           }}
           id={props.id}

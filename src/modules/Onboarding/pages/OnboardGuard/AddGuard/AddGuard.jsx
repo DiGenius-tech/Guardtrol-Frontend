@@ -127,7 +127,7 @@ function AddGuard({ onBoarding = true }) {
         return;
       }
       dispatch(addOnboardingGuard(guard));
-      // navigate("../");
+      navigate("../");
     } else {
       if (guards?.length >= sub?.maxbeats * 5 + sub?.maxextraguards) {
         Swal.fire({
