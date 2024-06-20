@@ -167,17 +167,19 @@ const BeatsLog = () => {
             <Table.HeadCell>Type</Table.HeadCell>
           </Table.Head>
           <Table.Body>
-            {filteredLogs?.map((log) => (
-              <Table.Row key={log._id}>
-                <Table.Cell>
-                  {format(new Date(log.createdAt), "yyyy-MM-dd HH:mm:ss")}
-                </Table.Cell>
-                {/* <Table.Cell>{log.user?.name || "Unknown"}</Table.Cell> */}
-                <Table.Cell>{log.message}</Table.Cell>
-                <Table.Cell>{log.beat?.name || "Unknown"}</Table.Cell>
-                <Table.Cell>{log.type}</Table.Cell>
-              </Table.Row>
-            ))}
+            {filteredLogs
+              .filter((log) => log.beat)
+              ?.map((log) => (
+                <Table.Row key={log._id}>
+                  <Table.Cell>
+                    {format(new Date(log.createdAt), "yyyy-MM-dd HH:mm:ss")}
+                  </Table.Cell>
+                  {/* <Table.Cell>{log.user?.name || "Unknown"}</Table.Cell> */}
+                  <Table.Cell>{log.message}</Table.Cell>
+                  <Table.Cell>{log.beat?.name || "Unknown"}</Table.Cell>
+                  <Table.Cell>{log.type}</Table.Cell>
+                </Table.Row>
+              ))}
           </Table.Body>
         </Table>
       </div>

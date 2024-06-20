@@ -137,15 +137,17 @@ const GuardsLog = () => {
             <Table.HeadCell>Message</Table.HeadCell>
           </Table.Head>
           <Table.Body>
-            {filteredLogs.map((log) => (
-              <Table.Row key={log._id}>
-                <Table.Cell>
-                  {format(new Date(log.createdAt), "yyyy-MM-dd HH:mm:ss")}
-                </Table.Cell>
-                <Table.Cell>{log?.guard?.name}</Table.Cell>
-                <Table.Cell>{log.message}</Table.Cell>
-              </Table.Row>
-            ))}
+            {filteredLogs
+              .filter((log) => log.guard)
+              .map((log) => (
+                <Table.Row key={log._id}>
+                  <Table.Cell>
+                    {format(new Date(log.createdAt), "yyyy-MM-dd HH:mm:ss")}
+                  </Table.Cell>
+                  <Table.Cell>{log?.guard?.name}</Table.Cell>
+                  <Table.Cell>{log.message}</Table.Cell>
+                </Table.Row>
+              ))}
           </Table.Body>
         </Table>
       </div>
