@@ -4,7 +4,7 @@ import TextInputField from "../../../../../Sandbox/InputField/TextInputField";
 import RegularButton from "../../../../../Sandbox/Buttons/RegularButton";
 import SelectField from "../../../../../Sandbox/SelectField/SelectField";
 import { useParams } from "react-router-dom";
-
+import { useDropzone } from "react-dropzone";
 import useHttpRequest from "../../../../../../shared/Hooks/HttpRequestHook";
 import { toast } from "react-toastify";
 import {
@@ -12,8 +12,9 @@ import {
   selectUser,
 } from "../../../../../../redux/selectors/auth";
 import { useSelector } from "react-redux";
-import axios from "axios";
 import { patch } from "../../../../../../lib/methods";
+import { Formik } from "formik";
+import { FileInput } from "flowbite-react";
 
 const titleOptions = [
   {
@@ -98,6 +99,7 @@ const EditGuarantorForm = (props) => {
     rank: "",
     //
     identificationNumber: "",
+    identificationFile: null,
     identificationType: "",
   });
 
@@ -116,6 +118,7 @@ const EditGuarantorForm = (props) => {
       rank: props.guard?.rank,
       //
       identificationNumber: props.guard?.identificationNumber,
+      identificationFile: props.guard?.identificationFile,
       identificationType: props.guard?.identificationType,
     });
   }, [props]);
@@ -219,7 +222,23 @@ const EditGuarantorForm = (props) => {
       toast.warn("select a valid identification type");
       return;
     }
-    const data = patch(`guard/guarantor/${guardId}`, formData, token).then(
+    const newFormData = new FormData();
+
+    newFormData.append("title", formData.title);
+    newFormData.append("firstName", formData.firstName);
+    newFormData.append("lastName", formData.lastName);
+    newFormData.append("email", formData.email);
+    newFormData.append("dob", formData.dob);
+    newFormData.append("sex", formData.sex);
+    newFormData.append("phone", formData.phone);
+    newFormData.append("altPhone", formData.altPhone);
+    newFormData.append("placeOfWork", formData.placeOfWork);
+    newFormData.append("rank", formData.rank);
+    newFormData.append("identificationFile", formData.identificationFile);
+    newFormData.append("identificationNumber", formData.identificationNumber);
+    newFormData.append("identificationType", formData.identificationType);
+
+    const data = patch(`guard/guarantor/${guardId}`, newFormData, token).then(
       (data) => {
         if (data.status) {
           toast("Guarantor Information Updated");
@@ -228,6 +247,12 @@ const EditGuarantorForm = (props) => {
         }
       }
     );
+  };
+
+  const handleFileChange = (event) => {
+    const uploadedFile = event.target.files[0];
+
+    setFormData({ ...formData, identificationFile: uploadedFile });
   };
 
   return (
@@ -547,6 +572,42 @@ const EditGuarantorForm = (props) => {
                             onChange={handleChange}
                             error={validationErrors["identificationNumber"]}
                           />
+                        </div>
+                        <div className="col-span-12">
+                          <label
+                            htmlFor="fileUpload"
+                            className="semibold_label"
+                          >
+                            Upload Identification File
+                          </label>
+                          <FileInput
+                            id="file"
+                            onChange={handleFileChange}
+                            accept=".pdf, image/*"
+                            className=" placeholder-red-900"
+                            helperText="Select Upload Identification File"
+                          />
+
+                          {/* <input
+                            type="file"
+                            id="fileUpload"
+                            onChange={handleFileChange}
+                            className="file-input"
+                          /> */}
+                          {/* {identificationFile && (
+                            <div className="file-preview">
+                              <h2>Preview:</h2>
+                              <FileViewer
+                                fileType={file.type.split("/")[1]} // Extract the file extension
+                                filePath={URL.createObjectURL(
+                                  identificationFile
+                                )}
+                                onError={(e) =>
+                                  console.log("Error while previewing file:", e)
+                                }
+                              />
+                            </div>
+                          )} */}
                         </div>
                       </div>
                       <div className="flex items-center justify-between">

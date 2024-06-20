@@ -90,8 +90,8 @@ const Patrols = () => {
           </Table>
         </div>
       ) : (
-        <p className="text-primary-500 font-semibold text-center sm:text-left">
-          No Patrol
+        <p className="text-primary-500 justify-center items-center font-semibold text-center  min-h-64 ">
+          No Patrols
         </p>
       )}
     </>
