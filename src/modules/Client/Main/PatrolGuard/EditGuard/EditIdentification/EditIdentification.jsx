@@ -12,6 +12,8 @@ import {
   selectUser,
 } from "../../../../../../redux/selectors/auth";
 import { patch } from "../../../../../../lib/methods";
+import { FileInput } from "flowbite-react";
+import { useGetGuardsQuery } from "../../../../../../redux/services/guards";
 const identificationTypeOptions = [
   {
     name: "National Identification Number (NIN)",
@@ -35,16 +37,26 @@ const EditIdentification = (props) => {
   const { guardId } = useParams();
   const user = useSelector(selectUser);
   const token = useSelector(selectToken);
+
+  const {
+    data: guards,
+    refetch: refetchGuards,
+    isUninitialized,
+  } = useGetGuardsQuery();
+
   const { isLoading, error, responseData, sendRequest } = useHttpRequest();
   const [validationErrors, setValidationErrors] = useState({});
   const [formData, setFormData] = useState({
-    idnumber: "",
-    idname: "",
+    idnumber: props.guard?.idnumber,
+    idname: props.guard?.idname,
+    guardIdentificationFile: null,
   });
+
   useEffect(() => {
     setFormData({
       idnumber: props.guard?.idnumber,
-      idname: props.guard?.idname,
+      idname: identificationTypeOptions[props.guard?.idname],
+      guardIdentificationFile: props.guard?.identificationsFile,
     });
   }, [props]);
 
@@ -68,6 +80,11 @@ const EditIdentification = (props) => {
     setValidationErrors({ ...validationErrors, [e.target.name]: "" });
   };
 
+  const handleFileChange = (event) => {
+    const uploadedFile = event.target.files[0];
+    setFormData({ ...formData, guardIdentificationFile: uploadedFile });
+  };
+
   const save = async (e) => {
     e.preventDefault();
     if (!formData.idname) {
@@ -75,20 +92,24 @@ const EditIdentification = (props) => {
       return;
     }
 
-    const guardData = {
-      idname: formData.idname,
-      idnumber: formData.idnumber,
-    };
+    const newFormData = new FormData();
+    newFormData.append("idname", formData.idname);
+    newFormData.append("idnumber", formData.idnumber);
+    newFormData.append(
+      "guardIdentificationFile",
+      formData.guardIdentificationFile
+    );
 
     const data = patch(
       `guard/identification/${guardId}`,
 
-      guardData,
+      newFormData,
       token
     ).then((data) => {
       if (data.status) {
         toast("Identification Information Updated");
         //props.setGuard({})
+        refetchGuards();
       }
     });
   };
@@ -105,7 +126,8 @@ const EditIdentification = (props) => {
             <div className="grid grid-cols-12 gap-x-4">
               <div className="col-span-12">
                 <SelectField
-                  value={identificationType}
+                  value={formData?.idname}
+                  defaultValue={formData?.idname}
                   name="idname"
                   id="idname"
                   label="Identification Type"
@@ -123,11 +145,23 @@ const EditIdentification = (props) => {
                   id="idnumber"
                   required="required"
                   name="idnumber"
-                  value={formData.idnumber}
+                  value={formData?.idnumber || ""}
                   onChange={handleChange}
                   error={validationErrors["idnumber"]}
                 />
               </div>
+            </div>
+            <div className="col-span-12  mb-3">
+              <label htmlFor="fileUpload" className="semibold_label">
+                Upload Identification File
+              </label>
+              <FileInput
+                id="file"
+                onChange={handleFileChange}
+                accept=".pdf, image/*"
+                className=" placeholder-red-900"
+                helperText="Select Upload Identification File"
+              />
             </div>
             <RegularButton text="Update" />
           </fieldset>

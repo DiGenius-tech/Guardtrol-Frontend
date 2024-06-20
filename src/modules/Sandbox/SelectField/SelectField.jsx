@@ -15,7 +15,7 @@ function SelectField(props) {
         </label>
         <select
           required
-          defaultValue={JSON.stringify(props?.value)}
+          defaultValue={props?.defaultValue}
           name={props.name}
           multiple={props?.multiple}
           size={props?.multiSelect ? props?.multiSelect : 0}

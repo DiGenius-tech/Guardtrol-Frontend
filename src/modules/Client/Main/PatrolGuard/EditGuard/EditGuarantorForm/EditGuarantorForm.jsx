@@ -15,6 +15,7 @@ import { useSelector } from "react-redux";
 import { patch } from "../../../../../../lib/methods";
 import { Formik } from "formik";
 import { FileInput } from "flowbite-react";
+import { useGetGuardsQuery } from "../../../../../../redux/services/guards";
 
 const titleOptions = [
   {
@@ -49,8 +50,8 @@ const identificationTypeOptions = [
     value: "NIN",
   },
   {
-    name: "Drivers Liscense",
-    value: "Drivers Liscense",
+    name: "Drivers License ",
+    value: "Drivers License ",
   },
   {
     name: "International Passport",
@@ -85,6 +86,7 @@ const EditGuarantorForm = (props) => {
   const [identificationType, setIdentificationType] = useState(
     identificationTypeOptions[0]
   );
+
   const [formData, setFormData] = useState({
     title: "",
     firstName: "",
@@ -102,6 +104,12 @@ const EditGuarantorForm = (props) => {
     identificationFile: null,
     identificationType: "",
   });
+
+  const {
+    data: guards,
+    refetch: refetchGuards,
+    isUninitialized,
+  } = useGetGuardsQuery();
 
   useEffect(() => {
     setFormData({
@@ -154,8 +162,7 @@ const EditGuarantorForm = (props) => {
           formData.email &&
           formData.dob &&
           formData.sex &&
-          formData.phone &&
-          formData.altPhone
+          formData.phone
         ) {
           if (marginSize < 200) {
             stepper.stepForward();
@@ -219,6 +226,7 @@ const EditGuarantorForm = (props) => {
   const save = async (e) => {
     e.preventDefault();
     if (!formData.identificationType) {
+      refetchGuards();
       toast.warn("select a valid identification type");
       return;
     }
@@ -351,6 +359,7 @@ const EditGuarantorForm = (props) => {
                           <SelectField
                             value={title}
                             name="title"
+                            defaultValue={props?.guard?.title || ""}
                             id="title"
                             label="Title"
                             semibold_label={true}
@@ -414,6 +423,7 @@ const EditGuarantorForm = (props) => {
                         <div className="col-span-12 sm:col-span-6">
                           <SelectField
                             value={sex}
+                            defaultValue={props?.guard?.sex || ""}
                             name="sex"
                             id="sex"
                             label="Sex"
@@ -442,7 +452,6 @@ const EditGuarantorForm = (props) => {
                             semibold_label={true}
                             type="text"
                             id="altPhone"
-                            required="required"
                             name="altPhone"
                             value={formData.altPhone}
                             onChange={handleChange}
@@ -573,7 +582,7 @@ const EditGuarantorForm = (props) => {
                             error={validationErrors["identificationNumber"]}
                           />
                         </div>
-                        <div className="col-span-12">
+                        <div className="col-span-12  mb-3">
                           <label
                             htmlFor="fileUpload"
                             className="semibold_label"

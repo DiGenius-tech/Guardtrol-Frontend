@@ -1,5 +1,11 @@
+import axios from "axios";
 import { Table } from "flowbite-react";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { API_BASE_URL, ASSET_URL } from "../../../../../constants/api";
+import { get } from "../../../../../lib/methods";
+import { useSelector } from "react-redux";
+import { selectToken } from "../../../../../redux/selectors/auth";
+import { format, formatISO } from "date-fns";
 
 const patrols = [
   // {
@@ -27,73 +33,107 @@ const patrols = [
 ];
 
 const Patrols = () => {
+  const token = useSelector(selectToken);
+  const [patrols, setPatrols] = useState();
+
+  const getPatrolInstances = async () => {
+    const res = await get(API_BASE_URL + "patrols/get-instances", token);
+    setPatrols(res);
+  };
+  const formattedTime = (date) => format(new Date(date), "hh:mm a");
+
+  useEffect(() => {
+    getPatrolInstances();
+  }, []);
+  console.log(patrols);
   return (
     <>
       {/* patrols-app works! */}
 
-      {patrols.length ? (
-        <div className="overflow-auto min-h-64 ">
-          <Table>
-            <Table.Head>
-              <Table.HeadCell>Guard name</Table.HeadCell>
-              <Table.HeadCell className="hidden sm:block">Time</Table.HeadCell>
-              <Table.HeadCell>Status</Table.HeadCell>
-              <Table.HeadCell className="hidden sm:table-cell">
-                <span className="sr-only"></span>
-              </Table.HeadCell>
-            </Table.Head>
-            <Table.Body className="divide-y">
-              {patrols.map((patrol) => {
-                return (
-                  <Table.Row
-                    className="bg-white dark:border-gray-700 dark:bg-gray-800"
-                    key={patrol.id}
-                  >
-                    <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
-                      <div className="flex items-end gap-2">
-                        <div className="h-8 w-8 rounded-full overflow-hidden">
-                          <img src={patrol.guard.profileImage} alt={""} />
-                        </div>
-                        {patrol.guard.name}
-                        <span className="block sm:hidden">
-                          <br />
-                          {patrol.time}
-                        </span>
-                      </div>
-                    </Table.Cell>
-                    <Table.Cell className="hidden sm:block">
-                      <span>{patrol.time}</span>
-                    </Table.Cell>
-                    <Table.Cell>
-                      {patrol.isCompleted ? (
-                        <span className="text-green-400">Completed</span>
-                      ) : (
-                        <span className="text-red-400">Not completed</span>
-                      )}
-                      {/* <span className="block sm:hidden"> */}
-                      <br />
-                      <span className="whitespace-nowrap">{patrol.beat}</span>
-                      {/* </span> */}
-                    </Table.Cell>
-                    <Table.Cell className="hidden sm:block">
-                      <a
-                        href="#"
-                        className="font-medium text-primary-500 hover:underline dark:text-cyan-500"
+      <div className="overflow-auto min-h-64 max-h-64 ">
+        <Table>
+          <Table.Head>
+            <Table.HeadCell>Guard name</Table.HeadCell>
+            <Table.HeadCell className="hidden sm:block">Time</Table.HeadCell>
+            <Table.HeadCell>Status</Table.HeadCell>
+            <Table.HeadCell className="hidden sm:table-cell">
+              <span className="sr-only"></span>
+            </Table.HeadCell>
+          </Table.Head>
+          <Table.Body className="divide-y  overflow-y-scroll">
+            <>
+              {patrols?.length !== 0 ? (
+                <>
+                  {patrols?.map((patrolInstance) => {
+                    return (
+                      <Table.Row
+                        className="bg-white dark:border-gray-700 dark:bg-gray-800"
+                        key={patrolInstance._id}
                       >
-                        View
-                      </a>
-                    </Table.Cell>
-                  </Table.Row>
-                );
-              })}
-            </Table.Body>
-          </Table>
-        </div>
-      ) : (
-        <p className="text-primary-500 justify-center items-center font-semibold text-center  min-h-64 ">
-          No Patrols
-        </p>
-      )}
+                        <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+                          <div className="flex items-center justify-center gap-2">
+                            <div className="h-8 w-8 rounded-full overflow-hidden">
+                              <img
+                                src={`${
+                                  ASSET_URL +
+                                  patrolInstance?.guard?.profileImage
+                                }`}
+                                alt={""}
+                              />
+                            </div>
+                            {patrolInstance?.guard?.name}
+                            <span className="block sm:hidden">
+                              {patrolInstance?.patrol?.starttime &&
+                                formattedTime(
+                                  patrolInstance?.patrol?.starttime
+                                )}
+                            </span>
+                          </div>
+                        </Table.Cell>
+                        <Table.Cell className="hidden sm:flex items-center justify-center">
+                          {patrolInstance?.patrol?.starttime &&
+                            formattedTime(patrolInstance?.patrol?.starttime)}
+                        </Table.Cell>
+                        <Table.Cell>
+                          {patrolInstance.status === "pending" ? (
+                            <span className="text-green-400 uppercase">
+                              {patrolInstance.status}
+                            </span>
+                          ) : (
+                            <span className="text-red-400">Completed</span>
+                          )}
+                          {/* <span className="block sm:hidden"> */}
+                          <br />
+                          <span className="whitespace-nowrap">
+                            {patrolInstance?.beat?.name}
+                          </span>
+                          {/* </span> */}
+                        </Table.Cell>
+                        {/* <Table.Cell className="hidden sm:block">
+                          <a
+                            href="#"
+                            className="font-medium text-primary-500 hover:underline dark:text-cyan-500"
+                          >
+                            View
+                          </a>
+                        </Table.Cell> */}
+                      </Table.Row>
+                    );
+                  })}
+                </>
+              ) : (
+                <Table.Row>
+                  <Table.Cell>
+                    <p className="text-primary-500 justify-center items-center font-semibold text-center  min-h-64 ">
+                      No Patrols
+                    </p>
+                  </Table.Cell>
+                </Table.Row>
+              )}
+            </>
+          </Table.Body>
+        </Table>
+      </div>
     </>
   );
 };

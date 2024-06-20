@@ -59,6 +59,8 @@ function AddBeat() {
 
   const saveBeat = async (e) => {
     e.preventDefault();
+    console.log(beats);
+
     if (beats.find((b) => b.name === beat.name)) {
       Swal.fire({
         icon: "warning",

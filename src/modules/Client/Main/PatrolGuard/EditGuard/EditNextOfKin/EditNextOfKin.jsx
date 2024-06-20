@@ -9,6 +9,8 @@ import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 import { selectAuth } from "../../../../../../redux/selectors/auth";
 import { patch } from "../../../../../../lib/methods";
+import { FileInput } from "flowbite-react";
+import { useGetGuardsQuery } from "../../../../../../redux/services/guards";
 
 const identificationTypeOptions = [
   {
@@ -16,8 +18,8 @@ const identificationTypeOptions = [
     value: "NIN",
   },
   {
-    name: "Drivers Liscense",
-    value: "Drivers Liscense",
+    name: "Drivers License ",
+    value: "Drivers License ",
   },
   {
     name: "International Passport",
@@ -31,9 +33,15 @@ const identificationTypeOptions = [
 ];
 
 const EditNextOfKin = (props) => {
+  console.log(props);
   const { guardId } = useParams();
   const auth = useSelector(selectAuth);
   const { user, token } = useSelector(selectAuth);
+  const {
+    data: guards,
+    refetch: refetchGuards,
+    isUninitialized,
+  } = useGetGuardsQuery();
 
   const { isLoading, error, responseData, sendRequest } = useHttpRequest();
   const [validationErrors, setValidationErrors] = useState({});
@@ -41,6 +49,7 @@ const EditNextOfKin = (props) => {
     name: "",
     idnumber: "",
     phone: "",
+    nextofkinIdentificationFile: null,
     idname: "",
     relationship: "",
   });
@@ -67,6 +76,11 @@ const EditNextOfKin = (props) => {
     // console.log("formData: ", formData)
   };
 
+  const handleFileChange = (event) => {
+    const uploadedFile = event.target.files[0];
+    setFormData({ ...formData, nextofkinIdentificationFile: uploadedFile });
+  };
+
   const [identificationType, setIdentificationType] = useState(null);
   const handleSelectChange = (e) => {
     let type = e.target;
@@ -81,17 +95,27 @@ const EditNextOfKin = (props) => {
       return;
     }
 
-    const data = patch(
-      `guard/nextofkin/${guardId}`,
+    const newFormData = new FormData();
 
-      formData,
-      token
-    ).then((data) => {
-      if (data.status) {
-        toast("Next Of Kin Information Updated");
-        //props.setGuard({})
+    newFormData.append("idname", formData.idname);
+    newFormData.append("name", formData.name);
+    newFormData.append("phone", formData.phone);
+    newFormData.append("idnumber", formData.idnumber);
+    newFormData.append("relationship", formData.relationship);
+    newFormData.append(
+      "nextofkinIdentificationFile",
+      formData.nextofkinIdentificationFile
+    );
+
+    const data = patch(`guard/nextofkin/${guardId}`, newFormData, token).then(
+      (data) => {
+        if (data.status) {
+          refetchGuards();
+          toast("Next Of Kin Information Updated");
+          //props.setGuard({})
+        }
       }
-    });
+    );
   };
 
   return (
@@ -108,6 +132,7 @@ const EditNextOfKin = (props) => {
               <div className="col-span-12">
                 <SelectField
                   value={identificationType}
+                  defaultValue={props?.guard?.idname}
                   name="idname"
                   id="idname"
                   label="Next Of Kin Identification Type"
@@ -168,6 +193,18 @@ const EditNextOfKin = (props) => {
                   value={formData.relationship}
                   onChange={handleChange}
                   error={validationErrors["relationship"]}
+                />
+              </div>
+              <div className="col-span-12 mb-3">
+                <label htmlFor="fileUpload" className="semibold_label">
+                  Upload Identification File
+                </label>
+                <FileInput
+                  id="file"
+                  onChange={handleFileChange}
+                  accept=".pdf, image/*"
+                  className=" placeholder-red-900"
+                  helperText="Select Upload Identification File"
                 />
               </div>
             </div>

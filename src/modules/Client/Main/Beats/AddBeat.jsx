@@ -60,6 +60,15 @@ const AddBeat = () => {
 
   const saveBeat = async (e) => {
     e.preventDefault();
+
+    if (beats.find((b) => b.name === beat.name)) {
+      Swal.fire({
+        icon: "warning",
+        confirmButtonColor: "#008080",
+        title: "A beat exists with the same name!",
+      });
+      return;
+    }
     if (beat.name === "" || beat.name.length < 3) {
       setValidationErrors({
         ...validationErrors,
