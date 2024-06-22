@@ -32,35 +32,28 @@ const patrols = [
   // }
 ];
 
-const Patrols = () => {
-  const token = useSelector(selectToken);
-  const [patrols, setPatrols] = useState();
-
-  const getPatrolInstances = async () => {
-    const res = await get(API_BASE_URL + "patrols/get-instances", token);
-    setPatrols(res);
-  };
+const Patrols = ({ patrols }) => {
   const formattedTime = (date) => format(new Date(date), "hh:mm a");
+  const formatDate = (date) => format(new Date(date), "yyyy-MM-dd");
 
-  useEffect(() => {
-    getPatrolInstances();
-  }, []);
-  console.log(patrols);
   return (
     <>
       {/* patrols-app works! */}
 
-      <div className="overflow-auto min-h-64 max-h-64 ">
+      <div className="overflow-y-scroll  min-h-64 max-h-64 ">
         <Table>
           <Table.Head>
             <Table.HeadCell>Guard name</Table.HeadCell>
-            <Table.HeadCell className="hidden sm:block">Time</Table.HeadCell>
+            <Table.HeadCell className="hidden sm:block  sm:w-[120px]">
+              Time
+            </Table.HeadCell>
             <Table.HeadCell>Status</Table.HeadCell>
+            <Table.HeadCell className=" w-[200px]">Date</Table.HeadCell>
             <Table.HeadCell className="hidden sm:table-cell">
               <span className="sr-only"></span>
             </Table.HeadCell>
           </Table.Head>
-          <Table.Body className="divide-y  overflow-y-scroll">
+          <Table.Body className="divide-y  overflow-x-scroll  ">
             <>
               {patrols?.length !== 0 ? (
                 <>
@@ -95,12 +88,13 @@ const Patrols = () => {
                             formattedTime(patrolInstance?.patrol?.starttime)}
                         </Table.Cell>
                         <Table.Cell>
-                          {patrolInstance.status === "pending" ? (
-                            <span className="text-green-400 uppercase">
+                          {patrolInstance.status === "pending" && (
+                            <span className="text-red-400 uppercase">
                               {patrolInstance.status}
                             </span>
-                          ) : (
-                            <span className="text-red-400">Completed</span>
+                          )}
+                          {patrolInstance.status === "completed" && (
+                            <span className="text-green-400">Completed</span>
                           )}
                           {/* <span className="block sm:hidden"> */}
                           <br />
@@ -108,6 +102,10 @@ const Patrols = () => {
                             {patrolInstance?.beat?.name}
                           </span>
                           {/* </span> */}
+                        </Table.Cell>
+                        <Table.Cell className="hidden sm:flex items-center justify-center">
+                          {patrolInstance?.createdAt &&
+                            formatDate(patrolInstance?.createdAt)}
                         </Table.Cell>
                         {/* <Table.Cell className="hidden sm:block">
                           <a
@@ -123,8 +121,11 @@ const Patrols = () => {
                 </>
               ) : (
                 <Table.Row>
-                  <Table.Cell>
-                    <p className="text-primary-500 justify-center items-center font-semibold text-center  min-h-64 ">
+                  <Table.Cell
+                    colSpan={3}
+                    className=" justify-center items-center py-10"
+                  >
+                    <p className="text-primary-500 justify-center items-center font-semibold text-center ">
                       No Patrols
                     </p>
                   </Table.Cell>

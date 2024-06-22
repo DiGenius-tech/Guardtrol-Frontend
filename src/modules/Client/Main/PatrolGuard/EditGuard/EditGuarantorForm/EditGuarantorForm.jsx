@@ -573,7 +573,7 @@ const EditGuarantorForm = (props) => {
                           <TextInputField
                             label="Identification number"
                             semibold_label={true}
-                            type="number"
+                            type="text"
                             id="identificationNumber"
                             required="required"
                             name="identificationNumber"

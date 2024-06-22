@@ -75,6 +75,7 @@ const TextInputField = (props) => {
 
             <input
               // ref={props.password_field_ref}
+
               type={props.passwordType}
               id={props.id}
               name={props.name}

@@ -47,7 +47,14 @@ const BankDetails = (props) => {
 
   const save = async (e) => {
     e.preventDefault();
-
+    console.log(formData.accountnumber.length);
+    if (formData.accountnumber.length !== 10) {
+      setValidationErrors({
+        ...validationErrors,
+        accountnumber: "Account number should be 10 digits",
+      });
+      return;
+    }
     const data = patch(`guard/banking/${guardId}`, formData, token).then(
       (data) => {
         if (data.status) {

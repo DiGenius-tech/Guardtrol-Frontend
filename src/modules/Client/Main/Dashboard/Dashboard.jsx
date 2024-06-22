@@ -1,5 +1,5 @@
 import { Card, Label, Select } from "flowbite-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Activities from "./Activities/Activities";
 import Patrols from "./Patrols/Patrols";
 import "./Dashboard.scss";
@@ -12,35 +12,86 @@ import { useGetGuardsQuery } from "../../../../redux/services/guards";
 import { useGetBeatsQuery } from "../../../../redux/services/beats";
 import userEvent from "@testing-library/user-event";
 import { useSelector } from "react-redux";
-import { selectUser } from "../../../../redux/selectors/auth";
+import { selectToken, selectUser } from "../../../../redux/selectors/auth";
+import { get } from "../../../../lib/methods";
+import { API_BASE_URL } from "../../../../constants/api";
 
 const Dashboard = () => {
   const user = useSelector(selectUser);
   const { data: timelineLogs } = useGetTimelineLogsQuery();
   const formatDate = (date) => format(new Date(date), "yyyy-MM-dd HH:mm:ss");
   const [filterStatus, setFilterStatus] = useState("All");
-  const [filterDate, setFilterDate] = useState("Today");
+  const [filterDate, setFilterDate] = useState("All");
+  const [filterPatrolDate, setFilterPatrolDate] = useState("All");
   const { data: guards } = useGetGuardsQuery();
   const { data: beats } = useGetBeatsQuery();
   // Function to render timeline logs
+  const [patrols, setPatrols] = useState();
+  const token = useSelector(selectToken);
+  const [filteredPatrols, setFilteredPatrols] = useState([]);
+  const [filterPatrolsType, setFilterPatrolsType] = useState();
+
+  const getPatrolInstances = async () => {
+    const res = await get(API_BASE_URL + "patrols/get-instances", token);
+    setPatrols(res);
+  };
+
+  useEffect(() => {
+    getPatrolInstances();
+  }, []);
+
+  useEffect(() => {
+    if (!patrols) return;
+    console.log(patrols);
+
+    let newfilteredPatrols = patrols;
+    if (filterPatrolDate !== "All") {
+      const today = new Date();
+      const yesterday = new Date(today);
+      yesterday.setDate(yesterday.getDate() - 1);
+
+      newfilteredPatrols = patrols?.filter((p) => {
+        const patrolDate = new Date(p.createdAt);
+        if (filterPatrolDate === "Today") {
+          return patrolDate.toDateString() === today.toDateString();
+        } else if (filterPatrolDate === "Yesterday") {
+          return patrolDate.toDateString() === yesterday.toDateString();
+        } else {
+          // Assuming filterPatrolDate is a specific date in "yyyy-MM-dd" format
+          return (
+            patrolDate.toDateString() ===
+            new Date(filterPatrolDate).toDateString()
+          );
+        }
+      });
+    } else {
+      newfilteredPatrols = patrols;
+    }
+
+    if (filterPatrolsType === "completed" || filterPatrolsType === "pending") {
+      setFilteredPatrols(
+        newfilteredPatrols?.filter((p) => p.status === filterPatrolsType)
+      );
+    } else {
+      setFilteredPatrols(newfilteredPatrols);
+    }
+  }, [filterPatrolsType, filterPatrolDate, patrols]);
+
   const filteredLogs = () => {
     if (!timelineLogs) return [];
 
     let filtered = timelineLogs;
 
     if (filterStatus === "All") {
-      return timelineLogs;
+      filtered = timelineLogs;
     }
 
     if (filterStatus === "Clock Action") {
-      console.log("first");
       filtered = filtered.filter((log) => {
         return filterStatus === "Clock Action"
           ? log.type === "Clock Action"
           : true;
       });
-
-      return filtered;
     }
 
     if (filterStatus === "Guard Action") {
@@ -49,33 +100,28 @@ const Dashboard = () => {
           ? log.type === "Guard Action"
           : true;
       });
-
-      return filtered;
     }
+
     if (filterStatus === "Patrol Action") {
       filtered = filtered.filter((log) => {
         return filterStatus === "Patrol Action"
           ? log.type === "Patrol Action"
           : true;
       });
-
-      return filtered;
     }
+
     if (filterStatus === "Shift Action") {
       filtered = filtered.filter((log) => {
         return filterStatus === "Shift Action"
           ? log.type === "Shift Action"
           : true;
       });
-
-      return filtered;
     }
 
     if (filterDate !== "All") {
       const today = new Date();
       const yesterday = new Date(today);
       yesterday.setDate(yesterday.getDate() - 1);
-
       filtered = filtered.filter((log) => {
         const logDate = new Date(log.createdAt);
         if (filterDate === "Today") {
@@ -200,10 +246,10 @@ const Dashboard = () => {
               <div className="max-w-md">
                 <Select
                   id="dates"
-                  required
                   value={filterDate}
                   onChange={(e) => setFilterDate(e.target.value)}
                 >
+                  <option value="All">All</option>
                   <option value="Today">Today</option>
                   <option value="Yesterday">Yesterday</option>
                   {/* Add other date options as needed */}
@@ -243,26 +289,33 @@ const Dashboard = () => {
             </div>
             <div className="flex items-center gap-2">
               <div className="max-w-md">
-                <Select id="dates" required>
-                  <option value={""} defaultValue>
-                    Today
-                  </option>
-                  <option value={""}>...</option>
+                <Select
+                  onChange={(e) => setFilterPatrolDate(e.target.value)}
+                  id="dates"
+                  required
+                >
+                  <option value="All">All</option>
+                  <option value="Today">Today</option>
+                  <option value="Yesterday">Yesterday</option>
                 </Select>
               </div>
-
               <div className="max-w-md">
-                <Select id="statuses" required>
+                <Select
+                  onChange={(e) => setFilterPatrolsType(e.target.value)}
+                  id="dates"
+                  required
+                >
                   <option value={""} defaultValue>
-                    All Statuses
+                    All
                   </option>
-                  <option value={""}>...</option>
+                  <option value={"completed"}>Completed</option>
+                  <option value={"pending"}>Pending</option>
                 </Select>
               </div>
             </div>
 
             <div>
-              <Patrols />
+              <Patrols patrols={filteredPatrols} />
             </div>
           </Card>
         </div>

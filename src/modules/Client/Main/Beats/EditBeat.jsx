@@ -1,4 +1,4 @@
-import { Modal } from "flowbite-react";
+import { Modal, ToggleSwitch } from "flowbite-react";
 import { useContext, useEffect, useState } from "react";
 import RegularButton from "../../../Sandbox/Buttons/RegularButton";
 import TextareaField from "../../../Sandbox/TextareaField/TextareaField";
@@ -11,7 +11,7 @@ import { useGetSubscriptionQuery } from "../../../../redux/services/subscription
 import { useSelector } from "react-redux";
 import { selectToken } from "../../../../redux/selectors/auth";
 
-function EditBeat(props) {
+function EditBeat({ beatToEdit, openModal, handleUpdateBeat, setOpenModal }) {
   const [validationErrors, setValidationErrors] = useState({});
   const token = useSelector(selectToken);
 
@@ -48,30 +48,30 @@ function EditBeat(props) {
       return;
     }
 
-    props.handleUpdateBeat(beat);
+    handleUpdateBeat(beat);
   };
 
   useEffect(() => {
-    // console.log("useEffect: ", props.beatToEdit)
-    if (props.beatToEdit) {
+    // console.log("useEffect: ", beatToEdit)
+    if (beatToEdit) {
       setBeat({
-        id: props.beatToEdit?._id,
-        beat_name: props.beatToEdit?.name,
-        address: props.beatToEdit?.address,
-        description: props.beatToEdit?.description,
+        id: beatToEdit?._id,
+        beat_name: beatToEdit?.name,
+        address: beatToEdit?.address,
+        description: beatToEdit?.description,
       });
     }
     return () => {};
-  }, [props.beatToEdit]);
+  }, [beatToEdit]);
   return (
     <>
       {/* edit-beat-app works! */}
 
-      <Modal show={props.openModal} onClose={() => props.setOpenModal(false)}>
+      <Modal show={openModal} onClose={() => setOpenModal(false)}>
         <Modal.Header>Edit beat</Modal.Header>
         <Modal.Body>
           <div className="space-y-6">
-            {/* {props.beatToEdit?.title} */}
+            {/* {beatToEdit?.title} */}
 
             <form method="post" onSubmit={saveBeat}>
               <div className="mb-6">
@@ -123,10 +123,7 @@ function EditBeat(props) {
                     padding="px-8 py-2.5"
                     textSize="sm"
                   />
-                  <button
-                    type="button"
-                    onClick={() => props.setOpenModal(false)}
-                  >
+                  <button type="button" onClick={() => setOpenModal(false)}>
                     Cancel
                   </button>
                 </div>

@@ -93,7 +93,11 @@ const ClientToolbar = (props) => {
                     ) : (
                       <img
                         className="h-8 w-8 rounded-full cursor-pointer"
-                        src={`${ASSET_URL + user?.image}`}
+                        src={
+                          user?.image.includes("https")
+                            ? user?.image
+                            : ASSET_URL + user?.image
+                        }
                         alt={"profile"}
                       />
                     )}
@@ -251,7 +255,13 @@ const ClientToolbar = (props) => {
                     {
                       <img
                         className="h-8 w-8 rounded-full cursor-pointer"
-                        src={`${ASSET_URL + user?.image}` || null}
+                        src={
+                          `${
+                            user?.image.includes("https")
+                              ? user?.image
+                              : ASSET_URL + user?.image
+                          }` || null
+                        }
                         alt={"profile"}
                       />
                     }

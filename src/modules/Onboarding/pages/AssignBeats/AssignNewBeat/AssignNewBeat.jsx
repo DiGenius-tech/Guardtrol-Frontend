@@ -230,8 +230,19 @@ function AssignNewBeat({ isOnboarding = true }) {
               optionList={initialFrequencyState}
             />
           </div> */}
+          <div className="flex justify-between items-center">
+            <RegularButton text="Save Changes" width="[150px]" />
 
-          <RegularButton text="Save Changes" />
+            <span
+              onClick={() => {
+                navigate(-1);
+              }}
+              to="assign-new-beat"
+              className="text-primary-500 font-semibold text-sm cursor-pointer"
+            >
+              Cancel
+            </span>
+          </div>
         </form>
       </div>
     </>

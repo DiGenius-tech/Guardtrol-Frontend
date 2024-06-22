@@ -100,7 +100,7 @@ const ClientSidebar = () => {
                 </span>
               </Link>
             </li>
-            <li>
+            {/* <li>
               <Link
                 to={history[0]}
                 className={
@@ -115,7 +115,7 @@ const ClientSidebar = () => {
                   History
                 </span>
               </Link>
-            </li>
+            </li> */}
             <li>
               <Link
                 to={patrol_guard[0]}
