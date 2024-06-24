@@ -28,7 +28,7 @@ const Patrols = ({ patrols }) => {
   }, []);
   return (
     <>
-      <div className="overflow-x-auto max-h-64 w-full">
+      <div className="overflow-x-auto max-h-64 min-h-64 w-full">
         <Table>
           <Table.Head>
             <Table.HeadCell>Guard name</Table.HeadCell>
@@ -37,58 +37,60 @@ const Patrols = ({ patrols }) => {
             <Table.HeadCell>Date</Table.HeadCell>
           </Table.Head>
           <Table.Body className="divide-y overflow-y-scroll">
-            {mpatrols ? (
-              mpatrols.map((patrolInstance) => (
-                <Table.Row
-                  className="bg-white dark:border-gray-700 dark:bg-gray-800"
-                  key={patrolInstance._id}
-                >
-                  <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
-                    <div className="flex items-center gap-2">
-                      <div className="h-8 w-8 rounded-full">
-                        <img
-                          src={`${
-                            ASSET_URL + patrolInstance?.guard?.profileImage
-                          }`}
-                          alt={patrolInstance?.guard?.name}
-                          className="w-full h-full object-cover rounded-full"
-                        />
-                      </div>
-                      {patrolInstance?.guard?.name}
-                      <span className="block">
-                        {patrolInstance?.patrol?.starttime &&
-                          formattedTime(patrolInstance?.patrol?.starttime)}
-                      </span>
+            {mpatrols?.map((patrolInstance) => (
+              <Table.Row
+                className="bg-white dark:border-gray-700 dark:bg-gray-800"
+                key={patrolInstance._id}
+              >
+                <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+                  <div className="flex items-center gap-2">
+                    <div className="h-8 w-8 rounded-full">
+                      <img
+                        src={`${
+                          ASSET_URL + patrolInstance?.guard?.profileImage
+                        }`}
+                        alt={patrolInstance?.guard?.name}
+                        className="w-full h-full object-cover rounded-full"
+                      />
                     </div>
-                  </Table.Cell>
-                  <Table.Cell className="text-center">
-                    {patrolInstance?.patrol?.starttime &&
-                      formattedTime(patrolInstance?.patrol?.starttime)}
-                  </Table.Cell>
-                  <Table.Cell>
-                    {patrolInstance.status === "pending" && (
-                      <span className="text-red-400 uppercase">
-                        {patrolInstance.status}
-                      </span>
-                    )}
-                    {patrolInstance.status === "completed" && (
-                      <span className="text-green-400">Completed</span>
-                    )}
-                    <br />
-                    <span className="whitespace-nowrap">
-                      {patrolInstance?.beat?.name}
+                    {patrolInstance?.guard?.name}
+                    <span className="block">
+                      {patrolInstance?.patrol?.starttime &&
+                        formattedTime(patrolInstance?.patrol?.starttime)}
                     </span>
-                  </Table.Cell>
-                  <Table.Cell className="text-center">
-                    {patrolInstance?.createdAt &&
-                      formatDate(patrolInstance?.createdAt)}
-                  </Table.Cell>
-                </Table.Row>
-              ))
-            ) : (
-              <Table.Row>
-                <Table.Cell colSpan={4} className="text-center">
-                  <p className="font-semibold">No Patrols</p>
+                  </div>
+                </Table.Cell>
+                <Table.Cell className="text-center">
+                  {patrolInstance?.patrol?.starttime &&
+                    formattedTime(patrolInstance?.patrol?.starttime)}
+                </Table.Cell>
+                <Table.Cell>
+                  {patrolInstance.status === "pending" && (
+                    <span className="text-red-400 uppercase">
+                      {patrolInstance.status}
+                    </span>
+                  )}
+                  {patrolInstance.status === "completed" && (
+                    <span className="text-green-400">Completed</span>
+                  )}
+                  <br />
+                  <span className="whitespace-nowrap">
+                    {patrolInstance?.beat?.name}
+                  </span>
+                </Table.Cell>
+                <Table.Cell className="text-center">
+                  {patrolInstance?.createdAt &&
+                    formatDate(patrolInstance?.createdAt)}
+                </Table.Cell>
+              </Table.Row>
+            ))}
+            {(mpatrols.length === 0 || !mpatrols) && (
+              <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
+                <Table.Cell
+                  colSpan={4}
+                  className="whitespace-nowrap font-medium  text-center text-gray-900 dark:text-white"
+                >
+                  {"No Patrols"}
                 </Table.Cell>
               </Table.Row>
             )}
