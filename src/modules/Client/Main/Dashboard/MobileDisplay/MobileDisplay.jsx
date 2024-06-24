@@ -15,10 +15,11 @@ function MobileDisplay() {
                   // color: isPending ? "red" : "black",
                   viewTransitionName: isTransitioning
                     ? "transform opacity-0 scale-95"
-                    : "transform opacity-100 scale-100"
+                    : "transform opacity-100 scale-100",
                 };
               }}
-              to="/client" end
+              to="/client"
+              end
               // to="activities"
               // to={[{ pathname: '/client' }, { pathname: 'activities' }]} end
               // className="flex items-center justify-center rounded-e-full rounded-s-full px-4 py-2 bg-white -mr-4"
@@ -38,7 +39,7 @@ function MobileDisplay() {
                   // viewTransitionName: isTransitioning ? "slide" : ""
                   viewTransitionName: isTransitioning
                     ? "transform opacity-0 scale-95"
-                    : "transform opacity-100 scale-100"
+                    : "transform opacity-100 scale-100",
                 };
               }}
               to={"patrols"}

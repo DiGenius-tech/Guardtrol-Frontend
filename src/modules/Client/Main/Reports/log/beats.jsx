@@ -2,11 +2,11 @@ import React, { useState, useEffect } from "react";
 import ReactApexChart from "react-apexcharts";
 import "tailwindcss/tailwind.css";
 import { useGetBeatsQuery } from "../../../../../redux/services/beats";
-import { Datepicker, Table } from "flowbite-react";
+import { Table } from "flowbite-react";
 import * as XLSX from "xlsx";
-import { PDFDocument, rgb } from "pdf-lib";
 import { format } from "date-fns";
 import { useGetTimelineLogsQuery } from "../../../../../redux/services/timelinelogs";
+import Pagination from "../../../../../shared/Pagination/Pagination"; // Adjust the import based on your project structure
 
 const BeatsLog = () => {
   const { data: allLogs } = useGetTimelineLogsQuery();
@@ -15,21 +15,9 @@ const BeatsLog = () => {
   const [endDate, setEndDate] = useState(null);
   const [selectedType, setSelectedType] = useState("");
   const [selectedBeat, setSelectedBeat] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [entriesPerPage, setEntriesPerPage] = useState(10);
   const { data: beats } = useGetBeatsQuery();
-
-  //  useEffect(() => {
-  // if (allLogs) {
-  //   setFilteredLogs(
-  //     allLogs.filter((log) => {
-  //       const logDate = new Date(log.timestamp);
-  //       return (
-  //         (!startDate || logDate >= new Date(startDate)) &&
-  //         (!endDate || logDate <= new Date(endDate))
-  //       );
-  //     })
-  //   );
-  // }
-  // }, [allLogs, startDate, endDate]);
 
   const handleDateChange = (date, type) => {
     if (type === "start") {
@@ -55,7 +43,7 @@ const BeatsLog = () => {
     });
 
     setFilteredLogs(newFilteredLogs);
-  }, [startDate, endDate, selectedType, selectedBeat]);
+  }, [allLogs, startDate, endDate, selectedType, selectedBeat]);
 
   const handleTypeChange = (e) => {
     setSelectedType(e.target.value);
@@ -70,7 +58,6 @@ const BeatsLog = () => {
       { header: "Type", key: "type" },
     ];
 
-    // Map the filteredLogs to the defined columns
     const data = filteredLogs.map((log) => ({
       date: format(new Date(log.createdAt), "yyyy-MM-dd HH:mm:ss"),
       user: log.user?.name || "Unknown",
@@ -95,7 +82,7 @@ const BeatsLog = () => {
         name: "Logs",
         data: filteredLogs?.map((log) => ({
           x: new Date(log.createdAt).getTime(),
-          y: 1, // You can customize this value based on your requirements
+          y: 1,
         })),
       },
     ],
@@ -109,15 +96,20 @@ const BeatsLog = () => {
     },
   };
 
+  // Pagination logic
+  const totalEntries = filteredLogs?.length || 0;
+  const indexOfLastEntry = currentPage * entriesPerPage;
+  const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
+  const currentLogs = filteredLogs?.slice(indexOfFirstEntry, indexOfLastEntry);
+
   return (
     <div className="container mx-auto">
       <section className="mb-6">
         <h2 className="text-xl font-semibold">Beats Log</h2>
       </section>
-      <div className="flex  flex-wrap gap-3">
+      <div className="flex flex-wrap gap-3">
         <input
           type="date"
-          label="Start Date"
           className="m-0 w-full sm:w-[48%] md:w-auto"
           selected={startDate}
           onChange={(e) => handleDateChange(e.target.value, "start")}
@@ -125,7 +117,6 @@ const BeatsLog = () => {
         <input
           type="date"
           className="m-0 w-full sm:w-[48%] md:w-auto"
-          label="End Date"
           selected={endDate}
           onChange={(e) => handleDateChange(e.target.value, "end")}
         />
@@ -145,13 +136,14 @@ const BeatsLog = () => {
         >
           <option value="">Select Beat</option>
           {beats?.map((beat) => (
-            <option value={beat?._id}>{beat?.name}</option>
+            <option key={beat?._id} value={beat?._id}>
+              {beat?.name}
+            </option>
           ))}
-          {/* Add other types as needed */}
         </select>
         <button
           onClick={exportToExcel}
-          className="bg-blue-500 text-white  h-[41.6px]  px-4 rounded w-full sm:w-[48%] md:w-auto"
+          className="bg-blue-500 text-white h-[41.6px] px-4 rounded w-full sm:w-[48%] md:w-auto"
         >
           Export to Excel
         </button>
@@ -161,20 +153,18 @@ const BeatsLog = () => {
         <Table>
           <Table.Head>
             <Table.HeadCell>Date</Table.HeadCell>
-            {/* <Table.HeadCell>User</Table.HeadCell> */}
             <Table.HeadCell>Message</Table.HeadCell>
             <Table.HeadCell>Beat</Table.HeadCell>
             <Table.HeadCell>Type</Table.HeadCell>
           </Table.Head>
           <Table.Body>
-            {filteredLogs
-              .filter((log) => log.beat)
+            {currentLogs
+              ?.filter((log) => log.beat)
               ?.map((log) => (
                 <Table.Row key={log._id}>
                   <Table.Cell>
                     {format(new Date(log.createdAt), "yyyy-MM-dd HH:mm:ss")}
                   </Table.Cell>
-                  {/* <Table.Cell>{log.user?.name || "Unknown"}</Table.Cell> */}
                   <Table.Cell>{log.message}</Table.Cell>
                   <Table.Cell>{log.beat?.name || "Unknown"}</Table.Cell>
                   <Table.Cell>{log.type}</Table.Cell>
@@ -183,7 +173,15 @@ const BeatsLog = () => {
           </Table.Body>
         </Table>
       </div>
-
+      <div className="relative mt-16">
+        <Pagination
+          totalEntries={totalEntries}
+          entriesPerPage={entriesPerPage}
+          currentPage={currentPage}
+          onPageChange={setCurrentPage}
+          onEntriesPerPageChange={setEntriesPerPage}
+        />
+      </div>
       <div className="mt-5">
         <ReactApexChart
           options={chartData.options}

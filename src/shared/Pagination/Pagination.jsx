@@ -19,7 +19,7 @@ const Pagination = ({
   };
 
   return (
-    <div className="flex items-center flex-wrap gap-4 absolute bottom-0 right-0">
+    <div className="flex items-center flex-wrap gap-4 absolute bottom-0 right-0 pl-5 pb-5">
       <div className="flex items-center gap-4">
         <div className="flex">
           <span className="text-center border border-gray-300 text-sm rounded-lg block min-w-8 h-8 p-2.5 pt-1.5">

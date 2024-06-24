@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Datepicker, Table } from "flowbite-react";
+import { Table } from "flowbite-react";
 import ReactApexChart from "react-apexcharts";
 import "tailwindcss/tailwind.css";
 import { useGetGuardsQuery } from "../../../../../redux/services/guards";
 import * as XLSX from "xlsx";
-import { PDFDocument, rgb } from "pdf-lib";
 import { useGetTimelineLogsQuery } from "../../../../../redux/services/timelinelogs";
 import { format } from "date-fns";
+import Pagination from "../../../../../shared/Pagination/Pagination"; // Adjust the import based on your project structure
 
 const GuardsLog = () => {
   const { data: allLogs } = useGetTimelineLogsQuery();
@@ -14,22 +14,23 @@ const GuardsLog = () => {
   const [endDate, setEndDate] = useState(null);
   const [selectedGuard, setSelectedGuard] = useState("");
   const [filteredLogs, setFilteredLogs] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [entriesPerPage, setEntriesPerPage] = useState(10);
   const { data: guards } = useGetGuardsQuery();
 
   useEffect(() => {
     if (allLogs) {
-      setFilteredLogs(
-        allLogs.filter((log) => {
-          const GuardId = log?.guard?._id;
-          const logDate = new Date(log.createdAt);
+      const newFilteredLogs = allLogs?.filter((log) => {
+        const logDate = new Date(log.createdAt);
+        const logType = log.type;
+        const GuardId = log?.guard?._id;
 
-          return selectedGuard
-            ? GuardId === selectedGuard
-            : true &&
-                (!startDate || logDate >= new Date(startDate)) &&
-                (!endDate || logDate <= new Date(endDate));
-        })
-      );
+        return (!startDate || logDate >= new Date(startDate)) && selectedGuard
+          ? GuardId === selectedGuard
+          : true && (!endDate || logDate <= new Date(endDate));
+      });
+
+      setFilteredLogs(newFilteredLogs);
     }
   }, [allLogs, startDate, endDate, selectedGuard]);
 
@@ -50,7 +51,6 @@ const GuardsLog = () => {
       { header: "Type", key: "type" },
     ];
 
-    // Map the filteredLogs to the defined columns
     const data = filteredLogs.map((log) => ({
       date: format(new Date(log.createdAt), "yyyy-MM-dd HH:mm:ss"),
       user: log.user?.name || "Unknown",
@@ -75,7 +75,7 @@ const GuardsLog = () => {
         name: "Logs",
         data: filteredLogs?.map((log) => ({
           x: new Date(log.createdAt).getTime(),
-          y: 1, // You can customize this value based on your requirements
+          y: 1,
         })),
       },
     ],
@@ -89,15 +89,21 @@ const GuardsLog = () => {
     },
   };
 
+  // Pagination logic
+  const totalEntries = filteredLogs?.length || 0;
+  const indexOfLastEntry = currentPage * entriesPerPage;
+  const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
+  const currentLogs = filteredLogs?.slice(indexOfFirstEntry, indexOfLastEntry);
+
+  console.log(totalEntries, indexOfLastEntry, indexOfFirstEntry, currentLogs);
   return (
     <div className="container mx-auto">
       <section className="mb-6">
         <h2 className="text-xl font-semibold">Guards Log</h2>
       </section>
-      <div className="flex  flex-wrap gap-3">
+      <div className="flex flex-wrap gap-3">
         <input
           type="date"
-          label="Start Date"
           className="m-0 w-full sm:w-[48%] md:w-auto"
           selected={startDate}
           onChange={(e) => handleDateChange(e.target.value, "start")}
@@ -105,25 +111,24 @@ const GuardsLog = () => {
         <input
           type="date"
           className="m-0 w-full sm:w-[48%] md:w-auto"
-          label="End Date"
           selected={endDate}
           onChange={(e) => handleDateChange(e.target.value, "end")}
         />
         <select
           defaultValue={selectedGuard}
-          // onChange={handleTypeChange}
           onChange={(e) => setSelectedGuard(e.target.value)}
           className="border px-2 h-[41.6px] rounded m-0 w-full sm:w-[48%] md:w-auto"
         >
           <option value="">Select Guard</option>
           {guards?.map((guard) => (
-            <option value={guard?._id}>{guard?.name}</option>
+            <option key={guard?._id} value={guard?._id}>
+              {guard?.name}
+            </option>
           ))}
-          {/* Add other types as needed */}
         </select>
         <button
           onClick={exportToExcel}
-          className="bg-blue-500 text-white  h-[41.6px]  px-4 rounded w-full sm:w-[48%] md:w-auto"
+          className="bg-blue-500 text-white h-[41.6px] px-4 rounded w-full sm:w-[48%] md:w-auto"
         >
           Export to Excel
         </button>
@@ -137,19 +142,26 @@ const GuardsLog = () => {
             <Table.HeadCell>Message</Table.HeadCell>
           </Table.Head>
           <Table.Body>
-            {filteredLogs
-              .filter((log) => log.guard)
-              .map((log) => (
-                <Table.Row key={log._id}>
-                  <Table.Cell>
-                    {format(new Date(log.createdAt), "yyyy-MM-dd HH:mm:ss")}
-                  </Table.Cell>
-                  <Table.Cell>{log?.guard?.name}</Table.Cell>
-                  <Table.Cell>{log.message}</Table.Cell>
-                </Table.Row>
-              ))}
+            {currentLogs.map((log) => (
+              <Table.Row key={log._id}>
+                <Table.Cell>
+                  {format(new Date(log.createdAt), "yyyy-MM-dd HH:mm:ss")}
+                </Table.Cell>
+                <Table.Cell>{log?.guard?.name}</Table.Cell>
+                <Table.Cell>{log.message}</Table.Cell>
+              </Table.Row>
+            ))}
           </Table.Body>
         </Table>
+      </div>
+      <div className="relative mt-16">
+        <Pagination
+          totalEntries={totalEntries}
+          entriesPerPage={entriesPerPage}
+          currentPage={currentPage}
+          onPageChange={setCurrentPage}
+          onEntriesPerPageChange={setEntriesPerPage}
+        />
       </div>
 
       <div className="mt-5">

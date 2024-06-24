@@ -18,17 +18,26 @@ import { API_BASE_URL } from "../../../../constants/api";
 
 const Dashboard = () => {
   const user = useSelector(selectUser);
-  const { data: timelineLogs } = useGetTimelineLogsQuery();
+  // const {
+  //   data: timelineLogs,
+  //   isUninitialized,
+  //   refetch: refetchLogs,
+  // } = useGetTimelineLogsQuery();
+
   const formatDate = (date) => format(new Date(date), "yyyy-MM-dd HH:mm:ss");
   const [filterStatus, setFilterStatus] = useState("All");
   const [filterDate, setFilterDate] = useState("All");
+
   const [filterPatrolDate, setFilterPatrolDate] = useState("All");
   const { data: guards } = useGetGuardsQuery();
   const { data: beats } = useGetBeatsQuery();
+
   // Function to render timeline logs
   const [patrols, setPatrols] = useState();
+  const [timelineLogs, setLogs] = useState();
   const token = useSelector(selectToken);
   const [filteredPatrols, setFilteredPatrols] = useState([]);
+
   const [filterPatrolsType, setFilterPatrolsType] = useState();
 
   const getPatrolInstances = async () => {
@@ -36,8 +45,14 @@ const Dashboard = () => {
     setPatrols(res);
   };
 
+  const getLogs = async () => {
+    const res = await get(API_BASE_URL + "logs", token);
+    setLogs(res);
+  };
+
   useEffect(() => {
     getPatrolInstances();
+    getLogs();
   }, []);
 
   useEffect(() => {
@@ -218,7 +233,7 @@ const Dashboard = () => {
               <div className="flex items-center mt-2">
                 <FaUser className="text-gray-600 dark:text-gray-400 text-2xl mr-2 mb-1" />
                 <p className="text-3xl  font-semibold text-gray-800 dark:text-gray-200">
-                  {guards?.length}
+                  {guards?.length || 0}
                 </p>
               </div>
             </StatsCard>
@@ -231,7 +246,7 @@ const Dashboard = () => {
               <div className="flex items-center mt-2">
                 <FaMap className="text-gray-600 mb-1 dark:text-gray-400 text-2xl mr-2" />
                 <p className="text-3xl font-semibold text-gray-800 dark:text-gray-200">
-                  {beats?.length}
+                  {beats?.length || 0}
                 </p>
               </div>
             </StatsCard>
@@ -314,7 +329,7 @@ const Dashboard = () => {
               </div>
             </div>
 
-            <div>
+            <div className="flex">
               <Patrols patrols={filteredPatrols} />
             </div>
           </Card>

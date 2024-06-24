@@ -82,8 +82,8 @@ const SettingShiftSchedule = () => {
           <div className="">
             <h3 className="font-bold">Shifts List</h3>
           </div>
-          <div className="">
-            <div className="grid grid-cols-12 gap-4 relative pb-16">
+          <div className=" ">
+            <div className="grid grid-cols-12 gap-4 relative pb-44 pb-16">
               <div className="col-span-12">
                 {paginatedShifts?.length > 0 ? (
                   <ul className="grid grid-cols-1 gap-2">
