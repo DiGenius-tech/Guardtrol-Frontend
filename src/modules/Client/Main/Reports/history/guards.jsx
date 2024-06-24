@@ -99,11 +99,11 @@ const GuardsHistory = () => {
     });
 
     const guardList = Object.values(guardAggregates).map((guard) => {
-      const totalClockInTime = guard?.clockInLogs.reduce(
+      const totalClockInTime = guard?.clockInLogs?.reduce(
         (acc, time) => acc + time,
         0
       );
-      const totalClockOutTime = guard?.clockOutLogs.reduce(
+      const totalClockOutTime = guard?.clockOutLogs?.reduce(
         (acc, time) => acc + time,
         0
       );

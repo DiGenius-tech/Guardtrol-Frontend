@@ -26,7 +26,7 @@ const BeatsMetrics = () => {
   const { data: beats } = useGetBeatsQuery();
 
   const beatStatusChartOptions = {
-    series: beats.reduce(
+    series: beats?.reduce(
       (acc, beat) => {
         if (beat.isactive) acc[0] += 1;
         else acc[1] += 1;

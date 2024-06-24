@@ -123,7 +123,7 @@ function InactivePatrolGuards() {
   );
 
   return (
-    <div div className="relative pb-16">
+    <div div className="relative  pb-40">
       <div className="hidden sm:block">
         <Card>
           <PatrolGuardListDesktopView
@@ -136,7 +136,7 @@ function InactivePatrolGuards() {
         </Card>
       </div>
 
-      <div className="sm:hidden rounded-lg bg-white p-2">
+      <div className="sm:hidden rounded-lg bg-white p-2 min-h-64">
         <PatrolGuardListMobileView
           duty_status={duty_status}
           icon_menu_dots={icon_menu_dots}

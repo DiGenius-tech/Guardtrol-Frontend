@@ -102,11 +102,11 @@ const BeatsHistory = () => {
     });
 
     const beatList = Object.values(beatAggregates).map((beat) => {
-      const totalClockInTime = beat.clockInLogs.reduce(
+      const totalClockInTime = beat.clockInLogs?.reduce(
         (acc, time) => acc + time,
         0
       );
-      const totalClockOutTime = beat.clockOutLogs.reduce(
+      const totalClockOutTime = beat.clockOutLogs?.reduce(
         (acc, time) => acc + time,
         0
       );
@@ -114,14 +114,14 @@ const BeatsHistory = () => {
       return {
         ...beat,
         avgClockInTime:
-          beat.clockInLogs.length > 0
-            ? new Date(totalClockInTime / beat.clockInLogs.length)
+          beat?.clockInLogs?.length > 0
+            ? new Date(totalClockInTime / beat?.clockInLogs.length)
                 .toISOString()
                 .substr(11, 8)
             : "N/A",
         avgClockOutTime:
           beat.clockOutLogs.length > 0
-            ? new Date(totalClockOutTime / beat.clockOutLogs.length)
+            ? new Date(totalClockOutTime / beat?.clockOutLogs.length)
                 .toISOString()
                 .substr(11, 8)
             : "N/A",

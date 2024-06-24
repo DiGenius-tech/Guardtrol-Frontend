@@ -144,7 +144,7 @@ function ActivePatrolGuards() {
   );
 
   return (
-    <div className="relative pb-16">
+    <div className="relative pb-32">
       {/* active-patrol-guards-app works! */}
       <div className="hidden sm:block">
         <Card>
@@ -157,7 +157,7 @@ function ActivePatrolGuards() {
           />
         </Card>
       </div>
-      <div className="sm:hidden rounded-lg bg-white p-2">
+      <div className="sm:hidden rounded-lg bg-white p-2 min-h-64">
         <PatrolGuardListMobileView
           duty_status={duty_status}
           handleDeleteGuard={handleDeleteGuard}

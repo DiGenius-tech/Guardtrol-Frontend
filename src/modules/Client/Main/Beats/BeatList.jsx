@@ -96,7 +96,7 @@ const BeatList = () => {
     currentPage * entriesPerPage
   );
   return (
-    <div className="relative pb-16">
+    <div className="relative  pb-40">
       <div className="fixed z-10 bottom-8 right-4">
         <Link
           to={"add"}
@@ -124,7 +124,7 @@ const BeatList = () => {
         </Card>
       </div>
 
-      <div className="sm:hidden">
+      <div className="sm:hidden  min-h-64">
         <BeatsMobileView
           beatList={beats}
           icon_menu_dots={icon_menu_dots}

@@ -53,7 +53,11 @@ function PatrolGuardListMobileView(props) {
                     <td className="p-2">
                       <div>
                         <div>
-                          <Link to={`details/${guard.id}`}>{guard.name}</Link>
+                          <Link
+                            to={`/client/patrol-guard/details/${guard._id}`}
+                          >
+                            {guard.name}
+                          </Link>
                         </div>
                         <small className="text-dark-250">{guard.email}</small>
                       </div>
