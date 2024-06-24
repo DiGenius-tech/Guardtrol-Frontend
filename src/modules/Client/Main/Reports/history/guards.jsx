@@ -12,6 +12,7 @@ import { selectToken } from "../../../../../redux/selectors/auth";
 import { format } from "date-fns";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
+import Pagination from "../../../../../shared/Pagination/Pagination";
 
 const GuardsHistory = () => {
   const { data: guards } = useGetGuardsQuery();
@@ -59,13 +60,13 @@ const GuardsHistory = () => {
   const calculateAggregates = () => {
     const guardAggregates = {};
 
-    filteredLogs.forEach((log) => {
-      const guardId = log.guard?._id;
+    filteredLogs?.forEach((log) => {
+      const guardId = log?.guard?._id;
       if (!guardId) return;
 
       if (!guardAggregates[guardId]) {
         guardAggregates[guardId] = {
-          guardName: log.guard?.name || "N/A",
+          guardName: log?.guard?.name || "N/A",
           totalPatrols: 0,
           totalClockInTime: 0,
           totalClockOutTime: 0,
@@ -75,22 +76,22 @@ const GuardsHistory = () => {
         };
       }
 
-      const clockInLog = logs.find(
+      const clockInLog = logs?.find(
         (log) =>
-          log.guard?._id === guardId && log.message.includes("clocked in")
+          log?.guard?._id === guardId && log?.message.includes("clocked in")
       );
-      const clockOutLog = logs.find(
+      const clockOutLog = logs?.find(
         (log) =>
-          log.guard?._id === guardId && log.message.includes("clockedout")
+          log?.guard?._id === guardId && log?.message.includes("clockedout")
       );
 
       if (clockInLog) {
         const clockInTime = new Date(clockInLog.createdAt).getTime();
-        guardAggregates[guardId].clockInLogs.push(clockInTime);
+        guardAggregates[guardId]?.clockInLogs.push(clockInTime);
       }
       if (clockOutLog) {
         const clockOutTime = new Date(clockOutLog.createdAt).getTime();
-        guardAggregates[guardId].clockOutLogs.push(clockOutTime);
+        guardAggregates[guardId]?.clockOutLogs.push(clockOutTime);
       }
 
       guardAggregates[guardId].totalPatrols += 1;
@@ -98,25 +99,25 @@ const GuardsHistory = () => {
     });
 
     const guardList = Object.values(guardAggregates).map((guard) => {
-      const totalClockInTime = guard.clockInLogs.reduce(
+      const totalClockInTime = guard?.clockInLogs.reduce(
         (acc, time) => acc + time,
         0
       );
-      const totalClockOutTime = guard.clockOutLogs.reduce(
+      const totalClockOutTime = guard?.clockOutLogs.reduce(
         (acc, time) => acc + time,
         0
       );
-      console.log(totalClockInTime / guard.clockInLogs.length);
+      console.log(totalClockInTime / guard?.clockInLogs.length);
       return {
         ...guard,
         avgClockInTime:
-          guard.clockInLogs.length > 0
+          guard?.clockInLogs.length > 0
             ? new Date(totalClockInTime / guard.clockInLogs.length)
                 .toISOString()
                 .substr(11, 8)
             : "N/A",
         avgClockOutTime:
-          guard.clockOutLogs.length > 0
+          guard?.clockOutLogs.length > 0
             ? new Date(totalClockOutTime / guard.clockOutLogs.length)
                 .toISOString()
                 .substr(11, 8)
@@ -240,6 +241,16 @@ const GuardsHistory = () => {
             <Table.HeadCell>Avg Clock Out</Table.HeadCell>
           </Table.Head>
           <Table.Body className="divide-y">
+            {displayedGuards?.length === 0 && (
+              <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
+                <Table.Cell
+                  colSpan={4}
+                  className="whitespace-nowrap font-medium  text-center text-gray-900 dark:text-white"
+                >
+                  {"No History"}
+                </Table.Cell>
+              </Table.Row>
+            )}
             {displayedGuards?.map((guard, index) => (
               <Table.Row
                 key={index}
@@ -256,6 +267,13 @@ const GuardsHistory = () => {
           </Table.Body>
         </Table>
       </div>
+      <Pagination
+        totalEntries={aggregatedData.length}
+        entriesPerPage={entriesPerPage}
+        currentPage={currentPage}
+        onPageChange={setCurrentPage}
+        onEntriesPerPageChange={setEntriesPerPage}
+      />
     </div>
   );
 };

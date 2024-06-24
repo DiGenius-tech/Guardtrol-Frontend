@@ -142,6 +142,16 @@ const GuardsLog = () => {
             <Table.HeadCell>Message</Table.HeadCell>
           </Table.Head>
           <Table.Body>
+            {currentLogs?.length === 0 && (
+              <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
+                <Table.Cell
+                  colSpan={3}
+                  className="whitespace-nowrap font-medium text-center text-gray-900 dark:text-white"
+                >
+                  {"No Logs"}
+                </Table.Cell>
+              </Table.Row>
+            )}
             {currentLogs.map((log) => (
               <Table.Row key={log._id}>
                 <Table.Cell>

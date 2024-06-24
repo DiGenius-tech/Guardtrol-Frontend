@@ -58,7 +58,7 @@ const BeatsLog = () => {
       { header: "Type", key: "type" },
     ];
 
-    const data = filteredLogs.map((log) => ({
+    const data = filteredLogs?.map((log) => ({
       date: format(new Date(log.createdAt), "yyyy-MM-dd HH:mm:ss"),
       user: log.user?.name || "Unknown",
       message: log.message,
@@ -158,18 +158,26 @@ const BeatsLog = () => {
             <Table.HeadCell>Type</Table.HeadCell>
           </Table.Head>
           <Table.Body>
-            {currentLogs
-              ?.filter((log) => log.beat)
-              ?.map((log) => (
-                <Table.Row key={log._id}>
-                  <Table.Cell>
-                    {format(new Date(log.createdAt), "yyyy-MM-dd HH:mm:ss")}
-                  </Table.Cell>
-                  <Table.Cell>{log.message}</Table.Cell>
-                  <Table.Cell>{log.beat?.name || "Unknown"}</Table.Cell>
-                  <Table.Cell>{log.type}</Table.Cell>
-                </Table.Row>
-              ))}
+            {(currentLogs?.length === 0 || !currentLogs) && (
+              <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
+                <Table.Cell
+                  colSpan={4}
+                  className="whitespace-nowrap font-medium  text-center text-gray-900 dark:text-white"
+                >
+                  {"No Logs"}
+                </Table.Cell>
+              </Table.Row>
+            )}
+            {currentLogs?.map((log) => (
+              <Table.Row key={log._id}>
+                <Table.Cell>
+                  {format(new Date(log.createdAt), "yyyy-MM-dd HH:mm:ss")}
+                </Table.Cell>
+                <Table.Cell>{log.message}</Table.Cell>
+                <Table.Cell>{log.beat?.name || "Unknown"}</Table.Cell>
+                <Table.Cell>{log.type}</Table.Cell>
+              </Table.Row>
+            ))}
           </Table.Body>
         </Table>
       </div>

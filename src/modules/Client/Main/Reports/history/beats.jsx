@@ -59,13 +59,13 @@ const BeatsHistory = () => {
   const calculateAggregates = () => {
     const beatAggregates = {};
 
-    filteredPatrols.forEach((patrol) => {
-      const beatId = patrol.beat?._id;
+    filteredPatrols?.forEach((patrol) => {
+      const beatId = patrol?.beat?._id;
       if (!beatId) return;
 
       if (!beatAggregates[beatId]) {
         beatAggregates[beatId] = {
-          beatName: patrol.beat?.name || "N/A",
+          beatName: patrol?.beat?.name || "N/A",
           totalPatrols: 0,
           totalClockInTime: 0,
           totalClockOutTime: 0,
@@ -77,24 +77,24 @@ const BeatsHistory = () => {
 
       const clockInLog = logs.find(
         (log) =>
-          log.guard?._id === patrol.guard?._id &&
-          log.beat?._id === beatId &&
+          log?.guard?._id === patrol?.guard?._id &&
+          log?.beat?._id === beatId &&
           log.message.includes("clocked in")
       );
       const clockOutLog = logs.find(
         (log) =>
-          log.guard?._id === patrol.guard?._id &&
-          log.beat?._id === beatId &&
-          log.message.includes("clockedout")
+          log?.guard?._id === patrol?.guard?._id &&
+          log?.beat?._id === beatId &&
+          log?.message.includes("clockedout")
       );
 
       if (clockInLog) {
         const clockInTime = new Date(clockInLog.createdAt).getTime();
-        beatAggregates[beatId].clockInLogs.push(clockInTime);
+        beatAggregates[beatId]?.clockInLogs.push(clockInTime);
       }
       if (clockOutLog) {
         const clockOutTime = new Date(clockOutLog.createdAt).getTime();
-        beatAggregates[beatId].clockOutLogs.push(clockOutTime);
+        beatAggregates[beatId]?.clockOutLogs.push(clockOutTime);
       }
 
       beatAggregates[beatId].totalPatrols += 1;
@@ -132,13 +132,13 @@ const BeatsHistory = () => {
   };
 
   const aggregatedData = calculateAggregates();
-  const displayedPatrols = aggregatedData.slice(
+  const displayedPatrols = aggregatedData?.slice(
     (currentPage - 1) * entriesPerPage,
     currentPage * entriesPerPage
   );
 
   const exportToExcel = () => {
-    const exclFormat = aggregatedData.map((aggregated) => {
+    const exclFormat = aggregatedData?.map((aggregated) => {
       return {
         beatName: aggregated?.name || "N/A",
         totalPatrols: aggregated?.totalPatrols,
@@ -227,6 +227,16 @@ const BeatsHistory = () => {
             <Table.HeadCell>Avg Clock-out Time</Table.HeadCell>
           </Table.Head>
           <Table.Body className="divide-y">
+            {displayedPatrols?.length === 0 && (
+              <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
+                <Table.Cell
+                  colSpan={4}
+                  className="whitespace-nowrap font-medium  text-center text-gray-900 dark:text-white"
+                >
+                  {"No History"}
+                </Table.Cell>
+              </Table.Row>
+            )}
             {displayedPatrols.map((beat, index) => (
               <Table.Row
                 key={index}
