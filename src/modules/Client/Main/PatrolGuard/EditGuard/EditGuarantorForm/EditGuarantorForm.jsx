@@ -16,6 +16,8 @@ import { patch } from "../../../../../../lib/methods";
 import { Formik } from "formik";
 import { FileInput } from "flowbite-react";
 import { useGetGuardsQuery } from "../../../../../../redux/services/guards";
+import { ASSET_URL } from "../../../../../../constants/api";
+import { FaFileAlt } from "react-icons/fa";
 
 const titleOptions = [
   {
@@ -589,6 +591,31 @@ const EditGuarantorForm = (props) => {
                           >
                             Upload Identification File
                           </label>
+                          {props.guard?.identificationFile && (
+                            <a
+                              target="_blank"
+                              href={`${
+                                ASSET_URL + props.guard?.identificationFile
+                              }`}
+                            >
+                              <div className="flex items-center mt-2 my-3">
+                                <div>
+                                  <FaFileAlt className="mr-2" size={"3rem"} />
+                                </div>
+                                <div>
+                                  <span>
+                                    {props.guard?.identificationType ||
+                                      "Previously uploaded file"}
+                                  </span>{" "}
+                                  <br />
+                                  <span>
+                                    {props.guard?.identificationNumber ||
+                                      "Previously uploaded file"}
+                                  </span>
+                                </div>
+                              </div>
+                            </a>
+                          )}
                           <FileInput
                             id="file"
                             onChange={handleFileChange}

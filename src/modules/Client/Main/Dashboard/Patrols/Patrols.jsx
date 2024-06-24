@@ -84,7 +84,7 @@ const Patrols = ({ patrols }) => {
                 </Table.Cell>
               </Table.Row>
             ))}
-            {(mpatrols.length === 0 || !mpatrols) && (
+            {(mpatrols?.length === 0 || !mpatrols) && (
               <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
                 <Table.Cell
                   colSpan={4}

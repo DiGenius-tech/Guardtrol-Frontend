@@ -14,6 +14,9 @@ import {
 import { patch } from "../../../../../../lib/methods";
 import { FileInput } from "flowbite-react";
 import { useGetGuardsQuery } from "../../../../../../redux/services/guards";
+import { FaFileAlt } from "react-icons/fa";
+import { ASSET_URL } from "../../../../../../constants/api";
+
 const identificationTypeOptions = [
   {
     name: "National Identification Number (NIN)",
@@ -55,7 +58,7 @@ const EditIdentification = (props) => {
   useEffect(() => {
     setFormData({
       idnumber: props.guard?.idnumber,
-      idname: identificationTypeOptions[props.guard?.idname],
+      idname: props.guard?.idname,
       guardIdentificationFile: props.guard?.identificationsFile,
     });
   }, [props]);
@@ -87,6 +90,8 @@ const EditIdentification = (props) => {
 
   const save = async (e) => {
     e.preventDefault();
+    console.log(formData);
+
     if (!formData.idname) {
       toast.warn("select a valid identification type");
       return;
@@ -106,7 +111,7 @@ const EditIdentification = (props) => {
       newFormData,
       token
     ).then((data) => {
-      if (data.status) {
+      if (data?.status) {
         toast("Identification Information Updated");
         //props.setGuard({})
         refetchGuards();
@@ -155,6 +160,27 @@ const EditIdentification = (props) => {
               <label htmlFor="fileUpload" className="semibold_label">
                 Upload Identification File
               </label>
+              {props.guard?.identificationsFile && (
+                <a
+                  target="_blank"
+                  href={`${ASSET_URL + props.guard?.identificationsFile}`}
+                >
+                  <div className="flex items-center mt-2 my-3">
+                    <div>
+                      <FaFileAlt className="mr-2" size={"3rem"} />
+                    </div>
+                    <div>
+                      <span>
+                        {props.guard?.idname || "Previously uploaded file"}
+                      </span>{" "}
+                      <br />
+                      <span>
+                        {props.guard?.idnumber || "Previously uploaded file"}
+                      </span>
+                    </div>
+                  </div>
+                </a>
+              )}
               <FileInput
                 id="file"
                 onChange={handleFileChange}

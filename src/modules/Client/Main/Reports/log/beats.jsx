@@ -28,18 +28,26 @@ const BeatsLog = () => {
   };
 
   useEffect(() => {
-    const newFilteredLogs = allLogs?.filter((log) => {
+    if (!allLogs) return;
+
+    // Parse date only once
+    const parsedStartDate = startDate ? new Date(startDate) : null;
+    const parsedEndDate = endDate ? new Date(endDate) : null;
+
+    const newFilteredLogs = allLogs.filter((log) => {
       const logDate = new Date(log.createdAt);
       const logType = log.type;
-      const BeatId = log?.beat?._id;
+      const beatId = log?.beat?._id;
 
-      return (!startDate || logDate >= new Date(startDate)) &&
-        (!logType || selectedType) === selectedType &&
-        selectedBeat
-        ? BeatId === selectedBeat
-        : true && selectedType
-        ? logType === selectedType
-        : true && (!endDate || logDate <= new Date(endDate));
+      const dateCondition =
+        (!parsedStartDate || logDate >= parsedStartDate) &&
+        (!parsedEndDate || logDate <= parsedEndDate);
+
+      const typeCondition = !selectedType || logType === selectedType;
+
+      const beatCondition = !selectedBeat || beatId === selectedBeat;
+
+      return dateCondition && typeCondition && beatCondition;
     });
 
     setFilteredLogs(newFilteredLogs);

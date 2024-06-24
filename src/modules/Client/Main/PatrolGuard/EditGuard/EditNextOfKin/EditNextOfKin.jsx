@@ -11,6 +11,8 @@ import { selectAuth } from "../../../../../../redux/selectors/auth";
 import { patch } from "../../../../../../lib/methods";
 import { FileInput } from "flowbite-react";
 import { useGetGuardsQuery } from "../../../../../../redux/services/guards";
+import { FaFileAlt } from "react-icons/fa";
+import { ASSET_URL } from "../../../../../../constants/api";
 
 const identificationTypeOptions = [
   {
@@ -61,6 +63,7 @@ const EditNextOfKin = (props) => {
       idname: props.guard?.idname,
       phone: props.guard?.phone,
       relationship: props.guard?.relationship,
+      nextofkinIdentificationFile: props.guard?.nextofkinIdentificationFile,
     });
   }, [props]);
 
@@ -199,6 +202,29 @@ const EditNextOfKin = (props) => {
                 <label htmlFor="fileUpload" className="semibold_label">
                   Upload Identification File
                 </label>
+                {props.guard?.nextofkinIdentificationFile && (
+                  <a
+                    target="_blank"
+                    href={`${
+                      ASSET_URL + props.guard?.nextofkinIdentificationFile
+                    }`}
+                  >
+                    <div className="flex items-center mt-2 my-3">
+                      <div>
+                        <FaFileAlt className="mr-2" size={"3rem"} />
+                      </div>
+                      <div>
+                        <span>
+                          {props.guard?.idname || "Previously uploaded file"}
+                        </span>{" "}
+                        <br />
+                        <span>
+                          {props.guard?.idnumber || "Previously uploaded file"}
+                        </span>
+                      </div>
+                    </div>
+                  </a>
+                )}
                 <FileInput
                   id="file"
                   onChange={handleFileChange}

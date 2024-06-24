@@ -18,7 +18,7 @@ import {
   useUpdateGuardMutation,
 } from "../../../../../redux/services/guards";
 import { useGetBeatsQuery } from "../../../../../redux/services/beats";
-import { get, put } from "../../../../../lib/methods";
+import { get, patch, put } from "../../../../../lib/methods";
 import {
   suspenseHide,
   suspenseShow,
@@ -148,17 +148,17 @@ const PatrolGuardDetails = () => {
       updatedat: Date.now(),
     };
 
-    const data = sendRequest(`guard/comment/${guardId}`, "PATCH", commentData, {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    }).then((data) => {
-      if (data?.status) {
-        toast("Comment Updated");
-        setIsComment(false);
-        // setGuard({});
-        // handleSentRequest();
+    const data = patch(`guard/comment/${guardId}`, commentData, token).then(
+      async (data) => {
+        if (data?.status) {
+          toast("Comment Updated");
+          setIsComment(false);
+          await refetchGuards();
+          // setGuard({});
+          // handleSentRequest();
+        }
       }
-    });
+    );
   };
 
   // const getSelectedFile = (event) => {
@@ -316,7 +316,6 @@ const PatrolGuardDetails = () => {
 
                 <div className="my-2"></div>
                 <small className="text-dark-250 font-semibold">
-                  - {auth?.user?.name},{" "}
                   {moment(guard?.comment?.updatedat).format("h:mm a ddd D MMM")}
                 </small>
                 <div className="my-4"></div>
