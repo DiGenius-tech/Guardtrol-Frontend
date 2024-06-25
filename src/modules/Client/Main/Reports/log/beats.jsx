@@ -111,7 +111,7 @@ const BeatsLog = () => {
   const currentLogs = filteredLogs?.slice(indexOfFirstEntry, indexOfLastEntry);
 
   return (
-    <div className="container mx-auto">
+    <div className="container mx-auto relative min-h-[450px]  ">
       <section className="mb-6">
         <h2 className="text-xl font-semibold">Beats Log</h2>
       </section>
@@ -157,7 +157,7 @@ const BeatsLog = () => {
         </button>
       </div>
 
-      <div className="overflow-x-scroll max-h-96 mt-5">
+      <div className="overflow-x-scroll max-h-96 mt-5 mb-40">
         <Table>
           <Table.Head>
             <Table.HeadCell>Date</Table.HeadCell>

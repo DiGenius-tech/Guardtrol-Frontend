@@ -174,7 +174,7 @@ const BeatsHistory = () => {
     doc.save("beats_history.pdf");
   };
   return (
-    <div className="container mx-auto relative min-h-[450px]">
+    <div className="container mx-auto relative min-h-[450px]  pb-36">
       <section className="mb-6">
         <h2 className="text-xl font-semibold">Beats History</h2>
         <div className="flex space-x-4 mt-4">
@@ -218,7 +218,7 @@ const BeatsHistory = () => {
           Export to PDF
         </button>
       </div>
-      <div className="overflow-x-auto mt-5">
+      <div className="overflow-x-auto mt-5 mb-40">
         <Table striped>
           <Table.Head>
             <Table.HeadCell>Beat name</Table.HeadCell>

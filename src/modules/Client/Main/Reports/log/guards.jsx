@@ -97,7 +97,7 @@ const GuardsLog = () => {
 
   console.log(totalEntries, indexOfLastEntry, indexOfFirstEntry, currentLogs);
   return (
-    <div className="container mx-auto">
+    <div className="container mx-auto relative min-h-[450px] ">
       <section className="mb-6">
         <h2 className="text-xl font-semibold">Guards Log</h2>
       </section>
@@ -134,7 +134,7 @@ const GuardsLog = () => {
         </button>
       </div>
 
-      <div className="overflow-x-scroll max-h-96 mt-5">
+      <div className="overflow-x-scroll max-h-96 mt-5 mb-40">
         <Table>
           <Table.Head>
             <Table.HeadCell>Date</Table.HeadCell>

@@ -6,30 +6,6 @@ import { get } from "../../../../../lib/methods";
 import { API_BASE_URL } from "../../../../../constants/api";
 import { format } from "date-fns";
 
-const activityList = [
-  {
-    id: 1,
-    time: "9:00AM",
-    title: "Totam optio illo",
-    body: "Totam optio illo unde quod dolore quisquam minima distinctio voluptate alias. Magnam enim temporibus, voluptas voluptate quibusdam commodi.",
-    activityStatus: 1900,
-  },
-  {
-    id: 2,
-    time: "9:00AM",
-    title: "Thomas Prosper Clocked Out",
-    body: "“The electrician came to check the devices that developed fault in the compound and he said he’ll be come back tomorrow to fix it, please me see to the device is fixed”",
-    activityStatus: 1800,
-  },
-  {
-    id: 3,
-    time: "9:00AM",
-    title: "Thomas Prosper has taken a break",
-    body: "",
-    activityStatus: 1000,
-  },
-];
-
 const activity_status = {
   CLOCKED_ACTION: "Clock Action",
 };
@@ -78,9 +54,7 @@ const Activities = () => {
                     }`}
                         role="alert"
                       >
-                        <h3 className="title font-semibold">
-                          {activity.title}
-                        </h3>
+                        <h3 className="title font-semibold">{activity.type}</h3>
                         <p className="body">{activity.message}</p>
                       </div>
                     </div>

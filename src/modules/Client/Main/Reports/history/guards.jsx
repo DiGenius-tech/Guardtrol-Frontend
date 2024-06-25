@@ -220,19 +220,22 @@ const GuardsHistory = () => {
           />
         </div>
       </section>
-      <button
-        onClick={exportToExcel}
-        className="bg-blue-500 text-white py-2 px-4 rounded mt-4"
-      >
-        Export to Excel
-      </button>
-      <button
-        onClick={exportToPdf}
-        className="bg-red-500 text-white py-2 px-4 rounded mt-4 ml-4"
-      >
-        Export to PDF
-      </button>
-      <div className=" max-h-80 mt-5">
+      <div className="gap-3 flex">
+        <button
+          onClick={exportToExcel}
+          className="bg-blue-500 text-white py-2 px-4 rounded mt-4"
+        >
+          Export to Excel
+        </button>
+        <button
+          onClick={exportToPdf}
+          className="bg-red-500 text-white py-2 px-4 rounded mt-4 ml-4"
+        >
+          Export to PDF
+        </button>
+      </div>
+
+      <div className=" max-h-80 mt-5 mb-40">
         <Table striped>
           <Table.Head>
             <Table.HeadCell>Guard name</Table.HeadCell>

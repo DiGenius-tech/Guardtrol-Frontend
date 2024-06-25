@@ -215,13 +215,13 @@ const Dashboard = () => {
 
   return (
     <>
-      <div className="md:hidden">
-        <MobileDisplay />
-      </div>
       <div className="flex flex-col md:flex-row md:justify-between items-center">
         <h1 className="text-4xl font-bold tracking-tight text-gray-900 dark:text-white">
           Welcome, {user?.name || "User"}!
         </h1>
+      </div>
+      <div className="md:hidden">
+        <MobileDisplay />
       </div>
       <div className="hidden md:grid grid-cols-12 gap-4">
         <div className="grid grid-cols-4 col-span-12 gap-4">
