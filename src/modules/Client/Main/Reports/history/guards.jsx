@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Datepicker, Table, TextInput } from "flowbite-react"; // Assuming Input component for search
+import { Button, Datepicker, Spinner, Table, TextInput } from "flowbite-react"; // Assuming Input component for search
 import ReactApexChart from "react-apexcharts";
 import "tailwindcss/tailwind.css";
 import { useGetGuardsQuery } from "../../../../../redux/services/guards";
@@ -24,6 +24,7 @@ const GuardsHistory = () => {
   const token = useSelector(selectToken);
   const [currentPage, setCurrentPage] = useState(1);
   const [entriesPerPage, setEntriesPerPage] = useState(10);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     getLogs();
@@ -34,9 +35,15 @@ const GuardsHistory = () => {
   }, [startDate, endDate, guards]);
 
   const getLogs = async () => {
-    const res = await get(API_BASE_URL + "logs", token);
-    setLogs(res);
-    setFilteredLogs(res);
+    try {
+      setLoading(true);
+      const res = await get(API_BASE_URL + "logs", token);
+      setLogs(res);
+      setFilteredLogs(res);
+    } catch (error) {
+    } finally {
+      setLoading(false);
+    }
   };
 
   const filterLogs = () => {
@@ -45,7 +52,7 @@ const GuardsHistory = () => {
     if (startDate && endDate) {
       filtered = filtered.filter((log) => {
         const logDate = new Date(log.createdAt);
-        return logDate >= startDate && logDate <= endDate;
+        return logDate >= new Date(startDate) && logDate <= new Date(endDate);
       });
     }
 
@@ -201,39 +208,57 @@ const GuardsHistory = () => {
     <div className="container mx-auto relative min-h-[450px]">
       <section className="mb-6">
         <h2 className="text-xl font-semibold">Guards History</h2>
-        <div className="flex space-x-4 mt-4">
-          <Datepicker
-            selected={startDate}
-            onChange={(date) => setStartDate(date)}
-            placeholderText="Start Date"
+        <div className="flex gap-2 mt-4">
+          <input
+            className="border-gray-300 rounded-md"
+            type="date"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
           />
-          <Datepicker
-            selected={endDate}
-            onChange={(date) => setEndDate(date)}
-            placeholderText="End Date"
+          <input
+            className="border-gray-300 rounded-md"
+            type="date"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
           />
+
           <TextInput
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search by Guard Name"
           />
+          <button
+            onClick={exportToExcel}
+            className="bg-blue-500 text-white px-4 rounded "
+          >
+            Export to Excel
+          </button>
+          <button
+            onClick={exportToPdf}
+            className="bg-red-500 text-white px-4 rounded  "
+          >
+            Export to PDF
+          </button>
+          <Button
+            color={"green"}
+            onClick={getLogs}
+            className="bg-green-500 text-white px-4 rounded"
+            disabled={loading}
+          >
+            {loading ? (
+              <Spinner
+                aria-label="Loading spinner"
+                className="mr-2"
+                size="sm"
+                light
+              />
+            ) : (
+              "Refresh"
+            )}
+          </Button>
         </div>
       </section>
-      <div className="gap-3 flex">
-        <button
-          onClick={exportToExcel}
-          className="bg-blue-500 text-white py-2 px-4 rounded mt-4"
-        >
-          Export to Excel
-        </button>
-        <button
-          onClick={exportToPdf}
-          className="bg-red-500 text-white py-2 px-4 rounded mt-4 ml-4"
-        >
-          Export to PDF
-        </button>
-      </div>
 
       <div className=" max-h-80 mt-5 mb-40">
         <Table striped>

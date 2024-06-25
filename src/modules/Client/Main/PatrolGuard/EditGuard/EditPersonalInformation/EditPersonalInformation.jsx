@@ -68,12 +68,12 @@ const EditPersonalInformation = (props) => {
   const [validationErrors, setValidationErrors] = useState({});
 
   const [formData, setFormData] = useState({
-    name: "",
-    height: "",
-    dob: "",
-    sex: "",
-    altphone: "",
-    state: "",
+    name: props.guard?.name || "",
+    height: props.guard?.personalinformation?.height || "",
+    dob: props.guard?.personalinformation?.dob || "",
+    sex: props.guard?.personalinformation?.sex || "",
+    altphone: props.guard?.personalinformation?.altphone || "",
+    state: props.guard?.personalinformation?.state || "",
   });
 
   useEffect(() => {
@@ -136,7 +136,7 @@ const EditPersonalInformation = (props) => {
       }
     });
   };
-
+  console.log(formData);
   return (
     <>
       {/* edit-personal-information-app works! */}
@@ -194,6 +194,7 @@ const EditPersonalInformation = (props) => {
                 <SelectField
                   name="sex"
                   id="sex"
+                  defaultValue={props.guard?.personalinformation?.sex || ""}
                   value={formData?.sex || ""}
                   label="Sex"
                   semibold_label={true}
@@ -207,6 +208,7 @@ const EditPersonalInformation = (props) => {
                   value={formData?.state || ""}
                   name="state"
                   id="state"
+                  defaultValue={props.guard?.personalinformation?.state || ""}
                   label="State of origin"
                   semibold_label={true}
                   handleChangeOption={handleSelectChange}

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "tailwindcss/tailwind.css";
 import { useSelector } from "react-redux";
-import { Datepicker, Table, Select } from "flowbite-react";
+import { Datepicker, Table, Select, Button, Spinner } from "flowbite-react";
 import { useGetBeatsQuery } from "../../../../../redux/services/beats";
 import { useGetGuardsQuery } from "../../../../../redux/services/guards";
 import { get } from "../../../../../lib/methods";
@@ -23,11 +23,12 @@ const BeatsHistory = () => {
   const [selectedBeat, setSelectedBeat] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [entriesPerPage, setEntriesPerPage] = useState(10);
+  const [loading, setLoading] = useState(false);
 
   const token = useSelector(selectToken);
-
-  useEffect(() => {
-    const fetchData = async () => {
+  const fetchData = async () => {
+    try {
+      setLoading(true);
       const patrolInstances = await get(
         API_BASE_URL + "patrols/get-instances",
         token
@@ -37,7 +38,12 @@ const BeatsHistory = () => {
 
       const logData = await get(API_BASE_URL + "logs", token);
       setLogs(logData);
-    };
+    } catch (error) {
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
     fetchData();
   }, [token]);
 
@@ -49,12 +55,20 @@ const BeatsHistory = () => {
         (patrol) => patrol.beat && patrol.beat._id === selectedBeat
       );
     }
+
+    if (startDate && endDate) {
+      filteredData = filteredData.filter((patrol) => {
+        const logDate = new Date(patrol.createdAt);
+        return logDate >= new Date(startDate) && logDate <= new Date(endDate);
+      });
+    }
+
     setFilteredPatrols(filteredData);
   };
 
   useEffect(() => {
     handleFilterChange();
-  }, [selectedBeat]);
+  }, [selectedBeat, startDate, endDate]);
 
   const calculateAggregates = () => {
     const beatAggregates = {};
@@ -110,7 +124,6 @@ const BeatsHistory = () => {
         (acc, time) => acc + time,
         0
       );
-      console.log(totalClockInTime / beat.clockInLogs.length);
       return {
         ...beat,
         avgClockInTime:
@@ -177,16 +190,18 @@ const BeatsHistory = () => {
     <div className="container mx-auto relative min-h-[450px]  pb-36">
       <section className="mb-6">
         <h2 className="text-xl font-semibold">Beats History</h2>
-        <div className="flex space-x-4 mt-4">
-          <Datepicker
-            selected={startDate}
-            onChange={(date) => setStartDate(date)}
-            placeholderText="Start Date"
+        <div className="flex gap-2 mt-4">
+          <input
+            className="border-gray-300 rounded-md"
+            type="date"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
           />
-          <Datepicker
-            selected={endDate}
-            onChange={(date) => setEndDate(date)}
-            placeholderText="End Date"
+          <input
+            className="border-gray-300 rounded-md"
+            type="date"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
           />
 
           <Select
@@ -202,22 +217,37 @@ const BeatsHistory = () => {
               </option>
             ))}
           </Select>
+          <button
+            onClick={exportToExcel}
+            className="bg-blue-500 text-white  px-4 rounded "
+          >
+            Export to Excel
+          </button>
+          <button
+            onClick={exportToPdf}
+            className="bg-red-500 text-white  px-4 rounded "
+          >
+            Export to PDF
+          </button>
+          <Button
+            color={"green"}
+            onClick={fetchData}
+            className="bg-green-500 text-white px-4 rounded"
+            disabled={loading}
+          >
+            {loading ? (
+              <Spinner
+                aria-label="Loading spinner"
+                className="mr-2"
+                size="sm"
+                light
+              />
+            ) : (
+              "Refresh"
+            )}
+          </Button>
         </div>
       </section>
-      <div>
-        <button
-          onClick={exportToExcel}
-          className="bg-blue-500 text-white py-2 px-4 rounded mt-4"
-        >
-          Export to Excel
-        </button>
-        <button
-          onClick={exportToPdf}
-          className="bg-red-500 text-white py-2 px-4 rounded mt-4 ml-4"
-        >
-          Export to PDF
-        </button>
-      </div>
       <div className="overflow-x-auto mt-5 mb-40">
         <Table striped>
           <Table.Head>

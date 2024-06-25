@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Table } from "flowbite-react";
+import { Button, Spinner, Table } from "flowbite-react";
 import ReactApexChart from "react-apexcharts";
 import "tailwindcss/tailwind.css";
 import { useGetGuardsQuery } from "../../../../../redux/services/guards";
@@ -9,7 +9,7 @@ import { format } from "date-fns";
 import Pagination from "../../../../../shared/Pagination/Pagination"; // Adjust the import based on your project structure
 
 const GuardsLog = () => {
-  const { data: allLogs } = useGetTimelineLogsQuery();
+  const { data: allLogs, refetch, isFetching } = useGetTimelineLogsQuery();
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [selectedGuard, setSelectedGuard] = useState("");
@@ -101,23 +101,23 @@ const GuardsLog = () => {
       <section className="mb-6">
         <h2 className="text-xl font-semibold">Guards Log</h2>
       </section>
-      <div className="flex flex-wrap gap-3">
+      <div className="flex flex-wrap gap-2">
         <input
           type="date"
-          className="m-0 w-full sm:w-[48%] md:w-auto"
+          className="m-0 w-full sm:w-[48%] md:w-auto border-gray-300 rounded-md"
           selected={startDate}
           onChange={(e) => handleDateChange(e.target.value, "start")}
         />
         <input
           type="date"
-          className="m-0 w-full sm:w-[48%] md:w-auto"
+          className="m-0 w-full sm:w-[48%] md:w-auto border-gray-300 rounded-md"
           selected={endDate}
           onChange={(e) => handleDateChange(e.target.value, "end")}
         />
         <select
           defaultValue={selectedGuard}
           onChange={(e) => setSelectedGuard(e.target.value)}
-          className="border px-2 h-[41.6px] rounded m-0 w-full sm:w-[48%] md:w-auto"
+          className="border px-2 h-[41.6px] border-gray-300 rounded-md m-0 w-full sm:w-[48%] md:w-auto"
         >
           <option value="">Select Guard</option>
           {guards?.map((guard) => (
@@ -132,6 +132,23 @@ const GuardsLog = () => {
         >
           Export to Excel
         </button>
+        <Button
+          color={"green"}
+          onClick={refetch}
+          className="bg-green-500 text-white px-4 rounded"
+          disabled={isFetching}
+        >
+          {isFetching ? (
+            <Spinner
+              aria-label="Loading spinner"
+              className="mr-2"
+              size="sm"
+              light
+            />
+          ) : (
+            "Refresh"
+          )}
+        </Button>
       </div>
 
       <div className="overflow-x-scroll max-h-96 mt-5 mb-40">

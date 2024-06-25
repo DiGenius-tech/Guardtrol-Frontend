@@ -2,14 +2,14 @@ import React, { useState, useEffect } from "react";
 import ReactApexChart from "react-apexcharts";
 import "tailwindcss/tailwind.css";
 import { useGetBeatsQuery } from "../../../../../redux/services/beats";
-import { Table } from "flowbite-react";
+import { Button, Spinner, Table } from "flowbite-react";
 import * as XLSX from "xlsx";
 import { format } from "date-fns";
 import { useGetTimelineLogsQuery } from "../../../../../redux/services/timelinelogs";
 import Pagination from "../../../../../shared/Pagination/Pagination"; // Adjust the import based on your project structure
 
 const BeatsLog = () => {
-  const { data: allLogs } = useGetTimelineLogsQuery();
+  const { data: allLogs, refetch, isFetching } = useGetTimelineLogsQuery();
   const [startDate, setStartDate] = useState(null);
   const [filteredLogs, setFilteredLogs] = useState([]);
   const [endDate, setEndDate] = useState(null);
@@ -115,23 +115,24 @@ const BeatsLog = () => {
       <section className="mb-6">
         <h2 className="text-xl font-semibold">Beats Log</h2>
       </section>
-      <div className="flex flex-wrap gap-3">
+      <div className="flex flex-wrap gap-2">
         <input
+          className="border-gray-300 rounded-md"
           type="date"
-          className="m-0 w-full sm:w-[48%] md:w-auto"
           selected={startDate}
           onChange={(e) => handleDateChange(e.target.value, "start")}
         />
+
         <input
           type="date"
-          className="m-0 w-full sm:w-[48%] md:w-auto"
+          className="border-gray-300 rounded-md"
           selected={endDate}
           onChange={(e) => handleDateChange(e.target.value, "end")}
         />
         <select
           defaultValue={selectedType}
           onChange={handleTypeChange}
-          className="border px-2 h-[41.6px] rounded m-0 w-full sm:w-[48%] md:w-auto"
+          className="border px-2 h-[41.6px] border-gray-300 rounded-md m-0 w-full sm:w-[48%] md:w-auto"
         >
           <option value="">All Types</option>
           <option value="Clock Action">Clock Action</option>
@@ -140,7 +141,7 @@ const BeatsLog = () => {
         <select
           defaultValue={selectedBeat}
           onChange={(e) => setSelectedBeat(e.target.value)}
-          className="border px-2 h-[41.6px] rounded m-0 w-full sm:w-[48%] md:w-auto"
+          className="border px-2 h-[41.6px] border-gray-300 rounded-md m-0 w-full sm:w-[48%] md:w-auto"
         >
           <option value="">Select Beat</option>
           {beats?.map((beat) => (
@@ -155,6 +156,23 @@ const BeatsLog = () => {
         >
           Export to Excel
         </button>
+        <Button
+          color={"green"}
+          onClick={refetch}
+          className="bg-green-500 text-white px-4 rounded"
+          disabled={isFetching}
+        >
+          {isFetching ? (
+            <Spinner
+              aria-label="Loading spinner"
+              className="mr-2"
+              size="sm"
+              light
+            />
+          ) : (
+            "Refresh"
+          )}
+        </Button>
       </div>
 
       <div className="overflow-x-scroll max-h-96 mt-5 mb-40">
