@@ -257,7 +257,22 @@ const BeatsHistory = () => {
             <Table.HeadCell>Avg Clock-out Time</Table.HeadCell>
           </Table.Head>
           <Table.Body className="divide-y">
-            {displayedPatrols?.length === 0 && (
+            {loading && (
+              <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
+                <Table.Cell
+                  colSpan={4}
+                  className="whitespace-nowrap  font-medium  text-center text-gray-900 dark:text-white"
+                >
+                  <div className="w-full h-full justify-center flex items-center">
+                    <Spinner
+                      color="success"
+                      aria-label="Success spinner example"
+                    />
+                  </div>
+                </Table.Cell>
+              </Table.Row>
+            )}
+            {!loading && displayedPatrols?.length === 0 && (
               <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
                 <Table.Cell
                   colSpan={4}
@@ -267,19 +282,20 @@ const BeatsHistory = () => {
                 </Table.Cell>
               </Table.Row>
             )}
-            {displayedPatrols.map((beat, index) => (
-              <Table.Row
-                key={index}
-                className="bg-white dark:border-gray-700 dark:bg-gray-800"
-              >
-                <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
-                  {beat.beatName}
-                </Table.Cell>
-                <Table.Cell>{beat.totalPatrols}</Table.Cell>
-                <Table.Cell>{beat.avgClockInTime}</Table.Cell>
-                <Table.Cell>{beat.avgClockOutTime}</Table.Cell>
-              </Table.Row>
-            ))}
+            {!loading &&
+              displayedPatrols.map((beat, index) => (
+                <Table.Row
+                  key={index}
+                  className="bg-white dark:border-gray-700 dark:bg-gray-800"
+                >
+                  <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+                    {beat.beatName}
+                  </Table.Cell>
+                  <Table.Cell>{beat.totalPatrols}</Table.Cell>
+                  <Table.Cell>{beat.avgClockInTime}</Table.Cell>
+                  <Table.Cell>{beat.avgClockOutTime}</Table.Cell>
+                </Table.Row>
+              ))}
           </Table.Body>
         </Table>
       </div>

@@ -15,6 +15,7 @@ import { patch } from "../../../../../../lib/methods";
 const BankDetails = (props) => {
   const { guardId } = useParams();
   const auth = useSelector(selectAuth);
+  const [loading, setLoading] = useState(false);
 
   const token = useSelector(selectToken);
   const { isLoading, error, responseData, sendRequest } = useHttpRequest();
@@ -46,23 +47,29 @@ const BankDetails = (props) => {
   }, [error]);
 
   const save = async (e) => {
-    e.preventDefault();
-    console.log(formData.accountnumber.length);
-    if (formData.accountnumber.length !== 10) {
-      setValidationErrors({
-        ...validationErrors,
-        accountnumber: "Account number should be 10 digits",
-      });
-      return;
-    }
-    const data = patch(`guard/banking/${guardId}`, formData, token).then(
-      (data) => {
-        if (data.status) {
-          toast("Banking Information Updated");
-          //props.setGuard({})
-        }
+    try {
+      setLoading(true);
+      e.preventDefault();
+      console.log(formData.accountnumber.length);
+      if (formData.accountnumber.length !== 10) {
+        setValidationErrors({
+          ...validationErrors,
+          accountnumber: "Account number should be 10 digits",
+        });
+        return;
       }
-    );
+      const data = patch(`guard/banking/${guardId}`, formData, token).then(
+        (data) => {
+          if (data.status) {
+            toast("Banking Information Updated");
+            //props.setGuard({})
+          }
+        }
+      );
+    } catch (error) {
+    } finally {
+      setLoading(false);
+    }
   };
   return (
     <>
@@ -115,7 +122,11 @@ const BankDetails = (props) => {
                 />
               </div>
             </div>
-            <RegularButton text="Update" />
+            <RegularButton
+              disabled={loading}
+              isLoading={loading}
+              text="Update"
+            />
           </fieldset>
         </div>
       </form>

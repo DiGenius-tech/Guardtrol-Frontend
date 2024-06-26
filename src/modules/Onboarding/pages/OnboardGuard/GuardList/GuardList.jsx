@@ -74,7 +74,6 @@ function GuardList() {
   const { refetch: refetchGuards } = useGetGuardsQuery();
 
   const saveGuard = async () => {
-    
     if (onboardingGuards == [] || onboardingGuards.length < 1) {
       toast.info("Add at Least One Guard To Continue");
       return;
@@ -86,11 +85,13 @@ function GuardList() {
 
       if (data) {
         dispatch(setOnboardingGuards([]));
-        dispatch(setOnboardingLevel(3));
-        await refetchGuards();
+        const d = await refetchGuards();
+        if (d) {
+          dispatch(setOnboardingLevel(3));
+        }
+
         //navigate("/onboarding/assign-beats");
       }
-      console.log(data);
 
       dispatch(suspenseHide());
     } catch (error) {

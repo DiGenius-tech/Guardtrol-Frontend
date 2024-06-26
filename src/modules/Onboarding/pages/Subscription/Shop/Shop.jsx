@@ -33,13 +33,14 @@ const Shop = () => {
   const token = useSelector(selectToken);
 
   const [validationErrors, setValidationErrors] = useState({});
-  const { isLoading, error, responseData, sendRequest } = useHttpRequest();
+  const { error, responseData, sendRequest } = useHttpRequest();
   const [selectedPlan, setSelectedPlan] = useState(null);
   const [planFormData, setPlanFormData] = useState({
     numberofbeats: 1,
     extraguards: 0,
   });
   const [isModalOpen, setIsModalOpen] = useState(false); // State variable to control modal visibility
+  const [isLoading, setisLoading] = useState(false); // State variable to control modal visibility
 
   // useEffect(() => {
   //   const plan = JSsubscriptionsON.parse(localStorage.getItem("selectedPlan"));
@@ -59,6 +60,7 @@ const Shop = () => {
   };
 
   const handleSubmit = async (e) => {
+    setisLoading(true);
     e.preventDefault();
     const form = e.currentTarget;
     const newErrors = {};
@@ -110,6 +112,8 @@ const Shop = () => {
 
       navigate("/onboarding/membership/checkout");
     }
+
+    setisLoading(false);
   };
 
   useEffect(() => {
@@ -279,6 +283,8 @@ const Shop = () => {
           </div>
 
           <RegularButton
+            disabled={isLoading}
+            isLoading={isLoading}
             text={
               "Continue To Pay ₦" +
               (selectedPlan

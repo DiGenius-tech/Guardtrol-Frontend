@@ -151,6 +151,7 @@ function ActivePatrolGuards() {
           <PatrolGuardListDesktopView
             duty_status={duty_status}
             icon_menu_dots={icon_menu_dots}
+            isLoading={isLoading}
             handleDeleteGuard={handleDeleteGuard}
             handleUnAssignGuard={handleUnAssignGuard}
             guards={paginatedGuards}
@@ -162,6 +163,7 @@ function ActivePatrolGuards() {
           duty_status={duty_status}
           handleDeleteGuard={handleDeleteGuard}
           icon_menu_dots={icon_menu_dots}
+          isLoading={isLoading}
           guards={paginatedGuards}
         />
       </div>

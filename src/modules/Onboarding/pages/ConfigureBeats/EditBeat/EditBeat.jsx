@@ -4,25 +4,31 @@ import RegularButton from "../../../../Sandbox/Buttons/RegularButton";
 import TextareaField from "../../../../Sandbox/TextareaField/TextareaField";
 import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
-import { useGetBeatsQuery, useUpdateBeatMutation } from "../../../../../redux/services/beats";
+import {
+  useGetBeatsQuery,
+  useUpdateBeatMutation,
+} from "../../../../../redux/services/beats";
 import { useDispatch, useSelector } from "react-redux";
 import { selectUser } from "../../../../../redux/selectors/auth";
-import { suspenseHide, suspenseShow } from "../../../../../redux/slice/suspenseSlice";
+import {
+  suspenseHide,
+  suspenseShow,
+} from "../../../../../redux/slice/suspenseSlice";
 
 function EditBeat(props) {
   const [validationErrors, setValidationErrors] = useState({});
-  const [preBeat, setPreBeat] = useState('')
-  const navigate = useNavigate()
-  const dispatch = useDispatch()
-  const user = useSelector(selectUser)
+  const [preBeat, setPreBeat] = useState("");
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const user = useSelector(selectUser);
   const { data: beats, refetch: refetchBeats } = useGetBeatsQuery();
   const [formData, setFormData] = useState({
     _id: "",
     name: "",
     address: "",
-    description: ""
+    description: "",
   });
-  const [updateBeat] = useUpdateBeatMutation();
+  const [updateBeat, { isLoading }] = useUpdateBeatMutation();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -34,18 +40,20 @@ function EditBeat(props) {
       _id: props?.selectedBeat._id,
       name: props?.selectedBeat.name,
       address: props?.selectedBeat.address,
-      description: props?.selectedBeat.description
+      description: props?.selectedBeat.description,
     });
-    setPreBeat(props.selectedBeat.name)
+    setPreBeat(props.selectedBeat.name);
   }, [props]);
 
   const save = async (e) => {
     e.preventDefault();
 
     if (formData.name === "" || formData.name.length < 3) {
-      setValidationErrors({ ...validationErrors, beat_name: "Use A Valid Beat Name" });
+      setValidationErrors({
+        ...validationErrors,
+        beat_name: "Use A Valid Beat Name",
+      });
     } else {
-      
       dispatch(suspenseShow());
       await updateBeat({ body: formData, userid: user?.userid }).then(
         toast("Beat Updated")
@@ -53,16 +61,10 @@ function EditBeat(props) {
       await refetchBeats();
       dispatch(suspenseHide());
 
-   
-      props.cancelEdit()
-     
-
-      
-      
+      props.cancelEdit();
     }
-      
-  }
-  
+  };
+
   return (
     <>
       {/* add-beat-app works! */}
@@ -112,6 +114,8 @@ function EditBeat(props) {
           <div className="">
             <div className="flex items-center justify-between">
               <RegularButton
+                disabled={isLoading}
+                isLoading={isLoading}
                 text="Update Beat"
                 rounded="full"
                 width="auto"

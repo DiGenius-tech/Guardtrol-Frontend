@@ -63,7 +63,7 @@ const EditPersonalInformation = (props) => {
   const { guardId } = useParams();
 
   const { user, token } = useSelector(selectAuth);
-
+  const [loading, setLoading] = useState(false);
   const { isLoading, error, responseData, sendRequest } = useHttpRequest();
   const [validationErrors, setValidationErrors] = useState({});
 
@@ -105,38 +105,43 @@ const EditPersonalInformation = (props) => {
   };
 
   const save = async (e) => {
-    e.preventDefault();
-    if (!formData.sex) {
-      toast.warn("select a valid gender");
-      return;
-    }
-    if (!formData.state) {
-      toast.warn("select a valid state");
-      return;
-    }
-    const guardData = {
-      name: formData.name,
-      personalinformation: {
-        height: formData?.height,
-        dob: formData.dob,
-        sex: formData.sex,
-        altphone: formData.altphone,
-        state: formData.state,
-      },
-    };
-
-    const data = patch(
-      `guard/personalinformation/${guardId}`,
-      guardData,
-      token
-    ).then((data) => {
-      if (data.status) {
-        toast("Personal Information Updated");
-        // props.setGuard({});
+    try {
+      setLoading(true);
+      e.preventDefault();
+      if (!formData.sex) {
+        toast.warn("select a valid gender");
+        return;
       }
-    });
+      if (!formData.state) {
+        toast.warn("select a valid state");
+        return;
+      }
+      const guardData = {
+        name: formData.name,
+        personalinformation: {
+          height: formData?.height,
+          dob: formData.dob,
+          sex: formData.sex,
+          altphone: formData.altphone,
+          state: formData.state,
+        },
+      };
+
+      const data = patch(
+        `guard/personalinformation/${guardId}`,
+        guardData,
+        token
+      ).then((data) => {
+        if (data.status) {
+          toast("Personal Information Updated");
+          // props.setGuard({});
+        }
+      });
+    } catch (error) {
+    } finally {
+      setLoading(false);
+    }
   };
-  console.log(formData);
   return (
     <>
       {/* edit-personal-information-app works! */}
@@ -230,7 +235,11 @@ const EditPersonalInformation = (props) => {
                 />
               </div>
             </div>
-            <RegularButton text="Update" />
+            <RegularButton
+              disabled={loading}
+              isLoading={loading}
+              text="Update"
+            />
           </fieldset>
         </div>
       </form>

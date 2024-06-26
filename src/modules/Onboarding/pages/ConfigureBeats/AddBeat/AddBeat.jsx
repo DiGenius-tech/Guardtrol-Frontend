@@ -36,6 +36,7 @@ function AddBeat() {
   } = useGetSubscriptionQuery();
 
   const [open, setOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [beat, setBeat] = useState({
     name: "",
@@ -48,11 +49,10 @@ function AddBeat() {
     setValidationErrors({ ...validationErrors, [e.target.name]: "" });
   };
 
-  const [addBeat] = useAddBeatMutation();
+  const [addBeat, { isLoading: isAddBeatLoading }] = useAddBeatMutation();
 
   const {
     data: beats,
-    isLoading,
     isUninitialized,
     refetch: refetchBeats,
   } = useGetBeatsQuery();
@@ -60,36 +60,43 @@ function AddBeat() {
   const saveBeat = async (e) => {
     e.preventDefault();
     console.log(beats);
-
-    if (beats.find((b) => b.name === beat.name)) {
-      Swal.fire({
-        icon: "warning",
-        confirmButtonColor: "#008080",
-        title: "A beat exists with the same name!",
-      });
-      return;
-    }
-    if (beat.name === "" || beat.name.length < 3) {
-      setValidationErrors({
-        ...validationErrors,
-        name: "Use A Valid Beat Name",
-      });
-    } else {
-      if (beats?.length && sub?.maxbeats && beats?.length >= sub?.maxbeats) {
+    try {
+      setIsLoading(true);
+      if (beats.find((b) => b.name === beat.name)) {
         Swal.fire({
           icon: "warning",
           confirmButtonColor: "#008080",
-          title: "You've Run out of beats?",
-          text: "Complete onboarding process and subscribe for more?",
+          title: "A beat exists with the same name!",
         });
         return;
       }
-      dispatch(suspenseShow);
-      await addBeat(beat);
-      console.log(user);
-      await refetchBeats();
-      dispatch(suspenseHide);
-      navigate("../");
+      if (beat.name === "" || beat.name.length < 3) {
+        setValidationErrors({
+          ...validationErrors,
+          name: "Use A Valid Beat Name",
+        });
+      } else {
+        if (beats?.length && sub?.maxbeats && beats?.length >= sub?.maxbeats) {
+          Swal.fire({
+            icon: "warning",
+            confirmButtonColor: "#008080",
+            title: "You've Run out of beats?",
+            text: "Complete onboarding process and subscribe for more?",
+          });
+          return;
+        }
+        dispatch(suspenseShow);
+        await addBeat(beat);
+        console.log(user);
+        const d = await refetchBeats();
+        if (d) {
+          dispatch(suspenseHide);
+          navigate("../");
+        }
+      }
+    } catch (error) {
+    } finally {
+      setIsLoading(false);
     }
   };
   return (
@@ -141,6 +148,8 @@ function AddBeat() {
               <RegularButton
                 text="Add Beat"
                 rounded="full"
+                disabled={isLoading}
+                isLoading={isLoading}
                 width="auto"
                 padding="px-8 py-2.5"
                 textSize="sm"

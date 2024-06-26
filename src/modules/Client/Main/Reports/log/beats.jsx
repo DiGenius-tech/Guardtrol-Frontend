@@ -184,7 +184,22 @@ const BeatsLog = () => {
             <Table.HeadCell>Type</Table.HeadCell>
           </Table.Head>
           <Table.Body>
-            {(currentLogs?.length === 0 || !currentLogs) && (
+            {isFetching && (
+              <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
+                <Table.Cell
+                  colSpan={4}
+                  className="whitespace-nowrap  font-medium  text-center text-gray-900 dark:text-white"
+                >
+                  <div className="w-full h-full justify-center flex items-center">
+                    <Spinner
+                      color="success"
+                      aria-label="Success spinner example"
+                    />
+                  </div>
+                </Table.Cell>
+              </Table.Row>
+            )}
+            {!isFetching && (currentLogs?.length === 0 || !currentLogs) && (
               <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
                 <Table.Cell
                   colSpan={4}
@@ -194,16 +209,17 @@ const BeatsLog = () => {
                 </Table.Cell>
               </Table.Row>
             )}
-            {currentLogs?.map((log) => (
-              <Table.Row key={log._id}>
-                <Table.Cell>
-                  {format(new Date(log.createdAt), "yyyy-MM-dd HH:mm:ss")}
-                </Table.Cell>
-                <Table.Cell>{log.message}</Table.Cell>
-                <Table.Cell>{log.beat?.name || "Unknown"}</Table.Cell>
-                <Table.Cell>{log.type}</Table.Cell>
-              </Table.Row>
-            ))}
+            {!isFetching &&
+              currentLogs?.map((log) => (
+                <Table.Row key={log._id}>
+                  <Table.Cell>
+                    {format(new Date(log.createdAt), "yyyy-MM-dd HH:mm:ss")}
+                  </Table.Cell>
+                  <Table.Cell>{log.message}</Table.Cell>
+                  <Table.Cell>{log.beat?.name || "Unknown"}</Table.Cell>
+                  <Table.Cell>{log.type}</Table.Cell>
+                </Table.Row>
+              ))}
           </Table.Body>
         </Table>
       </div>

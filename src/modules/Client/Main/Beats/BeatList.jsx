@@ -113,6 +113,7 @@ const BeatList = () => {
             openModal={openModal}
             setOpenModal={setOpenModal}
             beatToEdit={beatToEdit}
+            isLoading={isLoading}
             setBeatToEdit={setBeatToEdit}
             handleUpdateBeat={handleUpdateBeat}
             setSelectedBeat={setSelectedBeat}
@@ -131,6 +132,7 @@ const BeatList = () => {
           openModal={openModal}
           setOpenModal={setOpenModal}
           beatToEdit={beatToEdit}
+          isLoading={isLoading}
           setBeatToEdit={setBeatToEdit}
           handleUpdateBeat={handleUpdateBeat}
           setSelectedBeat={setSelectedBeat}

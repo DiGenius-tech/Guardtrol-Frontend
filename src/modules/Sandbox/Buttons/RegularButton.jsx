@@ -1,3 +1,5 @@
+import { Spinner } from "flowbite-react";
+
 const RegularButton = (props) => {
   return (
     <button
@@ -26,7 +28,16 @@ const RegularButton = (props) => {
       disabled={props.disabled || props?.isLoading}
       onClick={props.onClick || null}
     >
-      {props?.isLoading ? "Please Wait" : props.text}
+      <div className="flex gap-2 justify-center items-center">
+        {props?.isLoading ? (
+          <>
+            "Please Wait"
+            <Spinner color="success" aria-label="Success spinner example" />
+          </>
+        ) : (
+          props.text
+        )}{" "}
+      </div>
     </button>
   );
 };

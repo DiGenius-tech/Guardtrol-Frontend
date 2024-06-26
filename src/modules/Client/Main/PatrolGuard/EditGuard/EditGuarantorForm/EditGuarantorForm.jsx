@@ -70,7 +70,7 @@ const EditGuarantorForm = (props) => {
   const { guardId } = useParams();
   const user = useSelector(selectUser);
   const token = useSelector(selectToken);
-
+  const [loading, setLoading] = useState(false);
   const { isLoading, error, responseData, sendRequest } = useHttpRequest();
   const stepperRef = useRef(); //stepperWrapper
   const pagesRef = useRef();
@@ -226,37 +226,43 @@ const EditGuarantorForm = (props) => {
   }, []);
 
   const save = async (e) => {
-    e.preventDefault();
-    if (!formData.identificationType) {
-      refetchGuards();
-      toast.warn("select a valid identification type");
-      return;
-    }
-    const newFormData = new FormData();
-
-    newFormData.append("title", formData.title);
-    newFormData.append("firstName", formData.firstName);
-    newFormData.append("lastName", formData.lastName);
-    newFormData.append("email", formData.email);
-    newFormData.append("dob", formData.dob);
-    newFormData.append("sex", formData.sex);
-    newFormData.append("phone", formData.phone);
-    newFormData.append("altPhone", formData.altPhone);
-    newFormData.append("placeOfWork", formData.placeOfWork);
-    newFormData.append("rank", formData.rank);
-    newFormData.append("identificationFile", formData.identificationFile);
-    newFormData.append("identificationNumber", formData.identificationNumber);
-    newFormData.append("identificationType", formData.identificationType);
-
-    const data = patch(`guard/guarantor/${guardId}`, newFormData, token).then(
-      (data) => {
-        if (data.status) {
-          toast("Guarantor Information Updated");
-          //props.setGuard({})
-          handleNext(formContent.IDENTIFICATION);
-        }
+    setLoading(true);
+    try {
+      e.preventDefault();
+      if (!formData.identificationType) {
+        refetchGuards();
+        toast.warn("select a valid identification type");
+        return;
       }
-    );
+      const newFormData = new FormData();
+
+      newFormData.append("title", formData.title);
+      newFormData.append("firstName", formData.firstName);
+      newFormData.append("lastName", formData.lastName);
+      newFormData.append("email", formData.email);
+      newFormData.append("dob", formData.dob);
+      newFormData.append("sex", formData.sex);
+      newFormData.append("phone", formData.phone);
+      newFormData.append("altPhone", formData.altPhone);
+      newFormData.append("placeOfWork", formData.placeOfWork);
+      newFormData.append("rank", formData.rank);
+      newFormData.append("identificationFile", formData.identificationFile);
+      newFormData.append("identificationNumber", formData.identificationNumber);
+      newFormData.append("identificationType", formData.identificationType);
+
+      const data = patch(`guard/guarantor/${guardId}`, newFormData, token).then(
+        (data) => {
+          if (data.status) {
+            toast("Guarantor Information Updated");
+            //props.setGuard({})
+            handleNext(formContent.IDENTIFICATION);
+          }
+        }
+      );
+    } catch (error) {
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleFileChange = (event) => {
@@ -656,6 +662,8 @@ const EditGuarantorForm = (props) => {
                           onClick={() => handlePrevious()}
                         />
                         <RegularButton
+                          disabled={loading}
+                          isLoading={loading}
                           text="Complete"
                           type="submit"
                           width="auto"

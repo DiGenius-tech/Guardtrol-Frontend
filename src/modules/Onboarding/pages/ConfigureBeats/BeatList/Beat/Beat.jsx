@@ -5,22 +5,36 @@ import icon_location_marker from "../../../../../../images/icons/icon-location-m
 import { toast } from "react-toastify";
 import { useState } from "react";
 import AlertDialog from "../../../../../../shared/Dialog/AlertDialog";
-import { useDeleteBeatMutation } from "../../../../../../redux/services/beats";
+import {
+  useDeleteBeatMutation,
+  useGetBeatsQuery,
+} from "../../../../../../redux/services/beats";
+import {
+  suspenseHide,
+  suspenseShow,
+} from "../../../../../../redux/slice/suspenseSlice";
+import { useDispatch } from "react-redux";
 
 function Beat({ setBeats, beat, status, handle_edit_beat }) {
   const [open, setOpen] = useState(false);
-
+  const dispatch = useDispatch();
   const [deleteBeat, { isLoading: isDeleting, deleteStatus }] =
     useDeleteBeatMutation();
+  const { refetch: refetchBeats } = useGetBeatsQuery();
 
   const handleDelete = async (_id) => {
+    setOpen(false);
+    dispatch(suspenseShow());
+
     try {
-      console.log(_id);
       const data = await deleteBeat({ beatId: _id });
-      setOpen(false);
+
       toast("Beat deleted");
-      console.log(data);
-    } catch (error) {}
+      await refetchBeats();
+    } catch (error) {
+    } finally {
+      dispatch(suspenseHide());
+    }
   };
   return (
     <>

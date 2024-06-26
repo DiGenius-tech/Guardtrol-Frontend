@@ -40,7 +40,7 @@ const EditIdentification = (props) => {
   const { guardId } = useParams();
   const user = useSelector(selectUser);
   const token = useSelector(selectToken);
-
+  const [updateloading, setLoading] = useState(false);
   const {
     data: guards,
     refetch: refetchGuards,
@@ -89,34 +89,40 @@ const EditIdentification = (props) => {
   };
 
   const save = async (e) => {
-    e.preventDefault();
-    console.log(formData);
+    setLoading(true);
+    try {
+      e.preventDefault();
+      console.log(formData);
 
-    if (!formData.idname) {
-      toast.warn("select a valid identification type");
-      return;
-    }
-
-    const newFormData = new FormData();
-    newFormData.append("idname", formData.idname);
-    newFormData.append("idnumber", formData.idnumber);
-    newFormData.append(
-      "guardIdentificationFile",
-      formData.guardIdentificationFile
-    );
-
-    const data = patch(
-      `guard/identification/${guardId}`,
-
-      newFormData,
-      token
-    ).then((data) => {
-      if (data?.status) {
-        toast("Identification Information Updated");
-        //props.setGuard({})
-        refetchGuards();
+      if (!formData.idname) {
+        toast.warn("select a valid identification type");
+        return;
       }
-    });
+
+      const newFormData = new FormData();
+      newFormData.append("idname", formData.idname);
+      newFormData.append("idnumber", formData.idnumber);
+      newFormData.append(
+        "guardIdentificationFile",
+        formData.guardIdentificationFile
+      );
+
+      const data = patch(
+        `guard/identification/${guardId}`,
+
+        newFormData,
+        token
+      ).then((data) => {
+        if (data?.status) {
+          toast("Identification Information Updated");
+          //props.setGuard({})
+          refetchGuards();
+        }
+      });
+    } catch (error) {
+    } finally {
+      setLoading(false);
+    }
   };
   return (
     <>
@@ -189,7 +195,12 @@ const EditIdentification = (props) => {
                 helperText="Select Upload Identification File"
               />
             </div>
-            <RegularButton text="Update" />
+            <RegularButton
+              disabled={updateloading}
+              isLoading={updateloading}
+              text="Update"
+              rounded="full"
+            />
           </fieldset>
         </div>
       </form>

@@ -215,7 +215,22 @@ const PatrolHistory = () => {
             <Table.HeadCell>Abandoned By</Table.HeadCell>
           </Table.Head>
           <Table.Body className="divide-y">
-            {filteredPatrolInstances?.length === 0 && (
+            {loading && (
+              <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
+                <Table.Cell
+                  colSpan={7}
+                  className="whitespace-nowrap  font-medium  text-center text-gray-900 dark:text-white"
+                >
+                  <div className="w-full h-full justify-center flex items-center">
+                    <Spinner
+                      color="success"
+                      aria-label="Success spinner example"
+                    />
+                  </div>
+                </Table.Cell>
+              </Table.Row>
+            )}
+            {!loading && filteredPatrolInstances?.length === 0 && (
               <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
                 <Table.Cell
                   colSpan={9}
@@ -225,32 +240,33 @@ const PatrolHistory = () => {
                 </Table.Cell>
               </Table.Row>
             )}
-            {filteredPatrolInstances?.map((instance, index) => (
-              <Table.Row
-                key={index}
-                className="bg-white dark:border-gray-700 dark:bg-gray-800"
-              >
-                <Table.Cell>{instance.status}</Table.Cell>
-                <Table.Cell>
-                  {instance.starttime
-                    ? formatDate(instance.starttime) +
-                      "-" +
-                      formattedTime(instance.starttime)
-                    : "Not completed"}
-                </Table.Cell>
-                <Table.Cell>
-                  {instance.endtime
-                    ? formatDate(instance.endtime) +
-                      "-" +
-                      formattedTime(instance.endtime)
-                    : "Not completed"}
-                </Table.Cell>
-                <Table.Cell>{instance.patrol?.name || "N/A"}</Table.Cell>
-                <Table.Cell>{instance.beat?.name || "N/A"}</Table.Cell>
-                <Table.Cell>{instance.guard?.name || "N/A"}</Table.Cell>
-                <Table.Cell>{instance.abandonedby?.name || "N/A"}</Table.Cell>
-              </Table.Row>
-            ))}
+            {!loading &&
+              filteredPatrolInstances?.map((instance, index) => (
+                <Table.Row
+                  key={index}
+                  className="bg-white dark:border-gray-700 dark:bg-gray-800"
+                >
+                  <Table.Cell>{instance.status}</Table.Cell>
+                  <Table.Cell>
+                    {instance.starttime
+                      ? formatDate(instance.starttime) +
+                        "-" +
+                        formattedTime(instance.starttime)
+                      : "Not completed"}
+                  </Table.Cell>
+                  <Table.Cell>
+                    {instance.endtime
+                      ? formatDate(instance.endtime) +
+                        "-" +
+                        formattedTime(instance.endtime)
+                      : "Not completed"}
+                  </Table.Cell>
+                  <Table.Cell>{instance.patrol?.name || "N/A"}</Table.Cell>
+                  <Table.Cell>{instance.beat?.name || "N/A"}</Table.Cell>
+                  <Table.Cell>{instance.guard?.name || "N/A"}</Table.Cell>
+                  <Table.Cell>{instance.abandonedby?.name || "N/A"}</Table.Cell>
+                </Table.Row>
+              ))}
           </Table.Body>
         </Table>
       </div>

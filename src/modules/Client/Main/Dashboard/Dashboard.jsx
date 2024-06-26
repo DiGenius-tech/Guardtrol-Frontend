@@ -1,4 +1,4 @@
-import { Card, Label, Select } from "flowbite-react";
+import { Card, Label, Select, Spinner } from "flowbite-react";
 import React, { useEffect, useState } from "react";
 import Activities from "./Activities/Activities";
 import Patrols from "./Patrols/Patrols";
@@ -27,31 +27,27 @@ const Dashboard = () => {
   const formatDate = (date) => format(new Date(date), "yyyy-MM-dd HH:mm:ss");
   const [filterStatus, setFilterStatus] = useState("All");
   const [filterDate, setFilterDate] = useState("All");
+  const [isLogsFetching, setIsLogsFetching] = useState(false);
 
-  const [filterPatrolDate, setFilterPatrolDate] = useState("All");
   const { data: guards } = useGetGuardsQuery();
   const { data: beats } = useGetBeatsQuery();
 
   // Function to render timeline logs
-  const [patrols, setPatrols] = useState();
   const [timelineLogs, setLogs] = useState();
   const token = useSelector(selectToken);
-  const [filteredPatrols, setFilteredPatrols] = useState([]);
-
-  const [filterPatrolsType, setFilterPatrolsType] = useState();
-
-  const getPatrolInstances = async () => {
-    const res = await get(API_BASE_URL + "patrols/get-instances", token);
-    setPatrols(res);
-  };
 
   const getLogs = async () => {
-    const res = await get(API_BASE_URL + "logs", token);
-    setLogs(res);
+    try {
+      setIsLogsFetching(true);
+      const res = await get(API_BASE_URL + "logs", token);
+      setLogs(res);
+    } catch (error) {
+    } finally {
+      setIsLogsFetching(false);
+    }
   };
 
   useEffect(() => {
-    getPatrolInstances();
     getLogs();
   }, []);
 
@@ -250,7 +246,16 @@ const Dashboard = () => {
               </div>
             </div>
             <ul className="activities | text-sm max-h-64  overflow-y-scroll min-h-64">
-              {renderLogs()}
+              {isLogsFetching ? (
+                <div className="w-full h-full justify-center flex items-center">
+                  <Spinner
+                    color="success"
+                    aria-label="Success spinner example"
+                  />
+                </div>
+              ) : (
+                renderLogs()
+              )}
             </ul>
           </Card>
         </div>

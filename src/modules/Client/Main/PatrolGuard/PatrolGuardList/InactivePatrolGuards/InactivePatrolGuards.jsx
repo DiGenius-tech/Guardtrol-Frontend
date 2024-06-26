@@ -127,6 +127,7 @@ function InactivePatrolGuards() {
       <div className="hidden sm:block">
         <Card>
           <PatrolGuardListDesktopView
+            isLoading={isLoading}
             duty_status={duty_status}
             handleDeleteGuard={handleDeleteGuard}
             handleUnAssignGuard={handleUnAssignGuard}
@@ -139,6 +140,7 @@ function InactivePatrolGuards() {
       <div className="sm:hidden rounded-lg bg-white p-2 min-h-64">
         <PatrolGuardListMobileView
           duty_status={duty_status}
+          isLoading={isLoading}
           icon_menu_dots={icon_menu_dots}
           handleUnAssignGuard={handleUnAssignGuard}
           guards={paginatedGuards}

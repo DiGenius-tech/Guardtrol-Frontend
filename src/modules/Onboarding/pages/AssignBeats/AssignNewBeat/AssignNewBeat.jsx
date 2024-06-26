@@ -26,22 +26,13 @@ function AssignNewBeat({ isOnboarding = true }) {
   const user = useSelector(selectUser);
   const token = useSelector(selectToken);
   const dispatch = useDispatch();
-
+  const [isLoading, setIsLoading] = useState(false);
   const { beatId } = useParams();
 
-  const {
-    data: beats,
-    isLoading,
-    error,
-    refetch: refetchBeats,
-  } = useGetBeatsQuery();
+  const { data: beats, error, refetch: refetchBeats } = useGetBeatsQuery();
   const selectedBeat = beats?.find((b) => b._id === beatId);
 
-  const {
-    data: guards,
-    isLoading: isGuardsLoading,
-    error: guardsError,
-  } = useGetGuardsQuery();
+  const { data: guards, error: guardsError } = useGetGuardsQuery();
 
   const [assignToBeat] = useAssignGuardToBeatMutation();
   const { responseData, sendRequest } = useHttpRequest();
@@ -110,6 +101,7 @@ function AssignNewBeat({ isOnboarding = true }) {
   };
 
   const save = async (e) => {
+    setIsLoading(true);
     e.preventDefault();
     if (!beat && !selectedBeat) {
       toast.info("Select a Beat to Assign Guards");
@@ -148,14 +140,15 @@ function AssignNewBeat({ isOnboarding = true }) {
     //   }
     // );
     const data = await assignToBeat({ userid: user.userid, body: formData });
-    refetchBeats();
-    console.log(data);
+    const d = await refetchBeats();
+    setIsLoading(false);
 
-    if (data) {
+    if (data && d) {
       toast("Assinged");
-    }
-    if (isOnboarding) {
-      navigate("/onboarding/assign-beats");
+
+      if (isOnboarding) {
+        navigate("/onboarding/assign-beats");
+      }
     }
   };
 
@@ -231,7 +224,12 @@ function AssignNewBeat({ isOnboarding = true }) {
             />
           </div> */}
           <div className="flex justify-between items-center">
-            <RegularButton text="Save Changes" width="[150px]" />
+            <RegularButton
+              disabled={isLoading}
+              isLoading={isLoading}
+              text="Save Changes"
+              width="[150px]"
+            />
 
             <span
               onClick={() => {

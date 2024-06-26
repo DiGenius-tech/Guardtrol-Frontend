@@ -269,7 +269,22 @@ const GuardsHistory = () => {
             <Table.HeadCell>Avg Clock Out</Table.HeadCell>
           </Table.Head>
           <Table.Body className="divide-y">
-            {displayedGuards?.length === 0 && (
+            {loading && (
+              <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
+                <Table.Cell
+                  colSpan={4}
+                  className="whitespace-nowrap  font-medium  text-center text-gray-900 dark:text-white"
+                >
+                  <div className="w-full h-full justify-center flex items-center">
+                    <Spinner
+                      color="success"
+                      aria-label="Success spinner example"
+                    />
+                  </div>
+                </Table.Cell>
+              </Table.Row>
+            )}
+            {!loading && displayedGuards?.length === 0 && (
               <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
                 <Table.Cell
                   colSpan={4}
@@ -279,19 +294,20 @@ const GuardsHistory = () => {
                 </Table.Cell>
               </Table.Row>
             )}
-            {displayedGuards?.map((guard, index) => (
-              <Table.Row
-                key={index}
-                className="bg-white dark:border-gray-700 dark:bg-gray-800"
-              >
-                <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
-                  {guard.guardName}
-                </Table.Cell>
-                <Table.Cell>{guard.totalPatrols}</Table.Cell>
-                <Table.Cell>{guard.avgClockInTime}</Table.Cell>
-                <Table.Cell>{guard.avgClockOutTime}</Table.Cell>
-              </Table.Row>
-            ))}
+            {!loading &&
+              displayedGuards?.map((guard, index) => (
+                <Table.Row
+                  key={index}
+                  className="bg-white dark:border-gray-700 dark:bg-gray-800"
+                >
+                  <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+                    {guard.guardName}
+                  </Table.Cell>
+                  <Table.Cell>{guard.totalPatrols}</Table.Cell>
+                  <Table.Cell>{guard.avgClockInTime}</Table.Cell>
+                  <Table.Cell>{guard.avgClockOutTime}</Table.Cell>
+                </Table.Row>
+              ))}
           </Table.Body>
         </Table>
       </div>

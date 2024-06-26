@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Card, Select, Table } from "flowbite-react";
+import { Card, Select, Spinner, Table } from "flowbite-react";
 import React, { useEffect, useState } from "react";
 import { API_BASE_URL, ASSET_URL } from "../../../../../constants/api";
 import { format } from "date-fns";
@@ -19,6 +19,8 @@ const Patrols = () => {
   const [timelineLogs, setLogs] = useState();
   const token = useSelector(selectToken);
   const [filteredPatrols, setFilteredPatrols] = useState([]);
+  const [isPatrolInstacesFetching, setIsPatrolInstacesFetching] =
+    useState(false);
 
   const [filterPatrolsType, setFilterPatrolsType] = useState();
 
@@ -62,13 +64,19 @@ const Patrols = () => {
   }, [filterPatrolsType, filterPatrolDate, patrols]);
 
   const getPatrolInstances = async () => {
-    const res = await get(API_BASE_URL + "patrols/get-instances", token);
-    setPatrols(res);
+    setIsPatrolInstacesFetching(true);
+    try {
+      const res = await get(API_BASE_URL + "patrols/get-instances", token);
+      setPatrols(res);
+    } catch (error) {
+    } finally {
+      setIsPatrolInstacesFetching(false);
+    }
   };
-
   useEffect(() => {
     getPatrolInstances();
   }, []);
+
   return (
     <Card className="">
       <div className="flex items-center justify-between">
@@ -117,59 +125,76 @@ const Patrols = () => {
               <Table.HeadCell>Date</Table.HeadCell>
             </Table.Head>
             <Table.Body className="divide-y overflow-y-scroll">
-              {patrols?.map((patrolInstance) => (
-                <Table.Row
-                  className="bg-white dark:border-gray-700 dark:bg-gray-800"
-                  key={patrolInstance._id}
-                >
-                  <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
-                    <div className="flex items-center gap-2">
-                      <div className="h-8 w-8 rounded-full">
-                        <img
-                          src={`${
-                            ASSET_URL + patrolInstance?.guard?.profileImage
-                          }`}
-                          alt={patrolInstance?.guard?.name}
-                          className="w-full h-full object-cover rounded-full"
-                        />
-                      </div>
-                      {patrolInstance?.guard?.name}
-                      <span className="block">
-                        {patrolInstance?.patrol?.starttime &&
-                          formattedTime(patrolInstance?.patrol?.starttime)}
-                      </span>
+              {isPatrolInstacesFetching && (
+                <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
+                  <Table.Cell
+                    colSpan={4}
+                    className="whitespace-nowrap  font-medium  text-center text-gray-900 dark:text-white"
+                  >
+                    <div className="w-full h-full justify-center flex items-center">
+                      <Spinner
+                        color="success"
+                        aria-label="Success spinner example"
+                      />
                     </div>
                   </Table.Cell>
-                  <Table.Cell className="text-center">
-                    {patrolInstance?.starttime &&
-                      formattedTime(patrolInstance?.starttime)}
-                  </Table.Cell>
-                  <Table.Cell>
-                    {patrolInstance.status === "pending" && (
-                      <span className="text-orange-400 uppercase">
-                        {patrolInstance.status}
-                      </span>
-                    )}
-                    {patrolInstance.status === "abandoned" && (
-                      <span className="text-red-400 uppercase">
-                        {patrolInstance.status}
-                      </span>
-                    )}
-                    {patrolInstance.status === "completed" && (
-                      <span className="text-green-400">Completed</span>
-                    )}
-                    <br />
-                    <span className="whitespace-nowrap">
-                      {patrolInstance?.beat?.name}
-                    </span>
-                  </Table.Cell>
-                  <Table.Cell className="text-center">
-                    {patrolInstance?.createdAt &&
-                      formatDate(patrolInstance?.createdAt)}
-                  </Table.Cell>
                 </Table.Row>
-              ))}
-              {(patrols?.length === 0 || !patrols) && (
+              )}
+              {!isPatrolInstacesFetching &&
+                patrols?.map((patrolInstance) => (
+                  <Table.Row
+                    className="bg-white dark:border-gray-700 dark:bg-gray-800"
+                    key={patrolInstance._id}
+                  >
+                    <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+                      <div className="flex items-center gap-2">
+                        <div className="h-8 w-8 rounded-full">
+                          <img
+                            src={`${
+                              ASSET_URL + patrolInstance?.guard?.profileImage
+                            }`}
+                            alt={patrolInstance?.guard?.name}
+                            className="w-full h-full object-cover rounded-full"
+                          />
+                        </div>
+                        {patrolInstance?.guard?.name}
+                        <span className="block">
+                          {patrolInstance?.patrol?.starttime &&
+                            formattedTime(patrolInstance?.patrol?.starttime)}
+                        </span>
+                      </div>
+                    </Table.Cell>
+                    <Table.Cell className="text-center">
+                      {patrolInstance?.starttime &&
+                        formattedTime(patrolInstance?.starttime)}
+                    </Table.Cell>
+                    <Table.Cell>
+                      {patrolInstance.status === "pending" && (
+                        <span className="text-orange-400 uppercase">
+                          {patrolInstance.status}
+                        </span>
+                      )}
+                      {patrolInstance.status === "abandoned" && (
+                        <span className="text-red-400 uppercase">
+                          {patrolInstance.status}
+                        </span>
+                      )}
+                      {patrolInstance.status === "completed" && (
+                        <span className="text-green-400">Completed</span>
+                      )}
+                      <br />
+                      <span className="whitespace-nowrap">
+                        {patrolInstance?.beat?.name}
+                      </span>
+                    </Table.Cell>
+                    <Table.Cell className="text-center">
+                      {patrolInstance?.createdAt &&
+                        formatDate(patrolInstance?.createdAt)}
+                    </Table.Cell>
+                  </Table.Row>
+                ))}
+              {((!isPatrolInstacesFetching && patrols?.length === 0) ||
+                !patrols) && (
                 <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
                   <Table.Cell
                     colSpan={4}

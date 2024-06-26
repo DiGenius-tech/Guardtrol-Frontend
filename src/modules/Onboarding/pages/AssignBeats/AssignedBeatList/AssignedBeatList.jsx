@@ -129,6 +129,7 @@ function AssignedBeatList(props) {
   const dispatch = useDispatch();
   const [isEdit, setIsEdit] = useState(false);
   const [openModal, setOpenModal] = useState(false);
+  const [isFinishLoading, setisFinishLoading] = useState(false);
   const [selectedAssignedBeat, setSelectedAssignedBeat] = useState(null);
 
   const handle_edit_beat = (guard) => {
@@ -157,28 +158,34 @@ function AssignedBeatList(props) {
   console.log(beats);
 
   const finish = async () => {
-    const check = beats.some((beat) => {
-      return beat.guards.length > 0;
-    });
+    try {
+      setisFinishLoading(true);
+      const check = beats.some((beat) => {
+        return beat.guards.length > 0;
+      });
 
-    if (!check) {
-      toast.info("Assign at Least One Guard to a Beat to Continue");
-      return;
+      if (!check) {
+        toast.info("Assign at Least One Guard to a Beat to Continue");
+        return;
+      }
+
+      const data = await patch(
+        `users/finishonboarding/${user.userid}`,
+        {},
+        token
+      );
+
+      if (!data) {
+        toast.error("An Error Occured");
+        return;
+      }
+      dispatch(loginSuccess(data));
+      dispatch(setOnboardingLevel(4));
+    } catch (error) {
+    } finally {
+      setisFinishLoading(false);
+      navigate("/onboarding/complete");
     }
-
-    const data = await patch(
-      `users/finishonboarding/${user.userid}`,
-      {},
-      token
-    );
-
-    if (!data) {
-      toast.error("An Error Occured");
-      return;
-    }
-    dispatch(loginSuccess(data));
-    dispatch(setOnboardingLevel(4));
-    navigate("/onboarding/complete");
   };
 
   const deleteGuard = async (beat) => {
@@ -265,7 +272,12 @@ function AssignedBeatList(props) {
 
             <div className="my-8"></div>
             {props.isOnboarding && (
-              <RegularButton text="Finish Onboarding" onClick={finish} />
+              <RegularButton
+                disabled={isFinishLoading}
+                isLoading={isFinishLoading}
+                text="Finish Onboarding"
+                onClick={finish}
+              />
             )}
             <Dialog
               openModal={openModal}

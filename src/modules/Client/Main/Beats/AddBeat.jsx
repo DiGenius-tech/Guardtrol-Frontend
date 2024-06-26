@@ -56,7 +56,7 @@ const AddBeat = () => {
     setValidationErrors({ ...validationErrors, [e.target.name]: "" });
   };
 
-  const [addBeat] = useAddBeatMutation();
+  const [addBeat, { isLoading: isAddBeatLoading }] = useAddBeatMutation();
 
   const saveBeat = async (e) => {
     e.preventDefault();
@@ -159,6 +159,8 @@ const AddBeat = () => {
               <RegularButton
                 text="Add Beat"
                 rounded="full"
+                disabled={isAddBeatLoading}
+                isLoading={isAddBeatLoading}
                 width="auto"
                 padding="px-8 py-2.5"
                 textSize="sm"

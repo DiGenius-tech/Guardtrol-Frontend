@@ -30,6 +30,7 @@ function AddGuard({ onBoarding = true }) {
   const [isGotIt, setIsGotIt] = useState(false);
   const [validationErrors, setValidationErrors] = useState({});
   const [open, setOpen] = useState(false);
+  const [isLoading, setisLoading] = useState(false);
   const token = useSelector(selectToken);
 
   const params = useParams();
@@ -59,50 +60,14 @@ function AddGuard({ onBoarding = true }) {
   };
 
   const saveGuard = async (e) => {
-    e.preventDefault();
-    if (
-      guards.find(
-        (g) =>
-          g.name?.toLocaleLowerCase() === guard.full_name?.toLocaleLowerCase()
-      )
-    ) {
-      setValidationErrors({
-        ...validationErrors,
-        full_name: "Guard with this name already exists",
-      });
-      return;
-    }
-
-    if (guards.find((g) => g.phone === guard.phone)) {
-      setValidationErrors({
-        ...validationErrors,
-        full_name: "Guard with this phone number already exists",
-      });
-      return;
-    }
-    if (guard.full_name === "" || guard.full_name.length < 5) {
-      setValidationErrors({
-        ...validationErrors,
-        full_name: "Enter A Valid Guard Name",
-      });
-      return;
-    }
-    if (guard.phone === "" || guard.phone.length < 8) {
-      setValidationErrors({
-        ...validationErrors,
-        phone: "Enter A Valid Phone Number",
-      });
-      return;
-    }
-
-    if (onBoarding) {
+    setisLoading(true);
+    try {
+      e.preventDefault();
       if (
-        onboardingGuards.find((g) => {
-          return (
-            g.full_name?.toLocaleLowerCase() ===
-            guard.full_name?.toLocaleLowerCase()
-          );
-        })
+        guards.find(
+          (g) =>
+            g.name?.toLocaleLowerCase() === guard.full_name?.toLocaleLowerCase()
+        )
       ) {
         setValidationErrors({
           ...validationErrors,
@@ -110,53 +75,98 @@ function AddGuard({ onBoarding = true }) {
         });
         return;
       }
-      if (onboardingGuards?.length >= sub?.maxbeats * 5 + sub?.maxextraguards) {
-        Swal.fire({
-          title: "OOPS!! You've Ran Out Of Guards",
-          text: "Would you like to subscribe for more guards ?",
-          icon: "warning",
-          showCancelButton: true,
-          confirmButtonColor: "#008080",
-          confirmButtonText: "Subscribe for more!",
-          cancelButtonColor: "#d33",
-        }).then((result) => {
-          if (result.isConfirmed) {
-            // run action on confirmed
-          }
+
+      if (guards.find((g) => g.phone === guard.phone)) {
+        setValidationErrors({
+          ...validationErrors,
+          full_name: "Guard with this phone number already exists",
         });
         return;
       }
-      dispatch(addOnboardingGuard(guard));
-      navigate("../");
-    } else {
-      if (guards?.length >= sub?.maxbeats * 5 + sub?.maxextraguards) {
-        Swal.fire({
-          title: "OOPS!! You've Ran Out Of Beats",
-          text: "Would you like to subscribe for more beats ?",
-          icon: "warning",
-          showCancelButton: true,
-          confirmButtonColor: "#008080",
-          confirmButtonText: "Subscribe for more!",
-          cancelButtonColor: "#d33",
-        }).then((result) => {
-          if (result.isConfirmed) {
-            // Swal.fire({
-            //   title: "Deleted!",
-            //   text: "Your file has been deleted.",
-            //   icon: "success",
-            // });
-          }
+      if (guard.full_name === "" || guard.full_name.length < 5) {
+        setValidationErrors({
+          ...validationErrors,
+          full_name: "Enter A Valid Guard Name",
         });
         return;
+      }
+      if (guard.phone === "" || guard.phone.length < 8) {
+        setValidationErrors({
+          ...validationErrors,
+          phone: "Enter A Valid Phone Number",
+        });
+        return;
+      }
+
+      if (onBoarding) {
+        if (
+          onboardingGuards.find((g) => {
+            return (
+              g.full_name?.toLocaleLowerCase() ===
+              guard.full_name?.toLocaleLowerCase()
+            );
+          })
+        ) {
+          setValidationErrors({
+            ...validationErrors,
+            full_name: "Guard with this name already exists",
+          });
+          return;
+        }
+        if (
+          onboardingGuards?.length >=
+          sub?.maxbeats * 5 + sub?.maxextraguards
+        ) {
+          Swal.fire({
+            title: "OOPS!! You've Ran Out Of Guards",
+            text: "Would you like to subscribe for more guards ?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#008080",
+            confirmButtonText: "Subscribe for more!",
+            cancelButtonColor: "#d33",
+          }).then((result) => {
+            if (result.isConfirmed) {
+              // run action on confirmed
+            }
+          });
+          return;
+        }
+        dispatch(addOnboardingGuard(guard));
+        navigate("../");
       } else {
-        dispatch(suspenseShow());
-        const { data } = await addGuards(guard);
-        if (data) {
-          console.log(data);
-          navigate(-1);
-          dispatch(suspenseHide());
+        if (guards?.length >= sub?.maxbeats * 5 + sub?.maxextraguards) {
+          Swal.fire({
+            title: "OOPS!! You've Ran Out Of Beats",
+            text: "Would you like to subscribe for more beats ?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#008080",
+            confirmButtonText: "Subscribe for more!",
+            cancelButtonColor: "#d33",
+          }).then((result) => {
+            if (result.isConfirmed) {
+              // Swal.fire({
+              //   title: "Deleted!",
+              //   text: "Your file has been deleted.",
+              //   icon: "success",
+              // });
+            }
+          });
+          return;
+        } else {
+          dispatch(suspenseShow());
+          const { data } = await addGuards(guard);
+          if (data) {
+            console.log(data);
+            navigate(-1);
+            dispatch(suspenseHide());
+          }
         }
       }
+    } catch (error) {
+    } finally {
+      setisLoading(false);
     }
   };
 
@@ -199,6 +209,8 @@ function AddGuard({ onBoarding = true }) {
             <div className="relative">
               <div className="flex items-center justify-between">
                 <RegularButton
+                  disabled={isLoading}
+                  isLoading={isLoading}
                   text="Save"
                   rounded="full"
                   width="auto"
