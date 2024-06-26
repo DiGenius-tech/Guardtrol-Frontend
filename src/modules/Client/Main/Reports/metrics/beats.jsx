@@ -80,30 +80,32 @@ const BeatsMetrics = () => {
 
       <section className="mb-6 ">
         <h2 className="text-xl font-semibold">Beat Details</h2>
-        <table className="min-w-full bg-white rounded shadow overflow-x-scroll">
-          <thead>
-            <tr>
-              <th className="py-2 px-4 bg-gray-200 text-start">Name</th>
-              <th className="py-2 px-4 bg-gray-200 text-start">Status</th>
-              <th className="py-2 px-4 bg-gray-200 text-start">Address</th>
-              <th className="py-2 px-4 bg-gray-200 text-start">
-                Guards Assigned
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {beats?.map((beat) => (
-              <tr key={beat._id}>
-                <td className="py-2 px-4">{beat.name}</td>
-                <td className="py-2 px-4">
-                  {beat.isactive ? "Active" : "InActive"}
-                </td>
-                <td className="py-2 px-4">{beat.address}</td>
-                <td className="py-2 px-4">{beat.guards?.length}</td>
+        <div className="overflow-x-scroll  remove-scrollbar">
+          <table className=" bg-white rounded shadow ">
+            <thead>
+              <tr>
+                <th className="py-2 px-4 bg-gray-200 text-start">Name</th>
+                <th className="py-2 px-4 bg-gray-200 text-start">Status</th>
+                <th className="py-2 px-4 bg-gray-200 text-start">Address</th>
+                <th className="py-2 px-4 bg-gray-200 text-start">
+                  Guards Assigned
+                </th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {beats?.map((beat) => (
+                <tr key={beat._id}>
+                  <td className="py-2 px-4">{beat.name}</td>
+                  <td className="py-2 px-4">
+                    {beat.isactive ? "Active" : "InActive"}
+                  </td>
+                  <td className="py-2 px-4">{beat.address}</td>
+                  <td className="py-2 px-4">{beat.guards?.length}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </section>
     </div>
   );

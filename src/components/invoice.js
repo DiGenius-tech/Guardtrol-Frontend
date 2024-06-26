@@ -62,7 +62,7 @@ const Invoice = ({ invoice, componentRef }) => {
                   <div className=" text-right text-sm ">
                     <h6 className="font-bold text-lg">Alphatrol Limited</h6>
                     <p className="text-sm text-dark-700 ">
-                      167 Adetokunbo Ademola Cres
+                      167 Adetokunbo Ademola Cresent
                       <br /> Wuse, Abuja, Nigeria
                     </p>
                     <p className="text-sm">+234 704-1111-161</p>

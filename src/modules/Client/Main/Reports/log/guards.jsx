@@ -101,23 +101,23 @@ const GuardsLog = () => {
       <section className="mb-6">
         <h2 className="text-xl font-semibold">Guards Log</h2>
       </section>
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-2  overflow-y-scroll remove-scrollbar">
         <input
           type="date"
-          className="m-0 w-full sm:w-[48%] md:w-auto border-gray-300 rounded-md"
+          className="m-0 min-w-40 h-10 sm:w-[48%] md:w-auto border-gray-300 rounded-md"
           selected={startDate}
           onChange={(e) => handleDateChange(e.target.value, "start")}
         />
         <input
           type="date"
-          className="m-0 w-full sm:w-[48%] md:w-auto border-gray-300 rounded-md"
+          className="m-0 min-w-40 h-10 sm:w-[48%] md:w-auto border-gray-300 rounded-md"
           selected={endDate}
           onChange={(e) => handleDateChange(e.target.value, "end")}
         />
         <select
           defaultValue={selectedGuard}
           onChange={(e) => setSelectedGuard(e.target.value)}
-          className="border px-2 h-[41.6px] border-gray-300 rounded-md m-0 w-full sm:w-[48%] md:w-auto"
+          className="border px-2 min-w-40 h-10 border-gray-300 rounded-md m-0 w-full sm:w-[48%] md:w-auto"
         >
           <option value="">Select Guard</option>
           {guards?.map((guard) => (
@@ -128,14 +128,14 @@ const GuardsLog = () => {
         </select>
         <button
           onClick={exportToExcel}
-          className="bg-blue-500 text-white h-[41.6px] px-4 rounded w-full sm:w-[48%] md:w-auto"
+          className="bg-blue-500 text-white min-w-40 h-10 px-4 rounded  sm:w-[48%] md:w-auto"
         >
           Export to Excel
         </button>
         <Button
           color={"green"}
           onClick={refetch}
-          className="bg-green-500 text-white px-4 rounded"
+          className="bg-green-500 text-white px-4 rounded min-w-40 h-10"
           disabled={isFetching}
         >
           {isFetching ? (

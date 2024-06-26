@@ -163,24 +163,26 @@ const GuardsMetrics = () => {
 
       <section className="mb-6">
         <h2 className="text-xl font-semibold">Guard Details</h2>
-        <table className="min-w-full bg-white rounded shadow overflow-x-scroll">
-          <thead>
-            <tr>
-              <th className="py-2 px-4 bg-gray-200 text-start">Name</th>
-              <th className="py-2 px-4 bg-gray-200 text-start">Status</th>
-              <th className="py-2 px-4 bg-gray-200 text-start">Phone</th>
-            </tr>
-          </thead>
-          <tbody>
-            {guards?.map((guard) => (
-              <tr key={guard.id}>
-                <td className="py-2 px-4">{guard.name}</td>
-                <td className="py-2 px-4">{guard.status}</td>
-                <td className="py-2 px-4">{guard.phone}</td>
+        <div className="overflow-x-scroll  remove-scrollbar">
+          <table className="min-w-full bg-white rounded shadow overflow-x-scroll">
+            <thead>
+              <tr>
+                <th className="py-2 px-4 bg-gray-200 text-start">Name</th>
+                <th className="py-2 px-4 bg-gray-200 text-start">Status</th>
+                <th className="py-2 px-4 bg-gray-200 text-start">Phone</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {guards?.map((guard) => (
+                <tr key={guard.id}>
+                  <td className="py-2 px-4">{guard.name}</td>
+                  <td className="py-2 px-4">{guard.status}</td>
+                  <td className="py-2 px-4">{guard.phone}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </section>
     </div>
   );

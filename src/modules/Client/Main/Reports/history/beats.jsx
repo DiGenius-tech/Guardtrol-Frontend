@@ -111,8 +111,11 @@ const BeatsHistory = () => {
         beatAggregates[beatId]?.clockOutLogs.push(clockOutTime);
       }
 
-      beatAggregates[beatId].totalPatrols += 1;
-      beatAggregates[beatId].patrolCount += 1;
+      if (patrol?.beat._id === beatId) {
+        console.log(patrol?.beat._id, beatId);
+        beatAggregates[beatId].totalPatrols += 1;
+        beatAggregates[beatId].patrolCount += 1;
+      }
     });
 
     const beatList = Object.values(beatAggregates).map((beat) => {
@@ -190,15 +193,15 @@ const BeatsHistory = () => {
     <div className="container mx-auto relative min-h-[450px]  pb-36">
       <section className="mb-6">
         <h2 className="text-xl font-semibold">Beats History</h2>
-        <div className="flex gap-2 mt-4">
+        <div className="flex  flex-wrap gap-2 mt-4 overflow-y-scroll remove-scrollbar">
           <input
-            className="border-gray-300 rounded-md"
+            className="border-gray-300 rounded-md min-w-40 h-10"
             type="date"
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
           />
           <input
-            className="border-gray-300 rounded-md"
+            className="border-gray-300 rounded-md min-w-40 h-10"
             type="date"
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
@@ -206,6 +209,7 @@ const BeatsHistory = () => {
 
           <Select
             id="beat"
+            className="min-w-40 h-10"
             value={selectedBeat}
             onChange={(e) => setSelectedBeat(e.target.value)}
             placeholder="Select Beat"
@@ -219,20 +223,20 @@ const BeatsHistory = () => {
           </Select>
           <button
             onClick={exportToExcel}
-            className="bg-blue-500 text-white  px-4 rounded "
+            className="bg-blue-500 text-white min-w-40 h-10  px-4 rounded "
           >
             Export to Excel
           </button>
           <button
             onClick={exportToPdf}
-            className="bg-red-500 text-white  px-4 rounded "
+            className="bg-red-500 text-white  px-4 rounded min-w-40 h-10"
           >
             Export to PDF
           </button>
           <Button
             color={"green"}
             onClick={fetchData}
-            className="bg-green-500 text-white px-4 rounded"
+            className="bg-green-500 text-white px-4 rounded min-w-40 h-10"
             disabled={loading}
           >
             {loading ? (

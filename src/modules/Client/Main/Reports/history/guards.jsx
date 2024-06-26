@@ -20,19 +20,35 @@ const GuardsHistory = () => {
   const [endDate, setEndDate] = useState(null);
   const [logs, setLogs] = useState([]);
   const [filteredLogs, setFilteredLogs] = useState([]);
+  const [filteredPatrols, setFilteredPatrols] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const token = useSelector(selectToken);
+
   const [currentPage, setCurrentPage] = useState(1);
   const [entriesPerPage, setEntriesPerPage] = useState(10);
-  const [loading, setLoading] = useState(false);
+  const [isPatrolInstacesFetching, setIsPatrolInstacesFetching] =
+    useState(false);
+  const [patrols, setPatrols] = useState([]);
 
+  const [loading, setLoading] = useState(false);
+  const getPatrolInstances = async () => {
+    setIsPatrolInstacesFetching(true);
+    try {
+      const res = await get(API_BASE_URL + "patrols/get-instances", token);
+      setPatrols(res);
+    } catch (error) {
+    } finally {
+      setIsPatrolInstacesFetching(false);
+    }
+  };
   useEffect(() => {
     getLogs();
+    getPatrolInstances();
   }, []); // Fetch logs on component mount
 
   useEffect(() => {
     filterLogs();
-  }, [startDate, endDate, guards]);
+  }, [startDate, endDate, guards, patrols]);
 
   const getLogs = async () => {
     try {
@@ -48,11 +64,17 @@ const GuardsHistory = () => {
 
   const filterLogs = () => {
     let filtered = [...logs];
+    let filteredPart = [...patrols];
 
     if (startDate && endDate) {
       filtered = filtered.filter((log) => {
         const logDate = new Date(log.createdAt);
         return logDate >= new Date(startDate) && logDate <= new Date(endDate);
+      });
+
+      filteredPart = filteredPart.filter((pat) => {
+        const patDate = new Date(pat.createdAt);
+        return patDate >= new Date(startDate) && patDate <= new Date(endDate);
       });
     }
 
@@ -63,6 +85,7 @@ const GuardsHistory = () => {
     }
 
     setFilteredLogs(filtered);
+    setFilteredPatrols(filteredPart);
   };
   const calculateAggregates = () => {
     const guardAggregates = {};
@@ -101,8 +124,9 @@ const GuardsHistory = () => {
         guardAggregates[guardId]?.clockOutLogs.push(clockOutTime);
       }
 
-      guardAggregates[guardId].totalPatrols += 1;
-      guardAggregates[guardId].patrolCount += 1;
+      guardAggregates[guardId].totalPatrols = filteredPatrols?.filter(
+        (fp) => fp?.guard?._id === guardId
+      )?.length;
     });
 
     const guardList = Object.values(guardAggregates).map((guard) => {
@@ -114,7 +138,6 @@ const GuardsHistory = () => {
         (acc, time) => acc + time,
         0
       );
-      console.log(totalClockInTime / guard?.clockInLogs.length);
       return {
         ...guard,
         avgClockInTime:
@@ -140,7 +163,6 @@ const GuardsHistory = () => {
     (currentPage - 1) * entriesPerPage,
     currentPage * entriesPerPage
   );
-  console.log(aggregatedData);
 
   const exportToExcel = () => {
     const exclFormat = aggregatedData.map((aggregated) => {
@@ -205,18 +227,18 @@ const GuardsHistory = () => {
     doc.save("guards_history.pdf");
   };
   return (
-    <div className="container mx-auto relative min-h-[450px]">
+    <div className="container mx-auto relative min-h-[450px]  pb-36">
       <section className="mb-6">
         <h2 className="text-xl font-semibold">Guards History</h2>
-        <div className="flex gap-2 mt-4">
+        <div className="flex  flex-wrap gap-2 mt-4 overflow-y-scroll remove-scrollbar">
           <input
-            className="border-gray-300 rounded-md"
+            className="border-gray-300 rounded-md min-w-40 h-10"
             type="date"
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
           />
           <input
-            className="border-gray-300 rounded-md"
+            className="border-gray-300 rounded-md min-w-40 h-10"
             type="date"
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
@@ -224,26 +246,27 @@ const GuardsHistory = () => {
 
           <TextInput
             type="text"
+            className="min-w-40 h-10"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search by Guard Name"
           />
           <button
             onClick={exportToExcel}
-            className="bg-blue-500 text-white px-4 rounded "
+            className="bg-blue-500 text-white px-4 rounded min-w-40 h-10"
           >
             Export to Excel
           </button>
           <button
             onClick={exportToPdf}
-            className="bg-red-500 text-white px-4 rounded  "
+            className="bg-red-500 text-white px-4 rounded  min-w-40 h-10"
           >
             Export to PDF
           </button>
           <Button
             color={"green"}
             onClick={getLogs}
-            className="bg-green-500 text-white px-4 rounded"
+            className="bg-green-500 text-white px-4 rounded min-w-40 h-10"
             disabled={loading}
           >
             {loading ? (
@@ -260,7 +283,7 @@ const GuardsHistory = () => {
         </div>
       </section>
 
-      <div className=" max-h-80 mt-5 mb-40">
+      <div className=" max-h-80 mt-5 mb-40 overflow-y-scroll">
         <Table striped>
           <Table.Head>
             <Table.HeadCell>Guard name</Table.HeadCell>

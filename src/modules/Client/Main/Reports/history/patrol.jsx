@@ -149,15 +149,15 @@ const PatrolHistory = () => {
     <div className="container mx-auto relative pb-40">
       <section className="mb-6">
         <h2 className="text-xl font-semibold">Patrol History</h2>
-        <div className="flex gap-2 mt-4">
+        <div className="flex gap-2 mt-4 flex-wrap overflow-y-scroll remove-scrollbar">
           <input
-            className="border-gray-300 rounded-md"
+            className="border-gray-300 rounded-md min-w-40 h-10"
             type="date"
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
           />
           <input
-            className="border-gray-300 rounded-md"
+            className="border-gray-300 rounded-md min-w-40 h-10"
             type="date"
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
@@ -165,6 +165,7 @@ const PatrolHistory = () => {
 
           <TextInput
             type="text"
+            className="min-w-40 h-10"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search by Guard Name"
@@ -172,21 +173,21 @@ const PatrolHistory = () => {
           <Button
             color={"blue"}
             onClick={exportToExcel}
-            className="bg-blue-500 text-white px-4 rounded"
+            className="bg-blue-500 text-white px-4 rounded min-w-40 h-10"
           >
             Export to Excel
           </Button>
           <Button
             color={"red"}
             onClick={exportToPdf}
-            className="bg-red-500 text-white px-4 rounded"
+            className="bg-red-500 min-w-40 h-10 text-white px-4 rounded"
           >
             Export to PDF
           </Button>
           <Button
             color={"green"}
             onClick={getPatrolInstances}
-            className="bg-green-500 text-white px-4 rounded"
+            className="bg-green-500 text-white px-4 rounded min-w-40 h-10"
             disabled={loading}
           >
             {loading ? (
