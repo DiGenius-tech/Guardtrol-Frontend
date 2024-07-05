@@ -17,7 +17,12 @@ const UserListMobileView = ({
           <p className="text-gray-700">{user.email}</p>
           <p className="text-gray-700">{user.role}</p>
           <div className="flex space-x-2 mt-4">
-            <Button onClick={() => handleEditUser(user)}>Edit</Button>
+            <Button
+              className="bg-[#008080]"
+              onClick={() => handleEditUser(user)}
+            >
+              Edit
+            </Button>
             <Button onClick={() => handleDeleteUser(user)} color="red">
               Delete
             </Button>

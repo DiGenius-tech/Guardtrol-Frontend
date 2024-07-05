@@ -48,7 +48,7 @@ const GuardsHistory = () => {
 
   useEffect(() => {
     filterLogs();
-  }, [startDate, endDate, guards, patrols]);
+  }, [startDate, endDate, guards, patrols, searchQuery]);
 
   const getLogs = async () => {
     try {
@@ -80,13 +80,14 @@ const GuardsHistory = () => {
 
     if (searchQuery) {
       filtered = filtered.filter((log) =>
-        log.guard.name.toLowerCase().includes(searchQuery.toLowerCase())
+        log?.guard?.name?.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
 
     setFilteredLogs(filtered);
     setFilteredPatrols(filteredPart);
   };
+
   const calculateAggregates = () => {
     const guardAggregates = {};
 
@@ -165,81 +166,102 @@ const GuardsHistory = () => {
   );
 
   const exportToExcel = () => {
-    const exclFormat = aggregatedData.map((aggregated) => {
-      return {
-        GuardName: aggregated?.guardName || "N/A",
-        totalPatrols: aggregated?.totalPatrols,
-        avgClockInTime: aggregated?.avgClockInTime,
-        avgClockOutTime: aggregated?.avgClockOutTime,
-      };
-    });
-    const worksheet = XLSX.utils.json_to_sheet(exclFormat);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Guards History");
-    XLSX.writeFile(workbook, "guards_history.xlsx");
-  };
-
-  const exportToPdf = () => {
-    const doc = new jsPDF();
-    const fontSize = 12;
-    const pageHeight = doc.internal.pageSize.height;
-    let yPosition = 20;
-
-    doc.setFontSize(fontSize);
-    doc.text("Guards History Report", 14, yPosition);
-    yPosition += fontSize + 10;
-
-    const headers = [
+    const headerData = [
+      ["Filter Information"],
       [
-        "Index",
-        "Guard Name",
-        "Total Patrols",
-        "AvgClockInTime",
-        "AvgClockOutTime",
+        `Date Range: ${
+          startDate && endDate ? startDate + " - " + endDate : "All"
+        } `,
       ],
+      [`Selected Guard: ${searchQuery || "All Guards"}`],
+      [],
+      ["GuardName", "totalPatrols", "avgClockInTime", "avgClockOutTime"],
     ];
 
-    const data = aggregatedData.map((log, index) => [
-      index + 1,
-      log?.name || "N/A",
-      log?.totalPatrols || "N/A",
-      log?.avgClockInTime || "N/A",
-      log?.avgClockOutTime || "N/A",
+    const exclFormat = aggregatedData?.map((aggregated) => [
+      aggregated?.guardName || "N/A",
+      aggregated?.totalPatrols,
+      aggregated?.avgClockInTime,
+      aggregated?.avgClockOutTime,
     ]);
 
-    doc.autoTable({
-      startY: yPosition,
-      head: headers,
-      body: data,
-      theme: "striped",
-      styles: { fontSize: fontSize - 2 },
-      headStyles: { fillColor: [22, 160, 133] },
-      margin: { top: 10 },
-      didDrawPage: (data) => {
-        const currentPage = doc.internal.getCurrentPageInfo().pageNumber;
-        const totalPages = doc.internal.getNumberOfPages();
-        const footerText = `Page ${currentPage} of ${totalPages}`;
-        doc.setFontSize(fontSize - 4);
-        doc.text(footerText, data.settings.margin.left, pageHeight - 10);
-      },
-    });
+    const combinedData = [...headerData, ...exclFormat];
 
-    doc.save("guards_history.pdf");
+    const ws = XLSX.utils.aoa_to_sheet(combinedData);
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Guards History");
+
+    XLSX.writeFile(wb, "guards_history.xlsx");
   };
+
+  // const exportToPdf = () => {
+  //   const doc = new jsPDF();
+  //   const fontSize = 12;
+  //   const pageHeight = doc.internal.pageSize.height;
+  //   let yPosition = 20;
+
+  //   doc.setFontSize(fontSize);
+  //   doc.text("Guards History Report", 14, yPosition);
+  //   yPosition += fontSize + 10;
+
+  //   const headers = [
+  //     [
+  //       "Index",
+  //       "Guard Name",
+  //       "Total Patrols",
+  //       "AvgClockInTime",
+  //       "AvgClockOutTime",
+  //     ],
+  //   ];
+
+  //   const data = aggregatedData.map((log, index) => [
+  //     index + 1,
+  //     log?.name || "N/A",
+  //     log?.totalPatrols || "N/A",
+  //     log?.avgClockInTime || "N/A",
+  //     log?.avgClockOutTime || "N/A",
+  //   ]);
+
+  //   doc.autoTable({
+  //     startY: yPosition,
+  //     head: headers,
+  //     body: data,
+  //     theme: "striped",
+  //     styles: { fontSize: fontSize - 2 },
+  //     headStyles: { fillColor: [22, 160, 133] },
+  //     margin: { top: 10 },
+  //     didDrawPage: (data) => {
+  //       const currentPage = doc.internal.getCurrentPageInfo().pageNumber;
+  //       const totalPages = doc.internal.getNumberOfPages();
+  //       const footerText = `Page ${currentPage} of ${totalPages}`;
+  //       doc.setFontSize(fontSize - 4);
+  //       doc.text(footerText, data.settings.margin.left, pageHeight - 10);
+  //     },
+  //   });
+
+  //   doc.save("guards_history.pdf");
+  // };
+  const indexOfLastEntry = currentPage * entriesPerPage;
+  const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
+  const currentEntries = aggregatedData.slice(
+    indexOfFirstEntry,
+    indexOfLastEntry
+  );
   return (
-    <div className="container mx-auto relative min-h-[450px]  pb-36">
-      <section className="mb-6">
+    <div className="container mx-auto relative pb-40 sm:pb-20">
+      <section className="mb-2">
         <h2 className="text-xl font-semibold">Guards History</h2>
-        <div className="flex  flex-wrap gap-2 mt-4 overflow-y-scroll remove-scrollbar">
+        <div className="flex gap-2 mt-1 flex-wrap overflow-y-scroll remove-scrollbar py-1">
           <input
             className="border-gray-300 rounded-md min-w-40 h-10"
-            type="date"
+            type="datetime-local"
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
           />
           <input
             className="border-gray-300 rounded-md min-w-40 h-10"
-            type="date"
+            type="datetime-local"
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
           />
@@ -257,12 +279,12 @@ const GuardsHistory = () => {
           >
             Export to Excel
           </button>
-          <button
+          {/* <button
             onClick={exportToPdf}
             className="bg-red-500 text-white px-4 rounded  min-w-40 h-10"
           >
             Export to PDF
-          </button>
+          </button> */}
           <Button
             color={"green"}
             onClick={getLogs}
@@ -283,7 +305,7 @@ const GuardsHistory = () => {
         </div>
       </section>
 
-      <div className=" max-h-80 mt-5 mb-40 overflow-y-scroll">
+      <div className=" min-h-[300px] max-h-80  overflow-y-auto">
         <Table striped>
           <Table.Head>
             <Table.HeadCell>Guard name</Table.HeadCell>
@@ -318,7 +340,7 @@ const GuardsHistory = () => {
               </Table.Row>
             )}
             {!loading &&
-              displayedGuards?.map((guard, index) => (
+              currentEntries?.map((guard, index) => (
                 <Table.Row
                   key={index}
                   className="bg-white dark:border-gray-700 dark:bg-gray-800"

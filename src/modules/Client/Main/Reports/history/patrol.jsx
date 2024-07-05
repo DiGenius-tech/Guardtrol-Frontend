@@ -10,6 +10,7 @@ import Pagination from "../../../../../shared/Pagination/Pagination";
 import { get } from "../../../../../lib/methods";
 import { API_BASE_URL } from "../../../../../constants/api";
 import { format } from "date-fns";
+import { useGetBeatsQuery } from "../../../../../redux/services/beats";
 
 const PatrolHistory = () => {
   const [startDate, setStartDate] = useState(null);
@@ -18,11 +19,13 @@ const PatrolHistory = () => {
   const [filteredPatrolInstances, setFilteredPatrolInstances] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const token = useSelector(selectToken);
+  const [selectedBeat, setSelectedBeat] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const [entriesPerPage, setEntriesPerPage] = useState(10);
+  const [entriesPerPage, setEntriesPerPage] = useState(5);
   const [loading, setLoading] = useState(false);
   const formattedTime = (date) => format(new Date(date), "hh:mm a");
   const formatDate = (date) => format(new Date(date), "yyyy-MM-dd");
+  const { data: beats } = useGetBeatsQuery();
 
   useEffect(() => {
     getPatrolInstances();
@@ -30,7 +33,7 @@ const PatrolHistory = () => {
 
   useEffect(() => {
     filterPatrolInstances();
-  }, [startDate, endDate, searchQuery, patrolInstances]);
+  }, [startDate, endDate, searchQuery, patrolInstances, selectedBeat]);
 
   const getPatrolInstances = async () => {
     try {
@@ -48,8 +51,6 @@ const PatrolHistory = () => {
   const filterPatrolInstances = () => {
     let filtered = [...patrolInstances];
     if (startDate && endDate) {
-      console.log(startDate, endDate);
-
       filtered = filtered.filter((instance) => {
         const instanceDate = new Date(instance.createdAt);
         return (
@@ -65,104 +66,158 @@ const PatrolHistory = () => {
       );
     }
 
+    if (selectedBeat) {
+      filtered = filtered.filter(
+        (instance) => instance.beat?._id === selectedBeat
+      );
+    }
+
     setFilteredPatrolInstances(filtered);
   };
+
+  const indexOfLastEntry = currentPage * entriesPerPage;
+  const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
+  const currentEntries = filteredPatrolInstances.slice(
+    indexOfFirstEntry,
+    indexOfLastEntry
+  );
 
   const exportToExcel = () => {
     const exclFormat = filteredPatrolInstances?.map((instance) => {
       return {
-        Key: instance?.key || "N/A",
-        User: instance?.user?.name || "N/A",
-        Status: instance?.status,
+        Patrol: instance?.patrol?.name || "N/A",
         StartTime: instance?.starttime,
         EndTime: instance?.endtime,
-        Patrol: instance?.patrol?.name || "N/A",
+        Status: instance?.status,
         Beat: instance?.beat?.name || "N/A",
         Guard: instance?.guard?.name || "N/A",
         AbandonedBy: instance?.abandonedby?.name || "N/A",
       };
     });
-    const worksheet = XLSX.utils.json_to_sheet(exclFormat);
+
+    // Create header information
+    const headerData = [
+      ["Filter Information"],
+      [
+        `Date Range: ${
+          startDate && endDate ? `${startDate} - ${endDate}` : "All"
+        }`,
+      ],
+      [`Selected Beat: ${selectedBeat || "All Beats"}`],
+      [],
+      [
+        "Patrol",
+        "Start Time",
+        "End Time",
+        "Status",
+        "Beat",
+        "Guard",
+        "Abandoned By",
+      ], // Column headers
+    ];
+
+    // Combine header and data
+    const combinedData = [...headerData, ...exclFormat.map(Object.values)];
+
+    // Create the worksheet
+    const worksheet = XLSX.utils.aoa_to_sheet(combinedData);
+
+    // Create a new workbook and append the sheet
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Patrol History");
+
+    // Write the workbook to file
     XLSX.writeFile(workbook, "patrol_history.xlsx");
   };
 
-  const exportToPdf = () => {
-    const doc = new jsPDF();
-    const fontSize = 12;
-    const pageHeight = doc.internal.pageSize.height;
-    let yPosition = 20;
+  // const exportToPdf = () => {
+  //   const doc = new jsPDF();
+  //   const fontSize = 12;
+  //   const pageHeight = doc.internal.pageSize.height;
+  //   let yPosition = 20;
 
-    doc.setFontSize(fontSize);
-    doc.text("Patrol History Report", 14, yPosition);
-    yPosition += fontSize + 10;
+  //   doc.setFontSize(fontSize);
+  //   doc.text("Patrol History Report", 14, yPosition);
+  //   yPosition += fontSize + 10;
 
-    const headers = [
-      [
-        "Key",
-        "User",
-        "Status",
-        "StartTime",
-        "EndTime",
-        "Patrol",
-        "Beat",
-        "Guard",
-        "AbandonedBy",
-      ],
-    ];
+  //   const headers = [
+  //     [
+  //       "Key",
+  //       "User",
+  //       "Status",
+  //       "StartTime",
+  //       "EndTime",
+  //       "Patrol",
+  //       "Beat",
+  //       "Guard",
+  //       "AbandonedBy",
+  //     ],
+  //   ];
 
-    const data = filteredPatrolInstances?.map((instance, index) => [
-      index + 1,
-      instance?.key || "N/A",
-      instance?.user?.name || "N/A",
-      instance?.status || "N/A",
-      instance?.starttime || "N/A",
-      instance?.endtime || "N/A",
-      instance?.patrol?.name || "N/A",
-      instance?.beat?.name || "N/A",
-      instance?.guard?.name || "N/A",
-      instance?.abandonedby?.name || "N/A",
-    ]);
+  //   const data = filteredPatrolInstances?.map((instance, index) => [
+  //     index + 1,
+  //     instance?.key || "N/A",
+  //     instance?.user?.name || "N/A",
+  //     instance?.status || "N/A",
+  //     instance?.starttime || "N/A",
+  //     instance?.endtime || "N/A",
+  //     instance?.patrol?.name || "N/A",
+  //     instance?.beat?.name || "N/A",
+  //     instance?.guard?.name || "N/A",
+  //     instance?.abandonedby?.name || "N/A",
+  //   ]);
 
-    doc.autoTable({
-      startY: yPosition,
-      head: headers,
-      body: data,
-      theme: "striped",
-      styles: { fontSize: fontSize - 2 },
-      headStyles: { fillColor: [22, 160, 133] },
-      margin: { top: 10 },
-      didDrawPage: (data) => {
-        const currentPage = doc.internal.getCurrentPageInfo().pageNumber;
-        const totalPages = doc.internal.getNumberOfPages();
-        const footerText = `Page ${currentPage} of ${totalPages}`;
-        doc.setFontSize(fontSize - 4);
-        doc.text(footerText, data.settings.margin.left, pageHeight - 10);
-      },
-    });
+  //   doc.autoTable({
+  //     startY: yPosition,
+  //     head: headers,
+  //     body: data,
+  //     theme: "striped",
+  //     styles: { fontSize: fontSize - 2 },
+  //     headStyles: { fillColor: [22, 160, 133] },
+  //     margin: { top: 10 },
+  //     didDrawPage: (data) => {
+  //       const currentPage = doc.internal.getCurrentPageInfo().pageNumber;
+  //       const totalPages = doc.internal.getNumberOfPages();
+  //       const footerText = `Page ${currentPage} of ${totalPages}`;
+  //       doc.setFontSize(fontSize - 4);
+  //       doc.text(footerText, data.settings.margin.left, pageHeight - 10);
+  //     },
+  //   });
 
-    doc.save("patrol_history.pdf");
-  };
+  //   doc.save("patrol_history.pdf");
+  // };
 
   return (
-    <div className="container mx-auto relative pb-40">
-      <section className="mb-6">
+    <div className="container mx-auto relative pb-40 sm:pb-20">
+      <section className="mb-2">
         <h2 className="text-xl font-semibold">Patrol History</h2>
-        <div className="flex gap-2 mt-4 flex-wrap overflow-y-scroll remove-scrollbar">
+        <div className="flex gap-2 mt-1 flex-wrap overflow-y-scroll remove-scrollbar py-1">
           <input
             className="border-gray-300 rounded-md min-w-40 h-10"
-            type="date"
+            type="datetime-local"
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
           />
           <input
             className="border-gray-300 rounded-md min-w-40 h-10"
-            type="date"
+            type="datetime-local"
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
           />
-
+          <select
+            defaultValue={selectedBeat}
+            onChange={(e) => {
+              setSelectedBeat(e.target.value);
+            }}
+            className="border px-2 min-w-40 h-10 border-gray-300 rounded-md m-0 w-full sm:w-[48%] md:w-auto"
+          >
+            <option value="">Select Beat</option>
+            {beats?.map((beat) => (
+              <option key={beat?._id} value={beat?._id}>
+                {beat?.name}
+              </option>
+            ))}
+          </select>
           <TextInput
             type="text"
             className="min-w-40 h-10"
@@ -177,13 +232,13 @@ const PatrolHistory = () => {
           >
             Export to Excel
           </Button>
-          <Button
+          {/* <Button
             color={"red"}
             onClick={exportToPdf}
             className="bg-red-500 min-w-40 h-10 text-white px-4 rounded"
           >
             Export to PDF
-          </Button>
+          </Button> */}
           <Button
             color={"green"}
             onClick={getPatrolInstances}
@@ -204,16 +259,17 @@ const PatrolHistory = () => {
         </div>
       </section>
 
-      <div className="mt-5 min-h-[450px] max-h-80  overflow-y-scroll">
+      <div className=" min-h-[300px] max-h-80  overflow-y-auto">
         <Table striped>
           <Table.Head>
-            <Table.HeadCell>Status</Table.HeadCell>
-            <Table.HeadCell className=" w-52">Start Time</Table.HeadCell>
-            <Table.HeadCell className="w-52">End Time</Table.HeadCell>
             <Table.HeadCell>Patrol</Table.HeadCell>
             <Table.HeadCell>Beat</Table.HeadCell>
             <Table.HeadCell>Guard</Table.HeadCell>
             <Table.HeadCell>Abandoned By</Table.HeadCell>
+
+            <Table.HeadCell>Status</Table.HeadCell>
+            <Table.HeadCell className=" w-52">Start Time</Table.HeadCell>
+            <Table.HeadCell className="w-52">End Time</Table.HeadCell>
           </Table.Head>
           <Table.Body className="divide-y">
             {loading && (
@@ -242,12 +298,24 @@ const PatrolHistory = () => {
               </Table.Row>
             )}
             {!loading &&
-              filteredPatrolInstances?.map((instance, index) => (
+              currentEntries?.map((instance, index) => (
                 <Table.Row
                   key={index}
                   className="bg-white dark:border-gray-700 dark:bg-gray-800"
                 >
-                  <Table.Cell>{instance.status}</Table.Cell>
+                  <Table.Cell className="capitalize">
+                    {instance.patrol?.name || "N/A"}
+                  </Table.Cell>
+                  <Table.Cell>{instance.beat?.name || "N/A"}</Table.Cell>
+                  <Table.Cell className="capitalize">
+                    {instance.guard?.name || "N/A"}
+                  </Table.Cell>
+                  <Table.Cell className="capitalize">
+                    {instance.abandonedby?.name || "N/A"}
+                  </Table.Cell>
+                  <Table.Cell className="capitalize">
+                    {instance.status}
+                  </Table.Cell>
                   <Table.Cell>
                     {instance.starttime
                       ? formatDate(instance.starttime) +
@@ -262,10 +330,6 @@ const PatrolHistory = () => {
                         formattedTime(instance.endtime)
                       : "Not completed"}
                   </Table.Cell>
-                  <Table.Cell>{instance.patrol?.name || "N/A"}</Table.Cell>
-                  <Table.Cell>{instance.beat?.name || "N/A"}</Table.Cell>
-                  <Table.Cell>{instance.guard?.name || "N/A"}</Table.Cell>
-                  <Table.Cell>{instance.abandonedby?.name || "N/A"}</Table.Cell>
                 </Table.Row>
               ))}
           </Table.Body>

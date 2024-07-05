@@ -45,27 +45,40 @@ const GuardsLog = () => {
   const exportToExcel = () => {
     const columns = [
       { header: "Date", key: "date" },
-      { header: "User", key: "user" },
       { header: "Message", key: "message" },
       { header: "Guard", key: "guard" },
       { header: "Type", key: "type" },
     ];
 
     const data = filteredLogs.map((log) => ({
-      date: format(new Date(log.createdAt), "yyyy-MM-dd HH:mm:ss"),
-      user: log.user?.name || "Unknown",
+      date: format(new Date(log.createdAt), "yyyy-MM-dd HH:mm"),
       message: log.message,
       guard: log?.guard?.name || "Unknown",
       type: log.type,
     }));
 
-    const worksheet = XLSX.utils.json_to_sheet(data);
-    const workbook = XLSX.utils.book_new();
+    const headerData = [
+      ["Filter Information"],
+      [`Date Range: ${startDate} - ${endDate}`],
+      [`Selected Guard: ${selectedGuard || "All Guards"}`],
+      [],
+      columns.map((col) => col.header),
+    ];
 
-    XLSX.utils.sheet_add_aoa(worksheet, [columns.map((col) => col.header)], {
-      origin: "A1",
-    });
+    const dataRows = data.map((log) => [
+      log.date,
+      log.message,
+      log.guard,
+      log.type,
+    ]);
+
+    const combinedData = [...headerData, ...dataRows];
+
+    const worksheet = XLSX.utils.aoa_to_sheet(combinedData);
+
+    const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Logs");
+
     XLSX.writeFile(workbook, "guards_logs.xlsx");
   };
 
@@ -95,21 +108,20 @@ const GuardsLog = () => {
   const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
   const currentLogs = filteredLogs?.slice(indexOfFirstEntry, indexOfLastEntry);
 
-  console.log(totalEntries, indexOfLastEntry, indexOfFirstEntry, currentLogs);
   return (
-    <div className="container mx-auto relative min-h-[450px] ">
-      <section className="mb-6">
+    <div className="container mx-auto relative pb-40 sm:pb-20">
+      <section className="mb-2">
         <h2 className="text-xl font-semibold">Guards Log</h2>
       </section>
-      <div className="flex flex-wrap gap-2  overflow-y-scroll remove-scrollbar">
+      <div className="flex gap-2 mt-1 flex-wrap overflow-y-scroll remove-scrollbar py-1">
         <input
-          type="date"
+          type="datetime-local"
           className="m-0 min-w-40 h-10 sm:w-[48%] md:w-auto border-gray-300 rounded-md"
           selected={startDate}
           onChange={(e) => handleDateChange(e.target.value, "start")}
         />
         <input
-          type="date"
+          type="datetime-local"
           className="m-0 min-w-40 h-10 sm:w-[48%] md:w-auto border-gray-300 rounded-md"
           selected={endDate}
           onChange={(e) => handleDateChange(e.target.value, "end")}
@@ -151,7 +163,7 @@ const GuardsLog = () => {
         </Button>
       </div>
 
-      <div className="overflow-x-scroll max-h-96 mt-5 mb-40">
+      <div className=" min-h-[300px] max-h-80  overflow-y-auto">
         <Table>
           <Table.Head>
             <Table.HeadCell>Date</Table.HeadCell>
@@ -197,6 +209,7 @@ const GuardsLog = () => {
           </Table.Body>
         </Table>
       </div>
+
       <div className="relative mt-16">
         <Pagination
           totalEntries={totalEntries}

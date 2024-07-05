@@ -22,7 +22,7 @@ const UserListDesktopView = ({
             <Table.Cell>{user.email}</Table.Cell>
             <Table.Cell>{user.role}</Table.Cell>
             <Table.Cell>
-              {user.role !== "Admin" && (
+              {user.role !== "Owner" && (
                 <div className="flex gap-2">
                   <Button
                     className="bg-[#008080]"

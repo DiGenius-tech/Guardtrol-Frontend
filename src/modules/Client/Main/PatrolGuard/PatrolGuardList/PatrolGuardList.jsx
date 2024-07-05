@@ -16,7 +16,7 @@ const duty_status = {
   ON_DUTY: 1,
 };
 
-const PatrolGuardList = (props)  => {
+const PatrolGuardList = (props) => {
   const [selectedGuard, setSelectedGuard] = useState(null);
   const [open, setOpen] = useState(false);
   const user = useSelector(selectUser);
@@ -32,10 +32,10 @@ const PatrolGuardList = (props)  => {
   const [deleteGuard, { isLoading: isUpdating, status }] =
     useDeleteGuardMutation();
 
-    useEffect(() => {
-      console.log(props)
-    }, [props])
-    
+  useEffect(() => {
+    console.log(props);
+  }, [props]);
+
   // if (status) {
   //   toast("Guard Deleted Successfully");
   //   setOpen(false);
@@ -55,8 +55,9 @@ const PatrolGuardList = (props)  => {
       {/* patrol-guard-list-app works! */}
       <PatrolGuardListToolbar />
       <div className="my-4"></div>
-      <Outlet />
-
+      <div className="px-4">
+        <Outlet />
+      </div>
       {/* <AlertDialog 
         open={open}
         title={`Delete Guard ?`}
@@ -67,6 +68,6 @@ const PatrolGuardList = (props)  => {
       /> */}
     </>
   );
-}
+};
 
 export default PatrolGuardList;

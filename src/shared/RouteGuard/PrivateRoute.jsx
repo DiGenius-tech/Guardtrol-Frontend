@@ -10,6 +10,7 @@ import { setOnboardingLevel } from "../../redux/slice/onboardingSlice";
 import { useGetBeatsQuery } from "../../redux/services/beats";
 import useHttpRequest from "../Hooks/HttpRequestHook";
 import { get } from "../../lib/methods";
+import { logout } from "../../redux/slice/authSlice";
 
 const PrivateRoute = ({
   component: Component,
@@ -25,7 +26,6 @@ const PrivateRoute = ({
 
   const [onboardingRoute, setOnboardingRoute] = useState("");
   const location = useLocation();
-
   const {
     data: beats,
     isUninitialized,

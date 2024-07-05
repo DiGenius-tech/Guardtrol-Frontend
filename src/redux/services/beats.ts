@@ -10,7 +10,6 @@ export const BeatApi = api.injectEndpoints({
         ...result.map(({ _id }) => ({ type: "Beats", _id } as const)),
         { type: "Beats" as const, id: "LIST" },
       ],
-      transformResponse: (response: any, meta, arg) => response.beats,
     }),
 
     addBeat: build.mutation<TBeat, Partial<any>>({

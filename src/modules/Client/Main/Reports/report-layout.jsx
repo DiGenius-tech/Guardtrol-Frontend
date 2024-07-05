@@ -5,7 +5,7 @@ const ReportLayout = () => {
   return (
     <>
       <ReportToolbar />
-      <div className=" p-4">
+      <div className="">
         <Outlet />
       </div>
     </>

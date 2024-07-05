@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Card, Button, Modal, TextInput, Select } from "flowbite-react";
+import {
+  Card,
+  Button,
+  Modal,
+  TextInput,
+  Select,
+  Spinner,
+} from "flowbite-react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 
@@ -16,8 +23,9 @@ import {
 import { selectToken, selectUser } from "../../../../../redux/selectors/auth";
 import UserListDesktopView from "./all-users-desktop";
 import UserListMobileView from "./all-users-mobile";
+import AssignBeatsToUser from "./assign-beats-to-user";
 
-const roles = ["Supervisor", "Manager", "Owner"];
+const roles = ["Supervisor", "Manager"];
 
 function OrganizationUsers() {
   const token = useSelector(selectToken);
@@ -27,12 +35,14 @@ function OrganizationUsers() {
   const {
     data: organizationUsers,
     isLoading,
+    isFetching: isFetchingUsers,
     error,
     refetch: refetchUsers,
   } = useGetUsersQuery(user.organization);
-  const [createUser] = useAddUserMutation();
-  const [updateUser] = useUpdateUserMutation();
-  const [deleteUser] = useDeleteUserMutation();
+
+  const [createUser, { isLoading: isCreatingUser }] = useAddUserMutation();
+  const [updateUser, { isLoading: isUpdatingUser }] = useUpdateUserMutation();
+  const [deleteUser, { isLoading: deletingUser }] = useDeleteUserMutation();
 
   const [showModal, setShowModal] = useState(false);
   const [editMode, setEditMode] = useState(false);
@@ -45,7 +55,10 @@ function OrganizationUsers() {
     email: "",
     password: "Password",
     role: "",
+    assignedBeats: [], // Add beats field
   });
+
+  const [selectedBeats, setSelectedBeats] = useState([]);
 
   useEffect(() => {
     if (error) {
@@ -54,13 +67,16 @@ function OrganizationUsers() {
   }, [error]);
 
   const handleOpenModal = (user = null) => {
+    console.log(user);
     if (user) {
       setSelectedUser(user);
       setUserForm({
         name: user.name,
         email: user.email,
         role: user.role,
+        assignedBeats: user.assignedBeats || [], // Set beats if available
       });
+      setSelectedBeats(user.assignedBeats || []); // Set selected beats if available
       setEditMode(true);
     } else {
       setSelectedUser(null);
@@ -68,7 +84,9 @@ function OrganizationUsers() {
         name: "",
         email: "",
         role: "",
+        assignedBeats: [], // Reset beats
       });
+      setSelectedBeats([]); // Reset selected beats
       setEditMode(false);
     }
     setShowModal(true);
@@ -88,7 +106,6 @@ function OrganizationUsers() {
 
   const handleRoleChange = (e) => {
     const { value } = e.target;
-
     setUserForm((prevForm) => {
       return { ...prevForm, role: value };
     });
@@ -96,21 +113,26 @@ function OrganizationUsers() {
 
   const handleSaveUser = async () => {
     try {
+      const userData = {
+        ...userForm,
+        assignedBeats: selectedBeats.map((sb) => sb.value),
+        organizationId: user.organization,
+      };
+      console.log("first");
+
       if (editMode) {
-        await updateUser({
-          id: selectedUser._id,
-          ...userForm,
-          organizationId: user.organization,
-        });
+        await updateUser({ id: selectedUser._id, ...userData });
         toast.success("User updated successfully");
       } else {
-        await createUser({ ...userForm, organizationId: user.organization });
+        await createUser(userData);
         toast.success("User created successfully");
       }
-      refetchUsers();
+
       handleCloseModal();
     } catch (err) {
       toast.error(err.message);
+    } finally {
+      const a22 = await refetchUsers();
     }
   };
 
@@ -139,8 +161,9 @@ function OrganizationUsers() {
     (currentPage - 1) * entriesPerPage,
     currentPage * entriesPerPage
   );
+
   return (
-    <div className="relative pb-16">
+    <div className="relative pb-16 ">
       <div className="flex justify-between items-center">
         <h2 className=" text-2xl font-bold">All Users</h2>
         <Button className="bg-[#008080] mb-5" onClick={() => handleOpenModal()}>
@@ -148,22 +171,34 @@ function OrganizationUsers() {
         </Button>
       </div>
       <div className="hidden sm:block">
-        <Card>
-          <UserListDesktopView
+        <Card className=" min-h-96">
+          {isFetchingUsers ? (
+            <div className="w-full h-full justify-center flex items-center">
+              <Spinner color="success" />
+            </div>
+          ) : (
+            <UserListDesktopView
+              users={paginatedUsers}
+              handleEditUser={handleOpenModal}
+              handleDeleteUser={handleDeleteUser}
+              icon_menu_dots={icon_menu_dots}
+            />
+          )}
+        </Card>
+      </div>
+      <div className="sm:hidden rounded-lg bg-white p-2 pb-20">
+        {isFetchingUsers ? (
+          <div className="w-full h-full justify-center flex items-center">
+            <Spinner color="success" />
+          </div>
+        ) : (
+          <UserListMobileView
             users={paginatedUsers}
             handleEditUser={handleOpenModal}
             handleDeleteUser={handleDeleteUser}
             icon_menu_dots={icon_menu_dots}
           />
-        </Card>
-      </div>
-      <div className="sm:hidden rounded-lg bg-white p-2">
-        <UserListMobileView
-          users={paginatedUsers}
-          handleEditUser={handleOpenModal}
-          handleDeleteUser={handleDeleteUser}
-          icon_menu_dots={icon_menu_dots}
-        />
+        )}
       </div>
       <Pagination
         totalEntries={organizationUsers?.length || 0}
@@ -213,11 +248,28 @@ function OrganizationUsers() {
                 </option>
               ))}
             </Select>
+            {userForm.role === "Supervisor" && (
+              <AssignBeatsToUser
+                selectedBeats={selectedBeats}
+                setSelectedBeats={setSelectedBeats}
+              />
+            )}
           </div>
         </Modal.Body>
         <Modal.Footer>
-          <Button className="bg-[#008080] " onClick={handleSaveUser}>
+          <Button
+            disabled={isUpdatingUser || isCreatingUser}
+            className="bg-[#008080] "
+            onClick={handleSaveUser}
+          >
             {editMode ? "Update" : "Create"}
+            {(isUpdatingUser || isCreatingUser) && (
+              <Spinner
+                aria-label="Loading spinner"
+                className="ml-2"
+                color="success"
+              />
+            )}
           </Button>
           <Button color="gray" onClick={handleCloseModal}>
             Cancel

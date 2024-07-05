@@ -173,7 +173,7 @@ const Dashboard = () => {
   };
 
   return (
-    <>
+    <div className="px-4">
       <div className="flex flex-col md:flex-row md:justify-between items-center">
         <h1 className="text-4xl font-bold tracking-tight text-gray-900 dark:text-white">
           Welcome, {user?.name || "User"}!
@@ -263,7 +263,7 @@ const Dashboard = () => {
           <Patrols />
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

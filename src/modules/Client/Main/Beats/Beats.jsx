@@ -4,7 +4,9 @@ function Beats(props) {
   return (
     <>
       {/* beats-app works! */}
-      <Outlet />
+      <div className="px-4">
+        <Outlet />
+      </div>
     </>
   );
 }

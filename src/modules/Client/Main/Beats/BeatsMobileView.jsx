@@ -1,6 +1,9 @@
 import { Dropdown, Spinner } from "flowbite-react";
 import AlertDialog from "../../../../shared/Dialog/AlertDialog";
 import { Link, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { selectUser } from "../../../../redux/selectors/auth";
+import { useGetPointsQuery } from "../../../../redux/services/points";
 
 function BeatsMobileView(props) {
   const navigate = useNavigate();
@@ -8,6 +11,13 @@ function BeatsMobileView(props) {
     props.setOpenModal(true);
     props.setBeatToEdit(beat);
   };
+  const {
+    data: points,
+    refetch: refetchPoints,
+    isLoading,
+  } = useGetPointsQuery();
+
+  const user = useSelector(selectUser);
   return (
     <>
       {/* beats-mobile-view-app works! */}
@@ -81,8 +91,15 @@ function BeatsMobileView(props) {
                       {beat.guards?.length || 0 > 1 ? <span>s</span> : ""}
                     </td>
                     <td className="px-6 py-4">
-                      {beat.routes?.length || 0}&nbsp;point
-                      {beat.routes?.length || 0 > 1 ? <span>s</span> : ""}
+                      {points?.filter((pat) => pat.beat === beat._id)?.length ||
+                        0}
+                      &nbsp;point
+                      {points?.filter((pat) => pat.beat === beat._id)?.length ||
+                      0 > 1 ? (
+                        <span>s</span>
+                      ) : (
+                        ""
+                      )}
                     </td>
                     <td className="px-6 py-4">
                       {beat.isactive ? (
@@ -109,13 +126,15 @@ function BeatsMobileView(props) {
                         >
                           Edit beat
                         </Dropdown.Item>
-                        <Dropdown.Item
-                          onClick={() => {
-                            props.handleDeleteBeat(beat);
-                          }}
-                        >
-                          Delete beat
-                        </Dropdown.Item>
+                        {(user.role === "Owner" || user.role === "Manager") && (
+                          <Dropdown.Item
+                            onClick={() => {
+                              props.handleDeleteBeat(beat);
+                            }}
+                          >
+                            Delete beat
+                          </Dropdown.Item>
+                        )}
                       </Dropdown>
                     </td>
                   </tr>

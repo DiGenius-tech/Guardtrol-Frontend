@@ -32,7 +32,11 @@ const BeatsLog = () => {
 
     // Parse date only once
     const parsedStartDate = startDate ? new Date(startDate) : null;
+
     const parsedEndDate = endDate ? new Date(endDate) : null;
+
+    console.log(parsedStartDate);
+    console.log(parsedEndDate);
 
     const newFilteredLogs = allLogs.filter((log) => {
       const logDate = new Date(log.createdAt);
@@ -60,7 +64,6 @@ const BeatsLog = () => {
   const exportToExcel = () => {
     const columns = [
       { header: "Date", key: "date" },
-      { header: "User", key: "user" },
       { header: "Message", key: "message" },
       { header: "Beat", key: "beat" },
       { header: "Type", key: "type" },
@@ -68,20 +71,38 @@ const BeatsLog = () => {
 
     const data = filteredLogs?.map((log) => ({
       date: format(new Date(log.createdAt), "yyyy-MM-dd HH:mm:ss"),
-      user: log.user?.name || "Unknown",
       message: log.message,
       beat: log?.beat?.name || "Unknown",
       type: log.type,
     }));
 
-    const worksheet = XLSX.utils.json_to_sheet(data);
-    const workbook = XLSX.utils.book_new();
+    const headerData = [
+      ["Filter Information"],
+      [
+        `Date Range: ${
+          startDate && endDate ? startDate + " - " + endDate : "All"
+        } `,
+      ],
+      [`Selected Beat: ${selectedBeat || "All Beats"}`],
+      [],
+      columns.map((col) => col.header),
+    ];
 
-    XLSX.utils.sheet_add_aoa(worksheet, [columns.map((col) => col.header)], {
-      origin: "A1",
-    });
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Logs");
-    XLSX.writeFile(workbook, "beats_logs.xlsx");
+    const dataRows = data.map((log) => [
+      log.date,
+      log.message,
+      log.beat,
+      log.type,
+    ]);
+
+    const combinedData = [...headerData, ...dataRows];
+
+    const ws = XLSX.utils.aoa_to_sheet(combinedData);
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Logs");
+
+    XLSX.writeFile(wb, "logs_history.xlsx");
   };
 
   const chartData = {
@@ -111,20 +132,20 @@ const BeatsLog = () => {
   const currentLogs = filteredLogs?.slice(indexOfFirstEntry, indexOfLastEntry);
 
   return (
-    <div className="container mx-auto relative min-h-[450px]  ">
-      <section className="mb-6">
+    <div className="container mx-auto relative pb-40 sm:pb-20">
+      <section className="mb-2">
         <h2 className="text-xl font-semibold">Beats Log</h2>
       </section>
-      <div className="flex flex-wrap gap-2 overflow-y-scroll remove-scrollbar">
+      <div className="flex gap-2 mt-1 flex-wrap overflow-y-scroll remove-scrollbar py-1">
         <input
           className="border-gray-300 rounded-md min-w-40 h-10"
-          type="date"
+          type="datetime-local"
           selected={startDate}
           onChange={(e) => handleDateChange(e.target.value, "start")}
         />
 
         <input
-          type="date"
+          type="datetime-local"
           className="border-gray-300 rounded-md min-w-40 h-10"
           selected={endDate}
           onChange={(e) => handleDateChange(e.target.value, "end")}
@@ -175,7 +196,7 @@ const BeatsLog = () => {
         </Button>
       </div>
 
-      <div className="overflow-x-scroll max-h-96 mt-5 mb-40">
+      <div className=" min-h-[300px] max-h-80  overflow-y-auto">
         <Table>
           <Table.Head>
             <Table.HeadCell>Date</Table.HeadCell>

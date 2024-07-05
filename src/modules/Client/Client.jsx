@@ -22,7 +22,7 @@ const Client = () => {
     <>
       {/* client-app works! */}
 
-      <div className="layout h-screen">
+      <div className="layout h-screen p-0">
         <div className="sticky top-0 left-0 right-0 z-40">
           <ClientToolbar
             handleOpenSidenav={handleOpenSidenav}
@@ -44,7 +44,7 @@ const Client = () => {
                 (isOpenSidenav
                   ? "-left-0 md:left-0 transition ease-out duration-100 "
                   : "left-full md:left-0 transition ease-in duration-75 ") +
-                "sidebar | h-full fixed md:relative top-0 bottom-0 w-3/4 md:w-full pt-4 z-40 bg-white"
+                "sidebar | h-full fixed md:relative top-0 bottom-0 w-3/4 md:w-full pt-0 z-40 bg-white"
               }
             >
               <div className="md:hidden px-4 py-2 flex items-center justify-between">

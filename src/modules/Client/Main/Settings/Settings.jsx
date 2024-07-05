@@ -9,9 +9,9 @@ function Settings() {
 
       <SettingsToolbar />
       <div className="my-4"></div>
-
-      <Outlet />
-
+      <div className="px-4 ">
+        <Outlet />
+      </div>
       {/* 
       <div className="tab flex-tabs flex-tab-nowrap">
         <Tabs aria-label="Tabs with underline" style="underline">

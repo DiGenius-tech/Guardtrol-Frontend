@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Dropdown } from "flowbite-react";
+import { Dropdown, Spinner } from "flowbite-react";
 import Swal from "sweetalert2";
 import icon_menu_dots from "../../../../../images/icons/icon-menu-dots.svg";
 import CreatePoint from "../../Points/CreatePoint";
@@ -9,12 +9,18 @@ import {
 } from "../../../../../redux/services/points";
 import Pagination from "../../../../../shared/Pagination/Pagination";
 import { ASSET_URL } from "../../../../../constants/api";
+import { useParams } from "react-router-dom";
 
 const BeatPoint = () => {
   const [openCreatePointModal, setOpenCreatePointModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [entriesPerPage, setEntriesPerPage] = useState(5);
-  const { data: points, refetch: refetchPoints } = useGetPointsQuery();
+  const { beatId } = useParams();
+  const {
+    data: points,
+    refetch: refetchPoints,
+    isLoading,
+  } = useGetPointsQuery();
   const [deletePoint] = useDeletePointsMutation();
 
   const handleDelete = async (pointToDelete) => {
@@ -47,10 +53,9 @@ const BeatPoint = () => {
     }
   };
 
-  const paginatedPoints = points?.slice(
-    (currentPage - 1) * entriesPerPage,
-    currentPage * entriesPerPage
-  );
+  const paginatedPoints = points
+    ?.filter((pat) => pat.beat === beatId)
+    ?.slice((currentPage - 1) * entriesPerPage, currentPage * entriesPerPage);
   return (
     <div className="relative pb-16">
       <CreatePoint
@@ -68,6 +73,17 @@ const BeatPoint = () => {
           +
         </div>
       </div>
+      {isLoading && (
+        <div className="w-full h-full justify-center flex items-center">
+          <Spinner color="success" aria-label="Success spinner example" />
+        </div>
+      )}
+      {((!isLoading && paginatedPoints?.length === 0) ||
+        (!isLoading && !paginatedPoints)) && (
+        <div className="w-full h-full py-20 justify-center flex items-center text-gray-700 font-semibold">
+          {"No Points"}
+        </div>
+      )}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4  gap-6 my-5">
         {paginatedPoints?.map((point) => (
           <div key={point._id} className="col-span-1 list-none">

@@ -5,7 +5,7 @@ const UsersLayout = () => {
   return (
     <>
       {/* <UsersToolbar /> */}
-      <div className=" p-4">
+      <div className="p-4">
         <Outlet />
       </div>
     </>

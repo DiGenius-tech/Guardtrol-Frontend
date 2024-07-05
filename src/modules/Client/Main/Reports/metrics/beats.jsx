@@ -1,29 +1,26 @@
-import React from "react";
+import React, { useState } from "react";
 import ReactApexChart from "react-apexcharts";
 import "tailwindcss/tailwind.css";
 import { useGetBeatsQuery } from "../../../../../redux/services/beats";
-
-// Sample data for beats
-const beatsData = [
-  {
-    id: 1,
-    name: "Beat A",
-    status: "Active",
-    address: "123 Main St",
-    description: "Description of Beat A",
-  },
-  {
-    id: 2,
-    name: "Beat B",
-    status: "Inactive",
-    address: "456 Elm St",
-    description: "Description of Beat B",
-  },
-  // More beats data here...
-];
+import Pagination from "../../../../../shared/Pagination/Pagination";
 
 const BeatsMetrics = () => {
   const { data: beats } = useGetBeatsQuery();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [entriesPerPage, setEntriesPerPage] = useState(10);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+  const handleEntriesPerPageChange = (entries) => {
+    setEntriesPerPage(entries);
+    setCurrentPage(1); // Reset to the first page when entries per page changes
+  };
+
+  const indexOfLastEntry = currentPage * entriesPerPage;
+  const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
+  const currentBeats = beats?.slice(indexOfFirstEntry, indexOfLastEntry);
 
   const beatStatusChartOptions = {
     series: beats?.reduce(
@@ -44,8 +41,8 @@ const BeatsMetrics = () => {
   };
 
   return (
-    <div className="container mx-auto ">
-      <div className=" grid grid-cols-1 lg:grid-cols-2 gap-5">
+    <div className="container mx-auto">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
         <section className="mb-6">
           <h2 className="text-xl font-semibold">Key Metrics</h2>
           <div className="bg-gray-100 p-4 rounded mb-5">
@@ -65,7 +62,7 @@ const BeatsMetrics = () => {
             </p>
           </div>
         </section>
-        <section className="mb-6 ">
+        <section className="mb-6">
           <h2 className="text-xl font-semibold">Charts and Visuals</h2>
           <div className="bg-white p-4 rounded shadow">
             <h3 className="text-lg font-bold mb-2">Beat Status</h3>
@@ -78,10 +75,10 @@ const BeatsMetrics = () => {
         </section>
       </div>
 
-      <section className="mb-6 ">
+      <section className="mb-6">
         <h2 className="text-xl font-semibold">Beat Details</h2>
-        <div className="overflow-x-scroll  remove-scrollbar">
-          <table className=" bg-white rounded shadow ">
+        <div className="overflow-x-scroll remove-scrollbar relative pb-36">
+          <table className="min-w-full bg-white rounded shadow">
             <thead>
               <tr>
                 <th className="py-2 px-4 bg-gray-200 text-start">Name</th>
@@ -93,11 +90,11 @@ const BeatsMetrics = () => {
               </tr>
             </thead>
             <tbody>
-              {beats?.map((beat) => (
+              {currentBeats?.map((beat) => (
                 <tr key={beat._id}>
                   <td className="py-2 px-4">{beat.name}</td>
                   <td className="py-2 px-4">
-                    {beat.isactive ? "Active" : "InActive"}
+                    {beat.isactive ? "Active" : "Inactive"}
                   </td>
                   <td className="py-2 px-4">{beat.address}</td>
                   <td className="py-2 px-4">{beat.guards?.length}</td>
@@ -105,6 +102,13 @@ const BeatsMetrics = () => {
               ))}
             </tbody>
           </table>
+          <Pagination
+            totalEntries={beats?.length || 0}
+            entriesPerPage={entriesPerPage}
+            currentPage={currentPage}
+            onPageChange={handlePageChange}
+            onEntriesPerPageChange={handleEntriesPerPageChange}
+          />
         </div>
       </section>
     </div>

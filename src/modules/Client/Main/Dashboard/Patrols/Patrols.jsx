@@ -8,8 +8,10 @@ import { useSelector } from "react-redux";
 import { get } from "../../../../../lib/methods";
 import { useGetGuardsQuery } from "../../../../../redux/services/guards";
 import { useGetBeatsQuery } from "../../../../../redux/services/beats";
+import { Link, useNavigate } from "react-router-dom";
 
 const Patrols = () => {
+  const navigate = useNavigate();
   const [filterPatrolDate, setFilterPatrolDate] = useState("All");
   const { data: guards } = useGetGuardsQuery();
   const { data: beats } = useGetBeatsQuery();
@@ -84,9 +86,12 @@ const Patrols = () => {
           Patrols
         </h2>
 
-        <button className="bg-secondary-500 hover:bg-secondary-600 rounded-full text-white py-2 px-4 text-sm">
+        <Link
+          to="/client/reports/history/patrols"
+          className="bg-secondary-500 hover:bg-secondary-600 rounded-full text-white py-2 px-4 text-sm"
+        >
           See all
-        </button>
+        </Link>
       </div>
       <div className="flex items-center gap-2">
         <div className="max-w-md">
@@ -151,13 +156,22 @@ const Patrols = () => {
                         <div className="h-8 w-8 rounded-full">
                           <img
                             src={`${
-                              ASSET_URL + patrolInstance?.guard?.profileImage
+                              patrolInstance.status === "abandoned"
+                                ? ASSET_URL +
+                                  patrolInstance?.abandonedby?.profileImage
+                                : ASSET_URL +
+                                  patrolInstance?.guard?.profileImage
                             }`}
                             alt={patrolInstance?.guard?.name}
                             className="w-full h-full object-cover rounded-full"
                           />
                         </div>
-                        {patrolInstance?.guard?.name}
+                        <span className=" capitalize">
+                          {patrolInstance.status === "abandoned"
+                            ? patrolInstance?.abandonedby?.name
+                            : patrolInstance?.guard?.name}
+                        </span>
+
                         <span className="block">
                           {patrolInstance?.patrol?.starttime &&
                             formattedTime(patrolInstance?.patrol?.starttime)}
@@ -194,7 +208,7 @@ const Patrols = () => {
                   </Table.Row>
                 ))}
               {((!isPatrolInstacesFetching && patrols?.length === 0) ||
-                !patrols) && (
+                (!isPatrolInstacesFetching && !patrols)) && (
                 <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
                   <Table.Cell
                     colSpan={4}

@@ -81,6 +81,8 @@ const BeatsHistory = () => {
         beatAggregates[beatId] = {
           beatName: patrol?.beat?.name || "N/A",
           totalPatrols: 0,
+          completedPatrols: 0,
+          abandonedPatrols: 0,
           totalClockInTime: 0,
           totalClockOutTime: 0,
           patrolCount: 0,
@@ -112,10 +114,16 @@ const BeatsHistory = () => {
       }
 
       if (patrol?.beat._id === beatId) {
-        console.log(patrol?.beat._id, beatId);
         beatAggregates[beatId].totalPatrols += 1;
         beatAggregates[beatId].patrolCount += 1;
       }
+      patrol.status === "completed" &&
+        (beatAggregates[beatId].completedPatrols =
+          beatAggregates[beatId].completedPatrols + 1);
+
+      patrol.status === "abandoned" &&
+        (beatAggregates[beatId].abandonedPatrols =
+          beatAggregates[beatId].abandonedPatrols + 1);
     });
 
     const beatList = Object.values(beatAggregates).map((beat) => {
@@ -154,55 +162,82 @@ const BeatsHistory = () => {
   );
 
   const exportToExcel = () => {
-    const exclFormat = aggregatedData?.map((aggregated) => {
-      return {
-        beatName: aggregated?.name || "N/A",
-        totalPatrols: aggregated?.totalPatrols,
-        patrolCount: aggregated?.patrolCount,
-        avgClockInTime: aggregated?.avgClockInTime,
-        avgClockOutTime: aggregated?.avgClockOutTime,
-      };
-    });
-    const ws = XLSX.utils.json_to_sheet(exclFormat);
+    const headerData = [
+      ["Filter Information"],
+      [
+        `Date Range: ${
+          startDate && endDate ? startDate + " - " + endDate : "All"
+        } `,
+      ],
+      [`Selected Beat: ${selectedBeat || "All Beats"}`],
+      [],
+      [
+        "beatName",
+        "totalPatrols",
+        "patrolCount",
+        "avgClockInTime",
+        "avgClockOutTime",
+      ],
+    ];
+
+    const exclFormat = aggregatedData?.map((aggregated) => [
+      aggregated?.beatName || "N/A",
+      aggregated?.totalPatrols,
+      aggregated?.patrolCount,
+      aggregated?.avgClockInTime,
+      aggregated?.avgClockOutTime,
+    ]);
+
+    const combinedData = [...headerData, ...exclFormat];
+
+    const ws = XLSX.utils.aoa_to_sheet(combinedData);
+
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Beats History");
+
     XLSX.writeFile(wb, "beats_history.xlsx");
   };
 
-  const exportToPdf = () => {
-    const doc = new jsPDF();
-    doc.autoTable({
-      head: [
-        [
-          "Beat name",
-          "Total Patrols",
-          "Avg Clock-in Time",
-          "Avg Clock-out Time",
-        ],
-      ],
-      body: aggregatedData.map((beat) => [
-        beat.beatName,
-        beat.totalPatrols,
-        beat.avgClockInTime,
-        beat.avgClockOutTime,
-      ]),
-    });
-    doc.save("beats_history.pdf");
-  };
+  // const exportToPdf = () => {
+  //   const doc = new jsPDF();
+  //   doc.autoTable({
+  //     head: [
+  //       [
+  //         "Beat name",
+  //         "Total Patrols",
+  //         "Avg Clock-in Time",
+  //         "Avg Clock-out Time",
+  //       ],
+  //     ],
+  //     body: aggregatedData.map((beat) => [
+  //       beat.beatName,
+  //       beat.totalPatrols,
+  //       beat.avgClockInTime,
+  //       beat.avgClockOutTime,
+  //     ]),
+  //   });
+  //   doc.save("beats_history.pdf");
+  // };
+  const indexOfLastEntry = currentPage * entriesPerPage;
+  const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
+  const currentEntries = aggregatedData.slice(
+    indexOfFirstEntry,
+    indexOfLastEntry
+  );
   return (
-    <div className="container mx-auto relative min-h-[450px]  pb-36">
-      <section className="mb-6">
+    <div className="container mx-auto relative pb-40 sm:pb-20">
+      <section className="mb-2">
         <h2 className="text-xl font-semibold">Beats History</h2>
-        <div className="flex  flex-wrap gap-2 mt-4 overflow-y-scroll remove-scrollbar">
+        <div className="flex gap-2 mt-1 flex-wrap overflow-y-scroll remove-scrollbar py-1">
           <input
             className="border-gray-300 rounded-md min-w-40 h-10"
-            type="date"
+            type="datetime-local"
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
           />
           <input
             className="border-gray-300 rounded-md min-w-40 h-10"
-            type="date"
+            type="datetime-local"
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
           />
@@ -227,12 +262,12 @@ const BeatsHistory = () => {
           >
             Export to Excel
           </button>
-          <button
+          {/* <button
             onClick={exportToPdf}
             className="bg-red-500 text-white  px-4 rounded min-w-40 h-10"
           >
             Export to PDF
-          </button>
+          </button> */}
           <Button
             color={"green"}
             onClick={fetchData}
@@ -252,11 +287,13 @@ const BeatsHistory = () => {
           </Button>
         </div>
       </section>
-      <div className="overflow-x-auto mt-5 mb-40">
+      <div className="min-h-[300px] max-h-80  overflow-y-auto">
         <Table striped>
           <Table.Head>
             <Table.HeadCell>Beat name</Table.HeadCell>
             <Table.HeadCell>Total Patrols</Table.HeadCell>
+            <Table.HeadCell>Completed Patrols </Table.HeadCell>
+            <Table.HeadCell>Abandoned Patrols </Table.HeadCell>
             <Table.HeadCell>Avg Clock-in Time</Table.HeadCell>
             <Table.HeadCell>Avg Clock-out Time</Table.HeadCell>
           </Table.Head>
@@ -264,7 +301,7 @@ const BeatsHistory = () => {
             {loading && (
               <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
                 <Table.Cell
-                  colSpan={4}
+                  colSpan={6}
                   className="whitespace-nowrap  font-medium  text-center text-gray-900 dark:text-white"
                 >
                   <div className="w-full h-full justify-center flex items-center">
@@ -279,7 +316,7 @@ const BeatsHistory = () => {
             {!loading && displayedPatrols?.length === 0 && (
               <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
                 <Table.Cell
-                  colSpan={4}
+                  colSpan={6}
                   className="whitespace-nowrap font-medium  text-center text-gray-900 dark:text-white"
                 >
                   {"No History"}
@@ -287,7 +324,7 @@ const BeatsHistory = () => {
               </Table.Row>
             )}
             {!loading &&
-              displayedPatrols.map((beat, index) => (
+              currentEntries.map((beat, index) => (
                 <Table.Row
                   key={index}
                   className="bg-white dark:border-gray-700 dark:bg-gray-800"
@@ -295,9 +332,11 @@ const BeatsHistory = () => {
                   <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
                     {beat.beatName}
                   </Table.Cell>
-                  <Table.Cell>{beat.totalPatrols}</Table.Cell>
-                  <Table.Cell>{beat.avgClockInTime}</Table.Cell>
-                  <Table.Cell>{beat.avgClockOutTime}</Table.Cell>
+                  <Table.Cell>{beat?.totalPatrols}</Table.Cell>
+                  <Table.Cell>{beat?.completedPatrols}</Table.Cell>
+                  <Table.Cell>{beat?.abandonedPatrols}</Table.Cell>
+                  <Table.Cell>{beat?.avgClockInTime}</Table.Cell>
+                  <Table.Cell>{beat?.avgClockOutTime}</Table.Cell>
                 </Table.Row>
               ))}
           </Table.Body>

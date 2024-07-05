@@ -124,7 +124,7 @@ const SettingPersonalInformation = () => {
   return (
     <>
       {/* setting-personal-information-app works! */}
-      <div className="p-4 sm:p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+      <div className="mb-10 p-4 sm:p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
         <form onSubmit={formik.handleSubmit} className="max-w-3xl">
           <div className="grid grid-cols-12 gap-4 sm:gap-8">
             <div className="hidden sm:block col-span-12 sm:col-span-6">

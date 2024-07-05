@@ -52,9 +52,6 @@ function BeatDetailsHeader() {
           <Tabs.Item title="Points" icon={BiAlbum}>
             <BeatPoint />
           </Tabs.Item>
-          <Tabs.Item title="Reports" icon={HiClipboardList}>
-            <BeatReport />
-          </Tabs.Item>
         </Tabs>
       </div>
       {/* <nav>
