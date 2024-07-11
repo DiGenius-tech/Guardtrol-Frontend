@@ -1,12 +1,22 @@
 import { Link, useLocation, useParams } from "react-router-dom";
-import { selectUser } from "../../../../../../redux/selectors/auth";
+import {
+  selectOrganization,
+  selectUser,
+} from "../../../../../../redux/selectors/auth";
 import { useSelector } from "react-redux";
+import { useGetUserOrganizationRoleQuery } from "../../../../../../redux/services/role";
 
 function PatrolGuardListToolbar() {
   const location = useLocation();
   const { beatId } = useParams();
   const user = useSelector(selectUser);
   /**URLS */
+
+  const organization = useSelector(selectOrganization);
+  const { data: userRole } = useGetUserOrganizationRoleQuery(organization, {
+    skip: organization ? false : true,
+  });
+
   const active = [
     "/client/patrol-guard",
     "/client/patrol-guard/",
@@ -56,7 +66,7 @@ function PatrolGuardListToolbar() {
             </Link>
           </li>
 
-          {(user.role === "Owner" || user.role === "Manager") && (
+          {userRole.name === "Owner" && (
             <li>
               <Link
                 to={`addguard`}

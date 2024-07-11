@@ -5,7 +5,10 @@ import * as XLSX from "xlsx";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import { useSelector } from "react-redux";
-import { selectToken } from "../../../../../redux/selectors/auth";
+import {
+  selectOrganization,
+  selectToken,
+} from "../../../../../redux/selectors/auth";
 import Pagination from "../../../../../shared/Pagination/Pagination";
 import { get } from "../../../../../lib/methods";
 import { API_BASE_URL } from "../../../../../constants/api";
@@ -13,6 +16,7 @@ import { format } from "date-fns";
 import { useGetBeatsQuery } from "../../../../../redux/services/beats";
 
 const PatrolHistory = () => {
+  const organization = useSelector(selectOrganization);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [patrolInstances, setPatrolInstances] = useState([]);
@@ -25,11 +29,13 @@ const PatrolHistory = () => {
   const [loading, setLoading] = useState(false);
   const formattedTime = (date) => format(new Date(date), "hh:mm a");
   const formatDate = (date) => format(new Date(date), "yyyy-MM-dd");
-  const { data: beats } = useGetBeatsQuery();
+  const { data: beats } = useGetBeatsQuery(organization, {
+    skip: organization ? false : true,
+  });
 
   useEffect(() => {
     getPatrolInstances();
-  }, []);
+  }, [organization]);
 
   useEffect(() => {
     filterPatrolInstances();
@@ -37,8 +43,12 @@ const PatrolHistory = () => {
 
   const getPatrolInstances = async () => {
     try {
+      if (!organization) return;
       setLoading(true);
-      const res = await get(API_BASE_URL + "patrols/get-instances", token);
+      const res = await get(
+        API_BASE_URL + `patrols/get-instances/${organization}`,
+        token
+      );
       setPatrolInstances(res);
       setFilteredPatrolInstances(res);
     } catch (error) {

@@ -2,35 +2,43 @@ import React, { useEffect, useState } from "react";
 import "./OnboardingProgressBar.scss";
 import { Link, useLocation } from "react-router-dom";
 import OnboardingTestNavigation from "../../../Sandbox/OnboardingTestNavigation/OnboardingTestNavigation";
+import { useSelector } from "react-redux";
+import { selectOrganization } from "../../../../redux/selectors/auth";
+import { useGetUserOrganizationRoleQuery } from "../../../../redux/services/role";
 
 const list = [
   {
     title: "Membership",
     url: "/onboarding/membership",
     passed: false,
-    current: true
+    current: true,
   },
   {
     title: "Configure Beats",
     url: "/onboarding/configure-beats",
     passed: false,
-    current: false
+    current: false,
   },
   {
     title: "Onboard Guard",
     url: "/onboarding/onboard-guard",
     passed: false,
-    current: false
+    current: false,
   },
   {
     title: "Assign Beats",
     url: "/onboarding/assign-beats",
     passed: false,
-    current: false
-  }
+    current: false,
+  },
 ];
 
 const OnboardingProgressBar = () => {
+  const organization = useSelector(selectOrganization);
+  const { data: userRole } = useGetUserOrganizationRoleQuery(organization, {
+    skip: organization ? false : true,
+  });
+
   const location = useLocation();
   const [stageProgressClass, setstageProgressClass] = useState("stage-2");
   const [stages, setStages] = useState([...list]);
@@ -75,7 +83,7 @@ const OnboardingProgressBar = () => {
         case "/onboarding/":
           setstageProgressClass("stage-1");
           break;
-        // 
+        //
         case "/onboarding/membership":
           setstageProgressClass("stage-1");
           break;
@@ -94,8 +102,8 @@ const OnboardingProgressBar = () => {
         case "/onboarding/membership/checkout/":
           setstageProgressClass("stage-1");
           break;
-        // 
-        // 
+        //
+        //
         case "/onboarding/services":
           setstageProgressClass("stage-1");
           break;
@@ -114,21 +122,21 @@ const OnboardingProgressBar = () => {
         case "/onboarding/services/checkout/":
           setstageProgressClass("stage-1");
           break;
-        // 
+        //
         case "/onboarding/configure-beats":
           setstageProgressClass("stage-2");
           break;
         case "/onboarding/configure-beats/":
           setstageProgressClass("stage-2");
           break;
-        // 
+        //
         case "/onboarding/configure-beats/add-beat":
           setstageProgressClass("stage-2");
           break;
         case "/onboarding/configure-beats/add-beat/":
           setstageProgressClass("stage-2");
           break;
-        // 
+        //
         case "/onboarding/onboard-guard":
           setstageProgressClass("stage-3");
           break;
@@ -151,7 +159,7 @@ const OnboardingProgressBar = () => {
           setstageProgressClass("stage-4");
           break;
         case "/onboarding/complete":
-          completeProcess()
+          completeProcess();
           break;
 
         default:
@@ -178,10 +186,11 @@ const OnboardingProgressBar = () => {
             return (
               <li
                 key={stage.title}
-                className={`font-semibold ${stage.passed
-                  ? "passed text-secondary-500"
-                  : "text-secondary-50"
-                  }; 
+                className={`font-semibold ${
+                  stage.passed
+                    ? "passed text-secondary-500"
+                    : "text-secondary-50"
+                }; 
                         `}
               >
                 <p className="hidden sm:block mt-1">{stage.title}</p>

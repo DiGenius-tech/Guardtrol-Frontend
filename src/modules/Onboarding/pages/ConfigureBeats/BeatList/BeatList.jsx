@@ -7,7 +7,11 @@ import useHttpRequest from "../../../../../shared/Hooks/HttpRequestHook";
 
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
-import { selectToken, selectUser } from "../../../../../redux/selectors/auth";
+import {
+  selectOrganization,
+  selectToken,
+  selectUser,
+} from "../../../../../redux/selectors/auth";
 import {
   suspenseHide,
   suspenseShow,
@@ -24,6 +28,7 @@ function BeatList() {
   const dispatch = useDispatch();
   //dispatch(suspenseHide());
   const token = useSelector(selectToken);
+  const organization = useSelector(selectOrganization);
 
   const navigate = useNavigate();
   const [selectedBeat, setSelectedBeat] = useState(null);
@@ -34,15 +39,17 @@ function BeatList() {
     isLoading,
     isUninitialized,
     refetch: refetchBeats,
-  } = useGetBeatsQuery();
+  } = useGetBeatsQuery(organization, {
+    skip: organization ? false : true,
+  });
 
-  console.log(beats)
+  console.log(beats);
 
   const [beatsToedit, setBeatsToEdit] = useState(beats);
   const handle_edit_beat = (beat) => {
     if (beat) {
       setIsEdit(true);
-      console.log(beat)
+      console.log(beat);
       setSelectedBeat(beat);
     }
   };
@@ -74,10 +81,8 @@ function BeatList() {
     //   dispatch(suspenseHide())
     // );
 
-    
-      dispatch(setOnboardingLevel(2));
-      navigate("/onboarding/onboard-guard");
-  
+    dispatch(setOnboardingLevel(2));
+    navigate("/onboarding/onboard-guard");
   };
 
   // useEffect(() => {

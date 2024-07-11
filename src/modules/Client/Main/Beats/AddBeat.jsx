@@ -10,7 +10,11 @@ import { SubscriptionContext } from "../../../../shared/Context/SubscriptionCont
 import TextareaField from "../../../Sandbox/TextareaField/TextareaField";
 
 import { useDispatch, useSelector } from "react-redux";
-import { selectToken, selectUser } from "../../../../redux/selectors/auth";
+import {
+  selectOrganization,
+  selectToken,
+  selectUser,
+} from "../../../../redux/selectors/auth";
 import {
   suspenseHide,
   suspenseShow,
@@ -26,9 +30,12 @@ const AddBeat = () => {
   const [validationErrors, setValidationErrors] = useState({});
   const user = useSelector(selectUser);
   const token = useSelector(selectToken);
+  const organization = useSelector(selectOrganization);
 
   const navigate = useNavigate();
-  const { data: sub } = useGetSubscriptionQuery();
+  const { data: sub } = useGetSubscriptionQuery(organization, {
+    skip: organization ? false : true,
+  });
 
   const dispatch = useDispatch();
 
@@ -45,8 +52,9 @@ const AddBeat = () => {
     isLoading,
     isUninitialized,
     refetch: refetchBeats,
-  } = useGetBeatsQuery();
-
+  } = useGetBeatsQuery(organization, {
+    skip: organization ? false : true,
+  });
   useEffect(() => {
     refetchBeats();
   }, [token]);
@@ -100,7 +108,7 @@ const AddBeat = () => {
       console.log("creating.......");
       dispatch(suspenseShow());
 
-      const { data } = await addBeat(beat);
+      const { data } = await addBeat({ organization, beat });
 
       if (data && data.status) {
         toast("Beat Created Successfully");

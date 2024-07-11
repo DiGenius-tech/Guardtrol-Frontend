@@ -10,9 +10,12 @@ import TextInputField from "../../Sandbox/InputField/TextInputField";
 import RegularButton from "../../Sandbox/Buttons/RegularButton";
 import { useGoogleLogin } from "@react-oauth/google";
 import { useDispatch, useSelector } from "react-redux";
-import { selectUser } from "../../../redux/selectors/auth";
+import { selectOrganization, selectUser } from "../../../redux/selectors/auth";
 import { API_BASE_URL } from "../../../constants/api";
-import { loginSuccess } from "../../../redux/slice/authSlice";
+import {
+  loginSuccess,
+  updateUserOrganization,
+} from "../../../redux/slice/authSlice";
 import {
   setOnboardingGuards,
   setOnboardingLevel,
@@ -105,6 +108,8 @@ const Register = () => {
             dispatch(setOnboardingGuards([]));
             dispatch(setCurrentSubscription(null));
             dispatch(loginSuccess(data));
+            console.log(data.userid);
+            dispatch(updateUserOrganization(data.userid));
             toast("Signup Successful");
             navigate("/auth/verify-email", { replace: true }); //should be dashboard
             // window.location.reload();

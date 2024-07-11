@@ -11,6 +11,8 @@ import Invoice from "../../components/invoice";
 import { ReportRouter } from "./Main/Reports/report-router";
 import { UsersRouter } from "./Main/Settings/Users/users-router";
 import OrganizationUsers from "./Main/Settings/Users/all-users";
+import RequestLayout from "./Main/Requests/request-layout";
+import { RequestRouter } from "./Main/Requests/request-router";
 
 const { dashboard_routes, dashboard_routes_empt } = dashboardRoutes;
 const { history_routes, history_routes_empt } = historyRoutes;
@@ -39,6 +41,10 @@ const client_routes = {
     {
       path: "reports/*",
       element: <ReportRouter />,
+    },
+    {
+      path: "requests/*",
+      element: <RequestRouter />,
     },
     {
       path: "invoice",

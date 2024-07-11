@@ -15,7 +15,7 @@ const UserListMobileView = ({
             {user.name}
           </h5>
           <p className="text-gray-700">{user.email}</p>
-          <p className="text-gray-700">{user.role}</p>
+          <p className="text-gray-700">{user?.role?.name}</p>
           <div className="flex space-x-2 mt-4">
             <Button
               className="bg-[#008080]"

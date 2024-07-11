@@ -8,6 +8,7 @@ import useHttpRequest from "../../../../../../shared/Hooks/HttpRequestHook";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 import {
+  selectOrganization,
   selectToken,
   selectUser,
 } from "../../../../../../redux/selectors/auth";
@@ -41,11 +42,15 @@ const EditIdentification = (props) => {
   const user = useSelector(selectUser);
   const token = useSelector(selectToken);
   const [updateloading, setLoading] = useState(false);
+  const organization = useSelector(selectOrganization);
+
   const {
     data: guards,
     refetch: refetchGuards,
     isUninitialized,
-  } = useGetGuardsQuery();
+  } = useGetGuardsQuery(organization, {
+    skip: organization ? false : true,
+  });
 
   const { isLoading, error, responseData, sendRequest } = useHttpRequest();
   const [validationErrors, setValidationErrors] = useState({});

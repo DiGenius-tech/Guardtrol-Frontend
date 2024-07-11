@@ -5,7 +5,10 @@ import { Datepicker, Table, Select, Button, Spinner } from "flowbite-react";
 import { useGetBeatsQuery } from "../../../../../redux/services/beats";
 import { useGetGuardsQuery } from "../../../../../redux/services/guards";
 import { get } from "../../../../../lib/methods";
-import { selectToken } from "../../../../../redux/selectors/auth";
+import {
+  selectOrganization,
+  selectToken,
+} from "../../../../../redux/selectors/auth";
 import { API_BASE_URL } from "../../../../../constants/api";
 import Pagination from "../../../../../shared/Pagination/Pagination";
 import * as XLSX from "xlsx";
@@ -18,8 +21,12 @@ const BeatsHistory = () => {
   const [patrols, setPatrols] = useState([]);
   const [logs, setLogs] = useState([]);
   const [filteredPatrols, setFilteredPatrols] = useState([]);
-  const { data: guards } = useGetGuardsQuery();
-  const { data: beats } = useGetBeatsQuery();
+
+  const organization = useSelector(selectOrganization);
+
+  const { data: beats } = useGetBeatsQuery(organization, {
+    skip: organization ? false : true,
+  });
   const [selectedBeat, setSelectedBeat] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [entriesPerPage, setEntriesPerPage] = useState(10);
@@ -28,15 +35,17 @@ const BeatsHistory = () => {
   const token = useSelector(selectToken);
   const fetchData = async () => {
     try {
+      if (!organization) return;
       setLoading(true);
+
       const patrolInstances = await get(
-        API_BASE_URL + "patrols/get-instances",
+        API_BASE_URL + `patrols/get-instances/${organization}`,
         token
       );
       setPatrols(patrolInstances);
       setFilteredPatrols(patrolInstances);
-
-      const logData = await get(API_BASE_URL + "logs", token);
+      if (!organization) return;
+      const logData = await get(API_BASE_URL + `logs/${organization}`, token);
       setLogs(logData);
     } catch (error) {
     } finally {
@@ -45,7 +54,7 @@ const BeatsHistory = () => {
   };
   useEffect(() => {
     fetchData();
-  }, [token]);
+  }, [token, organization]);
 
   const handleFilterChange = () => {
     let filteredData = patrols;
@@ -224,6 +233,7 @@ const BeatsHistory = () => {
     indexOfFirstEntry,
     indexOfLastEntry
   );
+
   return (
     <div className="container mx-auto relative pb-40 sm:pb-20">
       <section className="mb-2">

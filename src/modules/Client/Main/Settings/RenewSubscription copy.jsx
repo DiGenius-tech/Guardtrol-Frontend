@@ -5,7 +5,11 @@ import {
   selectFwConfig,
   selectPsConfig,
 } from "../../../../redux/selectors/selectedPlan";
-import { selectToken, selectUser } from "../../../../redux/selectors/auth";
+import {
+  selectOrganization,
+  selectToken,
+  selectUser,
+} from "../../../../redux/selectors/auth";
 import { usePaystackPayment } from "react-paystack";
 import { toast } from "react-toastify";
 import moment from "moment";
@@ -35,6 +39,7 @@ function parseDate(dateString) {
 
 const RenewSubscription = ({ openModal, setRenewalModal }) => {
   const psConfig = useSelector(selectPsConfig);
+  const organization = useSelector(selectOrganization);
 
   const token = useSelector(selectToken);
   const {
@@ -42,7 +47,9 @@ const RenewSubscription = ({ openModal, setRenewalModal }) => {
     isError,
     refetch: refetchActiveSubscription,
     isUninitialized,
-  } = useGetSubscriptionQuery(null, { skip: token ? false : true });
+  } = useGetSubscriptionQuery(organization, {
+    skip: organization ? false : true,
+  });
 
   if (!isUninitialized) {
     // refetchActiveSubscription();
@@ -56,10 +63,17 @@ const RenewSubscription = ({ openModal, setRenewalModal }) => {
 
   const currentDate = new Date();
 
-  const { data: availableGuards } = useGetGuardsQuery();
-  const { data: availableBeats } = useGetBeatsQuery();
+  const { data: availableGuards } = useGetGuardsQuery(organization, {
+    skip: organization ? false : true,
+  });
+  const { data: availableBeats } = useGetBeatsQuery(organization, {
+    skip: organization ? false : true,
+  });
+
   const { data: mySuscriptions, refetch: refetchAllMySubscriptions } =
-    useGetAllMySubscriptionsQuery();
+    useGetAllMySubscriptionsQuery(organization, {
+      skip: organization ? false : true,
+    });
   const [createSubscription] = useAddSubscriptionMutation();
 
   const activeSubscriptions = mySuscriptions?.filter(

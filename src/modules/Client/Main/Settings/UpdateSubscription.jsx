@@ -6,7 +6,11 @@ import {
   useUpdateSubscriptionMutation,
 } from "../../../../redux/services/subscriptions";
 import { useDispatch, useSelector } from "react-redux";
-import { selectToken, selectUser } from "../../../../redux/selectors/auth";
+import {
+  selectOrganization,
+  selectToken,
+  selectUser,
+} from "../../../../redux/selectors/auth";
 import { BEAT_PRICE, GUARD_PRICE } from "../../../../constants/static";
 import { Label, Select } from "flowbite-react";
 import {
@@ -27,6 +31,7 @@ const UpdateSubscription = () => {
   const psConfig = useSelector(selectPsConfig);
   const user = useSelector(selectUser);
   const fwConfig = useSelector(selectFwConfig);
+  const organization = useSelector(selectOrganization);
 
   const dispatch = useDispatch();
   const {
@@ -34,9 +39,14 @@ const UpdateSubscription = () => {
     isError,
     refetch: refetchActiveSubscription,
     isUninitialized,
-  } = useGetSubscriptionQuery(null, { skip: token ? false : true });
+  } = useGetSubscriptionQuery(organization, {
+    skip: organization ? false : true,
+  });
+
   const { data: mySuscriptions, refetch: refetchAllMySubscriptions } =
-    useGetAllMySubscriptionsQuery();
+    useGetAllMySubscriptionsQuery(organization, {
+      skip: organization ? false : true,
+    });
 
   const [updateSubscription] = useUpdateSubscriptionMutation();
 

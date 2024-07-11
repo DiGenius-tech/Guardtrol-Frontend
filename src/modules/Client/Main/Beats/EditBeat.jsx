@@ -9,18 +9,24 @@ import { SubscriptionContext } from "../../../../shared/Context/SubscriptionCont
 import { toast } from "react-toastify";
 import { useGetSubscriptionQuery } from "../../../../redux/services/subscriptions";
 import { useSelector } from "react-redux";
-import { selectToken } from "../../../../redux/selectors/auth";
+import {
+  selectOrganization,
+  selectToken,
+} from "../../../../redux/selectors/auth";
 
 function EditBeat({ beatToEdit, openModal, handleUpdateBeat, setOpenModal }) {
   const [validationErrors, setValidationErrors] = useState({});
   const token = useSelector(selectToken);
+  const organization = useSelector(selectOrganization);
 
   const {
     data: sub,
     isError,
     refetch,
     isUninitialized,
-  } = useGetSubscriptionQuery(null, { skip: token ? false : true });
+  } = useGetSubscriptionQuery(organization, {
+    skip: organization ? false : true,
+  });
 
   const [open, setOpen] = useState(false);
 

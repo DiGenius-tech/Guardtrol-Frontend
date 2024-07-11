@@ -18,23 +18,26 @@ const UserListDesktopView = ({
       <Table.Body>
         {users?.map((user) => (
           <Table.Row key={user._id}>
-            <Table.Cell>{user.name}</Table.Cell>
-            <Table.Cell>{user.email}</Table.Cell>
-            <Table.Cell>{user.role}</Table.Cell>
+            <Table.Cell>{user?.name}</Table.Cell>
+            <Table.Cell>{user?.email}</Table.Cell>
+            <Table.Cell>{user?.role?.name}</Table.Cell>
             <Table.Cell>
-              {user.role !== "Owner" && (
-                <div className="flex gap-2">
+              <div className="flex gap-2">
+                <>
                   <Button
                     className="bg-[#008080]"
                     onClick={() => handleEditUser(user)}
                   >
                     Edit
                   </Button>
-                  <Button onClick={() => handleDeleteUser(user)} color="red">
-                    Delete
-                  </Button>
-                </div>
-              )}
+
+                  {!user?.isOwner && user?.isDirectCreator && (
+                    <Button onClick={() => handleDeleteUser(user)} color="red">
+                      Delete
+                    </Button>
+                  )}
+                </>
+              </div>
             </Table.Cell>
           </Table.Row>
         ))}

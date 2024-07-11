@@ -16,7 +16,11 @@ import {
   useAddGuardMutation,
   useGetGuardsQuery,
 } from "../../../../../redux/services/guards";
-import { selectToken, selectUser } from "../../../../../redux/selectors/auth";
+import {
+  selectOrganization,
+  selectToken,
+  selectUser,
+} from "../../../../../redux/selectors/auth";
 import { selectOnboardingGuards } from "../../../../../redux/selectors/onboarding";
 import { addOnboardingGuard } from "../../../../../redux/slice/onboardingSlice";
 import { useGetSubscriptionQuery } from "../../../../../redux/services/subscriptions";
@@ -38,12 +42,17 @@ function AddGuard({ onBoarding = true }) {
   const dispatch = useDispatch();
   const onboardingGuards = useSelector(selectOnboardingGuards);
 
-  const { data: guards } = useGetGuardsQuery();
+  const organization = useSelector(selectOrganization);
+  const { data: guards, refetch } = useGetGuardsQuery(organization, {
+    skip: organization ? false : true,
+  });
 
   const navigate = useNavigate();
 
-  const { data: sub } = useGetSubscriptionQuery();
-  const [addGuards] = useAddGuardMutation();
+  const { data: sub } = useGetSubscriptionQuery(organization, {
+    skip: organization ? false : true,
+  });
+  const [addGuard] = useAddGuardMutation();
 
   const [guard, setGuard] = useState({
     full_name: "",
@@ -156,8 +165,9 @@ function AddGuard({ onBoarding = true }) {
           return;
         } else {
           dispatch(suspenseShow());
-          const { data } = await addGuards(guard);
+          const { data } = await addGuard({ organization, guard });
           if (data) {
+            refetch();
             console.log(data);
             navigate(-1);
             dispatch(suspenseHide());

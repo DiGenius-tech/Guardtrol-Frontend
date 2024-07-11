@@ -12,6 +12,7 @@ import {
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  selectOrganization,
   selectToken,
   selectUser,
 } from "../../../../../../redux/selectors/auth";
@@ -44,15 +45,23 @@ function ActivePatrolGuards() {
   const [currentPage, setCurrentPage] = useState(1);
   const [entriesPerPage, setEntriesPerPage] = useState(5);
 
+  const organization = useSelector(selectOrganization);
   const {
     data: guards,
     isLoading,
     refetch: refetchGuards,
     isUninitialized,
     error,
-  } = useGetGuardsQuery();
+  } = useGetGuardsQuery(organization, {
+    skip: organization ? false : true,
+  });
 
-  const { data: beats, refetch: refetchBeats } = useGetBeatsQuery();
+  const { data: beats, refetch: refetchBeats } = useGetBeatsQuery(
+    organization,
+    {
+      skip: organization ? false : true,
+    }
+  );
 
   const [selectedBeat, setSelectedBeat] = useState({});
 

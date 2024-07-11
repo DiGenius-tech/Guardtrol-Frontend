@@ -9,7 +9,10 @@ import AssignBeat from "./AssignBeat";
 import { Navigate, Outlet, Route, Routes, useParams } from "react-router-dom";
 import { useGetBeatsQuery } from "../../../../redux/services/beats";
 import { useSelector } from "react-redux";
-import { selectUser } from "../../../../redux/selectors/auth";
+import {
+  selectOrganization,
+  selectUser,
+} from "../../../../redux/selectors/auth";
 import BeatReport from "./BeatDetailsTabs/BeatReport";
 import BeatList from "./BeatList";
 import BeatDetailsHeader from "./BeatDetailsTabs/BeatDetailsHeader";
@@ -74,8 +77,16 @@ export const BeatGaurdRouter = () => {
 
 export const BeatDetailsRouter = () => {
   const user = useSelector(selectUser);
+  const organization = useSelector(selectOrganization);
+
   const { beatId } = useParams();
-  const { data: beats, isLoading, error } = useGetBeatsQuery();
+  const {
+    data: beats,
+    isLoading,
+    error,
+  } = useGetBeatsQuery(organization, {
+    skip: organization ? false : true,
+  });
 
   const beat = beats?.find((b) => b._id === beatId);
   return <BeatDetailsHeader />;

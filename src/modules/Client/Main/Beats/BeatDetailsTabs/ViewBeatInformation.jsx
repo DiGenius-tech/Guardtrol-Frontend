@@ -1,10 +1,19 @@
 import React from "react";
 import { Link, useParams } from "react-router-dom";
 import { useGetBeatsQuery } from "../../../../../redux/services/beats";
+import { useSelector } from "react-redux";
+import { selectOrganization } from "../../../../../redux/selectors/auth";
 
 const ViewBeatInformation = ({ setPage }) => {
   const { beatId } = useParams();
-  const { data: beats, refetch: refetchBeats } = useGetBeatsQuery();
+  const organization = useSelector(selectOrganization);
+
+  const { data: beats, refetch: refetchBeats } = useGetBeatsQuery(
+    organization,
+    {
+      skip: organization ? false : true,
+    }
+  );
 
   const selectedBeat = beats?.find((b) => b._id === beatId);
   return (

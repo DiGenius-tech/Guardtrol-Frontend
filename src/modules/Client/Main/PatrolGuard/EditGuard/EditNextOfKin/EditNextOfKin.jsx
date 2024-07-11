@@ -7,7 +7,10 @@ import { useParams } from "react-router-dom";
 import useHttpRequest from "../../../../../../shared/Hooks/HttpRequestHook";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
-import { selectAuth } from "../../../../../../redux/selectors/auth";
+import {
+  selectAuth,
+  selectOrganization,
+} from "../../../../../../redux/selectors/auth";
 import { patch } from "../../../../../../lib/methods";
 import { FileInput } from "flowbite-react";
 import { useGetGuardsQuery } from "../../../../../../redux/services/guards";
@@ -39,11 +42,14 @@ const EditNextOfKin = (props) => {
   const { guardId } = useParams();
   const auth = useSelector(selectAuth);
   const { user, token } = useSelector(selectAuth);
+  const organization = useSelector(selectOrganization);
   const {
     data: guards,
     refetch: refetchGuards,
     isUninitialized,
-  } = useGetGuardsQuery();
+  } = useGetGuardsQuery(organization, {
+    skip: organization ? false : true,
+  });
 
   const { isLoading, error, responseData, sendRequest } = useHttpRequest();
   const [validationErrors, setValidationErrors] = useState({});

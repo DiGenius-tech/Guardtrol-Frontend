@@ -11,7 +11,11 @@ import useHttpRequest from "../../../../../shared/Hooks/HttpRequestHook";
 
 import moment from "moment";
 import { useDispatch, useSelector } from "react-redux";
-import { selectToken, selectUser } from "../../../../../redux/selectors/auth";
+import {
+  selectOrganization,
+  selectToken,
+  selectUser,
+} from "../../../../../redux/selectors/auth";
 import {
   useActivateGuardMutation,
   useGetGuardsQuery,
@@ -39,17 +43,26 @@ const PatrolGuardDetails = () => {
   const [preview, setPreview] = useState("");
   const [base, setBase] = useState("");
   const [profile, setProfile] = useState();
+  const organization = useSelector(selectOrganization);
 
   const { guardId } = useParams();
 
   const [comment, setComment] = useState("");
   const [activateGuard] = useActivateGuardMutation();
-  const { data: beats, refetch: refetchBeats } = useGetBeatsQuery();
+  const { data: beats, refetch: refetchBeats } = useGetBeatsQuery(
+    organization,
+    {
+      skip: organization ? false : true,
+    }
+  );
+
   const {
     data: guards,
     refetch: refetchGuards,
     isUninitialized,
-  } = useGetGuardsQuery();
+  } = useGetGuardsQuery(organization, {
+    skip: organization ? false : true,
+  });
 
   const guard = guards.find((g) => g._id === guardId);
 

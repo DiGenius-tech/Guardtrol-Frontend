@@ -1,14 +1,18 @@
 import React, { useContext, useEffect, useState } from "react";
 
-import { Dropdown, Flowbite } from "flowbite-react";
+import { Dropdown, Flowbite, Select } from "flowbite-react";
 import { customTheme } from "../../../flowbite-theme";
 import brandLogo from "../../../images/brand-logo.svg";
 import { HiMenu } from "react-icons/hi";
 import { useLocation, useNavigate } from "react-router-dom";
 import { clientModuleList } from "../client.module-list";
 import { useDispatch, useSelector } from "react-redux";
-import { selectAuth, selectUser } from "../../../redux/selectors/auth";
-import { logout } from "../../../redux/slice/authSlice";
+import {
+  selectAuth,
+  selectOrganization,
+  selectUser,
+} from "../../../redux/selectors/auth";
+import { logout, updateUserOrganization } from "../../../redux/slice/authSlice";
 import { api } from "../../../redux/services/api";
 import { persistor, store } from "../../../redux/store";
 import { ScreenRotationSharp } from "@mui/icons-material";
@@ -17,13 +21,26 @@ import { API_BASE_URL, ASSET_URL } from "../../../constants/api";
 
 const ClientToolbar = (props) => {
   const navigate = useNavigate();
-
   const user = useSelector(selectUser);
+  const organization = useSelector(selectOrganization);
+
   const dispatch = useDispatch();
+
+  const handleSetUserOrganization = (newOrg) => {
+    dispatch(updateUserOrganization(newOrg));
+  };
+
+  useEffect(() => {
+    if (user) {
+      dispatch(updateUserOrganization(user?.roles?.[0]?.organization?._id));
+    }
+  }, []);
+
   const [isProfileDropdownOpened, setIsProfileDropdownOpened] = useState(false);
   const [isMobileProfileDropdownOpened, setIsMobileProfileDropdownOpened] =
     useState(false);
   const [moduleTitle, setModuleTitle] = useState("");
+
   let location = useLocation();
 
   const handleProfileDropdownToggle = () => {
@@ -72,11 +89,27 @@ const ClientToolbar = (props) => {
             <div className="absolute inset-y-0 right-0 items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0 flex">
               {/* <!-- Profile dropdown --> */}
               <div className="relative ml-3">
-                <div>
+                <div className=" flex gap-2 justify-center items-center">
+                  <Select
+                    id="beat"
+                    className="min-w-40 h-10"
+                    value={organization}
+                    onChange={(e) => {
+                      console.log(e.target.value);
+                      handleSetUserOrganization(e.target.value);
+                    }}
+                    placeholder="Select Organization"
+                  >
+                    {user?.roles?.map((rol) => (
+                      <option value={rol?.organization?._id}>
+                        {rol?.organization?.name}-{rol?.name}
+                      </option>
+                    ))}
+                  </Select>
                   <button
                     onClick={() => handleProfileDropdownToggle()}
                     type="button"
-                    className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                    className="relative w-fit h-fit flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
                     id="user-menu-button"
                     aria-expanded="false"
                     aria-haspopup="true"

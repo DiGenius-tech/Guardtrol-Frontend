@@ -12,12 +12,18 @@ import { useGetGuardsQuery } from "../../../../redux/services/guards";
 import { useGetBeatsQuery } from "../../../../redux/services/beats";
 import userEvent from "@testing-library/user-event";
 import { useSelector } from "react-redux";
-import { selectToken, selectUser } from "../../../../redux/selectors/auth";
+import {
+  selectOrganization,
+  selectToken,
+  selectUser,
+} from "../../../../redux/selectors/auth";
 import { get } from "../../../../lib/methods";
 import { API_BASE_URL } from "../../../../constants/api";
+import { useGetRolesQuery } from "../../../../redux/services/role";
 
 const Dashboard = () => {
   const user = useSelector(selectUser);
+
   // const {
   //   data: timelineLogs,
   //   isUninitialized,
@@ -29,8 +35,15 @@ const Dashboard = () => {
   const [filterDate, setFilterDate] = useState("All");
   const [isLogsFetching, setIsLogsFetching] = useState(false);
 
-  const { data: guards } = useGetGuardsQuery();
-  const { data: beats } = useGetBeatsQuery();
+  const organization = useSelector(selectOrganization);
+
+  const { data: guards } = useGetGuardsQuery(organization, {
+    skip: organization ? false : true,
+  });
+
+  const { data: beats } = useGetBeatsQuery(organization, {
+    skip: organization ? false : true,
+  });
 
   // Function to render timeline logs
   const [timelineLogs, setLogs] = useState();
@@ -38,8 +51,10 @@ const Dashboard = () => {
 
   const getLogs = async () => {
     try {
+      if (!organization) return;
       setIsLogsFetching(true);
-      const res = await get(API_BASE_URL + "logs", token);
+
+      const res = await get(API_BASE_URL + `logs/${organization}`, token);
       setLogs(res);
     } catch (error) {
     } finally {
@@ -49,7 +64,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     getLogs();
-  }, []);
+  }, [organization]);
 
   const filteredLogs = () => {
     if (!timelineLogs) return [];

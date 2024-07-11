@@ -3,7 +3,11 @@ import { Navigate, Outlet, useLocation } from "react-router-dom";
 
 import LoadingSpinner from "../LoadingSpinner/LoadingSpinner";
 import { useDispatch, useSelector } from "react-redux";
-import { selectToken, selectUser } from "../../redux/selectors/auth";
+import {
+  selectOrganization,
+  selectToken,
+  selectUser,
+} from "../../redux/selectors/auth";
 import { selectOnboardingLevel } from "../../redux/selectors/onboarding";
 import { suspenseHide, suspenseShow } from "../../redux/slice/suspenseSlice";
 import { setOnboardingLevel } from "../../redux/slice/onboardingSlice";
@@ -23,6 +27,7 @@ const PrivateRoute = ({
   const token = useSelector(selectToken);
 
   const dispatch = useDispatch();
+  const organization = useSelector(selectOrganization);
 
   const [onboardingRoute, setOnboardingRoute] = useState("");
   const location = useLocation();
@@ -30,13 +35,15 @@ const PrivateRoute = ({
     data: beats,
     isUninitialized,
     refetch: refetchBeats,
-  } = useGetBeatsQuery();
+  } = useGetBeatsQuery(organization, {
+    skip: organization ? false : true,
+  });
 
-  useEffect(() => {
-    if (isUninitialized && token) {
-      refetchBeats();
-    }
-  }, [token]);
+  // useEffect(() => {
+  //   if (isUninitialized && token) {
+  //     refetchBeats();
+  //   }
+  // }, [token]);
 
   const subRoutes = [
     "add-beat",
@@ -76,6 +83,8 @@ const PrivateRoute = ({
       dispatch(suspenseShow());
 
       try {
+        console.log("first");
+
         get(`users/getuser/${user.userid}`, token).then((response) => {
           if (response) {
             console.log(response);
@@ -149,6 +158,7 @@ const PrivateRoute = ({
   //     <Navigate to="/onboarding/complete" state={{ from: location }} replace />
   //   );
   // }
+  console.log(user?.onboardingcomplete);
   if (user?.onboardingcomplete && location.pathname === "/auth") {
     return <Navigate to={"/client"} state={{ from: "/" }} replace />;
   }

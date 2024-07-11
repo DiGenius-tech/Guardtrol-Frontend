@@ -158,6 +158,22 @@ const ClientSidebar = () => {
             </li>
             <li>
               <Link
+                to={"client/requests"}
+                className={
+                  (location.pathname.includes("requests")
+                    ? `bg-primary-50 `
+                    : ``) +
+                  `flex items-center p-2 text-dark-260 rounded-r-full dark:text-white hover:bg-primary-50 dark:hover:bg-primary-400 group`
+                }
+              >
+                <HiFilter fontSize={"1.5rem"} />
+                <span className="flex items-center ms-3 h-5 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white">
+                  Requests
+                </span>
+              </Link>
+            </li>
+            <li>
+              <Link
                 to={settings[0]}
                 className={
                   (settings.includes(location.pathname)

@@ -8,16 +8,23 @@ import { PDFDocument, rgb } from "pdf-lib";
 import { get } from "../../../../../lib/methods";
 import { API_BASE_URL } from "../../../../../constants/api";
 import { useSelector } from "react-redux";
-import { selectToken } from "../../../../../redux/selectors/auth";
+import {
+  selectOrganization,
+  selectToken,
+} from "../../../../../redux/selectors/auth";
 import { format } from "date-fns";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import Pagination from "../../../../../shared/Pagination/Pagination";
 
 const GuardsHistory = () => {
-  const { data: guards } = useGetGuardsQuery();
+  const organization = useSelector(selectOrganization);
+  const { data: guards } = useGetGuardsQuery(organization, {
+    skip: organization ? false : true,
+  });
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
+
   const [logs, setLogs] = useState([]);
   const [filteredLogs, setFilteredLogs] = useState([]);
   const [filteredPatrols, setFilteredPatrols] = useState([]);
@@ -34,7 +41,11 @@ const GuardsHistory = () => {
   const getPatrolInstances = async () => {
     setIsPatrolInstacesFetching(true);
     try {
-      const res = await get(API_BASE_URL + "patrols/get-instances", token);
+      if (!organization) return;
+      const res = await get(
+        API_BASE_URL + `patrols/get-instances/${organization}`,
+        token
+      );
       setPatrols(res);
     } catch (error) {
     } finally {
@@ -44,7 +55,7 @@ const GuardsHistory = () => {
   useEffect(() => {
     getLogs();
     getPatrolInstances();
-  }, []); // Fetch logs on component mount
+  }, [organization]); // Fetch logs on component mount
 
   useEffect(() => {
     filterLogs();
@@ -53,7 +64,8 @@ const GuardsHistory = () => {
   const getLogs = async () => {
     try {
       setLoading(true);
-      const res = await get(API_BASE_URL + "logs", token);
+      if (!organization) return;
+      const res = await get(API_BASE_URL + `logs/${organization}`, token);
       setLogs(res);
       setFilteredLogs(res);
     } catch (error) {

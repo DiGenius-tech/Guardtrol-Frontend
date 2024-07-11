@@ -5,7 +5,7 @@ import { TTimelineLogs } from "../../types/timelineLogs";
 export const ShiftApi = api.injectEndpoints({
   endpoints: (build) => ({
     getTimelineLogs: build.query<TTimelineLogs[], void>({
-      query: () => ({ url: `logs` }),
+      query: (organization) => ({ url: `logs/${organization}` }),
       providesTags: (result = []) => [
         ...result.map(({ _id }) => ({ type: "TimelineLogs", _id } as const)),
         { type: "TimelineLogs" as const, id: "LIST" },

@@ -4,18 +4,23 @@ import { Link } from "react-router-dom";
 import { useNavigate, useLocation } from "react-router-dom";
 import RegularButton from "../../../../Sandbox/Buttons/RegularButton";
 import { useGetSubscriptionQuery } from "../../../../../redux/services/subscriptions";
+import { useSelector } from "react-redux";
+import { selectOrganization } from "../../../../../redux/selectors/auth";
 
 const PaymentSuccess = () => {
   const tick_icon_ref = useRef();
   const [hasPayed, setHasPayed] = useState(false);
   const navigate = useNavigate();
+  const organization = useSelector(selectOrganization);
 
   const {
     data: sub,
     isError,
-
     refetch,
-  } = useGetSubscriptionQuery();
+  } = useGetSubscriptionQuery(organization, {
+    skip: organization ? false : true,
+  });
+
   console.log(sub);
   useEffect(() => {
     const payed = localStorage.getItem("paymentComplete") || false;

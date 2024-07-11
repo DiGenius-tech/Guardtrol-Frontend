@@ -7,7 +7,6 @@ import { useEffect, useState } from "react";
 import { randomHexColor } from "../../../../../../shared/functions/random-hex-color";
 
 function AssignedBeat(props) {
-
   // function randomHexColor() {
   //   var color = "#" + Math.floor(Math.random() * 16777215).toString(16); // Random value between 0 and FFFFFF
 
@@ -39,32 +38,36 @@ function AssignedBeat(props) {
               </p>
               <div className="my-1.5"></div>
               <ul className="flex items-center ms-1.5">
-                {props?.assigned_beat?.guards.length>0? props?.assigned_beat?.guards.map((guard) => {
-                  return (
-                    <li key={guard._id} className="-ms-1.5">
-                      <div
-                        style={{
-                          backgroundColor: randomHexColor(),
-                          color: "white"
-                        }}
-                        className={
-                          "h-7 w-7 rounded-full overflow-hidden border-2 flex items-center justify-center"
-                        }
-                      >
-                        {guard.profile_image ? (
-                          <img src={guard.profile_image} alt="profile image" />
-                        ) : (
-                          <p className="m-0 font-semibold">
-                            {guard.name.slice(0, 1).toUpperCase()}
-                          </p>
-                        )}
-                      </div>
-                    </li>
-                  );
-                }): 
-                <li className="-ms-1.5">
-                  No Guards Assigned Yet
-                </li>}
+                {props?.assigned_beat?.guards.length > 0 ? (
+                  props?.assigned_beat?.guards.map((guard) => {
+                    return (
+                      <li key={guard._id} className="-ms-1.5">
+                        <div
+                          style={{
+                            backgroundColor: randomHexColor(),
+                            color: "white",
+                          }}
+                          className={
+                            "h-7 w-7 rounded-full overflow-hidden border-2 flex items-center justify-center"
+                          }
+                        >
+                          {guard.profile_image ? (
+                            <img
+                              src={guard.profile_image}
+                              alt="profile image"
+                            />
+                          ) : (
+                            <p className="m-0 font-semibold">
+                              {guard?.name?.slice(0, 1).toUpperCase()}
+                            </p>
+                          )}
+                        </div>
+                      </li>
+                    );
+                  })
+                ) : (
+                  <li className="-ms-1.5">No Guards Assigned Yet</li>
+                )}
               </ul>
             </div>
           </div>

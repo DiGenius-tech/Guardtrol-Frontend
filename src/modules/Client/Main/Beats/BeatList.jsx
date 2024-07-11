@@ -15,7 +15,10 @@ import {
   useUpdateBeatMutation,
 } from "../../../../redux/services/beats";
 import { useSelector } from "react-redux";
-import { selectUser } from "../../../../redux/selectors/auth";
+import {
+  selectOrganization,
+  selectUser,
+} from "../../../../redux/selectors/auth";
 import Swal from "sweetalert2";
 import Pagination from "../../../../shared/Pagination/Pagination";
 
@@ -29,13 +32,16 @@ const BeatList = () => {
   const [beatToDelete, setBeatToDelete] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [entriesPerPage, setEntriesPerPage] = useState(5);
+  const organization = useSelector(selectOrganization);
 
   const {
     data: beats,
     refetch: refetchBeats,
     isLoading,
     error,
-  } = useGetBeatsQuery();
+  } = useGetBeatsQuery(organization, {
+    skip: organization ? false : true,
+  });
 
   const [deleteBeat, { isLoading: isDeleting, deleteStatus }] =
     useDeleteBeatMutation();

@@ -15,6 +15,7 @@ import icon_menu_dots from "../../../../../../images/icons/icon-menu-dots.svg";
 import PatrolGuardListDesktopView from "../PatrolGuardListDesktopView/PatrolGuardListDesktopView";
 import PatrolGuardListMobileView from "../PatrolGuardListMobileView/PatrolGuardListMobileView";
 import {
+  selectOrganization,
   selectToken,
   selectUser,
 } from "../../../../../../redux/selectors/auth";
@@ -37,13 +38,19 @@ function InactivePatrolGuards() {
   const [currentPage, setCurrentPage] = useState(1);
   const [entriesPerPage, setEntriesPerPage] = useState(5);
 
+  const organization = useSelector(selectOrganization);
   const {
     data: guards,
     isLoading,
     refetch: refetchGuards,
     error,
-  } = useGetGuardsQuery();
-  const { data: beats } = useGetBeatsQuery();
+  } = useGetGuardsQuery(organization, {
+    skip: organization ? false : true,
+  });
+  const { data: beats } = useGetBeatsQuery(organization, {
+    skip: organization ? false : true,
+  });
+
   const [deleteGuard] = useDeleteGuardMutation();
   const selectedBeat = beats?.find((b) => b._id === beatId);
 

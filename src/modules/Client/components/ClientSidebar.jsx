@@ -12,10 +12,17 @@ import {
 import { customTheme } from "../../../flowbite-theme";
 import { Link, useLocation, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { selectUser } from "../../../redux/selectors/auth";
+import { selectOrganization, selectUser } from "../../../redux/selectors/auth";
+import { useGetUserOrganizationRoleQuery } from "../../../redux/services/role";
 
 const ClientSidebar = () => {
   const location = useLocation();
+  const organization = useSelector(selectOrganization);
+
+  const { data: userRole } = useGetUserOrganizationRoleQuery(organization, {
+    skip: organization ? false : true,
+  });
+
   const user = useSelector(selectUser);
   let use_params = useParams();
   /**QUERIES */
@@ -185,7 +192,25 @@ const ClientSidebar = () => {
                 </span>
               </Link>
             </li>
-            {(user.role === "Owner" || user.role === "Manager") && (
+            {(userRole?.name === "Owner" || userRole?.name === "Manager") && (
+              <li>
+                <Link
+                  to={"requests"}
+                  className={
+                    (location.pathname.includes("requests")
+                      ? `bg-primary-50 `
+                      : ``) +
+                    `flex items-center p-2 text-dark-260 rounded-r-full dark:text-white hover:bg-primary-50 dark:hover:bg-primary-400 group`
+                  }
+                >
+                  <HiFilter fontSize={"1.5rem"} />
+                  <span className="flex items-center ms-3 h-5 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white">
+                    Requests
+                  </span>
+                </Link>
+              </li>
+            )}
+            {(userRole?.name === "Owner" || userRole?.name === "Manager") && (
               <li>
                 <Link
                   to={settings[0]}

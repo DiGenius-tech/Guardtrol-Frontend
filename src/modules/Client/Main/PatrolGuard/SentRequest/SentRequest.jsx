@@ -12,7 +12,10 @@ import {
   useGetGuardsQuery,
 } from "../../../../../redux/services/guards";
 import { useSelector } from "react-redux";
-import { selectUser } from "../../../../../redux/selectors/auth";
+import {
+  selectOrganization,
+  selectUser,
+} from "../../../../../redux/selectors/auth";
 
 function SentRequest(props) {
   const { user } = useSelector(selectUser);
@@ -22,7 +25,14 @@ function SentRequest(props) {
   const [selectedGuard, setSelectedGuard] = useState(null);
   const [open, setOpen] = useState(false);
 
-  const { data: guards, isLoading, error } = useGetGuardsQuery();
+  const organization = useSelector(selectOrganization);
+  const {
+    data: guards,
+    isLoading,
+    error,
+  } = useGetGuardsQuery(organization, {
+    skip: organization ? false : true,
+  });
 
   const [deleteGuard, { isLoading: isUpdating, status }] =
     useDeleteGuardMutation();

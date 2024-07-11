@@ -7,9 +7,19 @@ import * as XLSX from "xlsx";
 import { format } from "date-fns";
 import { useGetTimelineLogsQuery } from "../../../../../redux/services/timelinelogs";
 import Pagination from "../../../../../shared/Pagination/Pagination"; // Adjust the import based on your project structure
+import { useSelector } from "react-redux";
+import { selectOrganization } from "../../../../../redux/selectors/auth";
 
 const BeatsLog = () => {
-  const { data: allLogs, refetch, isFetching } = useGetTimelineLogsQuery();
+  const organization = useSelector(selectOrganization);
+  const {
+    data: allLogs,
+    refetch,
+    isFetching,
+  } = useGetTimelineLogsQuery(organization, {
+    skip: organization ? false : true,
+  });
+
   const [startDate, setStartDate] = useState(null);
   const [filteredLogs, setFilteredLogs] = useState([]);
   const [endDate, setEndDate] = useState(null);
@@ -17,7 +27,9 @@ const BeatsLog = () => {
   const [selectedBeat, setSelectedBeat] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [entriesPerPage, setEntriesPerPage] = useState(10);
-  const { data: beats } = useGetBeatsQuery();
+  const { data: beats } = useGetBeatsQuery(organization, {
+    skip: organization ? false : true,
+  });
 
   const handleDateChange = (date, type) => {
     if (type === "start") {
@@ -34,9 +46,6 @@ const BeatsLog = () => {
     const parsedStartDate = startDate ? new Date(startDate) : null;
 
     const parsedEndDate = endDate ? new Date(endDate) : null;
-
-    console.log(parsedStartDate);
-    console.log(parsedEndDate);
 
     const newFilteredLogs = allLogs.filter((log) => {
       const logDate = new Date(log.createdAt);

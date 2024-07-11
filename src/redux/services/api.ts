@@ -46,6 +46,8 @@ export const api = createApi({
     "Guards",
     "Users",
     "Subscriptions",
+    "UserRole",
+    "Roles",
     "Invoices",
     "UserSubscriptions",
     "Points",

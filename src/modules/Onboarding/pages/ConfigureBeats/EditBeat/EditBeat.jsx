@@ -9,7 +9,10 @@ import {
   useUpdateBeatMutation,
 } from "../../../../../redux/services/beats";
 import { useDispatch, useSelector } from "react-redux";
-import { selectUser } from "../../../../../redux/selectors/auth";
+import {
+  selectOrganization,
+  selectUser,
+} from "../../../../../redux/selectors/auth";
 import {
   suspenseHide,
   suspenseShow,
@@ -19,9 +22,17 @@ function EditBeat(props) {
   const [validationErrors, setValidationErrors] = useState({});
   const [preBeat, setPreBeat] = useState("");
   const navigate = useNavigate();
+
+  const organization = useSelector(selectOrganization);
+
   const dispatch = useDispatch();
   const user = useSelector(selectUser);
-  const { data: beats, refetch: refetchBeats } = useGetBeatsQuery();
+  const { data: beats, refetch: refetchBeats } = useGetBeatsQuery(
+    organization,
+    {
+      skip: organization ? false : true,
+    }
+  );
   const [formData, setFormData] = useState({
     _id: "",
     name: "",

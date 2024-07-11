@@ -11,7 +11,11 @@ import { FaPlus } from "react-icons/fa";
 import { FaCaretUp } from "react-icons/fa";
 import { FaCaretDown } from "react-icons/fa";
 import { useSelector } from "react-redux";
-import { selectToken, selectUser } from "../../../../../redux/selectors/auth";
+import {
+  selectOrganization,
+  selectToken,
+  selectUser,
+} from "../../../../../redux/selectors/auth";
 import { Outlet, useNavigate } from "react-router-dom";
 import {
   useGetAllMySubscriptionsQuery,
@@ -52,6 +56,8 @@ const SettingBilling = () => {
   const user = useSelector(selectUser);
   const token = useSelector(selectToken);
 
+  const organization = useSelector(selectOrganization);
+
   const [isAddNewCard, setIsAddNewCard] = useState(false);
   const [isUpdateSub, setIsUpdateSub] = useState(false);
   const [openRenewalModal, setOpenRenewalModal] = useState(false);
@@ -71,20 +77,24 @@ const SettingBilling = () => {
     isError,
     refetch,
     isUninitialized,
-  } = useGetSubscriptionQuery(null, { skip: token ? false : true });
+  } = useGetSubscriptionQuery(organization, {
+    skip: organization ? false : true,
+  });
 
-  const { data: guards } = useGetGuardsQuery(null, {
-    skip: token ? false : true,
+  const { data: guards } = useGetGuardsQuery(organization, {
+    skip: organization ? false : true,
   });
-  const { data: subs } = useGetAllSubscriptionsQuery(null, {
-    skip: token ? false : true,
+  const { data: subs } = useGetAllSubscriptionsQuery(organization, {
+    skip: organization ? false : true,
   });
-  const { data: invoices } = useGetInvoicesQuery(null, {
-    skip: token ? false : true,
+  const { data: invoices } = useGetInvoicesQuery(organization, {
+    skip: organization ? false : true,
   });
   const totalPages = subs?.length;
 
-  const { data: mySuscriptions } = useGetAllMySubscriptionsQuery();
+  const { data: mySuscriptions } = useGetAllMySubscriptionsQuery(organization, {
+    skip: organization ? false : true,
+  });
 
   const toggleIsUpdateSub = () => {
     setIsUpdateSub(!isUpdateSub);

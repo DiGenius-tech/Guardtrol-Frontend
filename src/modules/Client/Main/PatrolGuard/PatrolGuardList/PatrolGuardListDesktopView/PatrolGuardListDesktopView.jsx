@@ -4,7 +4,6 @@ import { ASSET_URL } from "../../../../../../constants/api";
 
 function PatrolGuardListDesktopView(props) {
   const navigate = useNavigate();
-  console.log(useLocation());
 
   const location = useLocation();
   return (

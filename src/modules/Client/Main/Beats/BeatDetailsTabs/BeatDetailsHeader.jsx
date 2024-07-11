@@ -10,6 +10,8 @@ import BeatReport from "./BeatReport";
 import { BiAlbum } from "react-icons/bi";
 import BeatPoint from "./BeatPoint";
 import { useGetBeatsQuery } from "../../../../../redux/services/beats";
+import { useSelector } from "react-redux";
+import { selectOrganization } from "../../../../../redux/selectors/auth";
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -19,8 +21,14 @@ function BeatDetailsHeader() {
   const location = useLocation();
   const tabsRef = useRef();
   const { beatId } = useParams();
+  const organization = useSelector(selectOrganization);
 
-  const { data: beats, refetch: refetchBeats } = useGetBeatsQuery();
+  const { data: beats, refetch: refetchBeats } = useGetBeatsQuery(
+    organization,
+    {
+      skip: organization ? false : true,
+    }
+  );
 
   const selectedBeat = beats?.find((b) => b._id === beatId);
   return (

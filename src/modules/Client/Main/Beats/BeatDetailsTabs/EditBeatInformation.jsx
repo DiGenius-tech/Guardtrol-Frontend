@@ -12,7 +12,10 @@ import {
   suspenseHide,
   suspenseShow,
 } from "../../../../../redux/slice/suspenseSlice";
-import { selectUser } from "../../../../../redux/selectors/auth";
+import {
+  selectOrganization,
+  selectUser,
+} from "../../../../../redux/selectors/auth";
 import * as Yup from "yup";
 import { useFormik } from "formik";
 import { post, put } from "../../../../../lib/methods";
@@ -29,8 +32,14 @@ const BeatInformationSchema = Yup.object().shape({
 const EditBeatInformation = ({ setPage }) => {
   const { beatId } = useParams();
   const [updateBeat] = useUpdateBeatMutation();
+  const organization = useSelector(selectOrganization);
 
-  const { data: beats, refetch: refetchBeats } = useGetBeatsQuery();
+  const { data: beats, refetch: refetchBeats } = useGetBeatsQuery(
+    organization,
+    {
+      skip: organization ? false : true,
+    }
+  );
 
   const selectedBeat = beats?.find((b) => b._id === beatId);
 

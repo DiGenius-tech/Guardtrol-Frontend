@@ -13,14 +13,19 @@ import {
   suspenseHide,
   suspenseShow,
 } from "../../../../../../redux/slice/suspenseSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { selectOrganization } from "../../../../../../redux/selectors/auth";
 
 function Beat({ setBeats, beat, status, handle_edit_beat }) {
+  const organization = useSelector(selectOrganization);
+
   const [open, setOpen] = useState(false);
   const dispatch = useDispatch();
   const [deleteBeat, { isLoading: isDeleting, deleteStatus }] =
     useDeleteBeatMutation();
-  const { refetch: refetchBeats } = useGetBeatsQuery();
+  const { refetch: refetchBeats } = useGetBeatsQuery(organization, {
+    skip: organization ? false : true,
+  });
 
   const handleDelete = async (_id) => {
     setOpen(false);

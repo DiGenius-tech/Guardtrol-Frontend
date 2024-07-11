@@ -8,6 +8,7 @@ import { useDropzone } from "react-dropzone";
 import useHttpRequest from "../../../../../../shared/Hooks/HttpRequestHook";
 import { toast } from "react-toastify";
 import {
+  selectOrganization,
   selectToken,
   selectUser,
 } from "../../../../../../redux/selectors/auth";
@@ -106,12 +107,14 @@ const EditGuarantorForm = (props) => {
     identificationFile: null,
     identificationType: "",
   });
-
+  const organization = useSelector(selectOrganization);
   const {
     data: guards,
     refetch: refetchGuards,
     isUninitialized,
-  } = useGetGuardsQuery();
+  } = useGetGuardsQuery(organization, {
+    skip: organization ? false : true,
+  });
 
   useEffect(() => {
     setFormData({

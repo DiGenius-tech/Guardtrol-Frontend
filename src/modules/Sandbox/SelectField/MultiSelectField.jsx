@@ -9,9 +9,14 @@ function MultiSelectField(props) {
   };
 
   const handleOptionToggle = (option) => {
-    if (props.selectedOptions.includes(option)) {
+    console.log(
+      props.selectedOptions.find((opt) => opt.value === option.value)
+    );
+    console.log(props.selectedOptions, option);
+
+    if (props.selectedOptions.find((opt) => opt._id === option._id)) {
       props.setSelectedOptions(
-        props.selectedOptions.filter((item) => item !== option)
+        props.selectedOptions.filter((item) => item.value !== option.value)
       );
     } else {
       props.setSelectedOptions([...props.selectedOptions, option]);
@@ -97,7 +102,9 @@ function MultiSelectField(props) {
                   type="checkbox"
                   className="form-checkbox h-5 w-5 text-green-500"
                   value={option}
-                  checked={props.selectedOptions.includes(option)}
+                  checked={props.selectedOptions.find(
+                    (opt) => opt._id === option._id
+                  )}
                   onChange={() => handleOptionToggle(option)}
                 />
                 <span className="ml-2">{option.name}</span>

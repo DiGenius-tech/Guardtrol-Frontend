@@ -40,7 +40,8 @@ function OrganizationUsers() {
     refetch: refetchUsers,
   } = useGetUsersQuery(user.organization);
 
-  const [createUser, { isLoading: isCreatingUser }] = useAddUserMutation();
+  const [createUser, { isLoading: isCreatingUser, isError }] =
+    useAddUserMutation();
   const [updateUser, { isLoading: isUpdatingUser }] = useUpdateUserMutation();
   const [deleteUser, { isLoading: deletingUser }] = useDeleteUserMutation();
 
@@ -55,10 +56,12 @@ function OrganizationUsers() {
     email: "",
     password: "Password",
     role: "",
+    whatsappNumber: "",
+    isDirectCreator: false,
     assignedBeats: [], // Add beats field
   });
 
-  const [selectedBeats, setSelectedBeats] = useState([]);
+  const [selectedBeats, setSelectedBeats] = useState();
 
   useEffect(() => {
     if (error) {
@@ -67,21 +70,30 @@ function OrganizationUsers() {
   }, [error]);
 
   const handleOpenModal = (user = null) => {
-    console.log(user);
     if (user) {
       setSelectedUser(user);
+
       setUserForm({
         name: user.name,
+        isDirectCreator: user.isDirectCreator,
         email: user.email,
-        role: user.role,
+        whatsappNumber: user.whatsappNumber,
+        role: user?.role?.name,
         assignedBeats: user.assignedBeats || [], // Set beats if available
       });
-      setSelectedBeats(user.assignedBeats || []); // Set selected beats if available
+      setSelectedBeats(
+        user?.role?.assignedBeats.map((b) => ({
+          _id: b._id,
+          value: b._id,
+          name: b.name,
+        })) || []
+      );
       setEditMode(true);
     } else {
       setSelectedUser(null);
       setUserForm({
         name: "",
+        whatsappNumber: "",
         email: "",
         role: "",
         assignedBeats: [], // Reset beats
@@ -91,7 +103,6 @@ function OrganizationUsers() {
     }
     setShowModal(true);
   };
-
   const handleCloseModal = () => {
     setShowModal(false);
   };
@@ -118,7 +129,6 @@ function OrganizationUsers() {
         assignedBeats: selectedBeats.map((sb) => sb.value),
         organizationId: user.organization,
       };
-      console.log("first");
 
       if (editMode) {
         await updateUser({ id: selectedUser._id, ...userData });
@@ -169,6 +179,23 @@ function OrganizationUsers() {
         <Button className="bg-[#008080] mb-5" onClick={() => handleOpenModal()}>
           Create User
         </Button>
+        <Button
+          color={"green"}
+          onClick={refetchUsers}
+          className="bg-green-500 text-white px-4 rounded min-w-40 h-10"
+          disabled={isLoading}
+        >
+          {isLoading ? (
+            <Spinner
+              aria-label="Loading spinner"
+              className="mr-2"
+              size="sm"
+              light
+            />
+          ) : (
+            "Refresh"
+          )}
+        </Button>
       </div>
       <div className="hidden sm:block">
         <Card className=" min-h-96">
@@ -183,6 +210,16 @@ function OrganizationUsers() {
               handleDeleteUser={handleDeleteUser}
               icon_menu_dots={icon_menu_dots}
             />
+          )}
+          {!isFetchingUsers && paginatedUsers?.length === 0 && (
+            <div className="bg-white dark:border-gray-700 dark:bg-gray-800">
+              <div
+                colSpan={4}
+                className="whitespace-nowrap font-medium  text-center text-gray-900 dark:text-white"
+              >
+                {"No Users"}
+              </div>
+            </div>
           )}
         </Card>
       </div>
@@ -213,6 +250,7 @@ function OrganizationUsers() {
           <div className="space-y-4">
             <TextInput
               label="Name"
+              readOnly={editMode && !userForm?.isDirectCreator}
               name="name"
               value={userForm.name}
               onChange={handleChange}
@@ -221,24 +259,57 @@ function OrganizationUsers() {
             />
             <TextInput
               label="Email"
+              readOnly={editMode && !userForm?.isDirectCreator}
               name="email"
               value={userForm.email}
               onChange={handleChange}
               placeholder="Enter user email"
               required
             />
-            <TextInput
-              label="Password"
-              name="password"
-              value={userForm.password}
-              onChange={handleChange}
-              placeholder="Enter user password"
-              required
-            />
+
+            {((editMode && userForm?.isDirectCreator) || !editMode) && (
+              <>
+                <TextInput
+                  label="Password"
+                  name="password"
+                  value={userForm.password}
+                  onChange={handleChange}
+                  placeholder="Enter user password"
+                  required
+                />
+                <TextInput
+                  label="Whatsapp Number"
+                  name="whatsappNumber"
+                  value={userForm.whatsappNumber}
+                  onChange={handleChange}
+                  placeholder="Enter user whatsapp number"
+                  required
+                />
+                <div className="mt-4 p-4 border border-yellow-400 bg-yellow-50 rounded-lg">
+                  <h4 className="font-bold text-yellow-800">
+                    Important Notice
+                  </h4>
+                  <p className="text-yellow-700">
+                    To receive notifications on WhatsApp, please ensure that you
+                    have accepted the most recent WhatsApp policy and terms.
+                    Click the link below to review and accept the terms.
+                  </p>
+                  <a
+                    href="https://wa.me/tos/20210210"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-500 underline"
+                  >
+                    Review and Accept WhatsApp Terms
+                  </a>
+                </div>
+              </>
+            )}
+
             <Select
               label="Roles"
               required
-              value={userForm.role}
+              value={userForm?.role}
               onChange={handleRoleChange}
             >
               <option value={""}>Select Role</option>
@@ -248,7 +319,7 @@ function OrganizationUsers() {
                 </option>
               ))}
             </Select>
-            {userForm.role === "Supervisor" && (
+            {userForm.role === "Supervisor" && selectedBeats && (
               <AssignBeatsToUser
                 selectedBeats={selectedBeats}
                 setSelectedBeats={setSelectedBeats}
@@ -263,7 +334,7 @@ function OrganizationUsers() {
             onClick={handleSaveUser}
           >
             {editMode ? "Update" : "Create"}
-            {(isUpdatingUser || isCreatingUser) && (
+            {(isUpdatingUser || isCreatingUser) && !isError && (
               <Spinner
                 aria-label="Loading spinner"
                 className="ml-2"

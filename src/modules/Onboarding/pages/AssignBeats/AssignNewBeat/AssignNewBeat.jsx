@@ -8,7 +8,11 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import MultiSelectField from "../../../../Sandbox/SelectField/MultiSelectField";
 import { useDispatch, useSelector } from "react-redux";
-import { selectToken, selectUser } from "../../../../../redux/selectors/auth";
+import {
+  selectOrganization,
+  selectToken,
+  selectUser,
+} from "../../../../../redux/selectors/auth";
 import {
   suspenseHide,
   suspenseShow,
@@ -28,11 +32,21 @@ function AssignNewBeat({ isOnboarding = true }) {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
   const { beatId } = useParams();
+  const organization = useSelector(selectOrganization);
 
-  const { data: beats, error, refetch: refetchBeats } = useGetBeatsQuery();
+  const {
+    data: beats,
+    error,
+    refetch: refetchBeats,
+  } = useGetBeatsQuery(organization, {
+    skip: organization ? false : true,
+  });
+
   const selectedBeat = beats?.find((b) => b._id === beatId);
 
-  const { data: guards, error: guardsError } = useGetGuardsQuery();
+  const { data: guards, error: guardsError } = useGetGuardsQuery(organization, {
+    skip: organization ? false : true,
+  });
 
   const [assignToBeat] = useAssignGuardToBeatMutation();
   const { responseData, sendRequest } = useHttpRequest();

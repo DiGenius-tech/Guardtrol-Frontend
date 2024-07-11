@@ -7,8 +7,12 @@ import useHttpRequest from "../../../../../../shared/Hooks/HttpRequestHook";
 
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { selectAuth } from "../../../../../../redux/selectors/auth";
+import {
+  selectAuth,
+  selectOrganization,
+} from "../../../../../../redux/selectors/auth";
 import { patch } from "../../../../../../lib/methods";
+import { useGetGuardsQuery } from "../../../../../../redux/services/guards";
 
 const sexOptions = [
   {
@@ -61,6 +65,10 @@ const stateOfOriginList = [
 ];
 const EditPersonalInformation = (props) => {
   const { guardId } = useParams();
+  const organization = useSelector(selectOrganization);
+  const { data: guards, refetch } = useGetGuardsQuery(organization, {
+    skip: organization ? false : true,
+  });
 
   const { user, token } = useSelector(selectAuth);
   const [loading, setLoading] = useState(false);
@@ -133,6 +141,7 @@ const EditPersonalInformation = (props) => {
         token
       ).then((data) => {
         if (data.status) {
+          refetch();
           toast("Personal Information Updated");
           // props.setGuard({});
         }

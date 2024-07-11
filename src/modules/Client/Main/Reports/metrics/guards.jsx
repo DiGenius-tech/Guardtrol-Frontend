@@ -3,9 +3,14 @@ import ReactApexChart from "react-apexcharts";
 import "tailwindcss/tailwind.css";
 import { useGetGuardsQuery } from "../../../../../redux/services/guards";
 import Pagination from "../../../../../shared/Pagination/Pagination";
+import { selectOrganization } from "../../../../../redux/selectors/auth";
+import { useSelector } from "react-redux";
 
 const GuardsMetrics = () => {
-  const { data: guards } = useGetGuardsQuery();
+  const organization = useSelector(selectOrganization);
+  const { data: guards } = useGetGuardsQuery(organization, {
+    skip: organization ? false : true,
+  });
   const [currentPage, setCurrentPage] = useState(1);
   const [entriesPerPage, setEntriesPerPage] = useState(10);
 

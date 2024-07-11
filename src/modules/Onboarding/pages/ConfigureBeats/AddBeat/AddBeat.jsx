@@ -12,7 +12,11 @@ import {
   useGetBeatsQuery,
 } from "../../../../../redux/services/beats";
 import { useDispatch, useSelector } from "react-redux";
-import { selectToken, selectUser } from "../../../../../redux/selectors/auth";
+import {
+  selectOrganization,
+  selectToken,
+  selectUser,
+} from "../../../../../redux/selectors/auth";
 import { selectSubscriptionState } from "../../../../../redux/selectors/subscription";
 import { useGetSubscriptionQuery } from "../../../../../redux/services/subscriptions";
 import {
@@ -27,13 +31,16 @@ function AddBeat() {
   const dispatch = useDispatch();
   const user = useSelector(selectUser);
   const token = useSelector(selectToken);
+  const organization = useSelector(selectOrganization);
 
   const {
     data: sub,
     isError,
 
     refetch,
-  } = useGetSubscriptionQuery();
+  } = useGetSubscriptionQuery(organization, {
+    skip: organization ? false : true,
+  });
 
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -55,7 +62,9 @@ function AddBeat() {
     data: beats,
     isUninitialized,
     refetch: refetchBeats,
-  } = useGetBeatsQuery();
+  } = useGetBeatsQuery(organization, {
+    skip: organization ? false : true,
+  });
 
   const saveBeat = async (e) => {
     e.preventDefault();
@@ -86,7 +95,7 @@ function AddBeat() {
           return;
         }
         dispatch(suspenseShow);
-        await addBeat(beat);
+        await addBeat({ organization, beat });
         console.log(user);
         const d = await refetchBeats();
         if (d) {

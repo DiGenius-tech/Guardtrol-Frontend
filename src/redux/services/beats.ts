@@ -5,7 +5,7 @@ import { TBeat } from "../../types/beat";
 export const BeatApi = api.injectEndpoints({
   endpoints: (build) => ({
     getBeats: build.query<TBeat[], void>({
-      query: () => ({ url: `beat/getbeats` }),
+      query: (organizationId) => ({ url: `beat/getbeats/${organizationId}` }),
       providesTags: (result = []) => [
         ...result.map(({ _id }) => ({ type: "Beats", _id } as const)),
         { type: "Beats" as const, id: "LIST" },
@@ -13,21 +13,21 @@ export const BeatApi = api.injectEndpoints({
     }),
 
     addBeat: build.mutation<TBeat, Partial<any>>({
-      query(body) {
+      query({ organization, beat }) {
         return {
-          url: `beat/addbeat`,
+          url: `beat/addbeat/${organization}`,
           method: "POST",
-          body,
+          body: beat,
         };
       },
       invalidatesTags: [{ type: "Beats", id: "LIST" }],
     }),
     addBeats: build.mutation<TBeat, Partial<any>>({
-      query(body) {
+      query({ organization, beats }) {
         return {
-          url: `beat/addbeat`,
+          url: `beat/addbeat/${organization}`,
           method: "POST",
-          body,
+          body: beats,
         };
       },
       invalidatesTags: [{ type: "Beats", id: "LIST" }],

@@ -2,9 +2,15 @@ import React, { useState, useEffect } from "react";
 import { useGetBeatsQuery } from "../../../../../redux/services/beats";
 import MultiSelectField from "../../../../Sandbox/SelectField/MultiSelectField";
 import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
+import { selectOrganization } from "../../../../../redux/selectors/auth";
 
 const AssignBeatsToUser = ({ selectedBeats, setSelectedBeats }) => {
-  const { data: beats, error } = useGetBeatsQuery();
+  const organization = useSelector(selectOrganization);
+
+  const { data: beats, error } = useGetBeatsQuery(organization, {
+    skip: organization ? false : true,
+  });
 
   useEffect(() => {
     if (error) {
@@ -31,6 +37,7 @@ const AssignBeatsToUser = ({ selectedBeats, setSelectedBeats }) => {
         handleChangeOption={handleBeatSelection}
         optionList={beats?.map((beat) => ({
           value: beat._id,
+          _id: beat._id,
           name: beat.name,
         }))}
       />

@@ -7,7 +7,11 @@ import RegularButton from "../../../../Sandbox/Buttons/RegularButton";
 import { toast } from "react-toastify";
 import useHttpRequest from "../../../../../shared/Hooks/HttpRequestHook";
 import { useDispatch, useSelector } from "react-redux";
-import { selectToken, selectUser } from "../../../../../redux/selectors/auth";
+import {
+  selectOrganization,
+  selectToken,
+  selectUser,
+} from "../../../../../redux/selectors/auth";
 import {
   suspenseHide,
   suspenseShow,
@@ -71,7 +75,10 @@ function GuardList() {
   // }, [isGuardsLoaded]);
 
   const [addGuards] = useAddGuardsMutation();
-  const { refetch: refetchGuards } = useGetGuardsQuery();
+  const organization = useSelector(selectOrganization);
+  const { refetch: refetchGuards } = useGetGuardsQuery(organization, {
+    skip: organization ? false : true,
+  });
 
   const saveGuard = async () => {
     if (onboardingGuards == [] || onboardingGuards.length < 1) {
@@ -81,7 +88,7 @@ function GuardList() {
 
     dispatch(suspenseShow());
     try {
-      const data = await addGuards(onboardingGuards);
+      const data = await addGuards({ guards: onboardingGuards, organization });
 
       if (data) {
         dispatch(setOnboardingGuards([]));

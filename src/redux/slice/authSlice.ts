@@ -22,11 +22,13 @@ interface Auth {
       }
     | undefined;
   isAuthenticated: boolean;
+  organization?: string;
   role: string;
 }
 
 const initialState: Auth = {
   token: null,
+  organization: undefined,
   user: undefined,
   isAuthenticated: false,
   role: "",
@@ -62,6 +64,9 @@ const authSlice = createSlice({
       state.user = undefined;
       state.token = null;
     },
+    updateUserOrganization(state, action) {
+      state.organization = action.payload;
+    },
     updateUser(state, action) {
       state.user = action.payload;
     },
@@ -71,5 +76,6 @@ const authSlice = createSlice({
   },
 });
 
-export const { loginSuccess, logout, updateUser } = authSlice.actions;
+export const { loginSuccess, updateUserOrganization, logout, updateUser } =
+  authSlice.actions;
 export default authSlice.reducer;

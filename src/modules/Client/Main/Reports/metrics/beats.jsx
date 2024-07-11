@@ -3,9 +3,14 @@ import ReactApexChart from "react-apexcharts";
 import "tailwindcss/tailwind.css";
 import { useGetBeatsQuery } from "../../../../../redux/services/beats";
 import Pagination from "../../../../../shared/Pagination/Pagination";
+import { useSelector } from "react-redux";
+import { selectOrganization } from "../../../../../redux/selectors/auth";
 
 const BeatsMetrics = () => {
-  const { data: beats } = useGetBeatsQuery();
+  const organization = useSelector(selectOrganization);
+  const { data: beats } = useGetBeatsQuery(organization, {
+    skip: organization ? false : true,
+  });
   const [currentPage, setCurrentPage] = useState(1);
   const [entriesPerPage, setEntriesPerPage] = useState(10);
 

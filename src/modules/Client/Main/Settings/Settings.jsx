@@ -1,8 +1,22 @@
 import { Tabs } from "flowbite-react";
 import SettingsToolbar from "./SettingsToolbar/SettingsToolbar";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
+import { selectOrganization } from "../../../../redux/selectors/auth";
+import { useGetUserOrganizationRoleQuery } from "../../../../redux/services/role";
+import { useEffect } from "react";
+import { useSelector } from "react-redux";
 
 function Settings() {
+  const organization = useSelector(selectOrganization);
+  const { data: userRole } = useGetUserOrganizationRoleQuery(organization, {
+    skip: organization ? false : true,
+  });
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (userRole.name === "Supervisor") {
+      navigate("/client");
+    }
+  }, [userRole]);
   return (
     <>
       {/* settings-app works! */}

@@ -11,7 +11,11 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import AlertDialog from "../../../../../shared/Dialog/AlertDialog";
 import { useDispatch, useSelector } from "react-redux";
-import { selectToken, selectUser } from "../../../../../redux/selectors/auth";
+import {
+  selectOrganization,
+  selectToken,
+  selectUser,
+} from "../../../../../redux/selectors/auth";
 import { useGetBeatsQuery } from "../../../../../redux/services/beats";
 import { patch } from "../../../../../lib/methods";
 import { loginSuccess } from "../../../../../redux/slice/authSlice";
@@ -124,6 +128,7 @@ function AssignedBeatList(props) {
   const [open, setOpen] = useState(false);
 
   const token = useSelector(selectToken);
+  const organization = useSelector(selectOrganization);
 
   const user = useSelector(selectUser);
   const dispatch = useDispatch();
@@ -154,7 +159,10 @@ function AssignedBeatList(props) {
     isLoading,
     isUninitialized,
     refetch: refetchBeats,
-  } = useGetBeatsQuery();
+  } = useGetBeatsQuery(organization, {
+    skip: organization ? false : true,
+  });
+
   console.log(beats);
 
   const finish = async () => {

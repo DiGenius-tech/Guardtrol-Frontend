@@ -1,12 +1,21 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import { selectUser } from "../../../../../redux/selectors/auth";
+import {
+  selectOrganization,
+  selectUser,
+} from "../../../../../redux/selectors/auth";
 import { useSelector } from "react-redux";
+import { useGetUserOrganizationRoleQuery } from "../../../../../redux/services/role";
 
 const SettingsToolbar = () => {
   const user = useSelector(selectUser);
   const location = useLocation();
   /**URLS */
+  const organization = useSelector(selectOrganization);
+  const { data: userRole } = useGetUserOrganizationRoleQuery(organization, {
+    skip: organization ? false : true,
+  });
+
   const personalInformation = [
     "/client/settings",
     "/client/settings/",
@@ -96,7 +105,7 @@ const SettingsToolbar = () => {
               Notification
             </Link>
           </li>
-          {user.role === "Owner" && (
+          {userRole?.name === "Owner" && (
             <li>
               <Link
                 to={`users`}

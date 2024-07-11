@@ -6,7 +6,11 @@ import { Outlet } from "react-router-dom";
 import PatrolGuardListToolbar from "./PatrolGuardListToolbar/PatrolGuardListToolbar";
 import { useDeleteGuardMutation } from "../../../../../redux/services/guards";
 import { useSelector } from "react-redux";
-import { selectToken, selectUser } from "../../../../../redux/selectors/auth";
+import {
+  selectOrganization,
+  selectToken,
+  selectUser,
+} from "../../../../../redux/selectors/auth";
 import { useGetBeatsQuery } from "../../../../../redux/services/beats";
 import { useParams } from "react-router-dom";
 import AddGuard from "../../../../Onboarding/pages/OnboardGuard/AddGuard/AddGuard";
@@ -21,12 +25,16 @@ const PatrolGuardList = (props) => {
   const [open, setOpen] = useState(false);
   const user = useSelector(selectUser);
   const { beatId } = useParams();
+  const organization = useSelector(selectOrganization);
 
   const {
     data: beats,
     isLoading: beatsIsLoading,
     error: beatsFetchError,
-  } = useGetBeatsQuery();
+  } = useGetBeatsQuery(organization, {
+    skip: organization ? false : true,
+  });
+
   const beat = beats?.find((b) => b?._id === beatId);
 
   const [deleteGuard, { isLoading: isUpdating, status }] =

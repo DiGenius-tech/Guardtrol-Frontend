@@ -7,16 +7,28 @@ import * as XLSX from "xlsx";
 import { useGetTimelineLogsQuery } from "../../../../../redux/services/timelinelogs";
 import { format } from "date-fns";
 import Pagination from "../../../../../shared/Pagination/Pagination"; // Adjust the import based on your project structure
+import { selectOrganization } from "../../../../../redux/selectors/auth";
+import { useSelector } from "react-redux";
 
 const GuardsLog = () => {
-  const { data: allLogs, refetch, isFetching } = useGetTimelineLogsQuery();
+  const organization = useSelector(selectOrganization);
+
+  const {
+    data: allLogs,
+    refetch,
+    isFetching,
+  } = useGetTimelineLogsQuery(organization, {
+    skip: organization ? false : true,
+  });
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [selectedGuard, setSelectedGuard] = useState("");
   const [filteredLogs, setFilteredLogs] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [entriesPerPage, setEntriesPerPage] = useState(10);
-  const { data: guards } = useGetGuardsQuery();
+  const { data: guards } = useGetGuardsQuery(organization, {
+    skip: organization ? false : true,
+  });
 
   useEffect(() => {
     if (allLogs) {

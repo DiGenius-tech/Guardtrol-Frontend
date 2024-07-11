@@ -5,7 +5,7 @@ import { TGuard } from "../../types/guad";
 export const GuardApi = api.injectEndpoints({
   endpoints: (build) => ({
     getGuards: build.query<TGuard[], void>({
-      query: () => ({ url: `guard/getguards` }),
+      query: (organizationId) => ({ url: `guard/getguards/${organizationId}` }),
       providesTags: (result = []) => [
         ...result.map(({ _id }) => ({ type: "Guards", _id } as const)),
         { type: "Guards" as const, id: "LIST" },
@@ -15,9 +15,9 @@ export const GuardApi = api.injectEndpoints({
     addGuards: build.mutation<TGuard, Partial<any>>({
       query: (body) => {
         return {
-          url: `guard/addguards`,
+          url: `guard/addguards/${body.organization}`,
           method: "POST",
-          body: body,
+          body: { guards: body.guards },
         };
       },
       invalidatesTags: [
@@ -28,9 +28,9 @@ export const GuardApi = api.injectEndpoints({
     addGuard: build.mutation<TGuard, Partial<any>>({
       query: (body) => {
         return {
-          url: `guard/addguard`,
+          url: `guard/addguard/${body.organization}`,
           method: "POST",
-          body: body,
+          body: { guard: body.guard },
         };
       },
       invalidatesTags: [

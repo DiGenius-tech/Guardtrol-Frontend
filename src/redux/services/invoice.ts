@@ -5,7 +5,7 @@ import { TInvoice } from "../../types/invoice";
 export const InvoiceApi = api.injectEndpoints({
   endpoints: (build) => ({
     getInvoices: build.query<TInvoice[], void>({
-      query: () => ({ url: `invoices` }),
+      query: (organization) => ({ url: `invoices/${organization}` }),
       providesTags: (result = []) => [
         ...result.map(({ _id }) => ({ type: "Invoices", _id } as const)),
         { type: "Invoices" as const, id: "LIST" },

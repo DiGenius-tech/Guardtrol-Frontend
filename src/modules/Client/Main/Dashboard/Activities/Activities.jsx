@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
 import "./Activities.scss";
 import { useSelector } from "react-redux";
-import { selectToken } from "../../../../../redux/selectors/auth";
+import {
+  selectOrganization,
+  selectToken,
+} from "../../../../../redux/selectors/auth";
 import { get } from "../../../../../lib/methods";
 import { API_BASE_URL } from "../../../../../constants/api";
 import { format } from "date-fns";
@@ -13,14 +16,17 @@ const activity_status = {
 const Activities = () => {
   const [timelineLogs, setLogs] = useState([]);
   const token = useSelector(selectToken);
+  const organization = useSelector(selectOrganization);
 
   const getLogs = async () => {
-    const res = await get(API_BASE_URL + "logs", token);
+    if (!organization) return;
+    const res = await get(API_BASE_URL + `logs/${organization}`, token);
     setLogs(res);
   };
+
   useEffect(() => {
     getLogs();
-  }, []);
+  }, [organization]);
   const formatDate = (date) => format(new Date(date), "yyyy-MM-dd HH:mm:ss");
   return (
     <>

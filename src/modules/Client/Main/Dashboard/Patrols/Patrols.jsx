@@ -3,19 +3,21 @@ import { Card, Select, Spinner, Table } from "flowbite-react";
 import React, { useEffect, useState } from "react";
 import { API_BASE_URL, ASSET_URL } from "../../../../../constants/api";
 import { format } from "date-fns";
-import { selectToken } from "../../../../../redux/selectors/auth";
+import {
+  selectOrganization,
+  selectToken,
+} from "../../../../../redux/selectors/auth";
 import { useSelector } from "react-redux";
 import { get } from "../../../../../lib/methods";
 import { useGetGuardsQuery } from "../../../../../redux/services/guards";
 import { useGetBeatsQuery } from "../../../../../redux/services/beats";
 import { Link, useNavigate } from "react-router-dom";
+import { useGetRolesQuery } from "../../../../../redux/services/role";
 
 const Patrols = () => {
   const navigate = useNavigate();
   const [filterPatrolDate, setFilterPatrolDate] = useState("All");
-  const { data: guards } = useGetGuardsQuery();
-  const { data: beats } = useGetBeatsQuery();
-
+  const organization = useSelector(selectOrganization);
   // Function to render timeline logs
   const [patrols, setPatrols] = useState();
   const [timelineLogs, setLogs] = useState();
@@ -68,7 +70,11 @@ const Patrols = () => {
   const getPatrolInstances = async () => {
     setIsPatrolInstacesFetching(true);
     try {
-      const res = await get(API_BASE_URL + "patrols/get-instances", token);
+      if (!organization) return;
+      const res = await get(
+        API_BASE_URL + `patrols/get-instances/${organization}`,
+        token
+      );
       setPatrols(res);
     } catch (error) {
     } finally {
@@ -77,7 +83,7 @@ const Patrols = () => {
   };
   useEffect(() => {
     getPatrolInstances();
-  }, []);
+  }, [organization]);
 
   return (
     <Card className="">

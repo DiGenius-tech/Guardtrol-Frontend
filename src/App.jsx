@@ -25,12 +25,18 @@ import { PersistGate } from "redux-persist/integration/react";
 
 import { persistor, store } from "./redux/store";
 import { useGetSubscriptionQuery } from "./redux/services/subscriptions";
-import { selectToken, selectUser } from "./redux/selectors/auth";
+import {
+  selectOrganization,
+  selectToken,
+  selectUser,
+} from "./redux/selectors/auth";
 import { selectSuspenseShow } from "./redux/selectors/suspense";
 import { logout } from "./redux/slice/authSlice";
 import { api } from "./redux/services/api";
 
 function App() {
+  const organization = useSelector(selectOrganization);
+
   const token = useSelector(selectToken);
   const user = useSelector(selectUser);
   const suspense = useSelector(selectSuspenseShow);
@@ -129,16 +135,18 @@ function App() {
     isError,
     refetch,
     isUninitialized,
-  } = useGetSubscriptionQuery(null, { skip: token ? false : true });
+  } = useGetSubscriptionQuery(organization, {
+    skip: organization ? false : true,
+  });
   if (isError && token) {
     toast.warn("You are not currently Subscribed to any Plan");
   }
 
-  useEffect(() => {
-    if (token && isUninitialized) {
-      refetch();
-    }
-  }, [token]);
+  // useEffect(() => {
+  //   if (token && isUninitialized) {
+  //     refetch();
+  //   }
+  // }, [token]);
 
   useEffect(() => {
     if (error) {
