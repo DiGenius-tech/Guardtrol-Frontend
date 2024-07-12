@@ -29,3 +29,4 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./build/ # Update this path according to your project's output directory
+          log-level: verbose

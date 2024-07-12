@@ -1,8 +1,0 @@
-{
-  "rules": {
-    "no-unused-vars": "off", // Ignore unused variable warnings
-    "react-hooks/exhaustive-deps": "warn", // Downgrade or disable warnings for missing dependencies in useEffect
-    "eqeqeq": "off", // Turn off the rule requiring === and !==
-    "import/no-anonymous-default-export": "off" // Disable warnings for exporting anonymous defaults
-  }
-}
