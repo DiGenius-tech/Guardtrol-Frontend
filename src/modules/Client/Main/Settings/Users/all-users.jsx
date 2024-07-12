@@ -20,7 +20,11 @@ import {
   useGetUsersQuery,
   useUpdateUserMutation,
 } from "../../../../../redux/services/organization-users";
-import { selectToken, selectUser } from "../../../../../redux/selectors/auth";
+import {
+  selectOrganization,
+  selectToken,
+  selectUser,
+} from "../../../../../redux/selectors/auth";
 import UserListDesktopView from "./all-users-desktop";
 import UserListMobileView from "./all-users-mobile";
 import AssignBeatsToUser from "./assign-beats-to-user";
@@ -31,6 +35,7 @@ function OrganizationUsers() {
   const token = useSelector(selectToken);
   const dispatch = useDispatch();
   const user = useSelector(selectUser);
+  const organization = useSelector(selectOrganization);
 
   const {
     data: organizationUsers,
@@ -38,7 +43,7 @@ function OrganizationUsers() {
     isFetching: isFetchingUsers,
     error,
     refetch: refetchUsers,
-  } = useGetUsersQuery(user.organization);
+  } = useGetUsersQuery(organization);
 
   const [createUser, { isLoading: isCreatingUser, isError }] =
     useAddUserMutation();
@@ -174,28 +179,30 @@ function OrganizationUsers() {
 
   return (
     <div className="relative pb-16 ">
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center mb-3">
         <h2 className=" text-2xl font-bold">All Users</h2>
-        <Button className="bg-[#008080] mb-5" onClick={() => handleOpenModal()}>
-          Create User
-        </Button>
-        <Button
-          color={"green"}
-          onClick={refetchUsers}
-          className="bg-green-500 text-white px-4 rounded min-w-40 h-10"
-          disabled={isLoading}
-        >
-          {isLoading ? (
-            <Spinner
-              aria-label="Loading spinner"
-              className="mr-2"
-              size="sm"
-              light
-            />
-          ) : (
-            "Refresh"
-          )}
-        </Button>
+
+        <div className="flex justify-center items-center gap-3">
+          <Button className="bg-[#008080] " onClick={() => handleOpenModal()}>
+            Create User
+          </Button>
+          <Button
+            onClick={refetchUsers}
+            className="bg-[#008080] text-white px-4 min-w-40 h-10"
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <Spinner
+                aria-label="Loading spinner"
+                className="mr-2"
+                size="sm"
+                light
+              />
+            ) : (
+              "Refresh"
+            )}
+          </Button>
+        </div>
       </div>
       <div className="hidden sm:block">
         <Card className=" min-h-96">
