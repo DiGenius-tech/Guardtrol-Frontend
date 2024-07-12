@@ -21,6 +21,7 @@
     "@testing-library/user-event": "^13.5.0",
     "@vitejs/plugin-react-swc": "^3.6.0",
     "axios": "^1.6.8",
+    "browser-image-compression": "^2.0.2",
     "date-fns": "^3.6.0",
     "flowbite": "^2.3.0",
     "flowbite-react": "^0.7.5",
