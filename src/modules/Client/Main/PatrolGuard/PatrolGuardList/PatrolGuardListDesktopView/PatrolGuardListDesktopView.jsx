@@ -72,10 +72,10 @@ function PatrolGuardListDesktopView(props) {
                                       : ""
                                   }`}
                                   className=" h-full w-full"
-                                  alt={guard.name}
+                                  alt={guard?.name}
                                 />
                               </div>
-                              {guard.name}
+                              {guard?.name}
                               <span className="block sm:hidden">
                                 <br />
                                 {/* {time} */}

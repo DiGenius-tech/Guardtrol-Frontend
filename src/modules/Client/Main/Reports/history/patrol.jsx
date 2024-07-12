@@ -87,7 +87,7 @@ const PatrolHistory = () => {
 
   const indexOfLastEntry = currentPage * entriesPerPage;
   const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
-  const currentEntries = filteredPatrolInstances.slice(
+  const currentEntries = filteredPatrolInstances?.slice(
     indexOfFirstEntry,
     indexOfLastEntry
   );

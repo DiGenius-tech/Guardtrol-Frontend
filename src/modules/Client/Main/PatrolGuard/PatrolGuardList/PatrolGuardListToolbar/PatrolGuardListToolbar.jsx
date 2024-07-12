@@ -66,7 +66,7 @@ function PatrolGuardListToolbar() {
             </Link>
           </li>
 
-          {userRole.name === "Owner" && (
+          {userRole?.name === "Owner" && (
             <li>
               <Link
                 to={`addguard`}

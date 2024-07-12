@@ -12,7 +12,11 @@ import { toast } from "react-toastify";
 import useHttpRequest from "../../../../../shared/Hooks/HttpRequestHook";
 import { SubscriptionContext } from "../../../../../shared/Context/SubscriptionContext";
 import { useDispatch, useSelector } from "react-redux";
-import { selectToken, selectUser } from "../../../../../redux/selectors/auth";
+import {
+  selectOrganization,
+  selectToken,
+  selectUser,
+} from "../../../../../redux/selectors/auth";
 import {
   suspenseHide,
   suspenseShow,
@@ -39,10 +43,14 @@ const Checkout = (props) => {
   const fwConfig = useSelector(selectFwConfig);
   const plan = useSelector(selectPlan);
   const token = useSelector(selectToken);
+  const organization = useSelector(selectOrganization);
 
-  const { data: sub, refetch: refetchActiveSub } = useGetSubscriptionQuery({
-    skip: token ? false : true,
-  });
+  const { data: sub, refetch: refetchActiveSub } = useGetSubscriptionQuery(
+    organization,
+    {
+      skip: token ? false : true,
+    }
+  );
   const suspenseState = useSelector(selectSuspenseShow);
 
   const dispatch = useDispatch();
