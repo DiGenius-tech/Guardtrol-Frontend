@@ -62,7 +62,7 @@ function PatrolGuardListMobileView(props) {
                                 : ""
                             }`}
                             className=" h-full w-full"
-                            alt={guard.name}
+                            alt={guard?.name}
                           />
                         </div>
                       </th>
@@ -72,7 +72,7 @@ function PatrolGuardListMobileView(props) {
                             <Link
                               to={`/client/patrol-guard/details/${guard._id}`}
                             >
-                              {guard.name}
+                              {guard?.name}
                             </Link>
                           </div>
                           <small className="text-dark-250">{guard.email}</small>

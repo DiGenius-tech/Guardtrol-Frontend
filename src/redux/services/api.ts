@@ -6,12 +6,13 @@ import { RootState } from "../store";
 const baseQuery = fetchBaseQuery({
   baseUrl: `${API_BASE_URL}`,
   prepareHeaders: (headers, { getState }) => {
-    // By default, if we have a token in the store, let's use that for authenticated requests
     const token = (getState() as RootState)?.auth.token;
     if (token) {
       headers.set("Authorization", `Bearer ${token}`);
+      return headers;
+    } else {
+      throw new Error("Authentication token is missing");
     }
-    return headers;
   },
 });
 
@@ -46,6 +47,7 @@ export const api = createApi({
     "Guards",
     "Users",
     "Subscriptions",
+    "PatrolInstances",
     "UserRole",
     "Roles",
     "Invoices",
@@ -55,6 +57,8 @@ export const api = createApi({
     "OrganizationUsers",
     "Shifts",
     "Patrols",
+    "BeatHistory",
+    "GuardHistory",
   ],
   /**
    * This api has endpoints injected in adjacent files,

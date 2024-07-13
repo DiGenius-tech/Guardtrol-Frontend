@@ -28,9 +28,6 @@ const RequestsHistory = () => {
     isLoading,
     refetch,
   } = useGetAllModificationsQuery();
-  const { data: beats } = useGetBeatsQuery(organization, {
-    skip: organization ? false : true,
-  });
 
   const handleFilterChange = () => {
     let filteredData = modifications;

@@ -35,17 +35,20 @@ function BeatList() {
   const [isBeatsLoaded, setIsBeatsLoaded] = useState(false);
 
   const {
-    data: beats,
+    data: beatsApiResponse,
     isLoading,
     isUninitialized,
     refetch: refetchBeats,
-  } = useGetBeatsQuery(organization, {
-    skip: organization ? false : true,
-  });
+  } = useGetBeatsQuery(
+    { organization },
+    {
+      skip: organization ? false : true,
+    }
+  );
 
-  console.log(beats);
+  console.log(beatsApiResponse?.beats);
 
-  const [beatsToedit, setBeatsToEdit] = useState(beats);
+  const [beatsToedit, setBeatsToEdit] = useState(beatsApiResponse?.beats);
   const handle_edit_beat = (beat) => {
     if (beat) {
       setIsEdit(true);
@@ -70,7 +73,7 @@ function BeatList() {
   const [addBeats] = useAddBeatMutation();
 
   const saveBeat = async (beats) => {
-    if (!beats.length) {
+    if (!beatsApiResponse?.totalBeats) {
       toast.info("Add at Least One Beat To Continue");
       return;
     }
@@ -105,7 +108,7 @@ function BeatList() {
         ) : (
           <>
             <ul className="mb-4 flex flex-col gap-4">
-              {beats?.map((beat) => (
+              {beatsApiResponse?.beats?.map((beat) => (
                 <li key={beat._id}>
                   <Beat
                     beat={beat}
@@ -125,7 +128,7 @@ function BeatList() {
             <div className="my-8"></div>
             <RegularButton
               text="Continue To On-Board Guards"
-              onClick={() => saveBeat(beats)}
+              onClick={() => saveBeat(beatsApiResponse?.beats)}
             />
           </>
         )}
