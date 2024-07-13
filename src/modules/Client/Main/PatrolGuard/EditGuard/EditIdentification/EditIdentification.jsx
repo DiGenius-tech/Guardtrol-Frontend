@@ -12,6 +12,7 @@ import {
   selectToken,
   selectUser,
 } from "../../../../../../redux/selectors/auth";
+import imageCompression from "browser-image-compression";
 import { patch } from "../../../../../../lib/methods";
 import { FileInput } from "flowbite-react";
 import { useGetGuardsQuery } from "../../../../../../redux/services/guards";
@@ -88,9 +89,32 @@ const EditIdentification = (props) => {
     setValidationErrors({ ...validationErrors, [e.target.name]: "" });
   };
 
-  const handleFileChange = (event) => {
+  const handleFileChange = async (event) => {
     const uploadedFile = event.target.files[0];
-    setFormData({ ...formData, guardIdentificationFile: uploadedFile });
+
+    if (uploadedFile) {
+      const options = {
+        maxSizeMB: 0.5, // Maximum file size in MB
+        maxWidthOrHeight: 800, // Maximum width or height in pixels
+        useWebWorker: true,
+      };
+
+      try {
+        const compressedFile = await imageCompression(uploadedFile, options);
+        console.log("Original file size:", uploadedFile.size);
+        console.log("Compressed file size:", compressedFile.size);
+
+        console.log(compressedFile);
+        setFormData({ ...formData, guardIdentificationFile: compressedFile });
+
+        const reader = new FileReader();
+        reader.onloadend = () => {};
+        reader.readAsDataURL(compressedFile);
+      } catch (error) {
+        console.error("Error during image compression:", error);
+      }
+    } else {
+    }
   };
 
   const save = async (e) => {
@@ -195,7 +219,7 @@ const EditIdentification = (props) => {
               <FileInput
                 id="file"
                 onChange={handleFileChange}
-                accept=".pdf, image/*"
+                accept="image/*"
                 className=" placeholder-red-900"
                 helperText="Select Upload Identification File"
               />

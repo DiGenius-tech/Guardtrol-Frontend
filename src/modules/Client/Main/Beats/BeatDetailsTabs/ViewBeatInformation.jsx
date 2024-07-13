@@ -8,14 +8,14 @@ const ViewBeatInformation = ({ setPage }) => {
   const { beatId } = useParams();
   const organization = useSelector(selectOrganization);
 
-  const { data: beats, refetch: refetchBeats } = useGetBeatsQuery(
-    organization,
+  const { data: beatsApiResponse, refetch: refetchBeats } = useGetBeatsQuery(
+    { organization },
     {
       skip: organization ? false : true,
     }
   );
 
-  const selectedBeat = beats?.find((b) => b._id === beatId);
+  const selectedBeat = beatsApiResponse?.beats?.find((b) => b._id === beatId);
   return (
     <>
       <div className="flex justify-between flex-row mb-3">

@@ -8,9 +8,12 @@ import { selectOrganization } from "../../../../../redux/selectors/auth";
 const AssignBeatsToUser = ({ selectedBeats, setSelectedBeats }) => {
   const organization = useSelector(selectOrganization);
 
-  const { data: beats, error } = useGetBeatsQuery(organization, {
-    skip: organization ? false : true,
-  });
+  const { data: beatsApiResponse, error } = useGetBeatsQuery(
+    { organization },
+    {
+      skip: organization ? false : true,
+    }
+  );
 
   useEffect(() => {
     if (error) {
@@ -35,7 +38,7 @@ const AssignBeatsToUser = ({ selectedBeats, setSelectedBeats }) => {
         label="Select Beats"
         semibold_label={true}
         handleChangeOption={handleBeatSelection}
-        optionList={beats?.map((beat) => ({
+        optionList={beatsApiResponse.beats?.map((beat) => ({
           value: beat._id,
           _id: beat._id,
           name: beat.name,

@@ -12,6 +12,8 @@ import {
   selectOrganization,
 } from "../../../../../../redux/selectors/auth";
 import { patch } from "../../../../../../lib/methods";
+import imageCompression from "browser-image-compression";
+
 import { FileInput } from "flowbite-react";
 import { useGetGuardsQuery } from "../../../../../../redux/services/guards";
 import { FaFileAlt } from "react-icons/fa";
@@ -38,9 +40,9 @@ const identificationTypeOptions = [
 ];
 
 const EditNextOfKin = (props) => {
-  console.log(props);
   const { guardId } = useParams();
   const auth = useSelector(selectAuth);
+
   const { user, token } = useSelector(selectAuth);
   const organization = useSelector(selectOrganization);
   const {
@@ -85,9 +87,34 @@ const EditNextOfKin = (props) => {
     // console.log("formData: ", formData)
   };
 
-  const handleFileChange = (event) => {
+  const handleFileChange = async (event) => {
     const uploadedFile = event.target.files[0];
-    setFormData({ ...formData, nextofkinIdentificationFile: uploadedFile });
+
+    if (uploadedFile) {
+      const options = {
+        maxSizeMB: 0.5, // Maximum file size in MB
+        maxWidthOrHeight: 800, // Maximum width or height in pixels
+        useWebWorker: true,
+      };
+
+      try {
+        const compressedFile = await imageCompression(uploadedFile, options);
+        console.log("Original file size:", uploadedFile.size);
+        console.log("Compressed file size:", compressedFile.size);
+
+        setFormData({
+          ...formData,
+          nextofkinIdentificationFile: compressedFile,
+        });
+
+        const reader = new FileReader();
+        reader.onloadend = () => {};
+        reader.readAsDataURL(compressedFile);
+      } catch (error) {
+        console.error("Error during image compression:", error);
+      }
+    } else {
+    }
   };
 
   const [identificationType, setIdentificationType] = useState(null);

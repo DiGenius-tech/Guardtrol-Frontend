@@ -31,13 +31,17 @@ const PrivateRoute = ({
 
   const [onboardingRoute, setOnboardingRoute] = useState("");
   const location = useLocation();
+
   const {
     data: beats,
     isUninitialized,
     refetch: refetchBeats,
-  } = useGetBeatsQuery(organization, {
-    skip: organization ? false : true,
-  });
+  } = useGetBeatsQuery(
+    { organization },
+    {
+      skip: organization ? false : true,
+    }
+  );
 
   // useEffect(() => {
   //   if (isUninitialized && token) {
@@ -158,7 +162,6 @@ const PrivateRoute = ({
   //     <Navigate to="/onboarding/complete" state={{ from: location }} replace />
   //   );
   // }
-  console.log(user?.onboardingcomplete);
   if (user?.onboardingcomplete && location.pathname === "/auth") {
     return <Navigate to={"/client"} state={{ from: "/" }} replace />;
   }

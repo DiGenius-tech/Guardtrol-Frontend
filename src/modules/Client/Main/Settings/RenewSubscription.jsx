@@ -66,9 +66,12 @@ const RenewSubscription = ({ openModal, setRenewalModal }) => {
   const { data: availableGuards } = useGetGuardsQuery(organization, {
     skip: organization ? false : true,
   });
-  const { data: availableBeats } = useGetBeatsQuery(organization, {
-    skip: organization ? false : true,
-  });
+  const { data: beatsApiResponse } = useGetBeatsQuery(
+    { organization },
+    {
+      skip: organization ? false : true,
+    }
+  );
 
   const { data: mySuscriptions, refetch: refetchAllMySubscriptions } =
     useGetAllMySubscriptionsQuery(organization, {
@@ -258,7 +261,7 @@ const RenewSubscription = ({ openModal, setRenewalModal }) => {
         });
         return;
       }
-      if (availableBeats?.length > newMaxBeats) {
+      if (beatsApiResponse?.beats?.length > newMaxBeats) {
         Swal.fire({
           title: "Invalid Input",
           text: `Your entered amount of beats is less than your available beats, Delete beats!, your availble beats must not be more than ${newMaxBeats}`,

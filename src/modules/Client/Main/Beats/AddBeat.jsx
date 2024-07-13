@@ -48,13 +48,16 @@ const AddBeat = () => {
   });
 
   const {
-    data: beats,
+    data: beatsApiResponse,
     isLoading,
     isUninitialized,
     refetch: refetchBeats,
-  } = useGetBeatsQuery(organization, {
-    skip: organization ? false : true,
-  });
+  } = useGetBeatsQuery(
+    { organization },
+    {
+      skip: organization ? false : true,
+    }
+  );
   useEffect(() => {
     refetchBeats();
   }, [token]);
@@ -69,7 +72,7 @@ const AddBeat = () => {
   const saveBeat = async (e) => {
     e.preventDefault();
 
-    if (beats.find((b) => b.name === beat.name)) {
+    if (beatsApiResponse?.beats.find((b) => b.name === beat.name)) {
       Swal.fire({
         icon: "warning",
         confirmButtonColor: "#008080",
@@ -83,7 +86,7 @@ const AddBeat = () => {
         name: "Use A Valid Beat Name",
       });
     } else {
-      if (beats?.length >= sub?.maxbeats) {
+      if (beatsApiResponse?.beats?.length >= sub?.maxbeats) {
         setOpen(true);
         Swal.fire({
           title: "OOPS!! You've Ran Out Of Beats",

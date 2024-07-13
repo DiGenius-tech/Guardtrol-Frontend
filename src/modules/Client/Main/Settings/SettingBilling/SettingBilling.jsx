@@ -81,7 +81,6 @@ const SettingBilling = () => {
     skip: organization ? false : true,
   });
 
-  console.log(sub);
   const { data: guards } = useGetGuardsQuery(organization, {
     skip: organization ? false : true,
   });

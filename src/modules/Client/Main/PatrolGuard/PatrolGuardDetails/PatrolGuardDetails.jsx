@@ -16,6 +16,8 @@ import {
   selectToken,
   selectUser,
 } from "../../../../../redux/selectors/auth";
+import imageCompression from "browser-image-compression";
+
 import {
   useActivateGuardMutation,
   useGetGuardsQuery,
@@ -49,8 +51,8 @@ const PatrolGuardDetails = () => {
 
   const [comment, setComment] = useState("");
   const [activateGuard] = useActivateGuardMutation();
-  const { data: beats, refetch: refetchBeats } = useGetBeatsQuery(
-    organization,
+  const { data: beatsApiResponse, refetch: refetchBeats } = useGetBeatsQuery(
+    { organization },
     {
       skip: organization ? false : true,
     }
@@ -101,32 +103,32 @@ const PatrolGuardDetails = () => {
     }
   };
 
-  const getSelectedFile = (event) => {
+  const getSelectedFile = async (event) => {
     const file = event.target.files[0];
     if (file) {
-      const fileSizeInKB = file.size / 1024;
-      if (fileSizeInKB > 512) {
-        alert(
-          `File size exceeds the maximum limit of ${512} KB. Please select a smaller file.`
-        );
-        // Clear the input
-        event.target.value = null;
-        return;
-      }
-
-      // Proceed with the file
-      console.log("Selected file:", file);
-      // Add your logic to handle the file here
-    }
-    if (file) {
-      setFileName(file.name);
-      setProfile(event.target.files[0]);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreview(reader.result);
-        setBase(reader.result.split(",")[1]);
+      const options = {
+        maxSizeMB: 0.5, // Maximum file size in MB
+        maxWidthOrHeight: 800, // Maximum width or height in pixels
+        useWebWorker: true,
       };
-      reader.readAsDataURL(file);
+
+      try {
+        const compressedFile = await imageCompression(file, options);
+        console.log("Original file size:", file.size);
+        console.log("Compressed file size:", compressedFile.size);
+
+        setFileName(compressedFile.name);
+        setProfile(compressedFile);
+
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setPreview(reader.result);
+          setBase(reader.result.split(",")[1]);
+        };
+        reader.readAsDataURL(compressedFile);
+      } catch (error) {
+        console.error("Error during image compression:", error);
+      }
     } else {
       setFileName("");
     }
@@ -191,7 +193,6 @@ const PatrolGuardDetails = () => {
   // };
 
   const verify = async (e) => {
-    console.log(guard?.isactive);
     const statusData = {
       status: !guard?.isactive,
     };
@@ -217,7 +218,6 @@ const PatrolGuardDetails = () => {
     //   }
     // });
   };
-  console.log(guard);
   return (
     <>
       {/* patrol-guard-details-app works! */}

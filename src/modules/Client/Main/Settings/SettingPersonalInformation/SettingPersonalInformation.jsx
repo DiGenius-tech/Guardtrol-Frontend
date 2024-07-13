@@ -7,7 +7,7 @@ import * as Yup from "yup";
 import { useFormik } from "formik";
 import { post, put } from "../../../../../lib/methods";
 import { updateUser } from "../../../../../redux/slice/authSlice";
-import zIndex from "@mui/material/styles/zIndex";
+import imageCompression from "browser-image-compression";
 import {
   suspenseHide,
   suspenseShow,
@@ -33,30 +33,32 @@ const SettingPersonalInformation = () => {
   const [base, setBase] = useState("");
   const [profile, setProfile] = useState();
 
-  const getSelectedFile = (event) => {
+  const getSelectedFile = async (event) => {
     const file = event.target.files[0];
     if (file) {
-      const fileSizeInKB = file.size / 1024;
-      if (fileSizeInKB > 512) {
-        alert(
-          `File size exceeds the maximum limit of ${512} KB. Please select a smaller file.`
-        );
-        // Clear the input
-        event.target.value = null;
-        return;
-      }
-
-      console.log("Selected file:", file);
-    }
-    if (file) {
-      setFileName(file.name);
-      setProfile(event.target.files[0]);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreview(reader.result);
-        setBase(reader.result.split(",")[1]);
+      const options = {
+        maxSizeMB: 0.5, // Maximum file size in MB
+        maxWidthOrHeight: 800, // Maximum width or height in pixels
+        useWebWorker: true,
       };
-      reader.readAsDataURL(file);
+
+      try {
+        const compressedFile = await imageCompression(file, options);
+        console.log("Original file size:", file.size);
+        console.log("Compressed file size:", compressedFile.size);
+
+        setFileName(compressedFile.name);
+        setProfile(compressedFile);
+
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setPreview(reader.result);
+          setBase(reader.result.split(",")[1]);
+        };
+        reader.readAsDataURL(compressedFile);
+      } catch (error) {
+        console.error("Error during image compression:", error);
+      }
     } else {
       setFileName("");
     }
@@ -68,7 +70,6 @@ const SettingPersonalInformation = () => {
     initialValues: { ...user },
     validationSchema: PersonalInformationSchema,
     onSubmit: (values) => {
-      console.log("first");
       setLoading(true);
       try {
         handleUpdateProfile(values);
@@ -99,8 +100,6 @@ const SettingPersonalInformation = () => {
     dispatch(suspenseShow());
 
     const formData = new FormData();
-    console.log(profile);
-
     formData.append("profile", profile);
 
     const { data } = await axios.put(
@@ -108,14 +107,13 @@ const SettingPersonalInformation = () => {
       formData,
       {
         headers: {
-          Authorization: `${"Bearer " + token}`,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
         },
       }
     );
 
     if (data) {
-      console.log(data);
       dispatch(updateUser(data));
     }
     dispatch(suspenseHide());
@@ -123,7 +121,6 @@ const SettingPersonalInformation = () => {
 
   return (
     <>
-      {/* setting-personal-information-app works! */}
       <div className="mb-10 p-4 sm:p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
         <form onSubmit={formik.handleSubmit} className="max-w-3xl">
           <div className="grid grid-cols-12 gap-4 sm:gap-8">

@@ -56,8 +56,8 @@ function ActivePatrolGuards() {
     skip: organization ? false : true,
   });
 
-  const { data: beats, refetch: refetchBeats } = useGetBeatsQuery(
-    organization,
+  const { data: beatsApiResponse, refetch: refetchBeats } = useGetBeatsQuery(
+    { organization },
     {
       skip: organization ? false : true,
     }
@@ -66,8 +66,8 @@ function ActivePatrolGuards() {
   const [selectedBeat, setSelectedBeat] = useState({});
 
   useEffect(() => {
-    setSelectedBeat(beats?.find((b) => b?._id === beatId));
-  }, [beats]);
+    setSelectedBeat(beatsApiResponse?.beats?.find((b) => b?._id === beatId));
+  }, [beatsApiResponse]);
 
   const [deleteGuard] = useDeleteGuardMutation();
   const [UnAssignGuard] = useUnAssignFromGuardToBeatMutation();

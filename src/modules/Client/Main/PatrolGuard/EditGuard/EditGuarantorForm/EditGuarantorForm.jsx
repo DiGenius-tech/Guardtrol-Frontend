@@ -5,6 +5,8 @@ import RegularButton from "../../../../../Sandbox/Buttons/RegularButton";
 import SelectField from "../../../../../Sandbox/SelectField/SelectField";
 import { useParams } from "react-router-dom";
 import { useDropzone } from "react-dropzone";
+import imageCompression from "browser-image-compression";
+
 import useHttpRequest from "../../../../../../shared/Hooks/HttpRequestHook";
 import { toast } from "react-toastify";
 import {
@@ -268,10 +270,30 @@ const EditGuarantorForm = (props) => {
     }
   };
 
-  const handleFileChange = (event) => {
+  const handleFileChange = async (event) => {
     const uploadedFile = event.target.files[0];
 
-    setFormData({ ...formData, identificationFile: uploadedFile });
+    if (uploadedFile) {
+      const options = {
+        maxSizeMB: 0.5, // Maximum file size in MB
+        maxWidthOrHeight: 800, // Maximum width or height in pixels
+        useWebWorker: true,
+      };
+
+      try {
+        const compressedFile = await imageCompression(uploadedFile, options);
+        console.log("Original file size:", uploadedFile.size);
+        console.log("Compressed file size:", compressedFile.size);
+
+        setFormData({ ...formData, identificationFile: compressedFile });
+
+        const reader = new FileReader();
+        reader.onloadend = () => {};
+        reader.readAsDataURL(compressedFile);
+      } catch (error) {
+        console.error("Error during image compression:", error);
+      }
+    }
   };
 
   return (

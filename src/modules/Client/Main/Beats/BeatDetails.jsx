@@ -25,14 +25,15 @@ import AddGuard from "../../../Onboarding/pages/OnboardGuard/AddGuard/AddGuard";
 const BeatDetails = () => {
   const { beatId } = useParams();
   const user = useSelector(selectUser);
+  const organization = useSelector(selectOrganization);
 
   const {
-    data: beats,
+    data: beatsApiResponse,
     isLoading,
     error,
-  } = useGetBeatsQuery(user.userid, { skip: user.userid ? false : true });
+  } = useGetBeatsQuery({ organization }, { skip: organization ? false : true });
 
-  const beat = beats?.find((b) => b._id === beatId);
+  const beat = beatsApiResponse?.beats?.find((b) => b._id === beatId);
 
   return (
     <>
@@ -45,14 +46,16 @@ const BeatDetails = () => {
 export const BeatGaurdRouter = () => {
   const user = useSelector(selectUser);
   const { beatId } = useParams();
+  const organization = useSelector(selectOrganization);
+
   const {
-    data: beats,
+    data: beatsApiResponse,
     isLoading,
     refetch: refetchGuards,
     error,
-  } = useGetBeatsQuery(user.userid, { skip: user.userid ? false : true });
+  } = useGetBeatsQuery({ organization }, { skip: organization ? false : true });
 
-  const beat = beats?.find((b) => b._id === beatId);
+  const beat = beatsApiResponse?.beats?.find((b) => b._id === beatId);
 
   return (
     <Routes>
@@ -81,14 +84,17 @@ export const BeatDetailsRouter = () => {
 
   const { beatId } = useParams();
   const {
-    data: beats,
+    data: beatsApiResponse,
     isLoading,
     error,
-  } = useGetBeatsQuery(organization, {
-    skip: organization ? false : true,
-  });
+  } = useGetBeatsQuery(
+    { organization },
+    {
+      skip: organization ? false : true,
+    }
+  );
 
-  const beat = beats?.find((b) => b._id === beatId);
+  const beat = beatsApiResponse?.beats?.find((b) => b._id === beatId);
   return <BeatDetailsHeader />;
 };
 

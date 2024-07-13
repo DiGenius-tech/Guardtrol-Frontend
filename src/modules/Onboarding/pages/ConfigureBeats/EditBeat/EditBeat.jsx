@@ -27,8 +27,8 @@ function EditBeat(props) {
 
   const dispatch = useDispatch();
   const user = useSelector(selectUser);
-  const { data: beats, refetch: refetchBeats } = useGetBeatsQuery(
-    organization,
+  const { refetch: refetchBeats } = useGetBeatsQuery(
+    { organization },
     {
       skip: organization ? false : true,
     }

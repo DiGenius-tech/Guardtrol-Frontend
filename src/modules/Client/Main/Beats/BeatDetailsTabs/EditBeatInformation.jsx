@@ -34,14 +34,14 @@ const EditBeatInformation = ({ setPage }) => {
   const [updateBeat] = useUpdateBeatMutation();
   const organization = useSelector(selectOrganization);
 
-  const { data: beats, refetch: refetchBeats } = useGetBeatsQuery(
-    organization,
+  const { data: beatsApiResponse, refetch: refetchBeats } = useGetBeatsQuery(
+    { organization },
     {
       skip: organization ? false : true,
     }
   );
 
-  const selectedBeat = beats?.find((b) => b._id === beatId);
+  const selectedBeat = beatsApiResponse?.beats?.find((b) => b._id === beatId);
 
   const [validationErrors, setValidationErrors] = useState({});
   const dispatch = useDispatch();

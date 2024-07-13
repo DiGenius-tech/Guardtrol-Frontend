@@ -23,9 +23,12 @@ function Beat({ setBeats, beat, status, handle_edit_beat }) {
   const dispatch = useDispatch();
   const [deleteBeat, { isLoading: isDeleting, deleteStatus }] =
     useDeleteBeatMutation();
-  const { refetch: refetchBeats } = useGetBeatsQuery(organization, {
-    skip: organization ? false : true,
-  });
+  const { refetch: refetchBeats } = useGetBeatsQuery(
+    { organization },
+    {
+      skip: organization ? false : true,
+    }
+  );
 
   const handleDelete = async (_id) => {
     setOpen(false);

@@ -27,16 +27,6 @@ const PatrolGuardList = (props) => {
   const { beatId } = useParams();
   const organization = useSelector(selectOrganization);
 
-  const {
-    data: beats,
-    isLoading: beatsIsLoading,
-    error: beatsFetchError,
-  } = useGetBeatsQuery(organization, {
-    skip: organization ? false : true,
-  });
-
-  const beat = beats?.find((b) => b?._id === beatId);
-
   const [deleteGuard, { isLoading: isUpdating, status }] =
     useDeleteGuardMutation();
 

@@ -48,7 +48,7 @@ function InactivePatrolGuards() {
     skip: organization ? false : true,
   });
   const { data: beatsApiResponse } = useGetBeatsQuery(
-    { organization: organization },
+    { organization },
     {
       skip: organization ? false : true,
     }
