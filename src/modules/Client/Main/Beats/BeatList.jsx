@@ -35,13 +35,16 @@ const BeatList = () => {
   const organization = useSelector(selectOrganization);
 
   const {
-    data: beats,
+    data: beatsApiResponse,
     refetch: refetchBeats,
     isLoading,
     error,
-  } = useGetBeatsQuery(organization, {
-    skip: organization ? false : true,
-  });
+  } = useGetBeatsQuery(
+    { organization, page: currentPage },
+    {
+      skip: organization ? false : true,
+    }
+  );
 
   const [deleteBeat, { isLoading: isDeleting, deleteStatus }] =
     useDeleteBeatMutation();
@@ -97,10 +100,7 @@ const BeatList = () => {
       // console.log(data);
     } catch (error) {}
   };
-  const paginatedBeats = beats?.slice(
-    (currentPage - 1) * entriesPerPage,
-    currentPage * entriesPerPage
-  );
+
   return (
     <div className="relative  pb-40">
       <div className="fixed z-10 bottom-8 right-4">
@@ -114,7 +114,7 @@ const BeatList = () => {
       <div className="hidden sm:block">
         <Card>
           <BeatsDesktopView
-            beatList={beats}
+            beatList={beatsApiResponse?.beats}
             icon_menu_dots={icon_menu_dots}
             openModal={openModal}
             setOpenModal={setOpenModal}
@@ -133,7 +133,7 @@ const BeatList = () => {
 
       <div className="sm:hidden  min-h-64">
         <BeatsMobileView
-          beatList={beats}
+          beatList={beatsApiResponse?.beats}
           icon_menu_dots={icon_menu_dots}
           openModal={openModal}
           setOpenModal={setOpenModal}
@@ -150,7 +150,7 @@ const BeatList = () => {
       </div>
 
       <Pagination
-        totalEntries={beats?.length || 0}
+        totalEntries={beatsApiResponse?.totalBeats || 0}
         entriesPerPage={entriesPerPage}
         currentPage={currentPage}
         onPageChange={setCurrentPage}

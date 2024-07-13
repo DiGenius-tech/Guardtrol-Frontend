@@ -26,6 +26,7 @@ import {
 import axios from "axios";
 import { API_BASE_URL } from "../../../../../constants/api";
 import { setOnboardingLevel } from "../../../../../redux/slice/onboardingSlice";
+import { useGetSubscriptionQuery } from "../../../../../redux/services/subscriptions";
 // const guardList = [
 //   {
 //     id: 1,
@@ -155,20 +156,29 @@ function AssignedBeatList(props) {
   };
 
   const {
-    data: beats,
+    data: beatsApiResponse,
     isLoading,
     isUninitialized,
     refetch: refetchBeats,
-  } = useGetBeatsQuery(organization, {
+  } = useGetBeatsQuery(
+    { organization },
+    {
+      skip: organization ? false : true,
+    }
+  );
+
+  const {
+    data: sub,
+    isError,
+    refetch,
+  } = useGetSubscriptionQuery(organization, {
     skip: organization ? false : true,
   });
-
-  console.log(beats);
 
   const finish = async () => {
     try {
       setisFinishLoading(true);
-      const check = beats.some((beat) => {
+      const check = beatsApiResponse?.beats?.some((beat) => {
         return beat.guards.length > 0;
       });
 
@@ -188,6 +198,7 @@ function AssignedBeatList(props) {
         return;
       }
       dispatch(loginSuccess(data));
+      refetch();
       dispatch(setOnboardingLevel(4));
     } catch (error) {
     } finally {
@@ -240,7 +251,7 @@ function AssignedBeatList(props) {
         ) : (
           <>
             <ul className="mb-4 flex flex-col gap-4">
-              {beats?.map((assigned_beat) => (
+              {beatsApiResponse?.beats?.map((assigned_beat) => (
                 <li
                   key={assigned_beat._id}
                   onClick={() => select_assigned_beat(assigned_beat)}

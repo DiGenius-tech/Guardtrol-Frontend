@@ -5,70 +5,55 @@ import { useGetBeatsQuery } from "../../../../../redux/services/beats";
 import { Button, Spinner, Table } from "flowbite-react";
 import * as XLSX from "xlsx";
 import { format } from "date-fns";
-import { useGetTimelineLogsQuery } from "../../../../../redux/services/timelinelogs";
 import Pagination from "../../../../../shared/Pagination/Pagination"; // Adjust the import based on your project structure
 import { useSelector } from "react-redux";
 import { selectOrganization } from "../../../../../redux/selectors/auth";
+import { useFetchTimelineLogsQuery } from "../../../../../redux/services/timelinelogs";
+import { POOLING_TIME } from "../../../../../constants/static";
 
 const BeatsLog = () => {
   const organization = useSelector(selectOrganization);
-  const {
-    data: allLogs,
-    refetch,
-    isFetching,
-  } = useGetTimelineLogsQuery(organization, {
-    skip: organization ? false : true,
-  });
-
   const [startDate, setStartDate] = useState(null);
-  const [filteredLogs, setFilteredLogs] = useState([]);
   const [endDate, setEndDate] = useState(null);
   const [selectedType, setSelectedType] = useState("");
   const [selectedBeat, setSelectedBeat] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [entriesPerPage, setEntriesPerPage] = useState(10);
-  const { data: beats } = useGetBeatsQuery(organization, {
-    skip: organization ? false : true,
-  });
-
-  const handleDateChange = (date, type) => {
-    if (type === "start") {
-      setStartDate(date);
-    } else {
-      setEndDate(date);
+  const { data: beatsApiResponse } = useGetBeatsQuery(
+    { organization: organization },
+    {
+      skip: organization ? false : true,
     }
-  };
+  );
 
-  useEffect(() => {
-    if (!allLogs) return;
+  const {
+    data: logsAPiResponse,
+    refetch,
+    isFetching,
+  } = useFetchTimelineLogsQuery(
+    {
+      organizationId: organization,
+      ...(startDate &&
+        endDate && {
+          startDate,
+          endDate,
+        }),
+      ...(selectedBeat && {
+        selectedEntity: selectedBeat,
+        entityType: "beat",
+      }),
+      ...(selectedType && {
+        selectedType,
+      }),
 
-    // Parse date only once
-    const parsedStartDate = startDate ? new Date(startDate) : null;
-
-    const parsedEndDate = endDate ? new Date(endDate) : null;
-
-    const newFilteredLogs = allLogs.filter((log) => {
-      const logDate = new Date(log.createdAt);
-      const logType = log.type;
-      const beatId = log?.beat?._id;
-
-      const dateCondition =
-        (!parsedStartDate || logDate >= parsedStartDate) &&
-        (!parsedEndDate || logDate <= parsedEndDate);
-
-      const typeCondition = !selectedType || logType === selectedType;
-
-      const beatCondition = !selectedBeat || beatId === selectedBeat;
-
-      return dateCondition && typeCondition && beatCondition;
-    });
-
-    setFilteredLogs(newFilteredLogs);
-  }, [allLogs, startDate, endDate, selectedType, selectedBeat]);
-
-  const handleTypeChange = (e) => {
-    setSelectedType(e.target.value);
-  };
+      page: currentPage,
+      limit: entriesPerPage,
+    },
+    {
+      skip: organization ? false : true,
+      pollingInterval: POOLING_TIME,
+    }
+  );
 
   const exportToExcel = () => {
     const columns = [
@@ -78,7 +63,7 @@ const BeatsLog = () => {
       { header: "Type", key: "type" },
     ];
 
-    const data = filteredLogs?.map((log) => ({
+    const data = logsAPiResponse?.logs?.map((log) => ({
       date: format(new Date(log.createdAt), "yyyy-MM-dd HH:mm:ss"),
       message: log.message,
       beat: log?.beat?.name || "Unknown",
@@ -118,7 +103,7 @@ const BeatsLog = () => {
     series: [
       {
         name: "Logs",
-        data: filteredLogs?.map((log) => ({
+        data: logsAPiResponse?.logs?.map((log) => ({
           x: new Date(log.createdAt).getTime(),
           y: 1,
         })),
@@ -134,12 +119,6 @@ const BeatsLog = () => {
     },
   };
 
-  // Pagination logic
-  const totalEntries = filteredLogs?.length || 0;
-  const indexOfLastEntry = currentPage * entriesPerPage;
-  const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
-  const currentLogs = filteredLogs?.slice(indexOfFirstEntry, indexOfLastEntry);
-
   return (
     <div className="container mx-auto relative pb-40 sm:pb-20">
       <section className="mb-2">
@@ -149,32 +128,31 @@ const BeatsLog = () => {
         <input
           className="border-gray-300 rounded-md min-w-40 h-10"
           type="datetime-local"
-          selected={startDate}
-          onChange={(e) => handleDateChange(e.target.value, "start")}
+          value={startDate}
+          onChange={(e) => setStartDate(e.target.value)}
         />
-
         <input
           type="datetime-local"
           className="border-gray-300 rounded-md min-w-40 h-10"
-          selected={endDate}
-          onChange={(e) => handleDateChange(e.target.value, "end")}
+          value={endDate}
+          onChange={(e) => setEndDate(e.target.value)}
         />
         <select
-          defaultValue={selectedType}
-          onChange={handleTypeChange}
-          className="border px-2  border-gray-300 rounded-md m-0 min-w-40 h-10 sm:w-[48%] md:w-auto"
+          value={selectedType}
+          onChange={(e) => setSelectedType(e.target.value)}
+          className="border px-2 border-gray-300 rounded-md min-w-40 h-10 sm:w-[48%] md:w-auto"
         >
           <option value="">All Types</option>
           <option value="Clock Action">Clock Action</option>
           <option value="Patrol Action">Patrol Action</option>
         </select>
         <select
-          defaultValue={selectedBeat}
+          value={selectedBeat}
           onChange={(e) => setSelectedBeat(e.target.value)}
-          className="border px-2 min-w-40 h-10 border-gray-300 rounded-md m-0 w-full sm:w-[48%] md:w-auto"
+          className="border px-2 border-gray-300 rounded-md min-w-40 h-10 sm:w-[48%] md:w-auto"
         >
           <option value="">Select Beat</option>
-          {beats?.map((beat) => (
+          {beatsApiResponse?.beats?.map((beat) => (
             <option key={beat?._id} value={beat?._id}>
               {beat?.name}
             </option>
@@ -205,7 +183,7 @@ const BeatsLog = () => {
         </Button>
       </div>
 
-      <div className=" min-h-[300px] max-h-80  overflow-y-auto">
+      <div className="min-h-[300px] max-h-80 overflow-y-auto">
         <Table>
           <Table.Head>
             <Table.HeadCell>Date</Table.HeadCell>
@@ -218,7 +196,7 @@ const BeatsLog = () => {
               <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
                 <Table.Cell
                   colSpan={4}
-                  className="whitespace-nowrap  font-medium  text-center text-gray-900 dark:text-white"
+                  className="whitespace-nowrap font-medium text-center text-gray-900 dark:text-white"
                 >
                   <div className="w-full h-full justify-center flex items-center">
                     <Spinner
@@ -229,18 +207,20 @@ const BeatsLog = () => {
                 </Table.Cell>
               </Table.Row>
             )}
-            {!isFetching && (currentLogs?.length === 0 || !currentLogs) && (
-              <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                <Table.Cell
-                  colSpan={4}
-                  className="whitespace-nowrap font-medium  text-center text-gray-900 dark:text-white"
-                >
-                  {"No Logs"}
-                </Table.Cell>
-              </Table.Row>
-            )}
             {!isFetching &&
-              currentLogs?.map((log) => (
+              (!logsAPiResponse?.logs ||
+                logsAPiResponse?.logs.length === 0) && (
+                <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
+                  <Table.Cell
+                    colSpan={4}
+                    className="whitespace-nowrap font-medium text-center text-gray-900 dark:text-white"
+                  >
+                    No Logs
+                  </Table.Cell>
+                </Table.Row>
+              )}
+            {!isFetching &&
+              logsAPiResponse?.logs?.map((log) => (
                 <Table.Row key={log._id}>
                   <Table.Cell>
                     {format(new Date(log.createdAt), "yyyy-MM-dd HH:mm:ss")}
@@ -255,7 +235,7 @@ const BeatsLog = () => {
       </div>
       <div className="relative mt-16">
         <Pagination
-          totalEntries={totalEntries}
+          totalEntries={logsAPiResponse?.total || 0}
           entriesPerPage={entriesPerPage}
           currentPage={currentPage}
           onPageChange={setCurrentPage}

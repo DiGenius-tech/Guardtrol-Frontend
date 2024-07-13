@@ -47,12 +47,15 @@ function InactivePatrolGuards() {
   } = useGetGuardsQuery(organization, {
     skip: organization ? false : true,
   });
-  const { data: beats } = useGetBeatsQuery(organization, {
-    skip: organization ? false : true,
-  });
+  const { data: beatsApiResponse } = useGetBeatsQuery(
+    { organization: organization },
+    {
+      skip: organization ? false : true,
+    }
+  );
 
   const [deleteGuard] = useDeleteGuardMutation();
-  const selectedBeat = beats?.find((b) => b._id === beatId);
+  const selectedBeat = beatsApiResponse.beats?.find((b) => b._id === beatId);
 
   const handleDeleteGuard = (guardToDelete) => {
     try {

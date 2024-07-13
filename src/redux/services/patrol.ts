@@ -11,6 +11,27 @@ export const PatrolsApi = api.injectEndpoints({
         { type: "Patrols" as const, id: "LIST" },
       ],
     }),
+    fetchPatrolInstances: build.query({
+      query: ({
+        organizationId,
+        startDate,
+        endDate,
+        guardName,
+        beatId,
+        page,
+        limit,
+      }) => ({
+        url: `patrols/get-instances/${organizationId}`,
+        params: { startDate, endDate, guardName, beatId, page, limit },
+      }),
+      providesTags: (result) => [
+        ...result.patrols.map(({ _id }: any) => ({
+          type: "PatrolInstances",
+          _id,
+        })),
+        { type: "PatrolInstances", id: "LIST" },
+      ],
+    }),
 
     createPatrol: build.mutation<TPatrol, Partial<any>>({
       query: (body) => {
@@ -66,4 +87,5 @@ export const {
   useGetPatrolsQuery,
   useUpdatePatrolsMutation,
   useGetErrorProneQuery,
+  useFetchPatrolInstancesQuery,
 } = PatrolsApi;

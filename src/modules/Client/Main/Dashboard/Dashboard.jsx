@@ -1,190 +1,134 @@
-import { Card, Label, Select, Spinner } from "flowbite-react";
+import { Card, Select, Spinner } from "flowbite-react";
 import React, { useEffect, useState } from "react";
-import Activities from "./Activities/Activities";
 import Patrols from "./Patrols/Patrols";
 import "./Dashboard.scss";
-import { Link, Outlet } from "react-router-dom";
 import MobileDisplay from "./MobileDisplay/MobileDisplay";
-import { FaUser, FaMap } from "react-icons/fa"; // Import the icons you want to use
-import { useGetTimelineLogsQuery } from "../../../../redux/services/timelinelogs";
-import { format } from "date-fns";
-import { useGetGuardsQuery } from "../../../../redux/services/guards";
-import { useGetBeatsQuery } from "../../../../redux/services/beats";
-import userEvent from "@testing-library/user-event";
+import { FaUser, FaMap } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import {
   selectOrganization,
   selectToken,
   selectUser,
 } from "../../../../redux/selectors/auth";
-import { get } from "../../../../lib/methods";
-import { API_BASE_URL } from "../../../../constants/api";
-import { useGetRolesQuery } from "../../../../redux/services/role";
+
+import { format } from "date-fns";
+import { useFetchTimelineLogsQuery } from "../../../../redux/services/timelinelogs";
+import { useGetBeatsQuery } from "../../../../redux/services/beats";
+import { useGetGuardsQuery } from "../../../../redux/services/guards";
 
 const Dashboard = () => {
   const user = useSelector(selectUser);
-
-  // const {
-  //   data: timelineLogs,
-  //   isUninitialized,
-  //   refetch: refetchLogs,
-  // } = useGetTimelineLogsQuery();
-
-  const formatDate = (date) => format(new Date(date), "yyyy-MM-dd HH:mm:ss");
-  const [filterStatus, setFilterStatus] = useState("All");
-  const [filterDate, setFilterDate] = useState("All");
-  const [isLogsFetching, setIsLogsFetching] = useState(false);
-
   const organization = useSelector(selectOrganization);
-
-  const { data: guards } = useGetGuardsQuery(organization, {
-    skip: organization ? false : true,
-  });
-
-  const { data: beats } = useGetBeatsQuery(organization, {
-    skip: organization ? false : true,
-  });
-
-  // Function to render timeline logs
-  const [timelineLogs, setLogs] = useState();
   const token = useSelector(selectToken);
 
-  const getLogs = async () => {
-    try {
-      if (!organization) return;
-      setIsLogsFetching(true);
+  const [filterStatus, setFilterStatus] = useState("All");
+  const [filterDate, setFilterDate] = useState("All");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [entriesPerPage, setEntriesPerPage] = useState(10);
 
-      const res = await get(API_BASE_URL + `logs/${organization}`, token);
-      setLogs(res);
-    } catch (error) {
-    } finally {
-      setIsLogsFetching(false);
+  const { data: guards } = useGetGuardsQuery(organization, {
+    skip: !organization,
+  });
+  const { data: beatsApiResponse } = useGetBeatsQuery(
+    { organization: organization },
+    {
+      skip: !organization,
+    }
+  );
+
+  const getDateFilter = () => {
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    switch (filterDate) {
+      case "Today":
+        return {
+          startDate: today.toISOString().split("T")[0],
+          endDate: today.toISOString().split("T")[0],
+        };
+      case "Yesterday":
+        return {
+          startDate: yesterday.toISOString().split("T")[0],
+          endDate: yesterday.toISOString().split("T")[0],
+        };
+      default:
+        return {};
     }
   };
 
-  useEffect(() => {
-    getLogs();
-  }, [organization]);
-
-  const filteredLogs = () => {
-    if (!timelineLogs) return [];
-
-    let filtered = timelineLogs;
-
-    if (filterStatus === "All") {
-      filtered = timelineLogs;
+  const {
+    data: logsAPiResponse,
+    refetch,
+    isFetching: isFetchingLogs,
+  } = useFetchTimelineLogsQuery(
+    {
+      organizationId: organization,
+      page: currentPage,
+      limit: entriesPerPage,
+      ...getDateFilter(),
+      type: filterStatus !== "All" ? filterStatus : undefined,
+    },
+    {
+      skip: !organization,
     }
+  );
 
-    if (filterStatus === "Clock Action") {
-      filtered = filtered.filter((log) => {
-        return filterStatus === "Clock Action"
-          ? log.type === "Clock Action"
-          : true;
-      });
-    }
+  const formatDate = (date) => format(new Date(date), "yyyy-MM-dd HH:mm:ss");
 
-    if (filterStatus === "Guard Action") {
-      filtered = filtered.filter((log) => {
-        return filterStatus === "Guard Action"
-          ? log.type === "Guard Action"
-          : true;
-      });
-    }
+  // useEffect(() => {
+  //   if (organization) {
+  //     refetch();
+  //   }
+  // }, [organization, filterStatus, filterDate, refetch]);
 
-    if (filterStatus === "Patrol Action") {
-      filtered = filtered.filter((log) => {
-        return filterStatus === "Patrol Action"
-          ? log.type === "Patrol Action"
-          : true;
-      });
-    }
-
-    if (filterStatus === "Shift Action") {
-      filtered = filtered.filter((log) => {
-        return filterStatus === "Shift Action"
-          ? log.type === "Shift Action"
-          : true;
-      });
-    }
-
-    if (filterDate !== "All") {
-      const today = new Date();
-      const yesterday = new Date(today);
-      yesterday.setDate(yesterday.getDate() - 1);
-      filtered = filtered.filter((log) => {
-        const logDate = new Date(log.createdAt);
-        if (filterDate === "Today") {
-          return logDate.toDateString() === today.toDateString();
-        } else if (filterDate === "Yesterday") {
-          return logDate.toDateString() === yesterday.toDateString();
-        } else {
-          // Assuming filterDate is a specific date in "yyyy-MM-dd" format
-          return logDate.toDateString() === new Date(filterDate).toDateString();
-        }
-      });
-    }
-
-    return filtered;
-  };
-
-  // Function to render timeline logs
   const renderLogs = () => {
-    const logs = filteredLogs();
+    if (!logsAPiResponse?.logs?.length) {
+      return (
+        <li className="w-full text-center py-28">
+          <p className="body text-gray-600">No Activity</p>
+        </li>
+      );
+    }
 
-    return (
-      <>
-        {logs?.length !== 0 ? (
-          <>
-            {logs.map((log) => (
-              <li key={log._id} className="horizontal-liner">
-                <div className="activity">
-                  <div className="grid grid-cols-12">
-                    <div className="col-span-12 md:col-span-3 md:p-[15px]">
-                      <div className="text-sm font-semibold">
-                        {formatDate(log.createdAt)}
-                      </div>
-                    </div>
-                    <div className="hidden md:block dot-wrap | col-span-2 p-[20px]">
-                      <div className="dot"></div>
-                    </div>
-                    <div className="col-span-12 md:col-span-7">
-                      <div className="body">
-                        <div
-                          style={{ borderWidth: "1px" }}
-                          className={`text-xs me-2 
-                            px-3 py-1.5 rounded-lg dark:bg-gray-700 
-                            ${
-                              log.type === "Clock Action"
-                                ? "bg-blue-50 text-blue-800  border-blue-900"
-                                : "bg-gray-50 text-gray-800"
-                            }`}
-                          role="alert"
-                        >
-                          <h3 className="title font-semibold">
-                            {log.message.includes("clocked in")
-                              ? "Clock in"
-                              : log.message.includes("clockedout")
-                              ? "Clock out"
-                              : log.type}
-                          </h3>
-                          <p className="body">{log.message}</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+    return logsAPiResponse.logs.map((log) => (
+      <li key={log._id} className="horizontal-liner">
+        <div className="activity">
+          <div className="grid grid-cols-12">
+            <div className="col-span-12 md:col-span-3 md:p-[15px]">
+              <div className="text-sm font-semibold">
+                {formatDate(log.createdAt)}
+              </div>
+            </div>
+            <div className="hidden md:block dot-wrap | col-span-2 p-[20px]">
+              <div className="dot"></div>
+            </div>
+            <div className="col-span-12 md:col-span-7">
+              <div className="body">
+                <div
+                  style={{ borderWidth: "1px" }}
+                  className={`text-xs me-2 px-3 py-1.5 rounded-lg dark:bg-gray-700 ${
+                    log.type === "Clock Action"
+                      ? "bg-blue-50 text-blue-800 border-blue-900"
+                      : "bg-gray-50 text-gray-800"
+                  }`}
+                  role="alert"
+                >
+                  <h3 className="title font-semibold">
+                    {log.message.includes("clocked in")
+                      ? "Clock in"
+                      : log.message.includes("clocked out")
+                      ? "Clock out"
+                      : log.type}
+                  </h3>
+                  <p className="body">{log.message}</p>
                 </div>
-              </li>
-            ))}
-          </>
-        ) : (
-          <>
-            <li className="w-full text-center py-28">
-              <p className="body text-gray-600">No Activity</p>
-            </li>
-          </>
-        )}
-      </>
-    );
+              </div>
+            </div>
+          </div>
+        </div>
+      </li>
+    ));
   };
 
   return (
@@ -199,32 +143,28 @@ const Dashboard = () => {
       </div>
       <div className="hidden md:grid grid-cols-12 gap-4">
         <div className="grid grid-cols-4 col-span-12 gap-4">
-          <div className="">
-            <StatsCard>
-              <h2 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
-                Number of Guards
-              </h2>
-              <div className="flex items-center mt-2">
-                <FaUser className="text-gray-600 dark:text-gray-400 text-2xl mr-2 mb-1" />
-                <p className="text-3xl  font-semibold text-gray-800 dark:text-gray-200">
-                  {guards?.length || 0}
-                </p>
-              </div>
-            </StatsCard>
-          </div>
-          <div className="">
-            <StatsCard>
-              <h2 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
-                Number of Beats
-              </h2>
-              <div className="flex items-center mt-2">
-                <FaMap className="text-gray-600 mb-1 dark:text-gray-400 text-2xl mr-2" />
-                <p className="text-3xl font-semibold text-gray-800 dark:text-gray-200">
-                  {beats?.length || 0}
-                </p>
-              </div>
-            </StatsCard>
-          </div>
+          <StatsCard>
+            <h2 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
+              Number of Guards
+            </h2>
+            <div className="flex items-center mt-2">
+              <FaUser className="text-gray-600 dark:text-gray-400 text-2xl mr-2 mb-1" />
+              <p className="text-3xl font-semibold text-gray-800 dark:text-gray-200">
+                {guards?.length || 0}
+              </p>
+            </div>
+          </StatsCard>
+          <StatsCard>
+            <h2 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
+              Number of Beats
+            </h2>
+            <div className="flex items-center mt-2">
+              <FaMap className="text-gray-600 mb-1 dark:text-gray-400 text-2xl mr-2" />
+              <p className="text-3xl font-semibold text-gray-800 dark:text-gray-200">
+                {beatsApiResponse?.totalBeats || 0}
+              </p>
+            </div>
+          </StatsCard>
         </div>
         <div className="col-span-12 lg:col-span-6">
           <Card className="h-[415px]">
@@ -260,8 +200,8 @@ const Dashboard = () => {
                 </Select>
               </div>
             </div>
-            <ul className="activities | text-sm max-h-64  overflow-y-scroll min-h-64">
-              {isLogsFetching ? (
+            <ul className="activities | text-sm max-h-64 overflow-y-scroll min-h-64">
+              {isFetchingLogs ? (
                 <div className="w-full h-full justify-center flex items-center">
                   <Spinner
                     color="success"
@@ -282,12 +222,10 @@ const Dashboard = () => {
   );
 };
 
-const StatsCard = ({ children }) => {
-  return (
-    <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-4">
-      {children}
-    </div>
-  );
-};
+const StatsCard = ({ children }) => (
+  <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-4">
+    {children}
+  </div>
+);
 
 export default Dashboard;

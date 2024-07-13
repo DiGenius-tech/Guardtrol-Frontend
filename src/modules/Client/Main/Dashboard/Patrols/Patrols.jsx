@@ -1,89 +1,61 @@
-import axios from "axios";
 import { Card, Select, Spinner, Table } from "flowbite-react";
 import React, { useEffect, useState } from "react";
-import { API_BASE_URL, ASSET_URL } from "../../../../../constants/api";
 import { format } from "date-fns";
-import {
-  selectOrganization,
-  selectToken,
-} from "../../../../../redux/selectors/auth";
 import { useSelector } from "react-redux";
-import { get } from "../../../../../lib/methods";
-import { useGetGuardsQuery } from "../../../../../redux/services/guards";
-import { useGetBeatsQuery } from "../../../../../redux/services/beats";
-import { Link, useNavigate } from "react-router-dom";
-import { useGetRolesQuery } from "../../../../../redux/services/role";
+import { selectOrganization } from "../../../../../redux/selectors/auth";
+import { Link } from "react-router-dom";
+import { ASSET_URL } from "../../../../../constants/api";
+import { useFetchPatrolInstancesQuery } from "../../../../../redux/services/patrol";
 
 const Patrols = () => {
-  const navigate = useNavigate();
-  const [filterPatrolDate, setFilterPatrolDate] = useState("All");
   const organization = useSelector(selectOrganization);
-  // Function to render timeline logs
-  const [patrols, setPatrols] = useState();
-  const [timelineLogs, setLogs] = useState();
-  const token = useSelector(selectToken);
-  const [filteredPatrols, setFilteredPatrols] = useState([]);
-  const [isPatrolInstacesFetching, setIsPatrolInstacesFetching] =
-    useState(false);
+  const [filterPatrolDate, setFilterPatrolDate] = useState("All");
+  const [filterPatrolsType, setFilterPatrolsType] = useState("");
 
-  const [filterPatrolsType, setFilterPatrolsType] = useState();
+  const getDateFilter = () => {
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    switch (filterPatrolDate) {
+      case "Today":
+        return {
+          startDate: today.toISOString().split("T")[0],
+          endDate: today.toISOString().split("T")[0],
+        };
+      case "Yesterday":
+        return {
+          startDate: yesterday.toISOString().split("T")[0],
+          endDate: yesterday.toISOString().split("T")[0],
+        };
+      default:
+        return {};
+    }
+  };
+
+  const {
+    data: patrolInstancesApiResponse,
+    refetch,
+    isFetching: isPatrolInstacesFetching,
+  } = useFetchPatrolInstancesQuery(
+    {
+      organizationId: organization,
+      ...getDateFilter(),
+      status: filterPatrolsType || undefined,
+    },
+    {
+      skip: !organization,
+    }
+  );
+
+  // useEffect(() => {
+  //   if (organization) {
+  //     refetch();
+  //   }
+  // }, [organization, filterPatrolDate, filterPatrolsType, refetch]);
 
   const formattedTime = (date) => format(new Date(date), "hh:mm a");
   const formatDate = (date) => format(new Date(date), "yyyy-MM-dd");
-  useEffect(() => {
-    if (!patrols) return;
-    console.log(patrols);
-
-    let newfilteredPatrols = patrols;
-    if (filterPatrolDate !== "All") {
-      const today = new Date();
-      const yesterday = new Date(today);
-      yesterday.setDate(yesterday.getDate() - 1);
-
-      newfilteredPatrols = patrols?.filter((p) => {
-        const patrolDate = new Date(p.createdAt);
-        if (filterPatrolDate === "Today") {
-          return patrolDate.toDateString() === today.toDateString();
-        } else if (filterPatrolDate === "Yesterday") {
-          return patrolDate.toDateString() === yesterday.toDateString();
-        } else {
-          // Assuming filterPatrolDate is a specific date in "yyyy-MM-dd" format
-          return (
-            patrolDate.toDateString() ===
-            new Date(filterPatrolDate).toDateString()
-          );
-        }
-      });
-    } else {
-      newfilteredPatrols = patrols;
-    }
-
-    if (filterPatrolsType === "completed" || filterPatrolsType === "pending") {
-      setFilteredPatrols(
-        newfilteredPatrols?.filter((p) => p.status === filterPatrolsType)
-      );
-    } else {
-      setFilteredPatrols(newfilteredPatrols);
-    }
-  }, [filterPatrolsType, filterPatrolDate, patrols]);
-
-  const getPatrolInstances = async () => {
-    setIsPatrolInstacesFetching(true);
-    try {
-      if (!organization) return;
-      const res = await get(
-        API_BASE_URL + `patrols/get-instances/${organization}`,
-        token
-      );
-      setPatrols(res);
-    } catch (error) {
-    } finally {
-      setIsPatrolInstacesFetching(false);
-    }
-  };
-  useEffect(() => {
-    getPatrolInstances();
-  }, [organization]);
 
   return (
     <Card className="">
@@ -91,7 +63,6 @@ const Patrols = () => {
         <h2 className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
           Patrols
         </h2>
-
         <Link
           to="/client/reports/history/patrols"
           className="bg-secondary-500 hover:bg-secondary-600 rounded-full text-white py-2 px-4 text-sm"
@@ -114,7 +85,7 @@ const Patrols = () => {
         <div className="max-w-md">
           <Select
             onChange={(e) => setFilterPatrolsType(e.target.value)}
-            id="dates"
+            id="statuses"
             required
           >
             <option value={""} defaultValue>
@@ -125,7 +96,6 @@ const Patrols = () => {
           </Select>
         </div>
       </div>
-
       <div className="flex">
         <div className="overflow-x-auto max-h-64 min-h-64 w-full">
           <Table>
@@ -152,7 +122,7 @@ const Patrols = () => {
                 </Table.Row>
               )}
               {!isPatrolInstacesFetching &&
-                patrols?.map((patrolInstance) => (
+                patrolInstancesApiResponse?.patrols?.map((patrolInstance) => (
                   <Table.Row
                     className="bg-white dark:border-gray-700 dark:bg-gray-800"
                     key={patrolInstance._id}
@@ -176,11 +146,6 @@ const Patrols = () => {
                           {patrolInstance.status === "abandoned"
                             ? patrolInstance?.abandonedby?.name
                             : patrolInstance?.guard?.name}
-                        </span>
-
-                        <span className="block">
-                          {patrolInstance?.patrol?.starttime &&
-                            formattedTime(patrolInstance?.patrol?.starttime)}
                         </span>
                       </div>
                     </Table.Cell>
@@ -213,8 +178,10 @@ const Patrols = () => {
                     </Table.Cell>
                   </Table.Row>
                 ))}
-              {((!isPatrolInstacesFetching && patrols?.length === 0) ||
-                (!isPatrolInstacesFetching && !patrols)) && (
+              {((!isPatrolInstacesFetching &&
+                patrolInstancesApiResponse?.patrols?.length === 0) ||
+                (!isPatrolInstacesFetching &&
+                  !patrolInstancesApiResponse?.patrols)) && (
                 <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
                   <Table.Cell
                     colSpan={4}

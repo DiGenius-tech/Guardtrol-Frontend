@@ -59,19 +59,22 @@ function AddBeat() {
   const [addBeat, { isLoading: isAddBeatLoading }] = useAddBeatMutation();
 
   const {
-    data: beats,
+    data: beatsApiResponse,
     isUninitialized,
     refetch: refetchBeats,
-  } = useGetBeatsQuery(organization, {
-    skip: organization ? false : true,
-  });
+  } = useGetBeatsQuery(
+    { organization },
+    {
+      skip: organization ? false : true,
+    }
+  );
 
   const saveBeat = async (e) => {
     e.preventDefault();
-    console.log(beats);
+    console.log(beatsApiResponse.totalPages);
     try {
       setIsLoading(true);
-      if (beats.find((b) => b.name === beat.name)) {
+      if (beatsApiResponse.beats.find((b) => b.name === beat.name)) {
         Swal.fire({
           icon: "warning",
           confirmButtonColor: "#008080",
@@ -85,7 +88,11 @@ function AddBeat() {
           name: "Use A Valid Beat Name",
         });
       } else {
-        if (beats?.length && sub?.maxbeats && beats?.length >= sub?.maxbeats) {
+        if (
+          beatsApiResponse.totalBeats &&
+          sub?.maxbeats &&
+          beatsApiResponse.totalBeats >= sub?.maxbeats
+        ) {
           Swal.fire({
             icon: "warning",
             confirmButtonColor: "#008080",

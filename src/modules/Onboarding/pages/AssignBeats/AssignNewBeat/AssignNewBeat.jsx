@@ -35,14 +35,17 @@ function AssignNewBeat({ isOnboarding = true }) {
   const organization = useSelector(selectOrganization);
 
   const {
-    data: beats,
+    data: beatsApiResponse,
     error,
     refetch: refetchBeats,
-  } = useGetBeatsQuery(organization, {
-    skip: organization ? false : true,
-  });
+  } = useGetBeatsQuery(
+    { organization },
+    {
+      skip: organization ? false : true,
+    }
+  );
 
-  const selectedBeat = beats?.find((b) => b._id === beatId);
+  const selectedBeat = beatsApiResponse?.beats?.find((b) => b._id === beatId);
 
   const { data: guards, error: guardsError } = useGetGuardsQuery(organization, {
     skip: organization ? false : true,
@@ -52,14 +55,14 @@ function AssignNewBeat({ isOnboarding = true }) {
   const { responseData, sendRequest } = useHttpRequest();
 
   const initialFrequencyState = useState([]);
-  const [beat, setBeat] = useState(beats?.[0]);
+  const [beat, setBeat] = useState(beatsApiResponse?.beats?.[0]);
 
   const [guard, setGuard] = useState([]);
   const [frequency, setFrequency] = useState(initialFrequencyState);
 
   const handleBeatSelection = (e) => {
     console.log(e.target.value);
-    setBeat(beats.find((b) => b._id === e.target.value));
+    setBeat(beatsApiResponse?.beats.find((b) => b._id === e.target.value));
   };
 
   const handleGuardSelection = (e) => {
@@ -99,7 +102,7 @@ function AssignNewBeat({ isOnboarding = true }) {
     dispatch(suspenseShow);
     let isGuardAssigned = { status: false, message: "" };
 
-    beats?.forEach((beat) => {
+    beatsApiResponse?.beats?.forEach((beat) => {
       if (
         beat?.guards?.some((assignedGuard) => assignedGuard._id === guard._id)
       ) {
@@ -191,13 +194,13 @@ function AssignNewBeat({ isOnboarding = true }) {
           {!selectedBeat && (
             <div className="mb-6">
               <SelectField
-                value={beat._id}
+                value={beat?._id}
                 name="beat"
                 id="beat"
                 label="Select beat"
                 semibold_label={true}
                 handleChangeOption={handleBeatSelection}
-                optionList={beats.map((b) => {
+                optionList={beatsApiResponse?.beats.map((b) => {
                   return { value: b._id, name: b.name };
                 })}
                 multipleSelect={false}
@@ -213,7 +216,9 @@ function AssignNewBeat({ isOnboarding = true }) {
               name="guard"
               multiple={true}
               multiSelect={
-                beats?.length >= 10 ? beats?.length - 5 : beats?.length
+                beatsApiResponse?.beats?.length >= 10
+                  ? beatsApiResponse?.beats?.length - 5
+                  : beatsApiResponse?.beats?.length
               }
               id="guard"
               multipleSelect={true}

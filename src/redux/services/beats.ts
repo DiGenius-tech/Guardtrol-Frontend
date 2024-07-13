@@ -1,15 +1,21 @@
 import { retry } from "@reduxjs/toolkit/query/react";
 import { api } from "./api";
 import { TBeat } from "../../types/beat";
+import { buildCreateSlice } from "@reduxjs/toolkit";
 
 export const BeatApi = api.injectEndpoints({
   endpoints: (build) => ({
-    getBeats: build.query<TBeat[], void>({
-      query: (organizationId) => ({ url: `beat/getbeats/${organizationId}` }),
-      providesTags: (result = []) => [
-        ...result.map(({ _id }) => ({ type: "Beats", _id } as const)),
-        { type: "Beats" as const, id: "LIST" },
-      ],
+    getBeats: build.query({
+      query: ({ organization, page = 1, limit = 10 }: any) => ({
+        url: `beat/getbeats/${organization}`,
+        params: { page, limit },
+      }),
+      transformResponse: (response: any) => ({
+        beats: response.beats,
+        currentPage: response.currentPage,
+        totalPages: response.totalPages,
+        totalBeats: response.totalBeats,
+      }),
     }),
 
     addBeat: build.mutation<TBeat, Partial<any>>({

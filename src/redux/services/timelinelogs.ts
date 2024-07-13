@@ -4,14 +4,28 @@ import { TTimelineLogs } from "../../types/timelineLogs";
 
 export const ShiftApi = api.injectEndpoints({
   endpoints: (build) => ({
-    getTimelineLogs: build.query<TTimelineLogs[], void>({
-      query: (organization) => ({ url: `logs/${organization}` }),
-      providesTags: (result = []) => [
-        ...result.map(({ _id }) => ({ type: "TimelineLogs", _id } as const)),
-        { type: "TimelineLogs" as const, id: "LIST" },
-      ],
+    fetchTimelineLogs: build.query({
+      query: ({
+        organizationId,
+        startDate,
+        endDate,
+        type,
+        beatId,
+        entityType,
+        selectedEntity,
+      }) => ({
+        url: `logs/${organizationId}`,
+        params: {
+          startDate,
+          endDate,
+          type,
+          beatId,
+          entityType,
+          selectedEntity,
+        },
+      }),
+      providesTags: ["TimelineLogs"],
     }),
-
     createTimelineLogs: build.mutation<TTimelineLogs, Partial<any>>({
       query: (body) => {
         return {
@@ -54,7 +68,7 @@ export const ShiftApi = api.injectEndpoints({
 export const {
   useCreateTimelineLogsMutation,
   useDeleteShiftMutation,
-  useGetTimelineLogsQuery,
+  useFetchTimelineLogsQuery,
   useUpdateShiftMutation,
   useGetErrorProneQuery,
 } = ShiftApi;

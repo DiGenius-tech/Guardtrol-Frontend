@@ -1,223 +1,96 @@
 import React, { useState, useEffect } from "react";
 import "tailwindcss/tailwind.css";
 import { useSelector } from "react-redux";
-import { Datepicker, Table, Select, Button, Spinner } from "flowbite-react";
+import { Table, Select, Button, Spinner } from "flowbite-react";
 import { useGetBeatsQuery } from "../../../../../redux/services/beats";
-import { useGetGuardsQuery } from "../../../../../redux/services/guards";
-import { get } from "../../../../../lib/methods";
 import {
   selectOrganization,
   selectToken,
 } from "../../../../../redux/selectors/auth";
-import { API_BASE_URL } from "../../../../../constants/api";
 import Pagination from "../../../../../shared/Pagination/Pagination";
 import * as XLSX from "xlsx";
-import jsPDF from "jspdf";
-import "jspdf-autotable";
+import { useFetchBeatHistoryQuery } from "../../../../../redux/services/reports";
+import { POOLING_TIME } from "../../../../../constants/static";
+// import jsPDF from "jspdf";
+// import "jspdf-autotable";
 
 const BeatsHistory = () => {
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
-  const [patrols, setPatrols] = useState([]);
-  const [logs, setLogs] = useState([]);
-  const [filteredPatrols, setFilteredPatrols] = useState([]);
-
-  const organization = useSelector(selectOrganization);
-
-  const { data: beats } = useGetBeatsQuery(organization, {
-    skip: organization ? false : true,
-  });
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const [selectedBeat, setSelectedBeat] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [entriesPerPage, setEntriesPerPage] = useState(10);
-  const [loading, setLoading] = useState(false);
 
+  const organization = useSelector(selectOrganization);
   const token = useSelector(selectToken);
-  const fetchData = async () => {
-    try {
-      if (!organization) return;
-      setLoading(true);
 
-      const patrolInstances = await get(
-        API_BASE_URL + `patrols/get-instances/${organization}`,
-        token
-      );
-      setPatrols(patrolInstances);
-      setFilteredPatrols(patrolInstances);
-      if (!organization) return;
-      const logData = await get(API_BASE_URL + `logs/${organization}`, token);
-      setLogs(logData);
-    } catch (error) {
-    } finally {
-      setLoading(false);
+  const { data: beatsApiResponse } = useGetBeatsQuery(
+    { organization: organization },
+    {
+      skip: !organization,
     }
-  };
-  useEffect(() => {
-    fetchData();
-  }, [token, organization]);
-
-  const handleFilterChange = () => {
-    let filteredData = patrols;
-
-    if (selectedBeat) {
-      filteredData = filteredData.filter(
-        (patrol) => patrol.beat && patrol.beat._id === selectedBeat
-      );
-    }
-
-    if (startDate && endDate) {
-      filteredData = filteredData.filter((patrol) => {
-        const logDate = new Date(patrol.createdAt);
-        return logDate >= new Date(startDate) && logDate <= new Date(endDate);
-      });
-    }
-
-    setFilteredPatrols(filteredData);
-  };
-
-  useEffect(() => {
-    handleFilterChange();
-  }, [selectedBeat, startDate, endDate]);
-
-  const calculateAggregates = () => {
-    const beatAggregates = {};
-
-    filteredPatrols?.forEach((patrol) => {
-      const beatId = patrol?.beat?._id;
-      if (!beatId) return;
-
-      if (!beatAggregates[beatId]) {
-        beatAggregates[beatId] = {
-          beatName: patrol?.beat?.name || "N/A",
-          totalPatrols: 0,
-          completedPatrols: 0,
-          abandonedPatrols: 0,
-          totalClockInTime: 0,
-          totalClockOutTime: 0,
-          patrolCount: 0,
-          clockInLogs: [],
-          clockOutLogs: [],
-        };
-      }
-
-      const clockInLog = logs.find(
-        (log) =>
-          log?.guard?._id === patrol?.guard?._id &&
-          log?.beat?._id === beatId &&
-          log.message.includes("clocked in")
-      );
-      const clockOutLog = logs.find(
-        (log) =>
-          log?.guard?._id === patrol?.guard?._id &&
-          log?.beat?._id === beatId &&
-          log?.message.includes("clockedout")
-      );
-
-      if (clockInLog) {
-        const clockInTime = new Date(clockInLog.createdAt).getTime();
-        beatAggregates[beatId]?.clockInLogs.push(clockInTime);
-      }
-      if (clockOutLog) {
-        const clockOutTime = new Date(clockOutLog.createdAt).getTime();
-        beatAggregates[beatId]?.clockOutLogs.push(clockOutTime);
-      }
-
-      if (patrol?.beat._id === beatId) {
-        beatAggregates[beatId].totalPatrols += 1;
-        beatAggregates[beatId].patrolCount += 1;
-      }
-      patrol.status === "completed" &&
-        (beatAggregates[beatId].completedPatrols =
-          beatAggregates[beatId].completedPatrols + 1);
-
-      patrol.status === "abandoned" &&
-        (beatAggregates[beatId].abandonedPatrols =
-          beatAggregates[beatId].abandonedPatrols + 1);
-    });
-
-    const beatList = Object.values(beatAggregates).map((beat) => {
-      const totalClockInTime = beat.clockInLogs?.reduce(
-        (acc, time) => acc + time,
-        0
-      );
-      const totalClockOutTime = beat.clockOutLogs?.reduce(
-        (acc, time) => acc + time,
-        0
-      );
-      return {
-        ...beat,
-        avgClockInTime:
-          beat?.clockInLogs?.length > 0
-            ? new Date(totalClockInTime / beat?.clockInLogs.length)
-                .toISOString()
-                .substr(11, 8)
-            : "N/A",
-        avgClockOutTime:
-          beat.clockOutLogs.length > 0
-            ? new Date(totalClockOutTime / beat?.clockOutLogs.length)
-                .toISOString()
-                .substr(11, 8)
-            : "N/A",
-      };
-    });
-
-    return beatList;
-  };
-
-  const aggregatedData = calculateAggregates();
-  const displayedPatrols = aggregatedData?.slice(
-    (currentPage - 1) * entriesPerPage,
-    currentPage * entriesPerPage
   );
+
+  const {
+    data: patrolsApiResponse,
+    isFetching,
+    refetch,
+  } = useFetchBeatHistoryQuery(
+    {
+      organizationId: organization,
+      page: currentPage,
+      limit: entriesPerPage,
+      beatId: selectedBeat ? selectedBeat : undefined,
+      startDate: startDate ? new Date(startDate).toISOString() : undefined,
+      endDate: endDate ? new Date(endDate).toISOString() : undefined,
+    },
+    { skip: !organization, pollingInterval: POOLING_TIME }
+  );
+  console.log(patrolsApiResponse);
+  const aggregatedData = patrolsApiResponse?.patrols || [];
+  const totalEntries = patrolsApiResponse?.total || 0;
 
   const exportToExcel = () => {
     const headerData = [
       ["Filter Information"],
       [
         `Date Range: ${
-          startDate && endDate ? startDate + " - " + endDate : "All"
-        } `,
+          startDate && endDate ? `${startDate} - ${endDate}` : "All"
+        }`,
       ],
       [`Selected Beat: ${selectedBeat || "All Beats"}`],
       [],
       [
         "beatName",
         "totalPatrols",
-        "patrolCount",
+        "completedPatrols",
+        "abandonedPatrols",
         "avgClockInTime",
         "avgClockOutTime",
       ],
     ];
 
-    const exclFormat = aggregatedData?.map((aggregated) => [
-      aggregated?.beatName || "N/A",
-      aggregated?.totalPatrols,
-      aggregated?.patrolCount,
-      aggregated?.avgClockInTime,
-      aggregated?.avgClockOutTime,
+    const exclFormat = aggregatedData.map((aggregated) => [
+      aggregated.beatName || "N/A",
+      aggregated.totalPatrols,
+      aggregated.completedPatrols,
+      aggregated.abandonedPatrols,
+      aggregated.avgClockInTime,
+      aggregated.avgClockOutTime,
     ]);
 
     const combinedData = [...headerData, ...exclFormat];
 
     const ws = XLSX.utils.aoa_to_sheet(combinedData);
-
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Beats History");
-
     XLSX.writeFile(wb, "beats_history.xlsx");
   };
 
   // const exportToPdf = () => {
   //   const doc = new jsPDF();
   //   doc.autoTable({
-  //     head: [
-  //       [
-  //         "Beat name",
-  //         "Total Patrols",
-  //         "Avg Clock-in Time",
-  //         "Avg Clock-out Time",
-  //       ],
-  //     ],
+  //     head: [["Beat name", "Total Patrols", "Avg Clock-in Time", "Avg Clock-out Time"]],
   //     body: aggregatedData.map((beat) => [
   //       beat.beatName,
   //       beat.totalPatrols,
@@ -227,12 +100,6 @@ const BeatsHistory = () => {
   //   });
   //   doc.save("beats_history.pdf");
   // };
-  const indexOfLastEntry = currentPage * entriesPerPage;
-  const indexOfFirstEntry = indexOfLastEntry - entriesPerPage;
-  const currentEntries = aggregatedData.slice(
-    indexOfFirstEntry,
-    indexOfLastEntry
-  );
 
   return (
     <div className="container mx-auto relative pb-40 sm:pb-20">
@@ -260,7 +127,7 @@ const BeatsHistory = () => {
             placeholder="Select Beat"
           >
             <option value="">All Beats</option>
-            {beats?.map((beat) => (
+            {beatsApiResponse?.beats?.map((beat) => (
               <option key={beat._id} value={beat._id}>
                 {beat.name}
               </option>
@@ -268,23 +135,23 @@ const BeatsHistory = () => {
           </Select>
           <button
             onClick={exportToExcel}
-            className="bg-blue-500 text-white min-w-40 h-10  px-4 rounded "
+            className="bg-blue-500 text-white min-w-40 h-10 px-4 rounded"
           >
             Export to Excel
           </button>
           {/* <button
             onClick={exportToPdf}
-            className="bg-red-500 text-white  px-4 rounded min-w-40 h-10"
+            className="bg-red-500 text-white px-4 rounded min-w-40 h-10"
           >
             Export to PDF
           </button> */}
           <Button
             color={"green"}
-            onClick={fetchData}
+            onClick={refetch}
             className="bg-green-500 text-white px-4 rounded min-w-40 h-10"
-            disabled={loading}
+            disabled={isFetching}
           >
-            {loading ? (
+            {isFetching ? (
               <Spinner
                 aria-label="Loading spinner"
                 className="mr-2"
@@ -297,22 +164,22 @@ const BeatsHistory = () => {
           </Button>
         </div>
       </section>
-      <div className="min-h-[300px] max-h-80  overflow-y-auto">
+      <div className="min-h-[300px] max-h-80 overflow-y-auto">
         <Table striped>
           <Table.Head>
             <Table.HeadCell>Beat name</Table.HeadCell>
             <Table.HeadCell>Total Patrols</Table.HeadCell>
-            <Table.HeadCell>Completed Patrols </Table.HeadCell>
-            <Table.HeadCell>Abandoned Patrols </Table.HeadCell>
+            <Table.HeadCell>Completed Patrols</Table.HeadCell>
+            <Table.HeadCell>Abandoned Patrols</Table.HeadCell>
             <Table.HeadCell>Avg Clock-in Time</Table.HeadCell>
             <Table.HeadCell>Avg Clock-out Time</Table.HeadCell>
           </Table.Head>
           <Table.Body className="divide-y">
-            {loading && (
+            {isFetching && (
               <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
                 <Table.Cell
                   colSpan={6}
-                  className="whitespace-nowrap  font-medium  text-center text-gray-900 dark:text-white"
+                  className="whitespace-nowrap font-medium text-center text-gray-900 dark:text-white"
                 >
                   <div className="w-full h-full justify-center flex items-center">
                     <Spinner
@@ -323,18 +190,18 @@ const BeatsHistory = () => {
                 </Table.Cell>
               </Table.Row>
             )}
-            {!loading && displayedPatrols?.length === 0 && (
+            {!isFetching && aggregatedData.length === 0 && (
               <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
                 <Table.Cell
                   colSpan={6}
-                  className="whitespace-nowrap font-medium  text-center text-gray-900 dark:text-white"
+                  className="whitespace-nowrap font-medium text-center text-gray-900 dark:text-white"
                 >
-                  {"No History"}
+                  No History
                 </Table.Cell>
               </Table.Row>
             )}
-            {!loading &&
-              currentEntries.map((beat, index) => (
+            {!isFetching &&
+              aggregatedData.map((beat, index) => (
                 <Table.Row
                   key={index}
                   className="bg-white dark:border-gray-700 dark:bg-gray-800"
@@ -342,18 +209,18 @@ const BeatsHistory = () => {
                   <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
                     {beat.beatName}
                   </Table.Cell>
-                  <Table.Cell>{beat?.totalPatrols}</Table.Cell>
-                  <Table.Cell>{beat?.completedPatrols}</Table.Cell>
-                  <Table.Cell>{beat?.abandonedPatrols}</Table.Cell>
-                  <Table.Cell>{beat?.avgClockInTime}</Table.Cell>
-                  <Table.Cell>{beat?.avgClockOutTime}</Table.Cell>
+                  <Table.Cell>{beat.totalPatrols}</Table.Cell>
+                  <Table.Cell>{beat.completedPatrols}</Table.Cell>
+                  <Table.Cell>{beat.abandonedPatrols}</Table.Cell>
+                  <Table.Cell>{beat.avgClockInTime}</Table.Cell>
+                  <Table.Cell>{beat.avgClockOutTime}</Table.Cell>
                 </Table.Row>
               ))}
           </Table.Body>
         </Table>
       </div>
       <Pagination
-        totalEntries={aggregatedData.length}
+        totalEntries={totalEntries}
         entriesPerPage={entriesPerPage}
         currentPage={currentPage}
         onPageChange={setCurrentPage}
