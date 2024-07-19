@@ -1,0 +1,26 @@
+.payment-options {
+  li {
+    > input[type="radio"] {
+      position: absolute;
+      visibility: hidden;
+      &:checked {
+        & + label {
+          color: blue;
+          display: flex;
+          gap: 50px;
+          align-items: center;
+          &::after {
+            content: "";
+            background-image: url(../../../../images/icons/icon-check-solid.svg);
+            display: block;
+            height: 15px;
+            width: 15px;
+            background-position: center;
+            background-size: contain;
+            background-repeat: no-repeat;
+          }
+        }
+      }
+    }
+  }
+}

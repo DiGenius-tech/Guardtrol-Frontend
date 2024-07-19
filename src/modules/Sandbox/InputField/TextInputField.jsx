@@ -9,16 +9,7 @@ const TextInputField = (props) => {
   };
   return (
     <>
-      {/* text-field-error-app works! */}
-
       <div className={`${props.class || "mb-6"}`}>
-        {/* <label
-          htmlFor={props.id}
-          className="block mb-2 font-medium text-gray-900 dark:text-white"
-        >
-          {props.label}
-        </label> */}
-
         <label
           htmlFor={props.id}
           className={
@@ -35,6 +26,7 @@ const TextInputField = (props) => {
               type={props.type}
               id={props.id}
               name={props.name}
+              readOnly={props.readOnly}
               className={
                 (props.placeholder_right ? `placeholder:text-end ` : "") +
                 (props.error
@@ -65,6 +57,7 @@ const TextInputField = (props) => {
               onClick={handleClick}
               aria-label="toggle password visibility"
               className="w-8 h-full absolute inset-y-0 right-0 flex items-center justify-center pr-3"
+              tabIndex={-1} // Prevents the button from being focused on tab
             >
               {props.passwordType === "text" ? (
                 <img src={eyeRegular} alt="exposed password" />
@@ -75,7 +68,6 @@ const TextInputField = (props) => {
 
             <input
               // ref={props.password_field_ref}
-
               type={props.passwordType}
               id={props.id}
               name={props.name}

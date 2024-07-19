@@ -25,8 +25,8 @@ export const SubscriptionApi = api.injectEndpoints({
     }),
 
     addSubscription: build.mutation<TSubscription, Partial<TSubscription>>({
-      query: (body) => ({
-        url: `subscriptions`,
+      query: ({ organization, body }: any) => ({
+        url: `subscriptions/${organization}`,
         method: "POST",
         body,
       }),
@@ -34,9 +34,9 @@ export const SubscriptionApi = api.injectEndpoints({
     }),
 
     updateSubscription: build.mutation<TSubscription, Partial<TSubscription>>({
-      query(body) {
+      query({ organization, body }: any) {
         return {
-          url: `subscriptions`,
+          url: `subscriptions/${organization}`,
           method: "PATCH",
           body,
         };

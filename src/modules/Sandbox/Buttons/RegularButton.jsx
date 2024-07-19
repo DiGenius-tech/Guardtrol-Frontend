@@ -31,7 +31,7 @@ const RegularButton = (props) => {
       <div className="flex gap-2 justify-center items-center">
         {props?.isLoading ? (
           <>
-            "Please Wait"
+            Please Wait
             <Spinner color="success" aria-label="Success spinner example" />
           </>
         ) : (

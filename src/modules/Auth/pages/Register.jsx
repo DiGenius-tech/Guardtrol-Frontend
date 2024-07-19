@@ -23,6 +23,7 @@ import {
 import { setCurrentSubscription } from "../../../redux/slice/subscriptionSlice";
 import { post } from "../../../lib/methods";
 import axios from "axios";
+import { suspenseHide, suspenseShow } from "../../../redux/slice/suspenseSlice";
 
 const Register = () => {
   const user = useSelector(selectUser);
@@ -67,40 +68,62 @@ const Register = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    const form = e.currentTarget;
-    const newErrors = {};
-
-    // Check each input field's validity and set errors accordingly
-    for (const el of form.elements) {
-      if (el.nodeName === "INPUT" && !el.validity.valid) {
-        console.log(el.name);
-        newErrors[el.name] = el.validationMessage;
-      }
-
-      // Add the condition to check if passwords match
-      if (
-        el.name === "password" &&
-        el.value !== formData.password_confirmation
-      ) {
-        newErrors["password_confirmation"] = "Passwords don't match";
-      } else if (
-        el.name === "password_confirmation" &&
-        el.value !== formData.password
-      ) {
-        newErrors["password_confirmation"] = "Passwords don't match";
-      }
-    }
-
-    if (Object.keys(newErrors).length > 0) {
-      // If there are validation errors, update state and stop submission
-      setValidationErrors(newErrors);
-      e.stopPropagation();
-    } else {
-      // Form is valid, handle submission
+    try {
+      dispatch(suspenseShow());
       setIsLoading(true);
-      try {
-        const data = await post("users/signup", formData);
+      e.preventDefault();
+      const form = e.currentTarget;
+      const newErrors = {};
+
+      // Check each input field's validity and set errors accordingly
+
+      console.log(formData);
+      if (formData.password.length < 8) {
+        setValidationErrors({
+          ...validationErrors,
+          password: "Password must be have a mininmum of 8 chracters.",
+        });
+        return;
+      }
+      if (formData.password_confirmation.length < 8) {
+        setValidationErrors({
+          ...validationErrors,
+          password_confirmation:
+            "Password must be have a mininmum of 8 chracters.",
+        });
+        return;
+      }
+      for (const el of form.elements) {
+        if (el.nodeName === "INPUT" && !el.validity.valid) {
+          console.log(el.name);
+          newErrors[el.name] = el.validationMessage;
+        }
+
+        // Add the condition to check if passwords match
+        if (
+          el.name === "password" &&
+          el.value !== formData.password_confirmation
+        ) {
+          newErrors["password_confirmation"] = "Passwords don't match";
+        } else if (
+          el.name === "password_confirmation" &&
+          el.value !== formData.password
+        ) {
+          newErrors["password_confirmation"] = "Passwords don't match";
+        }
+      }
+
+      if (Object.keys(newErrors).length > 0) {
+        // If there are validation errors, update state and stop submission
+        setValidationErrors(newErrors);
+        e.stopPropagation();
+      } else {
+        // Form is valid, handle submission
+
+        const data = await post("users/signup", {
+          ...formData,
+          email: formData?.email?.toLowerCase(),
+        });
 
         if (null != data) {
           if (data) {
@@ -108,20 +131,21 @@ const Register = () => {
             dispatch(setOnboardingGuards([]));
             dispatch(setCurrentSubscription(null));
             dispatch(loginSuccess(data));
-            console.log(data.userid);
+
             dispatch(updateUserOrganization(data.userid));
-            toast("Signup Successful");
+            toast("Signup successful");
             navigate("/auth/verify-email", { replace: true }); //should be dashboard
             // window.location.reload();
           }
           // navigate('../verify-email', {replace: true})
           // window.location.reload();
         }
-      } catch (err) {
-        console.log(err);
-      } finally {
-        setIsLoading(false);
       }
+    } catch (err) {
+      console.log(err);
+    } finally {
+      dispatch(suspenseHide());
+      setIsLoading(false);
     }
   };
 
@@ -150,8 +174,9 @@ const Register = () => {
           dispatch(setOnboardingLevel(0));
           dispatch(setOnboardingGuards([]));
           dispatch(setCurrentSubscription(null));
+          dispatch(updateUserOrganization(data.userid));
           dispatch(loginSuccess(data));
-          toast("Signup Successful");
+          toast("Signup successful");
         }
       }
     } catch (err) {
@@ -183,120 +208,102 @@ const Register = () => {
     <>
       {/* register-app works! */}
 
-      <div className="min-h-80 mx-auto max-w-screen-2xl px-2 sm:px-6 lg:px-8 mb-16">
-        <div className="grid grid-cols-12 gap-4 sm:gap-8 mx-auto px-2 sm:px-6 lg:px-8">
-          <div className="hidden sm:block sm:col-span-2 lg:col-span-4 text-left">
-            <div className="h-48"></div>
-            <div className="h-full flex items-end justify-end">
-              <img src={left_pattern_boxes} alt="" />
-            </div>
-          </div>
-          <div className="col-span-12 sm:col-span-6 lg:col-span-4">
-            <div className="mt-16"></div>
-            <h1 className="font-bold text-2xl tracking-wide text-center">
-              Create an Account
-            </h1>
+      <div className="mt-16"></div>
+      <h1 className="font-bold text-2xl tracking-wide text-center">
+        Create an Account
+      </h1>
 
-            <div className="mt-8"></div>
+      <div className="mt-8"></div>
 
-            <div className="block px-4 py-8 sm:p-8 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-              <form method="post" onSubmit={handleSubmit}>
-                <TextInputField
-                  label="Full Name"
-                  name="name"
-                  type="text"
-                  placeholder="Full Name"
-                  id="name"
-                  error={validationErrors["name"]}
-                  onChange={handleChange}
-                  required="required"
-                  value={formData.name}
-                />
+      <div className="block px-4 py-8 sm:p-8 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+        <form method="post" onSubmit={handleSubmit}>
+          <TextInputField
+            label="Full Name"
+            name="name"
+            type="text"
+            placeholder="Full Name"
+            id="name"
+            error={validationErrors["name"]}
+            onChange={handleChange}
+            required="required"
+            value={formData.name}
+          />
 
-                <TextInputField
-                  label="Email Address"
-                  name="email"
-                  type="email"
-                  placeholder="Email Address"
-                  id="email"
-                  error={validationErrors["email"]}
-                  onChange={handleChange}
-                  required="required"
-                  value={formData.email}
-                />
-                <TextInputField
-                  label="Phone Number"
-                  name="phone"
-                  type="number"
-                  placeholder="Phone Number"
-                  id="phone"
-                  error={validationErrors["phone"]}
-                  onChange={handleChange}
-                  required="required"
-                  value={formData.phone}
-                />
+          <TextInputField
+            label="Email Address"
+            name="email"
+            type="email"
+            placeholder="Email Address"
+            id="email"
+            error={validationErrors["email"]}
+            onChange={handleChange}
+            required="required"
+            value={formData.email}
+          />
+          <TextInputField
+            label="Phone Number"
+            name="phone"
+            type="number"
+            placeholder="Phone Number"
+            id="phone"
+            error={validationErrors["phone"]}
+            onChange={handleChange}
+            required="required"
+            value={formData.phone}
+          />
 
-                <TextInputField
-                  label="Password"
-                  name="password"
-                  type="password"
-                  placeholder="Enter Password"
-                  id="password"
-                  error={validationErrors["password"]}
-                  onChange={handleChange}
-                  required="required"
-                  value={formData.password}
-                  passwordToggler={true}
-                  //
-                  password_field_ref={password_field_ref}
-                  passwordType={password_type}
-                  setPassword_type={setPassword_type}
-                  togglePwdType={toggle_pwd_type}
-                />
+          <TextInputField
+            label="Password"
+            name="password"
+            type="password"
+            placeholder="Enter Password"
+            id="password"
+            error={validationErrors["password"]}
+            onChange={handleChange}
+            required="required"
+            value={formData.password}
+            passwordToggler={true}
+            //
+            password_field_ref={password_field_ref}
+            passwordType={password_type}
+            setPassword_type={setPassword_type}
+            togglePwdType={toggle_pwd_type}
+          />
 
-                <TextInputField
-                  label="Confirm Password"
-                  name="password_confirmation"
-                  type="password"
-                  placeholder="Confirm Password"
-                  id="password_confirmation"
-                  error={validationErrors["password_confirmation"]}
-                  onChange={handleChange}
-                  required="required"
-                  value={formData.password_confirmation}
-                  //
-                  passwordToggler={true}
-                  passwordType={confirm_password_type}
-                  setPassword_type={setConfirm_password_type}
-                  togglePwdType={toggle_confirm_pwd_type}
-                />
-                <RegularButton text="Create An Account" />
-              </form>
-            </div>
-
-            <p className="horizontal-line-title fw-medium my-8 text-center">
-              Or you can
-            </p>
-
-            <Link
-              to="#"
-              onClick={() => signUp()}
-              className="mb-4 block w-full border border-primary-500 text-dark bg-white focus:ring-1 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 sm:py-3 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
-            >
-              <span className="sm:text-lg flex items-center justify-center gap-2">
-                <img src={googleIconImg} alt="Sign Up With Google" />
-                Sign Up With Google
-              </span>
-            </Link>
-          </div>
-          <div className="hidden sm:block sm:col-span-2 lg:col-span-4 text-right">
-            <div className="h-48 hidden lg:block"></div>
-            <div className="h-full flex items-end justify-end">
-              <img src={right_pattern_boxes} alt="" />
-            </div>
-          </div>
-        </div>
+          <TextInputField
+            label="Confirm Password"
+            name="password_confirmation"
+            type="password"
+            placeholder="Confirm Password"
+            id="password_confirmation"
+            error={validationErrors["password_confirmation"]}
+            onChange={handleChange}
+            required="required"
+            value={formData.password_confirmation}
+            //
+            passwordToggler={true}
+            passwordType={confirm_password_type}
+            setPassword_type={setConfirm_password_type}
+            togglePwdType={toggle_confirm_pwd_type}
+          />
+          <RegularButton isLoading={isLoading} text="Create an Account" />
+        </form>
       </div>
+
+      <p className="horizontal-line-title fw-medium my-8 text-center">
+        Or you can
+      </p>
+
+      <Link
+        to="#"
+        onClick={() => signUp()}
+        className="mb-4 block w-full border border-primary-500 text-dark bg-white focus:ring-1 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 sm:py-3 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+      >
+        <span className="sm:text-lg flex items-center justify-center gap-2">
+          <img src={googleIconImg} alt="Sign Up With Google" />
+          Sign Up With Google
+        </span>
+      </Link>
     </>
   );
 };

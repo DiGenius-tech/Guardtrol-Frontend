@@ -6,16 +6,8 @@ import OnboardingProgressBar from "./components/OnboardingProgressBar/Onboarding
 const Onboarding = () => {
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //     if(null != auth.isLoggedIn){
-  //     if (!auth.isLoggedIn) {
-  //         navigate('/auth')
-  //     }
-  // }
-  // }, [auth.isLoggedIn])
   return (
     <>
-      {/* onboarding-app works! */}
       <OnboardingToolbar />
       <OnboardingProgressBar />
       <div className="my-8"></div>

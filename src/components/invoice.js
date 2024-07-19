@@ -8,6 +8,7 @@ import { useReactToPrint } from "react-to-print";
 const Invoice = ({ invoice, componentRef }) => {
   const invoiceDate = new Date(invoice?.createdAt);
   const expiryDate = new Date(invoice?.subscription?.expiresat);
+  console.log(invoice);
 
   const invoiceItems = [
     {
@@ -78,7 +79,7 @@ const Invoice = ({ invoice, componentRef }) => {
                   </div>
                   <div className="grid grid-cols-1 text-right leading-3 gap-x-0">
                     <h6 className="font-bold text-lg">Invoice </h6>
-                    <p> {invoice?._id}</p>
+                    <p> {invoice?.invoiceNumber || invoice?._id}</p>
                     <p> {formatDate(invoice?.createdAt)}</p>
                     <div> </div>
                   </div>
@@ -87,7 +88,10 @@ const Invoice = ({ invoice, componentRef }) => {
 
                 <h6 className="mt-5 text-xl font-semi-bold">Order Details</h6>
                 <p className="my-2">
-                  Invoice for subcription from {formatDate(invoice?.createdAt)}
+                  Invoice for subcription from{" "}
+                  {invoice?.subscription?.startsAt
+                    ? formatDate(invoice?.subscription?.startsAt)
+                    : "Your subscription end date"}
                   {" to "}
                   {formatDate(invoice?.subscription?.expiresat)}
                 </p>
@@ -99,16 +103,18 @@ const Invoice = ({ invoice, componentRef }) => {
                     <Table.HeadCell>Amount</Table.HeadCell>
                   </Table.Head>
                   <Table.Body>
-                    {invoiceItems?.map((item, index) => (
-                      <Table.Row key={index}>
-                        <Table.Cell>{item?.item}</Table.Cell>
-                        <Table.Cell>{item?.quantity}</Table.Cell>
-                        <Table.Cell>{formatCurrency(item.rate)}</Table.Cell>
-                        <Table.Cell>
-                          {formatCurrency(item?.quantity * item?.rate)}
-                        </Table.Cell>
-                      </Table.Row>
-                    ))}
+                    {invoiceItems
+                      ?.filter((item) => item?.quantity !== 0)
+                      .map((item, index) => (
+                        <Table.Row key={index}>
+                          <Table.Cell>{item?.item}</Table.Cell>
+                          <Table.Cell>{item?.quantity}</Table.Cell>
+                          <Table.Cell>{formatCurrency(item.rate)}</Table.Cell>
+                          <Table.Cell>
+                            {formatCurrency(item?.quantity * item?.rate)}
+                          </Table.Cell>
+                        </Table.Row>
+                      ))}
                   </Table.Body>
                 </Table>
                 <div className="grid grid-cols-1 bg-[#008080] text-white p-5">
