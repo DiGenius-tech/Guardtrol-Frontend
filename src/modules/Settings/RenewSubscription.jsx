@@ -29,6 +29,10 @@ import {
 import { BEAT_PRICE, GUARD_PRICE } from "../../constants/static";
 import axios from "axios";
 import { useGetInvoicesQuery } from "../../redux/services/invoice";
+import { persistor } from "../../redux/store";
+import { api } from "../../redux/services/api";
+import { logout } from "../../redux/slice/authSlice";
+import { useNavigate } from "react-router-dom";
 
 // Constants for pricing
 
@@ -196,6 +200,7 @@ const RenewSubscription = ({
 
     return data;
   };
+  const navigate = useNavigate();
 
   const handlePaystackPayment = usePaystackPayment({
     ...psConfig,
@@ -218,6 +223,13 @@ const RenewSubscription = ({
         toast.warn("Payment Window Closed, Payment Cancelled");
       },
     });
+  };
+
+  const handleLogout = () => {
+    persistor.purge();
+    dispatch(api.util.resetApiState());
+    dispatch(logout());
+    navigate("/auth");
   };
 
   const payWithPaystack = async () => {
@@ -679,6 +691,11 @@ const RenewSubscription = ({
           <Button color="gray" onClick={() => setRenewalModal(false)}>
             Cancel
           </Button>
+          {isExpired && (
+            <Button color="red" onClick={() => handleLogout()}>
+              Logout
+            </Button>
+          )}
         </Modal.Footer>
       )}
     </Modal>
