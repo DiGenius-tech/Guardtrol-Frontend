@@ -17,6 +17,7 @@ const BeatsHistory = () => {
   const [selectedBeat, setSelectedBeat] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [entriesPerPage, setEntriesPerPage] = useState(10);
+  const [selectedBeatData, setselectedBeatData] = useState();
 
   const organization = useSelector(selectOrganization);
   const token = useSelector(selectToken);
@@ -55,7 +56,7 @@ const BeatsHistory = () => {
           startDate && endDate ? `${startDate} - ${endDate}` : "All"
         }`,
       ],
-      [`Selected Beat: ${selectedBeat || "All Beats"}`],
+      [`Selected Beat: ${selectedBeatData?.name || "All Beats"}`],
       [],
       [
         "beatName",
@@ -120,7 +121,15 @@ const BeatsHistory = () => {
             id="beat"
             className="min-w-40 h-10"
             value={selectedBeat}
-            onChange={(e) => setSelectedBeat(e.target.value)}
+            onChange={(e) => {
+              const selectedBeatId = e.target.value;
+              setSelectedBeat(selectedBeatId);
+              const selectedBeat = beatsApiResponse?.beats?.find(
+                (beat) => beat._id === selectedBeatId
+              );
+
+              setselectedBeatData(selectedBeat);
+            }}
             placeholder="Select Beat"
           >
             <option value="">All Beats</option>

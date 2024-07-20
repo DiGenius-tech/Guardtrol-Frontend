@@ -27,6 +27,7 @@ import { useGetInvoicesQuery } from "../../../redux/services/invoice";
 import Invoice from "../../../components/invoice";
 import { useReactToPrint } from "react-to-print";
 import ViewInvoice from "../ViewInvoice";
+import { formatDateTime } from "../../../utils/dateUtils";
 
 const savedPaymentCards = [
   {
@@ -292,17 +293,19 @@ const SettingBilling = () => {
                               scope="row"
                               className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                             >
-                              {moment(invoice?.subscription?.updatedat).format(
-                                "DD MMMM, YYYY"
-                              )}
+                              {invoice?.subscription?.expiresat &&
+                                formatDateTime(
+                                  invoice?.subscription?.createdAt
+                                )}
                             </th>
                             <th
                               scope="row"
                               className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                             >
-                              {moment(invoice?.subscription?.expiresat).format(
-                                "DD MMMM, YYYY"
-                              )}
+                              {invoice?.subscription?.expiresat &&
+                                formatDateTime(
+                                  invoice?.subscription?.expiresat
+                                )}
                             </th>
                             {/* <td className="px-6 py-4">{s?.plan} plan</td> */}
                             {/* <td className="px-6 py-4">Paid</td> */}

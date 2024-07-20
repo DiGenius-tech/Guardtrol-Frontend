@@ -14,6 +14,8 @@ export const ShiftApi = api.injectEndpoints({
         entityType,
         selectedEntity,
         where,
+        page,
+        limit,
       }) => ({
         url: `logs/${organizationId}`,
         params: {
@@ -24,6 +26,8 @@ export const ShiftApi = api.injectEndpoints({
           entityType,
           where,
           selectedEntity,
+          page,
+          limit,
         },
       }),
       providesTags: ["TimelineLogs"],

@@ -36,7 +36,11 @@ function parseDate(dateString) {
   return new Date(dateString);
 }
 
-const RenewSubscription = ({ openModal, setRenewalModal }) => {
+const RenewSubscription = ({
+  openModal,
+  setRenewalModal,
+  isExpired = false,
+}) => {
   const psConfig = useSelector(selectPsConfig);
   const organization = useSelector(selectOrganization);
 
@@ -59,7 +63,7 @@ const RenewSubscription = ({ openModal, setRenewalModal }) => {
   const fwConfig = useSelector(selectFwConfig);
 
   const currentDate = new Date();
-
+  console.log(organization);
   const { data: availableGuards } = useGetGuardsQuery(organization, {
     skip: organization ? false : true,
   });
@@ -205,8 +209,6 @@ const RenewSubscription = ({ openModal, setRenewalModal }) => {
     handleFlutterPayment({
       callback: (response) => {
         if (response.status === "successful") {
-          console.log(response);
-
           updateSubscription(response);
         }
         closePaymentModal();
@@ -250,7 +252,11 @@ const RenewSubscription = ({ openModal, setRenewalModal }) => {
           //   icon: "success",
           //   confirmButtonColor: "#008080",
           // });
-          setRenewalModal(false);
+          console.log(1);
+          if (!isExpired) {
+            setRenewalModal(false);
+          }
+          console.log(2);
           updateSubscription(transaction);
         },
         onCancel: () => {
@@ -308,20 +314,24 @@ const RenewSubscription = ({ openModal, setRenewalModal }) => {
         ...transaction,
         maxbeats:
           subscriptionAction === "renewal"
-            ? subscription?.maxbeats
+            ? subscription
+              ? subscription?.maxbeats
+              : mySuscriptions[0]?.maxbeats
             : newMaxBeats,
         maxextraguards:
           subscriptionAction === "renewal"
-            ? subscription?.maxextraguards
+            ? subscription
+              ? subscription?.maxextraguards
+              : mySuscriptions[0]?.maxextraguards
             : newMaxExtraGuards,
         totalamount: newSubscriptionTotalAmount,
         paymentstatus: "complete",
         plan: newSubscription,
         expiresat: newSubscriptionExpirationDate,
-        startsAt: subscription.expiresat,
+        startsAt: subscription ? subscription.expiresat : Date.now(),
         paymentgateway: paymentOption,
       };
-
+      console.log(6);
       const { data } = await createSubscription({
         organization,
         body: reqData,
@@ -330,9 +340,14 @@ const RenewSubscription = ({ openModal, setRenewalModal }) => {
       await refetchAllMySubscriptions();
       await refetchActiveSubscription();
       await refetchInvoices();
-      setRenewalModal(false);
-      dispatch(suspenseHide());
 
+      console.log(3);
+
+      if (!isExpired) {
+        setRenewalModal(false);
+      }
+      dispatch(suspenseHide());
+      console.log(4);
       if (data) {
         Swal.fire({
           title: "Renewal succefull",
@@ -348,7 +363,9 @@ const RenewSubscription = ({ openModal, setRenewalModal }) => {
   };
 
   useEffect(() => {
-    const currentExpirationDate = new Date(activeSubscriptions?.[0]?.expiresat);
+    const currentExpirationDate = new Date(
+      activeSubscriptions?.[0]?.expiresat || Date.now()
+    );
     const subscriptionPeriod = {
       monthly: 1,
       quarterly: 3,
@@ -361,7 +378,7 @@ const RenewSubscription = ({ openModal, setRenewalModal }) => {
       // setNewSubscriptionExpirationDate(
       //   moment(new Date()).format("DD MMMM, YYYY")
       // );
-      console.log("ssss");
+
       setNewSubscriptionExpirationDate("");
       setNewSubscriptionTotalAmount(0);
       return;
@@ -371,7 +388,6 @@ const RenewSubscription = ({ openModal, setRenewalModal }) => {
 
     if (!months) return;
 
-    console.log(currentExpirationDate);
     const newExpirationDate = new Date(
       currentExpirationDate.setMonth(currentExpirationDate.getMonth() + months)
     );
@@ -393,16 +409,23 @@ const RenewSubscription = ({ openModal, setRenewalModal }) => {
         guardCost = newMaxExtraGuards * GUARD_PRICE;
       }
     } else if (subscriptionAction === "increase") {
-      newTotalGuards = newMaxExtraGuards + subscription?.maxextraguards;
-      newTotalBeats = newMaxBeats + subscription?.maxbeats;
+      newTotalGuards =
+        newMaxExtraGuards +
+        (subscription?.maxextraguards || mySuscriptions[0]?.maxextraguards);
+      newTotalBeats =
+        newMaxBeats + (subscription?.maxbeats || mySuscriptions[0]?.maxbeats);
 
+      console.log(newTotalGuards, newTotalBeats);
       if (newMaxBeats) {
         beatCost = newTotalBeats * BEAT_PRICE;
       } else {
-        beatCost = subscription?.maxbeats * BEAT_PRICE;
+        beatCost =
+          (subscription?.maxbeats || mySuscriptions[0]?.maxbeats) * BEAT_PRICE;
       }
       if (newMaxExtraGuards) {
-        guardCost = subscription?.maxextraguards * GUARD_PRICE;
+        guardCost =
+          (subscription?.maxextraguards || mySuscriptions[0]?.maxextraguards) *
+          GUARD_PRICE;
       } else {
       }
     }
@@ -416,7 +439,11 @@ const RenewSubscription = ({ openModal, setRenewalModal }) => {
   ]);
 
   return (
-    <Modal dismissible show={openModal} onClose={() => setRenewalModal(false)}>
+    <Modal
+      dismissible={!isExpired}
+      show={openModal}
+      onClose={() => setRenewalModal(false)}
+    >
       <Modal.Header>Subscription Renewal</Modal.Header>
       <Modal.Body>
         <form method="post" className="space-y-6" onSubmit={pay}>
@@ -434,6 +461,14 @@ const RenewSubscription = ({ openModal, setRenewalModal }) => {
                 : "No Active Subscription"
             }`}</span>
           </div>
+          {isExpired && (
+            <div className=" flex flex-row justify-between items-center">
+              <span className=" text-gray-500 ">
+                Your subscription is expired to access Guardtrol, you are
+                reqiured to process a new subscription.
+              </span>
+            </div>
+          )}
           <hr />
           {hasTooManyActiveSubscriptions && (
             <>
@@ -561,7 +596,11 @@ const RenewSubscription = ({ openModal, setRenewalModal }) => {
                   {newSubscriptionExpirationDate
                     ? moment(newSubscriptionExpirationDate).format(
                         "DD MMMM, YYYY"
-                      ) || ""
+                      ) === "Invalid date"
+                      ? ""
+                      : moment(newSubscriptionExpirationDate).format(
+                          "DD MMMM, YYYY"
+                        )
                     : "-"}
                 </span>
               </div>
@@ -574,9 +613,11 @@ const RenewSubscription = ({ openModal, setRenewalModal }) => {
                       {subscriptionAction !== "renewal"
                         ? subscriptionAction === "reduce"
                           ? newMaxBeats || "0"
-                          : subscription?.maxbeats + newMaxBeats ||
-                            subscription?.maxbeats
-                        : subscription?.maxbeats}
+                          : (subscription?.maxbeats ||
+                              mySuscriptions[0]?.maxbeats) + newMaxBeats ||
+                            subscription?.maxbeats ||
+                            mySuscriptions[0]?.maxbeats
+                        : subscription?.maxbeats || mySuscriptions[0]?.maxbeats}
                     </span>
                   </div>
                   <div className=" flex flex-row justify-between items-center">
@@ -585,9 +626,13 @@ const RenewSubscription = ({ openModal, setRenewalModal }) => {
                       {subscriptionAction !== "renewal"
                         ? subscriptionAction === "reduce"
                           ? newMaxExtraGuards || "0"
-                          : subscription?.maxextraguards + newMaxExtraGuards ||
-                            subscription?.maxextraguards
-                        : subscription?.maxextraguards}
+                          : (subscription?.maxextraguards ||
+                              mySuscriptions[0]?.maxextraguards) +
+                              newMaxExtraGuards ||
+                            subscription?.maxextraguards ||
+                            mySuscriptions[0]?.maxextraguards
+                        : subscription?.maxextraguards ||
+                          mySuscriptions[0]?.maxextraguards}
                     </span>
                   </div>
                 </>

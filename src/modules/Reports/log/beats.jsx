@@ -20,6 +20,7 @@ const BeatsLog = () => {
   const [selectedBeat, setSelectedBeat] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [entriesPerPage, setEntriesPerPage] = useState(10);
+  const [selectedBeatData, setselectedBeatData] = useState();
 
   const { data: beatsApiResponse } = useGetBeatsQuery(
     { organization: organization },
@@ -81,7 +82,7 @@ const BeatsLog = () => {
           startDate && endDate ? startDate + " - " + endDate : "All"
         } `,
       ],
-      [`Selected Beat: ${selectedBeat || "All Beats"}`],
+      [`Selected Beat: ${selectedBeatData?.name || "All Beats"}`],
       [],
       columns.map((col) => col.header),
     ];
@@ -149,12 +150,21 @@ const BeatsLog = () => {
           <option value="">All Types</option>
           <option value="Clock Action">Clock</option>
           <option value="Patrol Action">Patrol</option>
-          <option value="Beat Action">Beat</option>
+          {/* <option value="Beat Action">Beat</option> */}
           <option value="Guard Action">Guard</option>
         </select>
         <select
           value={selectedBeat}
-          onChange={(e) => setSelectedBeat(e.target.value)}
+          onChange={(e) => {
+            const selectedBeatId = e.target.value;
+            setSelectedBeat(selectedBeatId);
+            const selectedBeat = beatsApiResponse?.beats?.find(
+              (beat) => beat._id === selectedBeatId
+            );
+
+            console.log(selectedBeat);
+            setselectedBeatData(selectedBeat);
+          }}
           className="border px-2 border-gray-300 rounded-md min-w-40 h-10 sm:w-[48%] md:w-auto"
         >
           <option value="">Select Beat</option>
@@ -192,10 +202,10 @@ const BeatsLog = () => {
       <div className="min-h-[300px]  max-h-80 overflow-y-auto">
         <Table>
           <Table.Head>
-            <Table.HeadCell>Date</Table.HeadCell>
-            <Table.HeadCell>Message</Table.HeadCell>
             <Table.HeadCell>Beat</Table.HeadCell>
-            <Table.HeadCell>Type</Table.HeadCell>
+            <Table.HeadCell className=" w-36">Type</Table.HeadCell>
+            <Table.HeadCell className=" w-52">Date</Table.HeadCell>
+            <Table.HeadCell>Message</Table.HeadCell>
           </Table.Head>
           <Table.Body>
             {isFetching && (
@@ -228,10 +238,10 @@ const BeatsLog = () => {
             {!isFetching &&
               logsAPiResponse?.logs?.map((log) => (
                 <Table.Row key={log._id}>
-                  <Table.Cell>{formatDateTime(log.createdAt)}</Table.Cell>
-                  <Table.Cell>{log.message}</Table.Cell>
                   <Table.Cell>{log.beat?.name || "Unknown"}</Table.Cell>
                   <Table.Cell>{log.type}</Table.Cell>
+                  <Table.Cell>{formatDateTime(log.createdAt)}</Table.Cell>
+                  <Table.Cell>{log.message}</Table.Cell>
                 </Table.Row>
               ))}
           </Table.Body>
