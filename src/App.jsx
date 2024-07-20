@@ -1,152 +1,41 @@
-import PageNotFound from "./PageNotFound/PageNotFound";
-import auth_routes from "./modules/Auth/Auth.routes";
-import onboarding_routes from "./modules/Onboarding/Onboarding.routes";
-import "./App.scss";
+import React, { useEffect, useState } from "react";
 import {
-  Navigate,
-  RouterProvider,
+  BrowserRouter as Router,
   Routes,
-  createBrowserRouter,
-  useNavigate,
+  Route,
+  Navigate,
 } from "react-router-dom";
-import { Provider, useDispatch, useSelector } from "react-redux";
-import { useCallback, useContext, useEffect, useState } from "react";
-
-import sandbox_routes from "./modules/Sandbox/sandbox.routes";
-import LoadingSpinner from "./shared/LoadingSpinner/LoadingSpinner";
-import patrol_route_configuration from "./modules/PatrolRouteConfiguration/patrol-route-configuration.routes";
-import PrivateRoute from "./shared/RouteGuard/PrivateRoute";
-import client_routes from "./modules/Client/client.routes";
-
-import { toast } from "react-toastify";
-import { SubscriptionContext } from "./shared/Context/SubscriptionContext";
-import useHttpRequest from "./shared/Hooks/HttpRequestHook";
+import { Provider, useSelector } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
+import { toast } from "react-toastify";
+import "./App.scss";
 
+import PageNotFound from "./PageNotFound/PageNotFound";
+import LoadingSpinner from "./shared/LoadingSpinner/LoadingSpinner";
+import useHttpRequest from "./shared/Hooks/HttpRequestHook";
 import { persistor, store } from "./redux/store";
-import { useGetSubscriptionQuery } from "./redux/services/subscriptions";
-import {
-  selectOrganization,
-  selectToken,
-  selectUser,
-} from "./redux/selectors/auth";
+import { selectUser } from "./redux/selectors/auth";
 import { selectSuspenseShow } from "./redux/selectors/suspense";
-import { logout } from "./redux/slice/authSlice";
-import { api } from "./redux/services/api";
+import Auth from "./modules/Auth/Auth";
+import { OnboardingRouter } from "./modules/Onboarding/onboarding-router";
+import { AuthRouter } from "./modules/Auth/auth-router";
+import ClientRouter from "./modules/Client/client-router";
+import useInactivityTimeout from "./utils/inactivity-timeout";
+import VerifyEmail from "./modules/Auth/pages/VerifyEmail";
+import AuthLayout from "./modules/Auth/auth-layout";
+import OnboardingLayout from "./modules/Onboarding/onboarding-layout";
+import OnboardingComplete from "./modules/Onboarding/CompleteOnboarding";
+import OnboardingToolbar from "./modules/Onboarding/components/OnboardingToolbar/OnboardingToolbar";
+import OnboardingProgressBar from "./modules/Onboarding/components/OnboardingProgressBar/OnboardingProgressBar";
 
 function App() {
-  const organization = useSelector(selectOrganization);
-
-  const token = useSelector(selectToken);
   const user = useSelector(selectUser);
   const suspense = useSelector(selectSuspenseShow);
-  const { error, responseData, sendRequest } = useHttpRequest();
+  const { error } = useHttpRequest();
 
-  const [psConfig, setPsConfig] = useState({});
-  const [fwConfig, setFwConfig] = useState({});
   const [suspenseState, setSuspenseState] = useState(suspense);
 
-  // const login = useCallback((data) => {
-  //   setToken(data.token);
-  //   setUser(data);
-
-  //   localStorage.setItem("userData", JSON.stringify(data));
-
-  //   return true;
-  // }, []);
-
-  // const loading = useCallback((load) => {
-  //   setTimeout(() => {
-  //     setIsLoading(load);
-  //   }, 200);
-  // }, []);
-
-  // const logout = useCallback(() => {
-  //   // setToken(null)
-  //   // setUser(null)
-  //   localStorage.clear();
-  //   window.location.href = "/";
-  // }, []);
-
-  // useEffect(() => {
-  //   const savedData = JSON.parse(localStorage.getItem("userData"));
-  //   if (savedData && savedData.token) {
-  //     login(savedData);
-  //   }
-  //   loading(false);
-  // }, [login, loading]);
-
-  // persistor.purge();
-  // api.util.resetApiState();
-
-  const init = (selectedPlan) => {
-    const psConfig = {
-      email: user.email,
-      amount: parseInt(selectedPlan?.amount) * 100,
-      metadata: {
-        name: user.name,
-        phone: user.phone || null,
-      },
-      publicKey: process.env.REACT_APP_PAYSTACK_KEY,
-    };
-
-    const fwConfig = {
-      public_key: process.env.REACT_APP_FLUTTERWAVE_KEY,
-      tx_ref: Date.now(),
-      amount: parseInt(selectedPlan?.amount),
-      currency: "NGN",
-      payment_options: "all",
-      payment_plan: selectedPlan?.type,
-      customer: {
-        email: user.email,
-        phone_number: user.phone || null,
-        name: user.name,
-      },
-      meta: { counsumer_id: user.userid, consumer_mac: user.clientid },
-      customizations: {
-        title: "Guardtrol Lite Subscription",
-        description: `${selectedPlan?.type} subscription to guardtrol lite`,
-        logo: "https://st2.depositphotos.com/4403291/7418/v/450/depositphotos_74189661-stock-illustration-online-shop-log.jpg",
-      },
-    };
-
-    setFwConfig(fwConfig);
-    setPsConfig(psConfig);
-  };
-
-  const router = createBrowserRouter([
-    {
-      path: "",
-      Component: () => <Navigate to={"/auth"} />,
-    },
-    sandbox_routes,
-    onboarding_routes,
-    client_routes,
-    patrol_route_configuration,
-    auth_routes,
-    {
-      path: "*",
-      element: <PageNotFound />,
-    },
-  ]);
-
-  const {
-    data: subcription,
-    isError,
-    refetch,
-    isUninitialized,
-  } = useGetSubscriptionQuery(organization, {
-    skip: organization ? false : true,
-  });
-  if (isError && token) {
-    toast.warn("You are not currently Subscribed to any Plan");
-  }
-
-  // useEffect(() => {
-  //   if (token && isUninitialized) {
-  //     refetch();
-  //   }
-  // }, [token]);
+  useInactivityTimeout();
 
   useEffect(() => {
     if (error) {
@@ -158,15 +47,76 @@ function App() {
     setSuspenseState(suspense);
   }, [suspense]);
 
-  console.log("suspense", suspense);
+  useEffect(() => {
+    setSuspenseState(false);
+  }, []);
+
   return (
     <Provider store={store}>
       <PersistGate persistor={persistor}>
         {suspenseState && <LoadingSpinner />}
-        <RouterProvider router={router} />
+        <Router>
+          <Routes>
+            {user ? (
+              <>
+                {!user.emailverified ? (
+                  <>
+                    <Route path="verify-email" element={<AuthLayout />}>
+                      <Route index element={<VerifyEmail />} />
+                    </Route>
+                    <Route path="*" element={<Navigate to="/verify-email" />} />
+                  </>
+                ) : user.onboardingcomplete ? (
+                  <>
+                    <Route path="/client/*" element={<ClientRouter />} />
+
+                    <Route path="*" element={<Navigate to="/client" />} />
+                  </>
+                ) : (
+                  <>
+                    {user.isOwner && (
+                      <>
+                        <Route
+                          path="onboarding/*"
+                          element={<OnboardingRouter />}
+                        />
+                        <Route
+                          path="onboardingcomplete"
+                          element={<OnboardingCompleteLayout />}
+                        />
+                        <Route
+                          path="*"
+                          element={<Navigate to="/onboarding" />}
+                        />
+                      </>
+                    )}
+                    {!user.isOwner && (
+                      <Route path="*" element={<Navigate to="/client" />} />
+                    )}
+                  </>
+                )}
+              </>
+            ) : (
+              <>
+                <Route path="/auth/*" element={<AuthRouter />} />
+                <Route path="*" element={<Navigate to="/auth" />} />
+              </>
+            )}
+            <Route path="*" element={<PageNotFound />} />
+          </Routes>
+        </Router>
       </PersistGate>
     </Provider>
   );
 }
 
+const OnboardingCompleteLayout = () => (
+  <>
+    <OnboardingToolbar />
+    {/* <OnboardingProgressBar complete={true} /> */}
+    <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
+      <OnboardingComplete />
+    </div>
+  </>
+);
 export default App;

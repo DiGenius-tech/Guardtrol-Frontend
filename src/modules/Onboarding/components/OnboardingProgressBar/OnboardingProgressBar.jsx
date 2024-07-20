@@ -1,31 +1,34 @@
 import React, { useEffect, useState } from "react";
 import "./OnboardingProgressBar.scss";
-import { Link, useLocation } from "react-router-dom";
-import OnboardingTestNavigation from "../../../Sandbox/OnboardingTestNavigation/OnboardingTestNavigation";
+import { useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { selectOrganization } from "../../../../redux/selectors/auth";
 import { useGetUserOrganizationRoleQuery } from "../../../../redux/services/role";
 
 const list = [
   {
+    id: 1,
     title: "Membership",
     url: "/onboarding/membership",
     passed: false,
     current: true,
   },
   {
+    id: 2,
     title: "Configure Beats",
     url: "/onboarding/configure-beats",
     passed: false,
     current: false,
   },
   {
+    id: 3,
     title: "Onboard Guard",
     url: "/onboarding/onboard-guard",
     passed: false,
     current: false,
   },
   {
+    id: 4,
     title: "Assign Beats",
     url: "/onboarding/assign-beats",
     passed: false,
@@ -33,44 +36,37 @@ const list = [
   },
 ];
 
-const OnboardingProgressBar = () => {
+const OnboardingProgressBar = ({ complete = false }) => {
   const organization = useSelector(selectOrganization);
   const { data: userRole } = useGetUserOrganizationRoleQuery(organization, {
-    skip: organization ? false : true,
+    skip: !organization,
   });
 
   const location = useLocation();
-  const [stageProgressClass, setstageProgressClass] = useState("stage-2");
+  const [stageProgressClass, setStageProgressClass] = useState("stage-1");
   const [stages, setStages] = useState([...list]);
 
   const completeProcess = () => {
-    for (let i = 0; i < list.length; i++) {
-      const stage = list[i];
-      stage.passed = true;
-    }
-
-    setStages(list);
-    setstageProgressClass("stage-full");
+    const updatedStages = stages.map((stage) => ({
+      ...stage,
+      passed: true,
+    }));
+    setStages(updatedStages);
+    setStageProgressClass("stage-full");
   };
 
   useEffect(() => {
     const handleProgress = (pathname) => {
-      let item_ = list.find((it) => it.url === pathname);
-      let item_index = list.indexOf(item_);
-
-      for (let i = 0; i < list.length; i++) {
-        const element = list[i];
-        element.current = false;
-        element.passed = false;
-
-        if (pathname === element.url) {
-          element.current = true;
-        }
-        if (i < item_index) {
-          element.passed = true;
-        }
-      }
-      setStages(list);
+      const updatedStages = stages.map((stage, index) => {
+        return {
+          ...stage,
+          current: pathname.includes(stage.url) ? true : false,
+          passed:
+            complete ||
+            stage.id < list.find((it) => pathname.includes(it.url))?.id,
+        };
+      });
+      setStages(updatedStages);
     };
 
     const progress = () => {
@@ -78,135 +74,76 @@ const OnboardingProgressBar = () => {
 
       switch (location.pathname) {
         case "/onboarding":
-          setstageProgressClass("stage-1");
-          break;
         case "/onboarding/":
-          setstageProgressClass("stage-1");
-          break;
-        //
         case "/onboarding/membership":
-          setstageProgressClass("stage-1");
-          break;
         case "/onboarding/membership/":
-          setstageProgressClass("stage-1");
-          break;
         case "/onboarding/membership/shop":
-          setstageProgressClass("stage-1");
-          break;
         case "/onboarding/membership/shop/":
-          setstageProgressClass("stage-1");
-          break;
         case "/onboarding/membership/checkout":
-          setstageProgressClass("stage-1");
-          break;
         case "/onboarding/membership/checkout/":
-          setstageProgressClass("stage-1");
-          break;
-        //
-        //
         case "/onboarding/services":
-          setstageProgressClass("stage-1");
-          break;
         case "/onboarding/services/":
-          setstageProgressClass("stage-1");
-          break;
         case "/onboarding/services/shop":
-          setstageProgressClass("stage-1");
-          break;
         case "/onboarding/services/shop/":
-          setstageProgressClass("stage-1");
-          break;
         case "/onboarding/services/checkout":
-          setstageProgressClass("stage-1");
-          break;
         case "/onboarding/services/checkout/":
-          setstageProgressClass("stage-1");
+          setStageProgressClass("stage-1");
           break;
-        //
         case "/onboarding/configure-beats":
-          setstageProgressClass("stage-2");
-          break;
         case "/onboarding/configure-beats/":
-          setstageProgressClass("stage-2");
-          break;
-        //
         case "/onboarding/configure-beats/add-beat":
-          setstageProgressClass("stage-2");
+          setStageProgressClass("stage-2");
           break;
         case "/onboarding/configure-beats/add-beat/":
-          setstageProgressClass("stage-2");
+          setStageProgressClass("stage-2");
           break;
-        //
         case "/onboarding/onboard-guard":
-          setstageProgressClass("stage-3");
-          break;
         case "/onboarding/onboard-guard/":
-          setstageProgressClass("stage-3");
-          break;
         case "/onboarding/onboard-guard/add-guard":
-          setstageProgressClass("stage-3");
-          break;
         case "/onboarding/onboard-guard/add-guard/":
-          setstageProgressClass("stage-3");
+          setStageProgressClass("stage-3");
           break;
+
         case "/onboarding/assign-beats":
-          setstageProgressClass("stage-4");
-          break;
         case "/onboarding/assign-beats/":
-          setstageProgressClass("stage-4");
-          break;
         case "/onboarding/assign-beats/assign-new-beat":
-          setstageProgressClass("stage-4");
+          setStageProgressClass("stage-4");
+          break;
+        case "/onboardingcomplete":
+          completeProcess();
           break;
         case "/onboarding/complete":
           completeProcess();
           break;
-
         default:
-          setstageProgressClass("stage-1");
+          setStageProgressClass("stage-1");
           break;
       }
     };
 
     progress();
-
-    return () => {
-      // cleanup
-    };
-  }, [location, stages]);
-
+  }, [location.pathname]);
   return (
-    <>
-      {/* onboarding-progress-bar-app works! */}
-
-      <div className="onboarding-progress-bar-alt | mx-auto max-w-7xl px-2 sm:px-6 lg:px-8 mb-4">
-        <div className={`bar ${stageProgressClass}`}></div>
-        <ul className="onboarding-progress passed">
-          {stages.map((stage, i) => {
-            return (
-              <li
-                key={stage.title}
-                className={`font-semibold ${
-                  stage.passed
-                    ? "passed text-secondary-500"
-                    : "text-secondary-50"
-                }; 
-                        `}
-              >
-                <p className="hidden sm:block mt-1">{stage.title}</p>
-              </li>
-            );
-          })}
-        </ul>
-        <p className="font-semibold sm:hidden">
-          {stages.map((stage, i) => {
-            return stage.current ? stage.title : null;
-          })}
-        </p>
-
-        {/* <OnboardingTestNavigation completeProcess={completeProcess} location={location} /> */}
-      </div>
-    </>
+    <div className="onboarding-progress-bar-alt | mx-auto max-w-7xl px-2 sm:px-6 lg:px-8 mb-4">
+      <div className={`bar ${stageProgressClass}`}></div>
+      <ul className="onboarding-progress passed">
+        {stages.map((stage) => (
+          <li
+            key={stage.title}
+            className={`font-semibold ${
+              complete || stage.passed || stage.current
+                ? "passed text-secondary-500"
+                : "text-secondary-50"
+            }`}
+          >
+            <p className="hidden sm:block mt-1">{stage.title}</p>
+          </li>
+        ))}
+      </ul>
+      <p className="font-semibold sm:hidden">
+        {stages.map((stage) => (stage.current ? stage.title : null))}
+      </p>
+    </div>
   );
 };
 

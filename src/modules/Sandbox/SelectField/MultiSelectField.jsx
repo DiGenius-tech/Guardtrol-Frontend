@@ -12,7 +12,6 @@ function MultiSelectField(props) {
     console.log(
       props.selectedOptions.find((opt) => opt.value === option.value)
     );
-    console.log(props.selectedOptions, option);
 
     if (props.selectedOptions.find((opt) => opt._id === option._id)) {
       props.setSelectedOptions(

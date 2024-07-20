@@ -20,9 +20,10 @@ export const PatrolsApi = api.injectEndpoints({
         beatId,
         page,
         limit,
+        status,
       }) => ({
         url: `patrols/get-instances/${organizationId}`,
-        params: { startDate, endDate, guardName, beatId, page, limit },
+        params: { startDate, endDate, guardName, beatId, page, limit, status },
       }),
       providesTags: (result) => [
         ...result.patrols.map(({ _id }: any) => ({

@@ -13,6 +13,7 @@ export const ShiftApi = api.injectEndpoints({
         beatId,
         entityType,
         selectedEntity,
+        where,
       }) => ({
         url: `logs/${organizationId}`,
         params: {
@@ -21,6 +22,7 @@ export const ShiftApi = api.injectEndpoints({
           type,
           beatId,
           entityType,
+          where,
           selectedEntity,
         },
       }),
