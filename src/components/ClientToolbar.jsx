@@ -194,7 +194,7 @@ const ClientToolbar = (props) => {
                   <button
                     onClick={handleProfileDropdownToggle}
                     type="button"
-                    className="relative w-fit h-fit flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                    className="relative w-fit h-fit flex rounded-full  bg-white text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
                     id="user-menu-button"
                     aria-expanded="false"
                     aria-haspopup="true"

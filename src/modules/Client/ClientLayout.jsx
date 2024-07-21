@@ -56,20 +56,20 @@ const Client = () => {
     );
   }
 
-  if (!subscription && !isFetchingActiveSubscription) {
-    return (
-      <div className=" absolute top-0 right-0 z-40 bg-white w-full h-full justify-center items-center">
-        <div className=" w-full relative  top-24">
-          <RenewSubscription
-            isExpired={true}
-            subscription={subscription}
-            openModal={true}
-            setRenewalModal={() => null}
-          />{" "}
-        </div>
-      </div>
-    );
-  }
+  // if (!subscription && !isFetchingActiveSubscription) {
+  //   return (
+  //     <div className=" absolute top-0 right-0 z-40 bg-white w-full h-full justify-center items-center">
+  //       <div className=" w-full relative  top-24">
+  //         <RenewSubscription
+  //           isExpired={true}
+  //           subscription={subscription}
+  //           openModal={true}
+  //           setRenewalModal={() => null}
+  //         />{" "}
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   return (
     <>

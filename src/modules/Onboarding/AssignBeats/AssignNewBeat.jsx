@@ -221,7 +221,9 @@ function AssignNewBeat({ isOnboarding = true }) {
               semibold_label={true}
               handleChangeOption={handleGuardSelection}
               optionList={guards?.filter(
-                (g) => !selectedBeat?.guards?.find((gu) => gu._id === g._id)
+                (g) =>
+                  !selectedBeat?.guards?.find((gu) => gu._id === g._id) &&
+                  g.isactive
               )}
             />
           </div>
@@ -255,9 +257,15 @@ function AssignNewBeat({ isOnboarding = true }) {
               Cancel
             </span>
           </div>
-          <p className="text-center mx-auto pt-10 max-w-[400px] text-dark-400">
-            Guard(s) assigned will be automatically active
-          </p>
+          {isOnboarding ? (
+            <p className="text-center mx-auto pt-10 max-w-[400px] text-dark-400">
+              Guard(s) assigned will be automatically active
+            </p>
+          ) : (
+            <p className="text-center mx-auto pt-10 max-w-[400px] text-dark-400">
+              Only avtivated Guard(s) can be assigned to Beat(s)
+            </p>
+          )}
         </form>
       </div>
     </>

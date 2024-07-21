@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import { selectOrganization, selectUser } from "../../redux/selectors/auth";
 import { useGetPointsQuery } from "../../redux/services/points";
 import { useGetUserOrganizationRoleQuery } from "../../redux/services/role";
+import { formatDateTime } from "../../utils/dateUtils";
 
 function BeatsDesktopView(props) {
   // const sendBeatToUpdate = (beat) => {
@@ -56,6 +57,12 @@ function BeatsDesktopView(props) {
                 className="px-6 py-3 whitespace-nowrap lowercase first-letter:uppercase"
               >
                 Status
+              </th>
+              <th
+                scope="col"
+                className="px-6 py-3 whitespace-nowrap lowercase first-letter:uppercase"
+              >
+                Last Seen
               </th>
               <th
                 scope="col"
@@ -115,6 +122,11 @@ function BeatsDesktopView(props) {
                       ) : (
                         <span className="text-red-400">Not active</span>
                       )}
+                    </td>{" "}
+                    <td className="px-6 py-4">
+                      {beat?.lastseen
+                        ? formatDateTime(beat?.lastseen)
+                        : "-------------"}
                     </td>
                     <td className="px-6 py-4">
                       <Dropdown

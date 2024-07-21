@@ -19,7 +19,7 @@ const guardAttributes = {
   idname: "Identification Name",
   idfile: "Identification File",
   idnumber: "Identification Number",
-  name: "Guard Name",
+  name: "Name",
   personalinformation: "Personal Information",
   height: "Guard height",
   dob: "Guard date of birth",
@@ -46,7 +46,7 @@ const RequestsHistory = () => {
   );
   const {
     data: modifications,
-    isFetching: isLoading,
+    isLoading,
     refetch,
   } = useGetAllModificationsQuery(
     { organization },

@@ -53,7 +53,7 @@ export const PatrolsApi = api.injectEndpoints({
         const { _id, ...body } = data;
         return {
           url: `patrols/${_id}`,
-          method: "PUT",
+          method: "PATCH",
           body,
         };
       },
