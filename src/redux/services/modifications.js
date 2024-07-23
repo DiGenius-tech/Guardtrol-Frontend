@@ -4,7 +4,10 @@ import { api } from "./api";
 export const modificationsApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getAllModifications: builder.query({
-      query: ({ organization }) => `modifications/all/${organization}`,
+      query: ({ organization, type }) => ({
+        url: `modifications/all/${organization}`,
+        params: { type },
+      }),
     }),
     getModifications: builder.query({
       query: () => "modifications/pending",

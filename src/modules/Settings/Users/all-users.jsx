@@ -59,14 +59,14 @@ function OrganizationUsers() {
   const [userForm, setUserForm] = useState({
     name: "",
     email: "",
-    password: "Password",
+    password: "",
     role: "",
     whatsappNumber: "",
     isDirectCreator: false,
     assignedBeats: [], // Add beats field
   });
-
-  const [selectedBeats, setSelectedBeats] = useState();
+  const [errors, setErrors] = useState({});
+  const [selectedBeats, setSelectedBeats] = useState([]);
 
   useEffect(() => {
     if (error) {
@@ -100,6 +100,7 @@ function OrganizationUsers() {
         name: "",
         whatsappNumber: "",
         email: "",
+        password: "",
         role: "",
         assignedBeats: [], // Reset beats
       });
@@ -110,14 +111,35 @@ function OrganizationUsers() {
   };
   const handleCloseModal = () => {
     setShowModal(false);
+    setErrors({});
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+
     setUserForm({
       ...userForm,
       [name]: value,
     });
+
+    if (name === "password" && value.length < 8) {
+      setErrors({
+        ...errors,
+        password: "Password must be at least 8 characters long",
+      });
+    } else if (name === "email") {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(value)) {
+        setErrors({
+          ...errors,
+          email: "Please enter a valid email address",
+        });
+      } else {
+        setErrors({ ...errors, email: "" });
+      }
+    } else {
+      setErrors({ ...errors, [name]: "" });
+    }
   };
 
   const handleRoleChange = (e) => {
@@ -128,6 +150,24 @@ function OrganizationUsers() {
   };
 
   const handleSaveUser = async () => {
+    // Validate all fields before saving
+    const newErrors = {};
+    if (!userForm.name) newErrors.name = "Name is required";
+    if (!userForm.email) newErrors.email = "Email is required";
+    if (!userForm.password && !editMode)
+      newErrors.password = "Password is required";
+    if (!userForm.whatsappNumber)
+      newErrors.whatsappNumber = "Whatsapp number is required";
+    if (!userForm.role) newErrors.role = "Role is required";
+    if (userForm.password && userForm.password.length < 8) {
+      newErrors.password = "Password must be at least 8 characters long";
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
     try {
       const userData = {
         ...userForm,
@@ -147,7 +187,7 @@ function OrganizationUsers() {
     } catch (err) {
       toast.error(err.message);
     } finally {
-      const a22 = await refetchUsers();
+      await refetchUsers();
     }
   };
 
@@ -263,15 +303,26 @@ function OrganizationUsers() {
               onChange={handleChange}
               placeholder="Enter User Name"
               required
+              helperText={
+                errors?.name && (
+                  <span className="text-red-500">{errors.name}</span>
+                )
+              }
             />
             <TextInput
               label="Email"
+              error={errors?.email}
               readOnly={editMode && !userForm?.isDirectCreator}
               name="email"
               value={userForm.email}
               onChange={handleChange}
               placeholder="Enter User Email"
               required
+              helperText={
+                errors?.email && (
+                  <span className="text-red-500">{errors.email}</span>
+                )
+              }
             />
 
             {((editMode && userForm?.isDirectCreator) || !editMode) && (
@@ -279,10 +330,16 @@ function OrganizationUsers() {
                 <TextInput
                   label="Password"
                   name="password"
+                  error={errors?.password}
                   value={userForm.password}
                   onChange={handleChange}
                   placeholder="Enter User Password"
                   required
+                  helperText={
+                    errors?.password && (
+                      <span className="text-red-500">{errors.password}</span>
+                    )
+                  }
                 />
                 <TextInput
                   label="Whatsapp Number"
@@ -291,6 +348,14 @@ function OrganizationUsers() {
                   onChange={handleChange}
                   placeholder="Enter user Whatsapp Number"
                   required
+                  type="number"
+                  helperText={
+                    errors?.whatsappNumber && (
+                      <span className="text-red-500">
+                        {errors.whatsappNumber}
+                      </span>
+                    )
+                  }
                 />
                 <div className="mt-4 p-4 border border-yellow-400 bg-yellow-50 rounded-lg">
                   <h4 className="font-bold text-yellow-800">
@@ -318,6 +383,11 @@ function OrganizationUsers() {
               required
               value={userForm?.role}
               onChange={handleRoleChange}
+              helperText={
+                errors?.role && (
+                  <span className="text-red-500">{errors.role}</span>
+                )
+              }
             >
               <option value={""}>Select Role</option>
               {roles?.map((role) => (

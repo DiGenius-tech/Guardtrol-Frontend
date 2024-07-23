@@ -26,7 +26,7 @@ import {
   useGetAllMySubscriptionsQuery,
   useGetSubscriptionQuery,
 } from "../../redux/services/subscriptions";
-import { BEAT_PRICE, GUARD_PRICE } from "../../constants/static";
+import { BEAT_PRICE, GUARD_PRICE, POOLING_TIME } from "../../constants/static";
 import axios from "axios";
 import { useGetInvoicesQuery } from "../../redux/services/invoice";
 import { persistor } from "../../redux/store";
@@ -75,6 +75,7 @@ const RenewSubscription = ({
     { organization },
     {
       skip: organization ? false : true,
+      pollingInterval: POOLING_TIME,
     }
   );
 
@@ -87,6 +88,7 @@ const RenewSubscription = ({
     organization,
     {
       skip: organization ? false : true,
+      pollingInterval: POOLING_TIME,
     }
   );
 
@@ -477,7 +479,7 @@ const RenewSubscription = ({
             <div className=" flex flex-row justify-between items-center">
               <span className=" text-gray-500 ">
                 Your subscription is expired to access Guardtrol, you are
-                reqiured to process a new subscription.
+                required to renew your subscription.
               </span>
             </div>
           )}

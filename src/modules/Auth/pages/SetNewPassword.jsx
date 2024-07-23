@@ -7,7 +7,7 @@ import useHttpRequest from "../../../shared/Hooks/HttpRequestHook";
 import TextInputField from "../../Sandbox/InputField/TextInputField";
 import RegularButton from "../../Sandbox/Buttons/RegularButton";
 
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { selectUser } from "../../../redux/selectors/auth";
 import { useDispatch, useSelector } from "react-redux";
 import { suspenseHide, suspenseShow } from "../../../redux/slice/suspenseSlice";
@@ -29,6 +29,26 @@ function SetNewPassword() {
     password_confirmation: "",
     resetToken: token,
   });
+
+  const password_field_ref = useRef();
+  const [password_type, setPassword_type] = useState("password");
+  const [confirm_password_type, setConfirm_password_type] =
+    useState("password");
+
+  // const [isPassword_confirm, setIsPassword_confirm] = useState(true);
+  // const [isPassword, setIsPassword] = useState(true);
+
+  const toggle_pwd_type = () => {
+    password_type === "password"
+      ? setPassword_type("text")
+      : setPassword_type("password");
+  };
+
+  const toggle_confirm_pwd_type = () => {
+    confirm_password_type === "password"
+      ? setConfirm_password_type("text")
+      : setConfirm_password_type("password");
+  };
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -66,21 +86,20 @@ function SetNewPassword() {
         e.stopPropagation();
       } else {
         // Form is valid, handle submission
-        dispatch(suspenseShow());
-
-        try {
-          const data = await patch(`users/resetpassword`, formData);
-
-          if (null != data) {
-            toast(data.message);
-            setPasswordChanged(true);
-          }
-        } catch (err) {
-          console.log(err);
-        } finally {
-          dispatch(suspenseHide());
-        }
       }
+    }
+    try {
+      dispatch(suspenseShow());
+      const data = await patch(`users/resetpassword`, formData);
+
+      if (null != data) {
+        toast(data.message);
+        setPasswordChanged(true);
+      }
+    } catch (err) {
+      console.log(err);
+    } finally {
+      dispatch(suspenseHide());
     }
   };
 
@@ -133,6 +152,12 @@ function SetNewPassword() {
                 onChange={handleChange}
                 required="required"
                 value={formData.password}
+                passwordToggler={true}
+                //
+                password_field_ref={password_field_ref}
+                passwordType={password_type}
+                setPassword_type={setPassword_type}
+                togglePwdType={toggle_pwd_type}
               />
               <TextInputField
                 label="Password Confirmation"
@@ -144,6 +169,10 @@ function SetNewPassword() {
                 onChange={handleChange}
                 required="required"
                 value={formData.password_confirmation}
+                passwordToggler={true}
+                passwordType={confirm_password_type}
+                setPassword_type={setConfirm_password_type}
+                togglePwdType={toggle_confirm_pwd_type}
               />
               <RegularButton text="Update password" />
             </form>

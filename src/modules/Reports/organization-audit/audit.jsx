@@ -26,12 +26,14 @@ const OrganizationAudits = () => {
     { organization: organization },
     {
       skip: organization ? false : true,
+      pollingInterval: POOLING_TIME,
     }
   );
   const {
     data: auditsApiResponse,
     refetch,
     isFetching,
+    isLoading,
   } = useFetchTimelineLogsQuery(
     {
       organizationId: organization,
@@ -197,7 +199,7 @@ const OrganizationAudits = () => {
             <Table.HeadCell>Type</Table.HeadCell>
           </Table.Head>
           <Table.Body>
-            {isFetching && (
+            {isLoading && (
               <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
                 <Table.Cell
                   colSpan={3}
@@ -212,7 +214,7 @@ const OrganizationAudits = () => {
                 </Table.Cell>
               </Table.Row>
             )}
-            {!isFetching &&
+            {!isLoading &&
               (!auditsApiResponse?.audits ||
                 auditsApiResponse?.audits.length === 0) && (
                 <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
@@ -224,7 +226,7 @@ const OrganizationAudits = () => {
                   </Table.Cell>
                 </Table.Row>
               )}
-            {!isFetching &&
+            {!isLoading &&
               auditsApiResponse?.audits?.map((audit) => (
                 <Table.Row key={audit._id}>
                   <Table.Cell>{formatDateTime(audit.createdAt)}</Table.Cell>

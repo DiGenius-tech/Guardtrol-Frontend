@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import { selectOrganization } from "../../../redux/selectors/auth";
 import { useGetGuardsQuery } from "../../../redux/services/guards";
 import { useParams } from "react-router-dom";
+import { POOLING_TIME } from "../../../constants/static";
 
 const AssignGuardToPatrol = ({ selectedGuards, setSelectedGuards }) => {
   const organization = useSelector(selectOrganization);
@@ -14,6 +15,7 @@ const AssignGuardToPatrol = ({ selectedGuards, setSelectedGuards }) => {
     { organization },
     {
       skip: organization ? false : true,
+      pollingInterval: POOLING_TIME,
     }
   );
 
@@ -37,7 +39,7 @@ const AssignGuardToPatrol = ({ selectedGuards, setSelectedGuards }) => {
         multiple={true}
         id="beats"
         multipleSelect={true}
-        label="Select Guars"
+        label="Select Guards"
         semibold_label={true}
         handleChangeOption={handleBeatSelection}
         optionList={selectedBeat?.guards?.map((beat) => ({

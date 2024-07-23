@@ -114,7 +114,7 @@ const SettingPersonalInformation = () => {
       formData.append("profile", profile);
 
       const { data } = await axios.put(
-        `${API_BASE_URL}/settings/personal-image`,
+        `${API_BASE_URL}settings/personal-image`,
         formData,
         {
           headers: {
@@ -123,17 +123,19 @@ const SettingPersonalInformation = () => {
           },
         }
       );
-      if (data) {
-        const { data: userRes, isLoading } = await refetch();
 
-        if (userRes) {
-          dispatch(updateUser(userRes));
-          toast("Profile Updated");
-        }
+      const { data: userRes, isLoading } = await refetch();
+
+      if (userRes) {
+        dispatch(updateUser(userRes));
+        console.log("first");
+        dispatch(suspenseHide());
+
+        toast("Profile Updated");
       }
     } catch (error) {
-    } finally {
       dispatch(suspenseHide());
+    } finally {
     }
   };
 

@@ -21,6 +21,7 @@ import {
 } from "../../../redux/selectors/auth";
 import Pagination from "../../../shared/Pagination/Pagination";
 import Swal from "sweetalert2";
+import { POOLING_TIME } from "../../../constants/static";
 
 const duty_status = {
   OFF_DUTY: 0,
@@ -46,16 +47,18 @@ function InactivePatrolGuards() {
     error,
   } = useGetGuardsQuery(organization, {
     skip: organization ? false : true,
+    pollingInterval: POOLING_TIME,
   });
   const { data: beatsApiResponse } = useGetBeatsQuery(
     { organization },
     {
       skip: organization ? false : true,
+      pollingInterval: POOLING_TIME,
     }
   );
 
   const [deleteGuard] = useDeleteGuardMutation();
-  const selectedBeat = beatsApiResponse.beats?.find((b) => b._id === beatId);
+  const selectedBeat = beatsApiResponse?.beats?.find((b) => b._id === beatId);
 
   const handleDeleteGuard = (guardToDelete) => {
     try {

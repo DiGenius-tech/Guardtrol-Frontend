@@ -13,7 +13,7 @@ const RequestLayout = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (userRole.name === "Supervisor") {
+    if (userRole?.name === "Supervisor") {
       navigate("/client");
     }
   }, [userRole]);

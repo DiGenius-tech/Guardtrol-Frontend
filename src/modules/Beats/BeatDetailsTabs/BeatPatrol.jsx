@@ -25,6 +25,7 @@ import {
 import AssignGuardToPatrol from "./assign-beats-to-user";
 import { useGetBeatsQuery } from "../../../redux/services/beats";
 import { formatTime } from "../../../utils/dateUtils";
+import { POOLING_TIME } from "../../../constants/static";
 
 const BeatPatrol = () => {
   const organization = useSelector(selectOrganization);
@@ -53,6 +54,7 @@ const BeatPatrol = () => {
     { organization },
     {
       skip: organization ? false : true,
+      pollingInterval: POOLING_TIME,
     }
   );
 
@@ -161,9 +163,11 @@ const BeatPatrol = () => {
                       parseISO(patrol?.time) &&
                       format(parseISO(patrol?.time), "HH:mm:ss")}
                   </p>
-                  <div>
-                    <h4 className="font-bold capitalize">Guard(s)</h4>
-                    <div className="ml-3">
+                  <div className="w-full ">
+                    <h4 className="font-bold capitalize">
+                      {patrol?.guards.length || ""} Guard(s)
+                    </h4>
+                    <div className="ml-3 overflow-y-auto w-full h-44">
                       {patrol?.guards?.map((guard, index) => (
                         <h3 key={index} className="text-dark-300">
                           {guard?.name}
@@ -172,7 +176,9 @@ const BeatPatrol = () => {
                     </div>
                   </div>
                   <div>
-                    <h4 className="font-bold capitalize">Point(s)</h4>
+                    <h4 className="font-bold capitalize">
+                      {patrol?.points.length || ""} Point(s)
+                    </h4>
                     <div className="ml-3">
                       {patrol?.points?.map((point, index) => (
                         <h3 key={index} className="text-dark-300">
@@ -220,10 +226,11 @@ const BeatPatrol = () => {
           <div className="flex gap-4 flex-col">
             <div className="grid grid-cols-2 gap-4">
               <div className="">
-                <Label htmlFor="name" value={"Enter Patrol name"} />
+                <Label htmlFor="name" value={"Enter Patrol Name"} />
                 <TextInput
                   id="name"
                   type="name"
+                  required
                   name="name"
                   placeholder={"Enter Patrol Name"}
                   value={currentPatrol?.name || ""}
@@ -236,6 +243,7 @@ const BeatPatrol = () => {
                   id="description"
                   type="description"
                   name="description"
+                  required
                   placeholder={"Enter patrol description"}
                   value={currentPatrol?.description || ""}
                   onChange={handleInputChange}
@@ -247,6 +255,7 @@ const BeatPatrol = () => {
                 <Label htmlFor="frequency" value={"Enter Patrol Frequency"} />
                 <TextInput
                   id="frequency"
+                  required
                   name="frequency"
                   type="number"
                   placeholder={"Enter patrol frequency"}
@@ -255,6 +264,21 @@ const BeatPatrol = () => {
                 />
               </div>
               <div className="">
+                <Label
+                  htmlFor="timetocompletepatrol"
+                  value={"Enter Time To Complete Patrol (Minutes)"}
+                />
+                <TextInput
+                  id="timetocompletepatrol"
+                  name="timetocompletepatrol"
+                  type="number"
+                  required
+                  placeholder={"Enter patrol Time To Complete Patrol"}
+                  value={currentPatrol?.timetocompletepatrol || ""}
+                  onChange={handleInputChange}
+                />
+              </div>
+              {/* <div className="">
                 <Label htmlFor="startTime" value={"Enter Patrol Start Time"} />
                 <div className="flex items-center gap-2">
                   <input
@@ -265,7 +289,7 @@ const BeatPatrol = () => {
                     onChange={handleStartTimeChange}
                   />
                 </div>
-              </div>
+              </div> */}
             </div>
 
             <div>

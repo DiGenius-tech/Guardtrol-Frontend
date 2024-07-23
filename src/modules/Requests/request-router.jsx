@@ -1,13 +1,14 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import RequestLayout from "./request-layout";
-import { RequestsHistory } from "./requests";
+import { GuardRequestsHistory, RequestsHistory } from "./guard-requests";
+import { BeatRequestsHistory } from "./beat-requests";
 
 const RequestRouter = () => (
   <Routes>
     <Route element={<RequestLayout />}>
       <Route path="" element={<Navigate to={"guards"} />} />
-      <Route path="guards/*" element={<RequestsHistory />} />
-      <Route path="beats/*" element={<RequestsHistory />} />
+      <Route path="guards/*" element={<GuardRequestsHistory />} />
+      <Route path="beats/*" element={<BeatRequestsHistory />} />
     </Route>
   </Routes>
 );

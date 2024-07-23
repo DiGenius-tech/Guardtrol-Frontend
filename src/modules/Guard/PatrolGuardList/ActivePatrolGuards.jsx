@@ -23,6 +23,8 @@ import {
 import { useParams } from "react-router-dom";
 import Pagination from "../../../shared/Pagination/Pagination";
 import Swal from "sweetalert2";
+import { suspenseHide, suspenseShow } from "../../../redux/slice/suspenseSlice";
+import { POOLING_TIME } from "../../../constants/static";
 
 const duty_status = {
   OFF_DUTY: 0,
@@ -56,6 +58,7 @@ function ActivePatrolGuards() {
     { organization },
     {
       skip: organization ? false : true,
+      pollingInterval: POOLING_TIME,
     }
   );
 
@@ -80,9 +83,10 @@ function ActivePatrolGuards() {
         confirmButtonText: "Yes, delete it!",
       }).then(async (result) => {
         if (result.isConfirmed) {
+          dispatch(suspenseShow());
           const { data } = await deleteGuard(guardToDelete);
           console.log(data);
-          refetchGuards();
+          await refetchGuards();
           if (data?.status) {
             Swal.fire({
               title: "Deleted!",
@@ -91,9 +95,13 @@ function ActivePatrolGuards() {
               confirmButtonColor: "#008080",
             });
           }
+          dispatch(suspenseHide());
         }
       });
-    } catch (error) {}
+    } catch (error) {
+    } finally {
+      dispatch(suspenseHide());
+    }
   };
   const handleUnAssignGuard = (guardToUnassign) => {
     try {

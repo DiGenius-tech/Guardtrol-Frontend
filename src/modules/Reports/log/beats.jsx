@@ -26,12 +26,14 @@ const BeatsLog = () => {
     { organization: organization },
     {
       skip: organization ? false : true,
+      pollingInterval: POOLING_TIME,
     }
   );
 
   const {
     data: logsAPiResponse,
     refetch,
+    isLoading,
     isFetching,
   } = useFetchTimelineLogsQuery(
     {
@@ -208,7 +210,7 @@ const BeatsLog = () => {
             <Table.HeadCell>Message</Table.HeadCell>
           </Table.Head>
           <Table.Body>
-            {isFetching && (
+            {isLoading && (
               <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
                 <Table.Cell
                   colSpan={4}
@@ -223,7 +225,7 @@ const BeatsLog = () => {
                 </Table.Cell>
               </Table.Row>
             )}
-            {!isFetching &&
+            {!isLoading &&
               (!logsAPiResponse?.logs ||
                 logsAPiResponse?.logs.length === 0) && (
                 <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
@@ -235,7 +237,7 @@ const BeatsLog = () => {
                   </Table.Cell>
                 </Table.Row>
               )}
-            {!isFetching &&
+            {!isLoading &&
               logsAPiResponse?.logs?.map((log) => (
                 <Table.Row key={log._id}>
                   <Table.Cell>{log.beat?.name || "Unknown"}</Table.Cell>

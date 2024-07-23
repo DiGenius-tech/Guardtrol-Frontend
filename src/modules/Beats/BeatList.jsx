@@ -18,6 +18,7 @@ import { useSelector } from "react-redux";
 import { selectOrganization, selectUser } from "../../redux/selectors/auth";
 import Swal from "sweetalert2";
 import Pagination from "../../shared/Pagination/Pagination";
+import { POOLING_TIME } from "../../constants/static";
 
 const BeatList = () => {
   const user = useSelector(selectUser);
@@ -34,12 +35,14 @@ const BeatList = () => {
   const {
     data: beatsApiResponse,
     refetch: refetchBeats,
-    isFetching: isLoading,
+    isLoading,
+    isFetching,
     error,
   } = useGetBeatsQuery(
     { organization, page: currentPage },
     {
       skip: organization ? false : true,
+      pollingInterval: POOLING_TIME,
     }
   );
 
@@ -116,9 +119,9 @@ const BeatList = () => {
           <Button
             onClick={refetchBeats}
             className="bg-[#008080] text-white px-4 rounded min-w-28 h-10"
-            disabled={isLoading}
+            disabled={isFetching}
           >
-            {isLoading ? (
+            {isFetching ? (
               <Spinner
                 aria-label="Loading spinner"
                 className="mr-2"

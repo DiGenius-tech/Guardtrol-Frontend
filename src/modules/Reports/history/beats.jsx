@@ -31,6 +31,7 @@ const BeatsHistory = () => {
 
   const {
     data: patrolsApiResponse,
+    isLoading,
     isFetching,
     refetch,
   } = useFetchBeatHistoryQuery(
@@ -44,7 +45,7 @@ const BeatsHistory = () => {
     },
     { skip: !organization, pollingInterval: POOLING_TIME }
   );
-  console.log(patrolsApiResponse);
+
   const aggregatedData = patrolsApiResponse?.patrols || [];
   const totalEntries = patrolsApiResponse?.total || 0;
 
@@ -181,7 +182,7 @@ const BeatsHistory = () => {
             <Table.HeadCell>Avg Clock-out Time</Table.HeadCell>
           </Table.Head>
           <Table.Body className="divide-y">
-            {isFetching && (
+            {isLoading && (
               <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
                 <Table.Cell
                   colSpan={6}
@@ -196,7 +197,7 @@ const BeatsHistory = () => {
                 </Table.Cell>
               </Table.Row>
             )}
-            {!isFetching && aggregatedData.length === 0 && (
+            {!isLoading && aggregatedData.length === 0 && (
               <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
                 <Table.Cell
                   colSpan={6}
@@ -206,7 +207,7 @@ const BeatsHistory = () => {
                 </Table.Cell>
               </Table.Row>
             )}
-            {!isFetching &&
+            {!isLoading &&
               aggregatedData.map((beat, index) => (
                 <Table.Row
                   key={index}

@@ -21,6 +21,7 @@ import { selectSubscriptionState } from "../../../redux/selectors/subscription";
 import { useGetSubscriptionQuery } from "../../../redux/services/subscriptions";
 import { suspenseHide, suspenseShow } from "../../../redux/slice/suspenseSlice";
 import Swal from "sweetalert2";
+import { POOLING_TIME } from "../../../constants/static";
 
 function AddBeat() {
   const [validationErrors, setValidationErrors] = useState({});
@@ -63,6 +64,7 @@ function AddBeat() {
     { organization },
     {
       skip: organization ? false : true,
+      pollingInterval: POOLING_TIME,
     }
   );
 

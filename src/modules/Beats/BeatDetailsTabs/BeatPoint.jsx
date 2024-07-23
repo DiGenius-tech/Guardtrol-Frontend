@@ -61,7 +61,7 @@ const BeatPoint = () => {
         openModal={openCreatePointModal}
         setOpenCreatePointModal={setOpenCreatePointModal}
       /> */}
-      <div
+      {/* <div
         onClick={() => setOpenCreatePointModal(true)}
         className="fixed z-10 bottom-8 right-4 cursor-pointer"
       >
@@ -71,7 +71,7 @@ const BeatPoint = () => {
         >
           +
         </div>
-      </div>
+      </div> */}
       {isLoading && (
         <div className="w-full h-full justify-center flex items-center">
           <Spinner color="success" aria-label="Success spinner example" />
@@ -112,7 +112,7 @@ const BeatPoint = () => {
                         JSON.parse(point.coordinates).longitude}
                     </p>
                   </div>
-                  <Dropdown
+                  {/* <Dropdown
                     label=""
                     placement="right"
                     dismissOnClick={false}
@@ -126,7 +126,7 @@ const BeatPoint = () => {
                     <Dropdown.Item onClick={() => handleDelete(point)}>
                       Delete
                     </Dropdown.Item>
-                  </Dropdown>
+                  </Dropdown> */}
                 </div>
               </div>
             </div>

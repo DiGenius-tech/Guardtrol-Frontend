@@ -4,6 +4,7 @@ import MultiSelectField from "../../Sandbox/SelectField/MultiSelectField";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 import { selectOrganization } from "../../../redux/selectors/auth";
+import { POOLING_TIME } from "../../../constants/static";
 
 const AssignBeatsToUser = ({ selectedBeats, setSelectedBeats }) => {
   const organization = useSelector(selectOrganization);
@@ -12,6 +13,7 @@ const AssignBeatsToUser = ({ selectedBeats, setSelectedBeats }) => {
     { organization },
     {
       skip: organization ? false : true,
+      pollingInterval: POOLING_TIME,
     }
   );
 
@@ -38,10 +40,10 @@ const AssignBeatsToUser = ({ selectedBeats, setSelectedBeats }) => {
         label="Select Beats"
         semibold_label={true}
         handleChangeOption={handleBeatSelection}
-        optionList={beatsApiResponse.beats?.map((beat) => ({
-          value: beat._id,
-          _id: beat._id,
-          name: beat.name,
+        optionList={beatsApiResponse?.beats?.map((beat) => ({
+          value: beat?._id,
+          _id: beat?._id,
+          name: beat?.name,
         }))}
       />
     </div>

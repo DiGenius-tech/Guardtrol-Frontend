@@ -16,6 +16,7 @@ import { post, put } from "../../../lib/methods";
 import { updateUser } from "../../../redux/slice/authSlice";
 import { useParams } from "react-router-dom";
 import { ToggleSwitch } from "flowbite-react";
+import { POOLING_TIME } from "../../../constants/static";
 
 const BeatInformationSchema = Yup.object().shape({
   name: Yup.string().required("Name is required"),
@@ -32,6 +33,7 @@ const EditBeatInformation = ({ setPage }) => {
     { organization },
     {
       skip: organization ? false : true,
+      pollingInterval: POOLING_TIME,
     }
   );
 
@@ -69,11 +71,11 @@ const EditBeatInformation = ({ setPage }) => {
 
   const handleUpdateBeat = async (data) => {
     dispatch(suspenseShow());
-    await updateBeat({ body: data, userid: user?.userid, organization }).then(
-      toast("Beat Updated")
-    );
+    await updateBeat({ body: data, userid: user?.userid, organization }).then();
     await refetchBeats();
+
     dispatch(suspenseHide());
+    toast("Beat Updated");
   };
 
   return (

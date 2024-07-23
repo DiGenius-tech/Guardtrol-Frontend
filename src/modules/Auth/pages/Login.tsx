@@ -120,6 +120,7 @@ const Login = () => {
         dispatch(setOnboardingLevel(null));
         dispatch(setOnboardingGuards([]));
         dispatch(setCurrentSubscription(null));
+        dispatch(loginSuccess(data));
         dispatch(updateUserOrganization(data?.organization));
         toast("Sign In successful");
         // navigate("/client/dashboard", { replace: true }); //should be dashboard
@@ -222,7 +223,7 @@ const Login = () => {
       >
         <span className="sm:text-lg flex items-center justify-center gap-2">
           <img src={googleIconImg} alt="Log In With Google" />
-          Log In With Google
+          Log in with Google
         </span>
       </Link>
     </>

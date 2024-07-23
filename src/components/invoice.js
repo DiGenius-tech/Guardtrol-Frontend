@@ -43,10 +43,7 @@ const Invoice = ({ invoice, componentRef }) => {
   };
   return (
     <>
-      <div
-        ref={componentRef}
-        className=" min-h-screen w-screen bg-gray-50 px-10 py-5"
-      >
+      <div ref={componentRef} className="  bg-gray-50 px-10 py-5">
         <div className="row">
           <div className="col-12">
             <div className="card">
@@ -63,8 +60,9 @@ const Invoice = ({ invoice, componentRef }) => {
                   <div className=" text-right text-sm ">
                     <h6 className="font-bold text-lg">Alphatrol Limited</h6>
                     <p className="text-sm text-dark-700 ">
-                      167 Adetokunbo Ademola Cresent
-                      <br /> Wuse, Abuja, Nigeria
+                      167 Adetokunbo Ademola Crescent
+                      <br />
+                      Wuse, Abuja, Nigeria
                     </p>
                     <p className="text-sm">+234 704-1111-161</p>
                     <p>info@alphatrol.com</p>
@@ -88,7 +86,7 @@ const Invoice = ({ invoice, componentRef }) => {
 
                 <h6 className="mt-5 text-xl font-semi-bold">Order Details</h6>
                 <p className="my-2">
-                  Invoice for subcription from{" "}
+                  Invoice for subscription from{" "}
                   {invoice?.subscription?.startsAt
                     ? formatDate(invoice?.subscription?.startsAt)
                     : "Your subscription end date"}

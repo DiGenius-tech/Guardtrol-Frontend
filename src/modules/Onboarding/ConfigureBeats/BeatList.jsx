@@ -19,6 +19,7 @@ import {
   useGetBeatsQuery,
 } from "../../../redux/services/beats";
 import { useGetSubscriptionQuery } from "../../../redux/services/subscriptions";
+import { POOLING_TIME } from "../../../constants/static";
 
 function BeatList() {
   const [isEdit, setIsEdit] = useState(false);
@@ -48,6 +49,7 @@ function BeatList() {
     { organization },
     {
       skip: organization ? false : true,
+      pollingInterval: POOLING_TIME,
     }
   );
 
@@ -77,14 +79,18 @@ function BeatList() {
 
   const saveBeat = async (beats) => {
     if (!beatsApiResponse?.totalBeats) {
-      toast.info("Add at Least One Beat To Continue");
+      toast.info("Add at least one Beat to continue");
       return;
     }
 
-    //dispatch(suspenseShow());
+    dispatch(suspenseShow());
+
+    setTimeout(() => {
+      dispatch(suspenseHide());
+    }, 1000);
 
     // const data = await addBeats({ userId: user.userid, body: beats }).finally(
-    //   dispatch(suspenseHide())
+    //
     // );
 
     dispatch(setOnboardingLevel(2));
@@ -135,7 +141,7 @@ function BeatList() {
             </Link>
             <div className="my-8"></div>
             <RegularButton
-              text="Continue To Onboard Guards"
+              text="Continue to onboard Guards"
               onClick={() => saveBeat(beatsApiResponse?.beats)}
             />
           </>

@@ -8,12 +8,14 @@ import {
 import { useGetBeatsQuery } from "../../redux/services/beats";
 import { format } from "date-fns";
 import Pagination from "../../shared/Pagination/Pagination";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { selectOrganization } from "../../redux/selectors/auth";
 import { ASSET_URL } from "../../constants/api";
 import { useGetGuardsQuery } from "../../redux/services/guards";
 import { formatDate, formatDateTime } from "../../utils/dateUtils";
 import { POOLING_TIME } from "../../constants/static";
+import { suspenseHide, suspenseShow } from "../../redux/slice/suspenseSlice";
+import { toast } from "react-toastify";
 
 const guardAttributes = {
   idname: "Identification Name",
@@ -27,7 +29,7 @@ const guardAttributes = {
   state: "Guard state",
   altphone: "Guard altphone",
 };
-const RequestsHistory = () => {
+const GuardRequestsHistory = () => {
   const organization = useSelector(selectOrganization);
   const [currentPage, setCurrentPage] = useState(1);
   const [entriesPerPage, setEntriesPerPage] = useState(10);
@@ -37,11 +39,13 @@ const RequestsHistory = () => {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [selectedStatus, setSelectedStatus] = useState("");
+  const dispatch = useDispatch();
 
   const { data: guards, refetch: refetchGuards } = useGetGuardsQuery(
     organization,
     {
       skip: organization ? false : true,
+      pollingInterval: POOLING_TIME,
     }
   );
   const {
@@ -49,7 +53,7 @@ const RequestsHistory = () => {
     isLoading,
     refetch,
   } = useGetAllModificationsQuery(
-    { organization },
+    { organization, type: "guard" },
     {
       skip: organization ? false : true,
       pollingInterval: POOLING_TIME,
@@ -60,7 +64,6 @@ const RequestsHistory = () => {
     let filteredData = modifications;
 
     if (selectedStatus) {
-      console.log(selectedStatus);
       filteredData = filteredData.filter(
         (modification) => modification.status === selectedStatus
       );
@@ -91,17 +94,23 @@ const RequestsHistory = () => {
   );
 
   const handleApprove = async (id) => {
+    dispatch(suspenseShow());
     await approveModification(id);
     await refetch();
     await refetchGuards();
     setIsModalOpen(false);
+    dispatch(suspenseHide());
+    toast("Request Approved");
   };
 
   const handleRevert = async (id) => {
+    dispatch(suspenseShow());
     await revertModification(id);
     await refetch();
     await refetchGuards();
+    dispatch(suspenseHide());
     setIsModalOpen(false);
+    toast("Request Rejected");
   };
 
   const openModal = (modification) => {
@@ -114,16 +123,103 @@ const RequestsHistory = () => {
     setSelectedModification(null);
   };
 
+  const renderDifferences = (differences) => {
+    const allkeys = Object.keys(differences);
+
+    return allkeys.map((aKey) => {
+      if (differences[aKey].type === "object") {
+        const allSubkeys = Object.keys(differences[aKey]).filter(
+          (key) => key !== "type"
+        );
+
+        return (
+          <div key={aKey} className="mb-2">
+            <strong>
+              {guardAttributes?.[aKey] ||
+                aKey.charAt(0).toUpperCase() + aKey.slice(1)}
+              :
+            </strong>
+            {allSubkeys.map((subkey) => (
+              <div key={subkey} className="mb-2 ml-9">
+                <strong>
+                  {guardAttributes?.[subkey] ||
+                    subkey.charAt(0).toUpperCase() + subkey.slice(1)}
+                  :
+                </strong>
+                <div className="ml-4">
+                  <div style={{ color: "red", textDecoration: "line-through" }}>
+                    {renderValue(differences[aKey][subkey].previous || "N/A")}
+                  </div>
+                  &rarr;
+                  <div style={{ color: "green" }}>
+                    {renderValue(differences[aKey][subkey].new)}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        );
+      } else {
+        return (
+          <div key={aKey} className="mb-2 ml-9">
+            <strong>
+              {guardAttributes?.[aKey] ||
+                aKey.charAt(0).toUpperCase() + aKey.slice(1)}
+              :
+            </strong>
+            <div className="ml-4">
+              <div style={{ color: "red", textDecoration: "line-through" }}>
+                {renderValue(differences[aKey].previous)}
+              </div>
+              &rarr;
+              <div style={{ color: "green" }}>
+                {renderValue(differences[aKey].new)}
+              </div>
+            </div>
+          </div>
+        );
+      }
+    });
+  };
+
   const highlightDifferences = (previousState, newState) => {
-    const differences = {};
-    for (const key in previousState) {
-      const prev = previousState[key];
-      const newVal = newState[key];
+    let differences = {};
+    for (const key in newState) {
+      const prev = previousState?.[key];
+      const newVal = newState?.[key];
+
       if (prev !== newVal && JSON.stringify(prev) !== JSON.stringify(newVal)) {
-        differences[key] = {
-          previous: prev,
-          new: newVal,
-        };
+        if (typeof newVal === "object" && newVal !== null) {
+          const allSubKeys = Object.keys(newVal);
+
+          for (const subkey of allSubKeys) {
+            if (prev?.[subkey] !== newVal?.[subkey]) {
+              if (differences?.[key]?.[subkey]) {
+                differences[key][subkey] = {
+                  previous: prev?.[subkey],
+                  new: newVal?.[subkey],
+                };
+              } else {
+                differences = {
+                  ...differences,
+                  [key]: {
+                    type: "object",
+                    ...differences[key],
+                    [subkey]: {
+                      previous: prev?.[subkey],
+                      new: newVal?.[subkey],
+                    },
+                  },
+                };
+              }
+            }
+          }
+        } else {
+          differences[key] = {
+            previous: prev,
+            new: newVal,
+          };
+        }
       }
     }
     return differences;
@@ -160,30 +256,6 @@ const RequestsHistory = () => {
     return value;
   };
 
-  const renderDifferences = (differences) => {
-    return Object.keys(differences).map((key) => (
-      <div key={key} className="mb-2 ml-9">
-        <strong>
-          {guardAttributes?.[key] || key.charAt(0).toUpperCase() + key.slice(1)}
-          :
-        </strong>
-        <div className="ml-4">
-          <div style={{ color: "red", textDecoration: "line-through" }}>
-            {renderValue(differences[key].previous)}
-          </div>
-          &rarr;
-          <div style={{ color: "green" }}>
-            {renderValue(differences[key].new)}
-          </div>
-        </div>
-      </div>
-    ));
-  };
-
-  const exportToExcel = () => {
-    // Add your export to Excel logic here
-  };
-
   return (
     <div className="container mx-auto relative pb-40 sm:pb-20">
       <section className="mb-2">
@@ -213,7 +285,8 @@ const RequestsHistory = () => {
             <option value="">All</option>
             <option value="pending">Pending</option>
             <option value="approved">Approved</option>
-            <option value="reverted">Reject</option>
+            <option value="reverted">Rejected</option>
+            <option value="no-response">No-Response</option>
           </Select>
           {/* <Button
             onClick={exportToExcel}
@@ -264,7 +337,7 @@ const RequestsHistory = () => {
             )}
             {isLoading && (
               <Table.Row>
-                <Table.Cell colSpan="4" className="text-center">
+                <Table.Cell colSpan={6} className="text-center">
                   <Spinner aria-label="Loading" />
                 </Table.Cell>
               </Table.Row>
@@ -278,7 +351,9 @@ const RequestsHistory = () => {
                   <Table.Cell>{modification?.beat?.name}</Table.Cell>
                   <Table.Cell>{modification?.performer?.name}</Table.Cell>
                   <Table.Cell className=" capitalize">
-                    {modification?.status}
+                    {modification?.status === "reverted"
+                      ? "Rejected"
+                      : modification?.status}
                   </Table.Cell>
                   <Table.Cell>
                     {formatDateTime(modification.createdAt)}
@@ -320,6 +395,7 @@ const RequestsHistory = () => {
               </div>
               <div>
                 <strong className=" underline">Updates</strong>
+                <br />
                 {renderDifferences(
                   highlightDifferences(
                     selectedModification?.previousState,
@@ -369,4 +445,4 @@ const RequestsHistory = () => {
   );
 };
 
-export { RequestsHistory };
+export { GuardRequestsHistory };

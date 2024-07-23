@@ -20,7 +20,7 @@ const GuardsHistory = () => {
 
   const debouncedSearchQuery = useDebouncedValue(searchQuery);
 
-  const { data, refetch, isFetching } = useFetchGuardHistoryQuery(
+  const { data, refetch, isFetching, isLoading } = useFetchGuardHistoryQuery(
     {
       organizationId: organization,
       page: currentPage,
@@ -129,7 +129,7 @@ const GuardsHistory = () => {
             <Table.HeadCell>Avg Clock Out</Table.HeadCell>
           </Table.Head>
           <Table.Body className="divide-y">
-            {isFetching && (
+            {isLoading && (
               <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
                 <Table.Cell
                   colSpan={4}
@@ -144,7 +144,7 @@ const GuardsHistory = () => {
                 </Table.Cell>
               </Table.Row>
             )}
-            {!isFetching && aggregatedData.length === 0 && (
+            {!isLoading && aggregatedData.length === 0 && (
               <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
                 <Table.Cell
                   colSpan={4}
@@ -154,7 +154,7 @@ const GuardsHistory = () => {
                 </Table.Cell>
               </Table.Row>
             )}
-            {!isFetching &&
+            {!isLoading &&
               currentEntries.map((guard, index) => (
                 <Table.Row
                   key={index}

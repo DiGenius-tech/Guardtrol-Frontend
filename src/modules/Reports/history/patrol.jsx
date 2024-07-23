@@ -34,12 +34,13 @@ const PatrolHistory = () => {
     data: patrolInstancesApiResponse,
     refetch,
     isFetching,
+    isLoading,
   } = useFetchPatrolInstancesQuery(
     {
       organizationId: organization,
       startDate: startDate ? new Date(startDate).toISOString() : undefined,
       endDate: endDate ? new Date(endDate).toISOString() : undefined,
-      searchQuery: searchQuery ? searchQuery : undefined,
+      guardName: searchQuery ? searchQuery : undefined,
       beatId: selectedBeat ? selectedBeat : undefined,
       page: currentPage,
       limit: entriesPerPage,
@@ -175,7 +176,7 @@ const PatrolHistory = () => {
             <Table.HeadCell className=" min-w-60">End Time</Table.HeadCell>
           </Table.Head>
           <Table.Body className="divide-y">
-            {isFetching && (
+            {isLoading && (
               <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
                 <Table.Cell
                   colSpan={7}
@@ -190,18 +191,17 @@ const PatrolHistory = () => {
                 </Table.Cell>
               </Table.Row>
             )}
-            {!isFetching &&
-              patrolInstancesApiResponse.patrols?.length === 0 && (
-                <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                  <Table.Cell
-                    colSpan={9}
-                    className="whitespace-nowrap font-medium text-center text-gray-900 dark:text-white"
-                  >
-                    No History
-                  </Table.Cell>
-                </Table.Row>
-              )}
-            {!isFetching &&
+            {!isLoading && patrolInstancesApiResponse.patrols?.length === 0 && (
+              <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
+                <Table.Cell
+                  colSpan={9}
+                  className="whitespace-nowrap font-medium text-center text-gray-900 dark:text-white"
+                >
+                  No History
+                </Table.Cell>
+              </Table.Row>
+            )}
+            {!isLoading &&
               patrolInstancesApiResponse.patrols?.map((instance, index) => (
                 <Table.Row
                   key={index}

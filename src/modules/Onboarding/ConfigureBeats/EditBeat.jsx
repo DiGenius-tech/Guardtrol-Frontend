@@ -11,6 +11,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { selectOrganization, selectUser } from "../../../redux/selectors/auth";
 import { suspenseHide, suspenseShow } from "../../../redux/slice/suspenseSlice";
+import { POOLING_TIME } from "../../../constants/static";
 
 function EditBeat(props) {
   const [validationErrors, setValidationErrors] = useState({});
@@ -25,6 +26,7 @@ function EditBeat(props) {
     { organization },
     {
       skip: organization ? false : true,
+      pollingInterval: POOLING_TIME,
     }
   );
   const [formData, setFormData] = useState({
@@ -60,12 +62,10 @@ function EditBeat(props) {
       });
     } else {
       dispatch(suspenseShow());
-      await updateBeat({ body: formData, userid: user?.userid }).then(
-        toast("Beat Updated")
-      );
+      await updateBeat({ body: formData, userid: user?.userid }).then();
       await refetchBeats();
       dispatch(suspenseHide());
-
+      toast("Beat Updated");
       props.cancelEdit();
     }
   };

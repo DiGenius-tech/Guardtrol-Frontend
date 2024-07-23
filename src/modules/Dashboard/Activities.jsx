@@ -108,7 +108,12 @@ const Activities = () => {
                         )}`}
                         role="alert"
                       >
-                        <h3 className="title font-semibold">{activity.type}</h3>
+                        <h3 className="title font-semibold">
+                          {activity.type}
+                          {activity.message.inclues("(Bypass)")
+                            ? "(Bypass)"
+                            : ""}
+                        </h3>
                         <p className="body">{activity.message}</p>
                       </div>
                     </div>

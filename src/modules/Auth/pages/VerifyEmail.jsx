@@ -141,7 +141,7 @@ function VerifyEmail() {
                     canResend ? "text-primary-500" : "text-gray-300"
                   } font-semibold text-sm pr-0 cursor-pointer flex items-center`}
                 >
-                  Send verification code
+                  Resend verification code
                   {isSendingLoading && (
                     <Spinner
                       color="success"

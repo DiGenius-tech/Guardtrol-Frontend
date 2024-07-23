@@ -50,6 +50,7 @@ const SettingsToolbar = () => {
               Personal Information
             </Link>
           </li>
+
           <li>
             <Link
               to={`security`}
@@ -76,32 +77,36 @@ const SettingsToolbar = () => {
               Shift Schedule
             </Link>
           </li> */}
-          <li>
-            <Link
-              to={`billing`}
-              className={
-                (billing.includes(location.pathname)
-                  ? `active font-semibold border-primary-500 text-primary-500 hover:border-primary-400 hover:text-primary-400 `
-                  : `border-transparent `) +
-                `flex items-center justify-center whitespace-nowrap p-4 text-sm font-medium first:ml-0 disabled:cursor-not-allowed disabled:text-gray-400 disabled:dark:text-gray-500 rounded-t-lg border-b-2 text-gray-500 hover:border-gray-300 hover:text-gray-600`
-              }
-            >
-              Billing
-            </Link>
-          </li>
-          <li>
-            <Link
-              to={`notification`}
-              className={
-                (location.pathname.includes("notification")
-                  ? `active font-semibold border-primary-500 text-primary-500 hover:border-primary-400 hover:text-primary-400 `
-                  : `border-transparent `) +
-                `flex items-center justify-center whitespace-nowrap p-4 text-sm font-medium first:ml-0 disabled:cursor-not-allowed disabled:text-gray-400 disabled:dark:text-gray-500 rounded-t-lg border-b-2 text-gray-500 hover:border-gray-300 hover:text-gray-600`
-              }
-            >
-              Notification
-            </Link>
-          </li>
+          {(userRole?.name === "Owner" || userRole?.name === "Manager") && (
+            <li>
+              <Link
+                to={`billing`}
+                className={
+                  (billing.includes(location.pathname)
+                    ? `active font-semibold border-primary-500 text-primary-500 hover:border-primary-400 hover:text-primary-400 `
+                    : `border-transparent `) +
+                  `flex items-center justify-center whitespace-nowrap p-4 text-sm font-medium first:ml-0 disabled:cursor-not-allowed disabled:text-gray-400 disabled:dark:text-gray-500 rounded-t-lg border-b-2 text-gray-500 hover:border-gray-300 hover:text-gray-600`
+                }
+              >
+                Billing
+              </Link>
+            </li>
+          )}
+          {(userRole?.name === "Owner" || userRole?.name === "Manager") && (
+            <li>
+              <Link
+                to={`notification`}
+                className={
+                  (location.pathname.includes("notification")
+                    ? `active font-semibold border-primary-500 text-primary-500 hover:border-primary-400 hover:text-primary-400 `
+                    : `border-transparent `) +
+                  `flex items-center justify-center whitespace-nowrap p-4 text-sm font-medium first:ml-0 disabled:cursor-not-allowed disabled:text-gray-400 disabled:dark:text-gray-500 rounded-t-lg border-b-2 text-gray-500 hover:border-gray-300 hover:text-gray-600`
+                }
+              >
+                Notification
+              </Link>
+            </li>
+          )}
           {userRole?.name === "Owner" && (
             <li>
               <Link

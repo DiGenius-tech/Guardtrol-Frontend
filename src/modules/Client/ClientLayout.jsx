@@ -56,20 +56,20 @@ const Client = () => {
     );
   }
 
-  // if (!subscription && !isFetchingActiveSubscription) {
-  //   return (
-  //     <div className=" absolute top-0 right-0 z-40 bg-white w-full h-full justify-center items-center">
-  //       <div className=" w-full relative  top-24">
-  //         <RenewSubscription
-  //           isExpired={true}
-  //           subscription={subscription}
-  //           openModal={true}
-  //           setRenewalModal={() => null}
-  //         />{" "}
-  //       </div>
-  //     </div>
-  //   );
-  // }
+  if (!subscription && !isFetchingActiveSubscription) {
+    return (
+      <div className=" absolute top-0 right-0 z-40 bg-white w-full h-full justify-center items-center">
+        <div className=" w-full relative  top-24">
+          <RenewSubscription
+            isExpired={true}
+            subscription={subscription}
+            openModal={true}
+            setRenewalModal={() => null}
+          />{" "}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -111,7 +111,7 @@ const Client = () => {
               <ClientSidebar />
             </div>
           </div>
-          <div className="col-span-12 md:col-span-10  h-full">
+          <div className="col-span-12 md:col-span-10  h-[calc(100vh-80px)]">
             <div className="bg-[#faffff] min-h-full  h-full px-4 pt-3">
               <Outlet />
             </div>

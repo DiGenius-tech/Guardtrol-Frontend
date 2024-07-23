@@ -133,7 +133,7 @@ const Register = () => {
             dispatch(loginSuccess(data));
 
             dispatch(updateUserOrganization(data.userid));
-            toast("Signup successful");
+            toast("Sign Up Successful");
             navigate("/auth/verify-email", { replace: true }); //should be dashboard
             // window.location.reload();
           }
@@ -176,7 +176,7 @@ const Register = () => {
           dispatch(setCurrentSubscription(null));
           dispatch(updateUserOrganization(data.userid));
           dispatch(loginSuccess(data));
-          toast("Signup successful");
+          toast("Sign Up Successful");
         }
       }
     } catch (err) {
@@ -301,7 +301,7 @@ const Register = () => {
       >
         <span className="sm:text-lg flex items-center justify-center gap-2">
           <img src={googleIconImg} alt="Sign Up With Google" />
-          Sign Up With Google
+          Sign up with Google
         </span>
       </Link>
     </>
