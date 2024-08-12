@@ -31,9 +31,12 @@ const Dashboard = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [entriesPerPage, setEntriesPerPage] = useState(10);
 
-  const { data: guards } = useGetGuardsQuery(organization, {
-    skip: !organization,
-  });
+  const { data: guards } = useGetGuardsQuery(
+    { organization },
+    {
+      skip: !organization,
+    }
+  );
   const { data: beatsApiResponse } = useGetBeatsQuery(
     { organization: organization },
     {

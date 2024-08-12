@@ -6,9 +6,12 @@ import { Outlet, useLocation } from "react-router-dom";
 import brandLogo from "../../images/brand-logo.svg";
 import "./Client.scss";
 import { HiX } from "react-icons/hi";
+import { useSocket, useSocketContext } from "../hooks/SocketContext";
+import { useDispatch } from "react-redux";
 
 const Client = () => {
   const [isOpenSidenav, setIsOpenSidenav] = useState(false);
+  const dispatch = useDispatch();
   let location = useLocation();
   const handleOpenSidenav = () => {
     setIsOpenSidenav(!isOpenSidenav);

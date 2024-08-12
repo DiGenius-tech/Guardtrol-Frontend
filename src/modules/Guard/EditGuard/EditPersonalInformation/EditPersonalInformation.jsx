@@ -83,10 +83,13 @@ const EditPersonalInformation = (props) => {
   console.log(props.guard?.personalinformation);
   const { guardId } = useParams();
   const organization = useSelector(selectOrganization);
-  const { data: guards, refetch } = useGetGuardsQuery(organization, {
-    skip: organization ? false : true,
-    pollingInterval: POOLING_TIME,
-  });
+  const { data: guards, refetch } = useGetGuardsQuery(
+    { organization },
+    {
+      skip: organization ? false : true,
+      pollingInterval: POOLING_TIME,
+    }
+  );
   const { token } = useSelector(selectAuth);
   const [loading, setLoading] = useState(false);
 

@@ -9,7 +9,7 @@ const TextInputField = (props) => {
   };
   return (
     <>
-      <div className={`${props.class || "mb-6"}`}>
+      <div className={`${props.class || "mb-6 "}`}>
         <label
           htmlFor={props.id}
           className={
@@ -31,13 +31,14 @@ const TextInputField = (props) => {
                 (props.placeholder_right ? `placeholder:text-end ` : "") +
                 (props.error
                   ? `border bg-red-50 border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500
-          text-sm rounded-lg block w-full p-2.5 sm:py-4 
+          text-sm rounded-lg block w-full  sm:py-2.5 
           dark:bg-gray-700 
           dark:border-red-500 
           dark:placeholder-gray-400 
           dark:text-red 
           dark:focus:ring-green-500`
-                  : `border border-gray-300 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 sm:py-4 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500`)
+                  : `border  border-gray-300 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full  sm:py-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500`) +
+                ""
               }
               placeholder={props.placeholder}
               required={props.required ? true : false}
@@ -74,7 +75,7 @@ const TextInputField = (props) => {
               className={
                 props.error
                   ? `border bg-red-50 border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500
-          text-sm rounded-lg block w-full p-2.5 sm:py-4 
+          text-sm rounded-lg block w-full p-1 sm:py-4 
           dark:bg-gray-700 
           dark:border-red-500 
           dark:placeholder-gray-400 

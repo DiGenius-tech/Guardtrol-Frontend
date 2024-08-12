@@ -8,9 +8,12 @@ import { useSelector } from "react-redux";
 
 const GuardsMetrics = () => {
   const organization = useSelector(selectOrganization);
-  const { data: guards } = useGetGuardsQuery(organization, {
-    skip: organization ? false : true,
-  });
+  const { data: guards } = useGetGuardsQuery(
+    { organization },
+    {
+      skip: organization ? false : true,
+    }
+  );
   const [currentPage, setCurrentPage] = useState(1);
   const [entriesPerPage, setEntriesPerPage] = useState(10);
 

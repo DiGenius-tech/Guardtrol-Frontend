@@ -50,9 +50,12 @@ function AssignNewBeat({ isOnboarding = true }) {
     data: guards,
     refetch: refetchGuards,
     error: guardsError,
-  } = useGetGuardsQuery(organization, {
-    skip: organization ? false : true,
-  });
+  } = useGetGuardsQuery(
+    { organization },
+    {
+      skip: organization ? false : true,
+    }
+  );
 
   const [assignToBeat] = useAssignGuardToBeatMutation();
   const { responseData, sendRequest } = useHttpRequest();

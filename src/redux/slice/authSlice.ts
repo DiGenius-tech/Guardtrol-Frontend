@@ -21,6 +21,20 @@ interface Auth {
         userid: string;
       }
     | undefined;
+  supportUser:
+    | {
+        clientid: string;
+        email: string;
+        image: string;
+        organization: string;
+        name: string;
+        phone: string;
+        emailverified: boolean;
+        onboardingcomplete: true;
+        token: string;
+        userid: string;
+      }
+    | undefined;
   isAuthenticated: boolean;
   organization?: string;
   role: string;
@@ -30,6 +44,7 @@ const initialState: Auth = {
   token: null,
   organization: undefined,
   user: undefined,
+  supportUser: undefined,
   isAuthenticated: false,
   role: "",
 };
@@ -64,8 +79,14 @@ const authSlice = createSlice({
       state.user = undefined;
       state.token = null;
     },
+    clearSupportUser(state) {
+      state.supportUser = undefined;
+    },
     updateUserOrganization(state, action) {
       state.organization = action.payload;
+    },
+    updateSupportUser(state, action) {
+      state.supportUser = action.payload;
     },
     updateUser(state, action) {
       state.user = action.payload;
@@ -76,6 +97,11 @@ const authSlice = createSlice({
   },
 });
 
-export const { loginSuccess, updateUserOrganization, logout, updateUser } =
-  authSlice.actions;
+export const {
+  loginSuccess,
+  updateSupportUser,
+  updateUserOrganization,
+  logout,
+  updateUser,
+} = authSlice.actions;
 export default authSlice.reducer;

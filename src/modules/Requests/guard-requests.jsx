@@ -42,7 +42,7 @@ const GuardRequestsHistory = () => {
   const dispatch = useDispatch();
 
   const { data: guards, refetch: refetchGuards } = useGetGuardsQuery(
-    organization,
+    { organization },
     {
       skip: organization ? false : true,
       pollingInterval: POOLING_TIME,

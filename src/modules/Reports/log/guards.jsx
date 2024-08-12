@@ -22,9 +22,12 @@ const GuardsLog = () => {
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [selectedGuardData, setselectedGuardData] = useState();
 
-  const { data: guards } = useGetGuardsQuery(organization, {
-    skip: organization ? false : true,
-  });
+  const { data: guards } = useGetGuardsQuery(
+    { organization },
+    {
+      skip: organization ? false : true,
+    }
+  );
 
   const {
     data: logsAPiResponse,

@@ -241,7 +241,12 @@ const BeatsLog = () => {
               logsAPiResponse?.logs?.map((log) => (
                 <Table.Row key={log._id}>
                   <Table.Cell>{log.beat?.name || "Unknown"}</Table.Cell>
-                  <Table.Cell>{log.type}</Table.Cell>
+                  <Table.Cell>
+                    {log.type}
+                    <span className=" font-semibold">{`${
+                      log.message.includes("Bypass") ? " (Bypass)" : ""
+                    }`}</span>
+                  </Table.Cell>
                   <Table.Cell>{formatDateTime(log.createdAt)}</Table.Cell>
                   <Table.Cell>{log.message}</Table.Cell>
                 </Table.Row>

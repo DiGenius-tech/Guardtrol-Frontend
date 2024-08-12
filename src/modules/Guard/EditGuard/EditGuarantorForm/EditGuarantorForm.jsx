@@ -106,7 +106,7 @@ const EditGuarantorForm = (props) => {
   const token = useSelector(selectToken);
   const organization = useSelector(selectOrganization);
   const { data: guards, refetch: refetchGuards } = useGetGuardsQuery(
-    organization,
+    { organization },
     { skip: organization ? false : true }
   );
 

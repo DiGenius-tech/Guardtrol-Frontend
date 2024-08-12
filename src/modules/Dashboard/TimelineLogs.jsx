@@ -27,9 +27,12 @@ export const TimelineLogs = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [entriesPerPage, setEntriesPerPage] = useState(10);
 
-  const { data: guards } = useGetGuardsQuery(organization, {
-    skip: !organization,
-  });
+  const { data: guards } = useGetGuardsQuery(
+    { organization },
+    {
+      skip: !organization,
+    }
+  );
 
   const { data: beatsApiResponse } = useGetBeatsQuery(
     { organization: organization },
@@ -114,7 +117,8 @@ export const TimelineLogs = () => {
                       ? "Clock in"
                       : log.message.includes("clocked out")
                       ? "Clock out"
-                      : log.type}
+                      : log.type}{" "}
+                    {`${log.message.includes("Bypass") ? "(Bypass)" : ""}`}
                   </h3>
                   <p className="body">{log.message}</p>
                 </div>

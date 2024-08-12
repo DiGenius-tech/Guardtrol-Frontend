@@ -77,9 +77,12 @@ const SettingBilling = () => {
     skip: organization ? false : true,
   });
 
-  const { data: guards } = useGetGuardsQuery(organization, {
-    skip: organization ? false : true,
-  });
+  const { data: guards } = useGetGuardsQuery(
+    { organization },
+    {
+      skip: organization ? false : true,
+    }
+  );
   const { data: subs } = useGetAllSubscriptionsQuery(organization, {
     skip: organization ? false : true,
   });

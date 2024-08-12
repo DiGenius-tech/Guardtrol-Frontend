@@ -4,8 +4,11 @@ import { TGuard } from "../../types/guad";
 
 export const GuardApi = api.injectEndpoints({
   endpoints: (build) => ({
-    getGuards: build.query<TGuard[], void>({
-      query: (organizationId) => ({ url: `guard/getguards/${organizationId}` }),
+    getGuards: build.query<TGuard[], any>({
+      query: ({ organization, searchQuery }) => ({
+        url: `guard/getguards/${organization}`,
+        params: { searchQuery },
+      }),
       providesTags: (result = []) => [
         ...result.map(({ _id }) => ({ type: "Guards", _id } as const)),
         { type: "Guards" as const, id: "LIST" },

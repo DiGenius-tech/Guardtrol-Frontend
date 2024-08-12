@@ -49,9 +49,12 @@ const EditIdentification = (props) => {
     data: guards,
     refetch: refetchGuards,
     isUninitialized,
-  } = useGetGuardsQuery(organization, {
-    skip: organization ? false : true,
-  });
+  } = useGetGuardsQuery(
+    { organization },
+    {
+      skip: organization ? false : true,
+    }
+  );
 
   const { isLoading, error, responseData, sendRequest } = useHttpRequest();
   const [validationErrors, setValidationErrors] = useState({});

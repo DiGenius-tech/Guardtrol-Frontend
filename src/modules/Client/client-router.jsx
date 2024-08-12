@@ -10,15 +10,24 @@ import Dashboard from "../Dashboard/Dashboard";
 import PageNotFound from "../../PageNotFound/PageNotFound";
 import ClientLayout from "./ClientLayout";
 import LogOut from "../Auth/pages/LogOut";
+import { SupportRouter } from "../Support/support-router";
+import { SocketProvider } from "../../hooks/useSocket";
 
 const ClientRouter = () => (
   <Routes>
-    <Route element={<ClientLayout />}>
+    <Route
+      element={
+        <SocketProvider>
+          <ClientLayout />
+        </SocketProvider>
+      }
+    >
       <Route index element={<Navigate to="dashboard" />} />
       <Route path="dashboard" element={<Dashboard />} />
       <Route path="patrol-guard/*" element={<GuardRouter />} />
       <Route path="beats/*" element={<BeatsRouter />} />
       <Route path="settings/*" element={<SettingsRouter />} />
+      <Route path="support/*" element={<SupportRouter />} />
       <Route path="loading-spinner" element={<LoadingSpinner />} />
       <Route path="reports/*" element={<ReportRouter />} />
       <Route path="requests/*" element={<RequestRouter />} />

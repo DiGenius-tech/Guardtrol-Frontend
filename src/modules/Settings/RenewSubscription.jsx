@@ -68,9 +68,12 @@ const RenewSubscription = ({
 
   const currentDate = new Date();
   console.log(organization);
-  const { data: availableGuards } = useGetGuardsQuery(organization, {
-    skip: organization ? false : true,
-  });
+  const { data: availableGuards } = useGetGuardsQuery(
+    { organization },
+    {
+      skip: organization ? false : true,
+    }
+  );
   const { data: beatsApiResponse } = useGetBeatsQuery(
     { organization },
     {

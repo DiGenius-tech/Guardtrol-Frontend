@@ -53,14 +53,17 @@ const PatrolGuardDetails = () => {
       pollingInterval: POOLING_TIME,
     }
   );
-
+  console.log(organization);
   const {
     data: guards,
     refetch: refetchGuards,
     isUninitialized,
-  } = useGetGuardsQuery(organization, {
-    skip: organization ? false : true,
-  });
+  } = useGetGuardsQuery(
+    { organization },
+    {
+      skip: organization ? false : true,
+    }
+  );
 
   const guard = guards.find((g) => g._id === guardId);
 

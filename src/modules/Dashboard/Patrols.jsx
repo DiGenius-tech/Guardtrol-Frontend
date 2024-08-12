@@ -30,7 +30,7 @@ const Patrols = () => {
           endDate: yesterday.toISOString().split("T")[0],
         };
       default:
-        return {};
+        return { startDate: undefined, endDate: undefined };
     }
   };
 
@@ -42,7 +42,7 @@ const Patrols = () => {
     {
       organizationId: organization,
       ...getDateFilter(),
-      status: filterPatrolsType || undefined,
+      ...(filterPatrolsType && { status: filterPatrolsType }),
     },
     {
       skip: !organization,
@@ -100,7 +100,7 @@ const Patrols = () => {
           </div>
         </div>
         <div className="flex">
-          <div className="overflow-x-auto max-h-64 min-h-64 ">
+          <div className="overflow-x-auto w-full max-h-64 min-h-64 ">
             <Table>
               <Table.Head>
                 <Table.HeadCell>Guard Name</Table.HeadCell>

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import RegularButton from "../Sandbox/Buttons/RegularButton";
 import TextInputField from "../Sandbox/InputField/TextInputField";
+import SelectField from "../Sandbox/SelectField/SelectField"; // Assuming you have a SelectField component
 import * as Yup from "yup";
 import { useFormik } from "formik";
 import { patch } from "../../lib/methods";
@@ -15,7 +16,15 @@ const notificationDataSchema = Yup.object().shape({
   whatsappNumber: Yup.string()
     .required("WhatsApp Number is required")
     .min(10, "WhatsApp Number must be at least 10 characters"),
+  notificationFrequency: Yup.string().required(
+    "Notification frequency is required"
+  ),
 });
+
+const notificationFrequencyOptions = [
+  { name: "Daily", value: "daily" },
+  { name: "Weekly", value: "weekly" },
+];
 
 const SettingNotifications = () => {
   const [loading, setLoading] = useState(false);
@@ -30,6 +39,7 @@ const SettingNotifications = () => {
   const formik = useFormik({
     initialValues: {
       whatsappNumber: user?.whatsappNumber || "",
+      notificationFrequency: user?.notificationFrequency || "weekly", // Default to weekly
     },
     validationSchema: notificationDataSchema,
     onSubmit: async (values) => {
@@ -70,9 +80,9 @@ const SettingNotifications = () => {
         <form onSubmit={formik.handleSubmit} className="max-w-3xl">
           <div className="grid grid-cols-12 gap-4 sm:gap-8">
             <div className="hidden sm:block col-span-12 sm:col-span-6">
-              <h3 className="font-bold">WhatsApp Number</h3>
+              <h3 className="font-bold">Notification Settings</h3>
               <p>
-                This number will be used to receive notifications on WhatsApp.
+                Manage your WhatsApp notification settings, including frequency.
               </p>
             </div>
             <div className="col-span-12 sm:col-span-6">
@@ -91,10 +101,32 @@ const SettingNotifications = () => {
                   <div className="mb-3">
                     {formik.touched.whatsappNumber &&
                       formik.errors.whatsappNumber && (
-                        <div className="">
-                          <div className="text-red-500">
-                            {formik.errors.whatsappNumber}
-                          </div>
+                        <div className="text-red-500">
+                          {formik.errors.whatsappNumber}
+                        </div>
+                      )}
+                  </div>
+                </div>
+                <div className="col-span-1">
+                  <SelectField
+                    label="Notification Frequency"
+                    name="notificationFrequency"
+                    optionList={notificationFrequencyOptions}
+                    handleChangeOption={(e) => {
+                      console.log(e.target);
+                      formik.values.notificationFrequency = e.target.value;
+                    }}
+                    {...formik.getFieldProps("notificationFrequency")}
+                    error={
+                      formik.touched.notificationFrequency &&
+                      formik.errors.notificationFrequency
+                    }
+                  />
+                  <div className="mb-3">
+                    {formik.touched.notificationFrequency &&
+                      formik.errors.notificationFrequency && (
+                        <div className="text-red-500">
+                          {formik.errors.notificationFrequency}
                         </div>
                       )}
                   </div>

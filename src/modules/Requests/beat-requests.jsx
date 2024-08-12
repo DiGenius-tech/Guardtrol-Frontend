@@ -16,6 +16,7 @@ import { formatDate, formatDateTime } from "../../utils/dateUtils";
 import { POOLING_TIME } from "../../constants/static";
 import { suspenseHide, suspenseShow } from "../../redux/slice/suspenseSlice";
 import { toast } from "react-toastify";
+import { api } from "../../redux/services/api";
 
 const guardAttributes = {
   idname: "Identification Name",
@@ -42,7 +43,7 @@ const BeatRequestsHistory = () => {
   const dispatch = useDispatch();
 
   const { data: guards, refetch: refetchGuards } = useGetGuardsQuery(
-    organization,
+    { organization },
     {
       skip: organization ? false : true,
       pollingInterval: POOLING_TIME,
@@ -98,6 +99,9 @@ const BeatRequestsHistory = () => {
     await approveModification(id);
     await refetch();
     await refetchGuards();
+    // dispatch(
+    //   api.util.invalidateTags([{ type: "Tickets", _id: ticketResponse.ticket }])
+    // );
     setIsModalOpen(false);
     dispatch(suspenseHide());
     toast("Request Approved");

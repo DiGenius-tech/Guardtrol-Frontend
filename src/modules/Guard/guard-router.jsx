@@ -5,6 +5,7 @@ import InactivePatrolGuards from "./PatrolGuardList/InactivePatrolGuards";
 import AddGuard from "../Onboarding/OnboardGuard/AddGuard";
 import PatrolGuardDetails from "./PatrolGuardDetails";
 import ActivateGuard from "./ActivateGuard";
+import BulkUploadGuards from "./BulkUploadGuards";
 
 const GuardRouter = () => (
   <Routes>
@@ -13,6 +14,7 @@ const GuardRouter = () => (
       <Route path="active" element={<ActivePatrolGuards />} />
       <Route path="inactive" element={<InactivePatrolGuards />} />
       <Route path="addguard" element={<AddGuard onBoarding={false} />} />
+      <Route path="bulkupload" element={<BulkUploadGuards />} />
       <Route path="details/:guardId" element={<PatrolGuardDetails />} />
       <Route path="activate/:guardId" element={<ActivateGuard />} />
     </Route>

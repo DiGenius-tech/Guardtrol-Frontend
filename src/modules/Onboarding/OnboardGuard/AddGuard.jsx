@@ -41,9 +41,12 @@ function AddGuard({ onBoarding = true }) {
   const onboardingGuards = useSelector(selectOnboardingGuards);
 
   const organization = useSelector(selectOrganization);
-  const { data: guards, refetch } = useGetGuardsQuery(organization, {
-    skip: organization ? false : true,
-  });
+  const { data: guards, refetch } = useGetGuardsQuery(
+    { organization },
+    {
+      skip: organization ? false : true,
+    }
+  );
 
   const navigate = useNavigate();
 

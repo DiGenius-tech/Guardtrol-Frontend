@@ -128,9 +128,8 @@ const Checkout = (props) => {
       };
 
       const data = await post(`users/subscribe/${user.userid}`, reqData, token);
-
+      console.log(data);
       if (data && data.message === "subscribed") {
-        console.log(data.subscription);
         dispatch(setOnboardingLevel(0));
         dispatch(suspenseHide());
         navigate("/onboarding/membership/successful");
@@ -151,7 +150,7 @@ const Checkout = (props) => {
       {/* checkout-app works! */}
 
       <h1 className="font-bold text-center text-2xl text-dark-450">Payment</h1>
-      <p className="text-sm text-center mx-auto max-w-[400px] text-dark-400">
+      <p className="text-sm text-center mx-auto max-w-[430px] text-dark-400">
         Your subscription provides access to advanced security software designed
         to help you efficiently manage your security personnel.
       </p>

@@ -6,9 +6,15 @@ import { buildCreateSlice } from "@reduxjs/toolkit";
 export const BeatApi = api.injectEndpoints({
   endpoints: (build) => ({
     getBeats: build.query({
-      query: ({ organization, page = 1, limit = 10, isactive }: any) => ({
+      query: ({
+        organization,
+        page = 1,
+        searchQuery,
+        limit = 10,
+        isactive,
+      }: any) => ({
         url: `beat/getbeats/${organization}`,
-        params: { page, limit },
+        params: { page, limit, searchQuery },
       }),
       transformResponse: (response: any) => ({
         beats: response.beats,
@@ -31,7 +37,7 @@ export const BeatApi = api.injectEndpoints({
     addBeats: build.mutation<TBeat, Partial<any>>({
       query({ organization, beats }) {
         return {
-          url: `beat/addbeat/${organization}`,
+          url: `beat/addbeats/${organization}`,
           method: "POST",
           body: beats,
         };
@@ -106,6 +112,7 @@ export const {
   useDeleteBeatMutation,
   useGetBeatsQuery,
   useUpdateBeatMutation,
+  useAddBeatsMutation,
   useGetErrorProneQuery,
   useAssignGuardToBeatMutation,
 } = BeatApi;

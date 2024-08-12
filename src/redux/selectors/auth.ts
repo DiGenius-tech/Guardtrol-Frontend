@@ -10,6 +10,8 @@ export const selectOrganization = (state: RootState) =>
 export const selectToken = (state: RootState) => selectAuth(state).token;
 
 export const selectUser = (state: RootState) => selectAuth(state).user;
+export const selectSupportUser = (state: RootState) =>
+  selectAuth(state).supportUser;
 
 export const selectIsUserLoggedIn = (state: RootState) =>
   selectAuth(state).isAuthenticated;

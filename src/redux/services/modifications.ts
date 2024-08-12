@@ -3,32 +3,36 @@ import { api } from "./api";
 
 export const modificationsApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    getAllModifications: builder.query({
+    getAllModifications: builder.query<any, any>({
       query: ({ organization, type }) => ({
         url: `modifications/all/${organization}`,
         params: { type },
       }),
-    }),
-    getModifications: builder.query({
-      query: () => "modifications/pending",
+      providesTags: (result = []) => [
+        ...result.map(
+          ({ _id }: any) => ({ type: "Modifications", _id } as const)
+        ),
+        { type: "Modifications" as const, id: "LIST" },
+      ],
     }),
     approveModification: builder.mutation({
       query: (modificationId) => ({
         url: `modifications/approve/${modificationId}`,
         method: "PATCH",
       }),
+      invalidatesTags: [{ type: "Modifications" as const, id: "LIST" }],
     }),
     revertModification: builder.mutation({
       query: (modificationId) => ({
         url: `modifications/revert/${modificationId}`,
         method: "PATCH",
       }),
+      invalidatesTags: [{ type: "Modifications" as const, id: "LIST" }],
     }),
   }),
 });
 
 export const {
-  useGetModificationsQuery,
   useApproveModificationMutation,
   useRevertModificationMutation,
   useGetAllModificationsQuery,

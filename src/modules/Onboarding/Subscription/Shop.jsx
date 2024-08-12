@@ -202,7 +202,7 @@ const Shop = () => {
       <h1 className="font-bold text-center text-2xl text-dark-450">
         Membership
       </h1>
-      <p className="text-sm text-center mx-auto max-w-[400px] text-dark-400">
+      <p className="text-sm text-center mx-auto max-w-[430px] text-dark-400">
         Your subscription provides access to advanced security software designed
         to help you efficiently manage your security personnel.
       </p>
@@ -211,7 +211,7 @@ const Shop = () => {
         <form onSubmit={handleSubmit} method="post">
           <div className="mb-6">
             <TextInputField
-              label="How Many Beat(s)?"
+              label="How many Beat(s)?"
               semibold_label={true}
               type="number"
               id="numberofbeats"
@@ -227,7 +227,7 @@ const Shop = () => {
           </div>
           <div className="mb-6">
             <TextInputField
-              label="How Many Extra Guard(s)?"
+              label="How many Extra Guard(s)?"
               placeholder="₦2,000 per Guard(s)"
               semibold_label={true}
               type="number"

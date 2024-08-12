@@ -30,6 +30,7 @@ function PatrolGuardListToolbar() {
     "/client/patrol-guard/addguard",
     `/client/beats/details/${beatId}/addguard`,
   ];
+  console.log(userRole);
   return (
     <>
       {/* patrol-guard-list-toolbar-app works! */}
@@ -63,20 +64,35 @@ function PatrolGuardListToolbar() {
             </Link>
           </li>
 
-          {userRole?.name === "Owner" && (
-            <li>
-              <Link
-                to={`addguard`}
-                className={
-                  (addguard.includes(location.pathname)
-                    ? `active font-semibold border-primary-500 text-primary-500 hover:border-primary-400 hover:text-primary-400 `
-                    : `border-transparent `) +
-                  `flex items-center justify-center whitespace-nowrap p-4 text-sm font-medium first:ml-0 disabled:cursor-not-allowed disabled:text-gray-400 disabled:dark:text-gray-500 rounded-t-lg border-b-2 text-gray-500 hover:border-gray-300 hover:text-gray-600`
-                }
-              >
-                Add Guard
-              </Link>
-            </li>
+          {(userRole?.name === "Owner" || userRole?.name === "Manager") && (
+            <>
+              <li>
+                <Link
+                  to={`addguard`}
+                  className={
+                    (addguard.includes(location.pathname)
+                      ? `active font-semibold border-primary-500 text-primary-500 hover:border-primary-400 hover:text-primary-400 `
+                      : `border-transparent `) +
+                    `flex items-center justify-center whitespace-nowrap p-4 text-sm font-medium first:ml-0 disabled:cursor-not-allowed disabled:text-gray-400 disabled:dark:text-gray-500 rounded-t-lg border-b-2 text-gray-500 hover:border-gray-300 hover:text-gray-600`
+                  }
+                >
+                  Add Guard
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to={`bulkupload`}
+                  className={
+                    (location.pathname.includes("bulkupload")
+                      ? `active font-semibold border-primary-500 text-primary-500 hover:border-primary-400 hover:text-primary-400 `
+                      : `border-transparent `) +
+                    `flex items-center justify-center whitespace-nowrap p-4 text-sm font-medium first:ml-0 disabled:cursor-not-allowed disabled:text-gray-400 disabled:dark:text-gray-500 rounded-t-lg border-b-2 text-gray-500 hover:border-gray-300 hover:text-gray-600`
+                  }
+                >
+                  Bulk Upload
+                </Link>
+              </li>
+            </>
           )}
         </ul>
       </nav>

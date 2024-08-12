@@ -1,4 +1,4 @@
-import { Card } from "flowbite-react";
+import { Button, Card, Spinner, TextInput } from "flowbite-react";
 import { useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
@@ -22,6 +22,7 @@ import {
 import Pagination from "../../../shared/Pagination/Pagination";
 import Swal from "sweetalert2";
 import { POOLING_TIME } from "../../../constants/static";
+import { useDebouncedValue } from "../../../utils/assetHelper";
 
 const duty_status = {
   OFF_DUTY: 0,
@@ -32,7 +33,10 @@ function InactivePatrolGuards() {
   const user = useSelector(selectUser);
   const token = useSelector(selectToken);
   const dispatch = useDispatch();
+  const [searchQuery, setSearchQuery] = useState("");
+
   const { beatId } = useParams();
+  const debouncedSearchQuery = useDebouncedValue(searchQuery);
 
   const [selectedGuard, setSelectedGuard] = useState(null);
   const [open, setOpen] = useState(false);
@@ -44,11 +48,18 @@ function InactivePatrolGuards() {
     data: guards,
     isLoading,
     refetch: refetchGuards,
+    isFetching,
     error,
-  } = useGetGuardsQuery(organization, {
-    skip: organization ? false : true,
-    pollingInterval: POOLING_TIME,
-  });
+  } = useGetGuardsQuery(
+    {
+      organization,
+      ...(debouncedSearchQuery && { searchQuery: debouncedSearchQuery }),
+    },
+    {
+      skip: organization ? false : true,
+      pollingInterval: POOLING_TIME,
+    }
+  );
   const { data: beatsApiResponse } = useGetBeatsQuery(
     { organization },
     {
@@ -138,6 +149,33 @@ function InactivePatrolGuards() {
 
   return (
     <div div className="relative  pb-40">
+      <div className="flex gap-2 justify-start mb-2">
+        <div className="min-w-40 max-w-64 h-10">
+          <TextInput
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search by Guard Name"
+          />
+        </div>
+        <Button
+          color={"green"}
+          onClick={refetchGuards}
+          className="bg-green-500 text-white px-4 rounded min-w-40 h-10"
+          disabled={isFetching}
+        >
+          {isFetching ? (
+            <Spinner
+              aria-label="Loading spinner"
+              className="mr-2"
+              size="sm"
+              light
+            />
+          ) : (
+            "Refresh"
+          )}
+        </Button>
+      </div>
       <div className="hidden sm:block">
         <Card>
           <PatrolGuardListDesktopView

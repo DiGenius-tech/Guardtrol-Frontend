@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Button, Card, Spinner } from "flowbite-react";
+import { Button, Card, Spinner, TextInput } from "flowbite-react";
 import icon_menu_dots from "../../images/icons/icon-menu-dots.svg";
 import { beat_list } from "./beat-list";
 import BeatsDesktopView from "./BeatsDesktopView";
@@ -19,6 +19,7 @@ import { selectOrganization, selectUser } from "../../redux/selectors/auth";
 import Swal from "sweetalert2";
 import Pagination from "../../shared/Pagination/Pagination";
 import { POOLING_TIME } from "../../constants/static";
+import { useDebouncedValue } from "../../utils/assetHelper";
 
 const BeatList = () => {
   const user = useSelector(selectUser);
@@ -31,6 +32,9 @@ const BeatList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [entriesPerPage, setEntriesPerPage] = useState(5);
   const organization = useSelector(selectOrganization);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const debouncedSearchQuery = useDebouncedValue(searchQuery);
 
   const {
     data: beatsApiResponse,
@@ -39,7 +43,11 @@ const BeatList = () => {
     isFetching,
     error,
   } = useGetBeatsQuery(
-    { organization, page: currentPage },
+    {
+      organization,
+      page: currentPage,
+      ...(debouncedSearchQuery && { searchQuery: debouncedSearchQuery }),
+    },
     {
       skip: organization ? false : true,
       pollingInterval: POOLING_TIME,
@@ -110,9 +118,17 @@ const BeatList = () => {
         <h2 className=" text-2xl font-bold">All Beats</h2>
 
         <div className="flex justify-end items-center gap-3 flex-wrap ">
+          <div className="min-w-40 max-w-64 h-10">
+            <TextInput
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search by Beat Name"
+            />
+          </div>
           <Button
             className="bg-[#008080] text-white px-4 rounded min-w-28 h-10"
-            onClick={() => navigate("add")}
+            onClick={() => navigate("add/create")}
           >
             New Beat
           </Button>
@@ -136,7 +152,7 @@ const BeatList = () => {
       </div>
       <div className="fixed z-10 bottom-8 right-4">
         <Link
-          to={"add"}
+          to={"add/create"}
           className="ml-auto border bg-secondary-500 h-12 w-12 p-2 flex items-center justify-center text-lg font-bold rounded-full text-white shadow-md"
         >
           +
