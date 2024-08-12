@@ -19,7 +19,7 @@ jobs:
       - name: 🔨 Build the project
         run: |
           npm install
-          CI=false npm run build
+          CI=false npm run build-staging
 
       # Sync files via FTP
       - name: 📂 Sync files via FTP
