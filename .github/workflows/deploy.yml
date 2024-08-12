@@ -24,6 +24,8 @@ jobs:
         run: |
           cp .env.staging .env
           npm run build-staging
+          export NODE_OPTIONS=--max-old-space-size=4096
+          CI=false npm run build
         env:
           NODE_ENV: production
 
