@@ -91,7 +91,7 @@ const ClientToolbar = (props) => {
     dispatch(api.util.resetApiState());
     dispatch(logout());
     dispatch(clearNotifications());
-    // navigate("/auth");
+    navigate("/auth");
   };
 
   const pendingCount = modifications?.filter(

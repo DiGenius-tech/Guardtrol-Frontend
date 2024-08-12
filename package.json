@@ -66,7 +66,7 @@
     "dev": "cross-env NODE_ENV=development node setupEnv.js && react-scripts start",
     "start": "cross-env NODE_ENV=production node setupEnv.js && react-scripts start",
     "build": "cross-env NODE_ENV=production node setupEnv.js && react-scripts build",
-    "build-staging": "cross-env NODE_ENV=development node setupEnv.js && react-scripts build",
+    "build-staging": "cross-env NODE_ENV=staging node setupEnv.js && react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "start_mdc_webpack": "webpack serve"
