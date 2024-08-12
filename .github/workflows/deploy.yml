@@ -11,30 +11,25 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout the repository
       - name: 🚚 Get latest code
         uses: actions/checkout@v4
-      # Install dependencies only once
-      - name: 📦 Install dependencies
-        run: |
-          npm install
 
-      # Install dependencies and build the project
+      - name: 📦 Install dependencies
+        run: npm install
+
       - name: 🔨 Build project
         run: |
           cp .env.staging .env
-          npm run build-staging
           export NODE_OPTIONS=--max-old-space-size=4096
-          CI=false npm run build
+          CI=false npm run build-staging
         env:
-          NODE_ENV: production
+          NODE_ENV: production # Or adjust this to match your needs
 
-      # Sync files via FTP
       - name: 📂 Sync files via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./build/ # Update this path according to your project's output directory
+          local-dir: ./build/
           log-level: verbose
