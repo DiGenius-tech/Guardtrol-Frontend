@@ -12,6 +12,7 @@ import BeatPoint from "./BeatPoint";
 import { useGetBeatsQuery } from "../../../redux/services/beats";
 import { useSelector } from "react-redux";
 import { selectOrganization } from "../../../redux/selectors/auth";
+import { POOLING_TIME } from "../../../constants/static";
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -27,6 +28,7 @@ function BeatDetailsHeader() {
     { organization },
     {
       skip: organization ? false : true,
+      pollingInterval: POOLING_TIME,
     }
   );
 

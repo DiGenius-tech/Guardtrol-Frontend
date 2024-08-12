@@ -13,13 +13,13 @@ const RequestLayout = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (userRole.name === "Supervisor") {
+    if (userRole?.name === "Supervisor") {
       navigate("/client");
     }
   }, [userRole]);
   return (
     <>
-      {/* <RequestToolbar /> */}
+      <RequestToolbar />
       <div className="mt-4 px-7">
         <Outlet />
       </div>

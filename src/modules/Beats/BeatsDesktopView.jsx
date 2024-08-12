@@ -5,6 +5,8 @@ import { useSelector } from "react-redux";
 import { selectOrganization, selectUser } from "../../redux/selectors/auth";
 import { useGetPointsQuery } from "../../redux/services/points";
 import { useGetUserOrganizationRoleQuery } from "../../redux/services/role";
+import { formatDateTime } from "../../utils/dateUtils";
+import { formatDistanceToNow } from "date-fns";
 
 function BeatsDesktopView(props) {
   // const sendBeatToUpdate = (beat) => {
@@ -31,35 +33,26 @@ function BeatsDesktopView(props) {
 
       <div className="relative overflow-x-auto">
         <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-          <thead className="text-sm text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+          <thead className="text-sm text-gray-700  bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>
-              <th
-                scope="col"
-                className="px-6 py-3 whitespace-nowrap lowercase first-letter:uppercase"
-              >
+              <th scope="col" className="px-6 py-3 whitespace-nowrap">
                 Name of Beat
               </th>
-              <th
-                scope="col"
-                className="px-6 py-3 whitespace-nowrap lowercase first-letter:uppercase"
-              >
+              <th scope="col" className="px-6 py-3 whitespace-nowrap">
                 Guards
               </th>
-              <th
-                scope="col"
-                className="px-6 py-3 whitespace-nowrap lowercase first-letter:uppercase"
-              >
+              <th scope="col" className="px-6 py-3 whitespace-nowrap">
                 Patrol Points
               </th>
-              <th
-                scope="col"
-                className="px-6 py-3 whitespace-nowrap lowercase first-letter:uppercase"
-              >
+              <th scope="col" className="px-6 py-3 whitespace-nowrap">
                 Status
+              </th>
+              <th scope="col" className="px-6 py-3 whitespace-nowrap">
+                Last Seen
               </th>
               <th
                 scope="col"
-                className="px-6 py-3 whitespace-nowrap lowercase first-letter:uppercase"
+                className="px-6 py-3 whitespace-nowrap lowercase "
               >
                 <span className="sr-only">Action</span>
               </th>
@@ -115,6 +108,13 @@ function BeatsDesktopView(props) {
                       ) : (
                         <span className="text-red-400">Not active</span>
                       )}
+                    </td>
+                    <td className="px-6 py-4">
+                      {beat?.lastseen
+                        ? formatDistanceToNow(beat?.lastseen, {
+                            addSuffix: true,
+                          })
+                        : "-------------"}
                     </td>
                     <td className="px-6 py-4">
                       <Dropdown

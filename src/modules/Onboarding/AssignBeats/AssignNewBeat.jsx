@@ -21,6 +21,7 @@ import {
 import { useGetGuardsQuery } from "../../../redux/services/guards";
 import { setOnboardingLevel } from "../../../redux/slice/onboardingSlice";
 import { selectOnboardingLevel } from "../../../redux/selectors/onboarding";
+import { POOLING_TIME } from "../../../constants/static";
 
 function AssignNewBeat({ isOnboarding = true }) {
   const navigate = useNavigate();
@@ -39,12 +40,17 @@ function AssignNewBeat({ isOnboarding = true }) {
     { organization },
     {
       skip: organization ? false : true,
+      pollingInterval: POOLING_TIME,
     }
   );
 
   const selectedBeat = beatsApiResponse?.beats?.find((b) => b._id === beatId);
 
-  const { data: guards, error: guardsError } = useGetGuardsQuery(organization, {
+  const {
+    data: guards,
+    refetch: refetchGuards,
+    error: guardsError,
+  } = useGetGuardsQuery(organization, {
     skip: organization ? false : true,
   });
 
@@ -153,6 +159,7 @@ function AssignNewBeat({ isOnboarding = true }) {
     // );
     const data = await assignToBeat({ userid: user.userid, body: formData });
     const d = await refetchBeats();
+    await refetchGuards();
     setIsLoading(false);
 
     if (data && d) {
@@ -160,6 +167,8 @@ function AssignNewBeat({ isOnboarding = true }) {
 
       if (isOnboarding) {
         navigate("/onboarding/assign-beats");
+      } else {
+        navigate(-1);
       }
     }
   };
@@ -220,8 +229,11 @@ function AssignNewBeat({ isOnboarding = true }) {
               label="Select Guard"
               semibold_label={true}
               handleChangeOption={handleGuardSelection}
-              optionList={guards?.filter(
-                (g) => !selectedBeat?.guards?.find((gu) => gu._id === g._id)
+              optionList={guards?.filter((g) =>
+                isOnboarding
+                  ? !selectedBeat?.guards?.find((gu) => gu._id === g._id)
+                  : !selectedBeat?.guards?.find((gu) => gu._id === g._id) &&
+                    g.isactive
               )}
             />
           </div>
@@ -255,9 +267,15 @@ function AssignNewBeat({ isOnboarding = true }) {
               Cancel
             </span>
           </div>
-          <p className="text-center mx-auto pt-10 max-w-[400px] text-dark-400">
-            Guard(s) assigned will be automatically active
-          </p>
+          {isOnboarding ? (
+            <p className="text-center mx-auto pt-10 max-w-[400px] text-dark-400">
+              Guard(s) assigned will be automatically active
+            </p>
+          ) : (
+            <p className="text-center mx-auto pt-10 max-w-[400px] text-dark-400">
+              Only avtivated Guard(s) can be assigned to Beat(s)
+            </p>
+          )}
         </form>
       </div>
     </>

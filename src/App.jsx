@@ -27,6 +27,7 @@ import OnboardingLayout from "./modules/Onboarding/onboarding-layout";
 import OnboardingComplete from "./modules/Onboarding/CompleteOnboarding";
 import OnboardingToolbar from "./modules/Onboarding/components/OnboardingToolbar/OnboardingToolbar";
 import OnboardingProgressBar from "./modules/Onboarding/components/OnboardingProgressBar/OnboardingProgressBar";
+import LogOut from "./modules/Auth/pages/LogOut";
 
 function App() {
   const user = useSelector(selectUser);
@@ -68,6 +69,7 @@ function App() {
                   </>
                 ) : user.onboardingcomplete ? (
                   <>
+                    <Route path="/logout" element={<LogOut />} />
                     <Route path="/client/*" element={<ClientRouter />} />
 
                     <Route path="*" element={<Navigate to="/client" />} />
@@ -91,7 +93,11 @@ function App() {
                       </>
                     )}
                     {!user.isOwner && (
-                      <Route path="*" element={<Navigate to="/client" />} />
+                      <>
+                        <Route path="/logout" element={<LogOut />} />
+                        <Route path="/client/*" element={<ClientRouter />} />
+                        <Route path="*" element={<Navigate to="/client/" />} />
+                      </>
                     )}
                   </>
                 )}

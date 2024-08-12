@@ -27,6 +27,7 @@ import { suspenseHide, suspenseShow } from "../../redux/slice/suspenseSlice";
 import { API_BASE_URL, ASSET_URL } from "../../constants/api";
 import axios from "axios";
 import EditPersonalInformation from "./EditGuard/EditPersonalInformation/EditPersonalInformation";
+import { POOLING_TIME } from "../../constants/static";
 
 const PatrolGuardDetails = () => {
   const dispatch = useDispatch();
@@ -49,6 +50,7 @@ const PatrolGuardDetails = () => {
     { organization },
     {
       skip: organization ? false : true,
+      pollingInterval: POOLING_TIME,
     }
   );
 
@@ -182,14 +184,17 @@ const PatrolGuardDetails = () => {
   // };
 
   const verify = async (e) => {
+    dispatch(suspenseShow());
     const statusData = {
       status: !guard?.isactive,
     };
 
     await activateGuard({ guardId, statusData });
+    dispatch(suspenseHide());
     toast("Guard Status Updated");
     await refetchBeats();
     await refetchGuards();
+
     // const data = sendRequest(
     //   `guard/verify/${guardId}`,
     //   "PATCH",

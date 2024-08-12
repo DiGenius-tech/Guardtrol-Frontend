@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import { useGetBeatsQuery } from "../../../redux/services/beats";
 import { useSelector } from "react-redux";
 import { selectOrganization } from "../../../redux/selectors/auth";
+import { POOLING_TIME } from "../../../constants/static";
 
 const ViewBeatInformation = ({ setPage }) => {
   const { beatId } = useParams();
@@ -12,6 +13,7 @@ const ViewBeatInformation = ({ setPage }) => {
     { organization },
     {
       skip: organization ? false : true,
+      pollingInterval: POOLING_TIME,
     }
   );
 

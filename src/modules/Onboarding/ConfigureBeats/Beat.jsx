@@ -13,6 +13,7 @@ import { suspenseHide, suspenseShow } from "../../../redux/slice/suspenseSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { selectOrganization } from "../../../redux/selectors/auth";
 import Swal from "sweetalert2";
+import { POOLING_TIME } from "../../../constants/static";
 
 function Beat({ setBeats, beat, status, handle_edit_beat }) {
   const organization = useSelector(selectOrganization);
@@ -25,6 +26,7 @@ function Beat({ setBeats, beat, status, handle_edit_beat }) {
     { organization },
     {
       skip: organization ? false : true,
+      pollingInterval: POOLING_TIME,
     }
   );
 

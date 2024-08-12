@@ -100,7 +100,7 @@ const Patrols = () => {
           </div>
         </div>
         <div className="flex">
-          <div className="overflow-x-auto max-h-64 min-h-64 w-full">
+          <div className="overflow-x-auto max-h-64 min-h-64 ">
             <Table>
               <Table.Head>
                 <Table.HeadCell>Guard Name</Table.HeadCell>
@@ -152,7 +152,7 @@ const Patrols = () => {
                           </span>
                         </div>
                       </Table.Cell>
-                      <Table.Cell className="text-center">
+                      <Table.Cell className="text-center w-20">
                         {patrolInstance?.starttime &&
                           formattedTime(patrolInstance?.starttime)}
                       </Table.Cell>
@@ -175,7 +175,7 @@ const Patrols = () => {
                           {patrolInstance?.beat?.name}
                         </span>
                       </Table.Cell>
-                      <Table.Cell className="text-center">
+                      <Table.Cell className="text-left">
                         {patrolInstance?.createdAt &&
                           formatDateTime(patrolInstance?.createdAt)}
                       </Table.Cell>

@@ -153,7 +153,7 @@ function GuardList() {
 
             <div className="my-8"></div>
             <RegularButton
-              text="Continue To Assign Beats"
+              text="Continue to assign Beats"
               onClick={() => saveGuard(guards)}
             />
           </>

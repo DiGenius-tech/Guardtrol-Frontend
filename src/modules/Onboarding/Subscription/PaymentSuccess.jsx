@@ -124,7 +124,7 @@ const PaymentSuccess = () => {
           <div className="my-4"></div>
 
           <RegularButton
-            text={"Continue to Configure Beats"}
+            text={"Continue to configure Beats"}
             onClick={() => handleNext()}
           />
         </div>

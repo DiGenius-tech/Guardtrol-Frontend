@@ -1,10 +1,16 @@
 import { Dropdown, Spinner } from "flowbite-react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { ASSET_URL } from "../../../constants/api";
+import { useGetUserOrganizationRoleQuery } from "../../../redux/services/role";
+import { useSelector } from "react-redux";
+import { selectOrganization } from "../../../redux/selectors/auth";
 
 function PatrolGuardListDesktopView(props) {
+  const organization = useSelector(selectOrganization);
   const navigate = useNavigate();
-
+  const { data: userRole } = useGetUserOrganizationRoleQuery(organization, {
+    skip: organization ? false : true,
+  });
   const location = useLocation();
   return (
     <>
@@ -131,13 +137,16 @@ function PatrolGuardListDesktopView(props) {
                                 </button>
                               </Dropdown.Item>
                             )}
-                            <Dropdown.Item>
-                              <button
-                                onClick={() => props.handleDeleteGuard(guard)}
-                              >
-                                Delete Guard
-                              </button>
-                            </Dropdown.Item>
+                            {(userRole?.name === "Owner" ||
+                              userRole?.name === "Manager") && (
+                              <Dropdown.Item>
+                                <button
+                                  onClick={() => props.handleDeleteGuard(guard)}
+                                >
+                                  Delete Guard
+                                </button>
+                              </Dropdown.Item>
+                            )}
                             {/* <Dropdown.Item>Assign guard to beat</Dropdown.Item> */}
                           </Dropdown>
                         </td>

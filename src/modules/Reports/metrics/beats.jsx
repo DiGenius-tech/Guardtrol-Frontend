@@ -6,6 +6,7 @@ import Pagination from "../../../shared/Pagination/Pagination";
 import { useSelector } from "react-redux";
 import { selectOrganization } from "../../../redux/selectors/auth";
 import { Spinner } from "flowbite-react";
+import { POOLING_TIME } from "../../../constants/static";
 
 const BeatsMetrics = () => {
   const organization = useSelector(selectOrganization);
@@ -13,10 +14,11 @@ const BeatsMetrics = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [entriesPerPage, setEntriesPerPage] = useState(10);
 
-  const { data: beatsApiResponse, isFetching } = useGetBeatsQuery(
+  const { data: beatsApiResponse, isLoading } = useGetBeatsQuery(
     { organization: organization, page: currentPage, limit: entriesPerPage },
     {
       skip: organization ? false : true,
+      pollingInterval: POOLING_TIME,
     }
   );
 
@@ -51,7 +53,7 @@ const BeatsMetrics = () => {
 
   return (
     <div className="container mx-auto">
-      {!isFetching && beatsApiResponse.beats && (
+      {!isLoading && beatsApiResponse.beats && (
         <>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
             <section className="mb-6">
@@ -129,7 +131,7 @@ const BeatsMetrics = () => {
           </section>{" "}
         </>
       )}
-      {isFetching && (
+      {isLoading && (
         <div className="bg-white dark:border-gray-700 dark:bg-gray-800">
           <div className="whitespace-nowrap  font-medium  text-center text-gray-900 dark:text-white">
             <div className="w-full h-full py-11 justify-center flex items-center">

@@ -291,7 +291,7 @@ const Shop = () => {
             disabled={isLoading}
             isLoading={isLoading}
             text={
-              "Continue To Pay ₦" +
+              "Continue to Pay ₦" +
               (selectedPlan
                 ? `${formatNumberWithCommas(
                     membership_card_data.filter((data) => {

@@ -11,7 +11,7 @@ import {
   selectToken,
   selectUser,
 } from "../../redux/selectors/auth";
-import { BEAT_PRICE, GUARD_PRICE } from "../../constants/static";
+import { BEAT_PRICE, GUARD_PRICE, POOLING_TIME } from "../../constants/static";
 import { Label, Select } from "flowbite-react";
 import {
   selectFwConfig,
@@ -50,6 +50,7 @@ const UpdateSubscription = () => {
     organization,
     {
       skip: organization ? false : true,
+      pollingInterval: POOLING_TIME,
     }
   );
   const [updateSubscription] = useUpdateSubscriptionMutation();

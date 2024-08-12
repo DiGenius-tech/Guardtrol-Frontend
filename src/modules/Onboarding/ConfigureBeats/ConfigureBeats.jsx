@@ -14,7 +14,7 @@ const ConfigureBeats = () => {
         Configure Beat
       </h1>
       <p className="text-center mx-auto max-w-[400px] text-dark-400">
-        Add at least one Beat to Continue
+        Add at least one Beat to continue
       </p>
       <div className="mt-8"></div>
 

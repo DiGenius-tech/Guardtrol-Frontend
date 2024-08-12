@@ -25,7 +25,7 @@ import {
   useGetAllMySubscriptionsQuery,
   useGetSubscriptionQuery,
 } from "../../redux/services/subscriptions";
-import { BEAT_PRICE, GUARD_PRICE } from "../../constants/static";
+import { BEAT_PRICE, GUARD_PRICE, POOLING_TIME } from "../../constants/static";
 import axios from "axios";
 
 // Constants for pricing
@@ -67,6 +67,7 @@ const RenewSubscription = ({ openModal, setRenewalModal }) => {
     { organization },
     {
       skip: organization ? false : true,
+      pollingInterval: POOLING_TIME,
     }
   );
 

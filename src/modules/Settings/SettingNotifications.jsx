@@ -9,6 +9,7 @@ import { selectToken, selectUser } from "../../redux/selectors/auth";
 import { errorHandler } from "../../lib/errorHandler";
 import { suspenseHide, suspenseShow } from "../../redux/slice/suspenseSlice";
 import { updateUser } from "../../redux/slice/authSlice";
+import { useGetUserQuery } from "../../redux/services/user";
 
 const notificationDataSchema = Yup.object().shape({
   whatsappNumber: Yup.string()
@@ -21,6 +22,10 @@ const SettingNotifications = () => {
   const user = useSelector(selectUser);
   const dispatch = useDispatch();
   const token = useSelector(selectToken);
+
+  const { data: userData, refetch } = useGetUserQuery(user._id, {
+    skip: user?._id ? false : true,
+  });
 
   const formik = useFormik({
     initialValues: {
@@ -50,8 +55,11 @@ const SettingNotifications = () => {
     );
 
     if (data) {
-      console.log(data);
-      dispatch(updateUser(data));
+      await refetch();
+
+      if (userData) {
+        dispatch(updateUser(userData));
+      }
     }
     dispatch(suspenseHide());
   };

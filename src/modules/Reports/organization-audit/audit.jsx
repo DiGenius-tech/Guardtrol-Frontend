@@ -20,17 +20,20 @@ const OrganizationAudits = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [selectedBeat, setSelectedBeat] = useState("");
+  const [selectedBeatData, setselectedBeatData] = useState();
 
   const { data: beatsApiResponse } = useGetBeatsQuery(
     { organization: organization },
     {
       skip: organization ? false : true,
+      pollingInterval: POOLING_TIME,
     }
   );
   const {
     data: auditsApiResponse,
     refetch,
     isFetching,
+    isLoading,
   } = useFetchTimelineLogsQuery(
     {
       organizationId: organization,
@@ -75,17 +78,19 @@ const OrganizationAudits = () => {
           startDate && endDate ? startDate + " - " + endDate : "All"
         } `,
       ],
-      [`Selected Beat: ${selectedBeat || "All Beats"}`],
+      [`Selected Beat: ${selectedBeatData?.name || "All Beats"}`],
       [],
-      columns.map((col) => col.header),
+      columns?.map((col) => col.header),
     ];
 
-    const dataRows = data.map((audit) => [
-      audit.date,
-      audit.message,
-      audit.type,
-      audit.beat?.name,
-    ]);
+    const dataRows = data
+      ? data?.map((audit) => [
+          audit.date,
+          audit.message,
+          audit.type,
+          audit.beat?.name,
+        ])
+      : [];
 
     const combinedData = [...headerData, ...dataRows];
 
@@ -139,7 +144,16 @@ const OrganizationAudits = () => {
         />
         <select
           value={selectedBeat}
-          onChange={(e) => setSelectedBeat(e.target.value)}
+          onChange={(e) => {
+            const selectedBeatId = e.target.value;
+            setSelectedBeat(selectedBeatId);
+            const selectedBeat = beatsApiResponse?.beats?.find(
+              (beat) => beat._id === selectedBeatId
+            );
+
+            console.log(selectedBeat);
+            setselectedBeatData(selectedBeat);
+          }}
           className="border px-2 border-gray-300 rounded-md min-w-40 h-10 sm:w-[48%] md:w-auto"
         >
           <option value="">Select Beat</option>
@@ -185,7 +199,7 @@ const OrganizationAudits = () => {
             <Table.HeadCell>Type</Table.HeadCell>
           </Table.Head>
           <Table.Body>
-            {isFetching && (
+            {isLoading && (
               <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
                 <Table.Cell
                   colSpan={3}
@@ -200,7 +214,7 @@ const OrganizationAudits = () => {
                 </Table.Cell>
               </Table.Row>
             )}
-            {!isFetching &&
+            {!isLoading &&
               (!auditsApiResponse?.audits ||
                 auditsApiResponse?.audits.length === 0) && (
                 <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
@@ -212,7 +226,7 @@ const OrganizationAudits = () => {
                   </Table.Cell>
                 </Table.Row>
               )}
-            {!isFetching &&
+            {!isLoading &&
               auditsApiResponse?.audits?.map((audit) => (
                 <Table.Row key={audit._id}>
                   <Table.Cell>{formatDateTime(audit.createdAt)}</Table.Cell>

@@ -9,6 +9,7 @@ import SettingsRouter from "../Settings/settings-router";
 import Dashboard from "../Dashboard/Dashboard";
 import PageNotFound from "../../PageNotFound/PageNotFound";
 import ClientLayout from "./ClientLayout";
+import LogOut from "../Auth/pages/LogOut";
 
 const ClientRouter = () => (
   <Routes>
@@ -21,6 +22,7 @@ const ClientRouter = () => (
       <Route path="loading-spinner" element={<LoadingSpinner />} />
       <Route path="reports/*" element={<ReportRouter />} />
       <Route path="requests/*" element={<RequestRouter />} />
+      <Route path="logout/*" element={<LogOut />} />
       <Route path="invoice" element={<Invoice />} />
       <Route path="*" element={<PageNotFound />} />
     </Route>

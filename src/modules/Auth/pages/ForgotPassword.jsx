@@ -50,20 +50,21 @@ const ForgotPassword = () => {
         e.stopPropagation();
       } else {
         // Form is valid, handle submission
-        dispatch(suspenseShow());
-
-        try {
-          const data = await post(`users/forgotpassword`, formData);
-
-          if (null != data) {
-            setEmailSent(true);
-          }
-        } catch (err) {
-          console.log(err);
-        } finally {
-          dispatch(suspenseHide());
-        }
       }
+    }
+
+    try {
+      dispatch(suspenseShow());
+      const data = await post(`users/forgotpassword`, formData);
+
+      if (null != data) {
+        setEmailSent(true);
+        toast("Password reset link has been sent");
+      }
+    } catch (err) {
+      console.log(err);
+    } finally {
+      dispatch(suspenseHide());
     }
   };
 

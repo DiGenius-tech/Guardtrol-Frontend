@@ -21,6 +21,7 @@ const PatrolHistory = () => {
   const [selectedBeat, setSelectedBeat] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [entriesPerPage, setEntriesPerPage] = useState(5);
+  const [selectedBeatData, setselectedBeatData] = useState();
 
   const { data: beatsApiResponse } = useGetBeatsQuery(
     { organization: organization },
@@ -33,12 +34,13 @@ const PatrolHistory = () => {
     data: patrolInstancesApiResponse,
     refetch,
     isFetching,
+    isLoading,
   } = useFetchPatrolInstancesQuery(
     {
       organizationId: organization,
       startDate: startDate ? new Date(startDate).toISOString() : undefined,
       endDate: endDate ? new Date(endDate).toISOString() : undefined,
-      searchQuery: searchQuery ? searchQuery : undefined,
+      guardName: searchQuery ? searchQuery : undefined,
       beatId: selectedBeat ? selectedBeat : undefined,
       page: currentPage,
       limit: entriesPerPage,
@@ -66,7 +68,7 @@ const PatrolHistory = () => {
           startDate && endDate ? `${startDate} - ${endDate}` : "All"
         }`,
       ],
-      [`Selected Beat: ${selectedBeat || "All Beats"}`],
+      [`Selected Beat: ${selectedBeatData?.name || "All Beats"}`],
       [],
       [
         "Patrol",
@@ -110,8 +112,16 @@ const PatrolHistory = () => {
           />
           <select
             value={selectedBeat}
-            onChange={(e) => setSelectedBeat(e.target.value)}
-            className="border px-2 min-w-40 h-10 border-gray-300 rounded-md m-0 w-full sm:w-[48%] md:w-auto"
+            onChange={(e) => {
+              const selectedBeatId = e.target.value;
+              setSelectedBeat(selectedBeatId);
+              const selectedBeat = beatsApiResponse?.beats?.find(
+                (beat) => beat._id === selectedBeatId
+              );
+
+              setselectedBeatData(selectedBeat);
+            }}
+            className="border px-2 border-gray-300 rounded-md min-w-40 h-10 sm:w-[48%] md:w-auto"
           >
             <option value="">Select Beat</option>
             {beatsApiResponse?.beats?.map((beat) => (
@@ -158,15 +168,15 @@ const PatrolHistory = () => {
         <Table striped>
           <Table.Head>
             <Table.HeadCell>Patrol</Table.HeadCell>
-            <Table.HeadCell>Beat</Table.HeadCell>
+            <Table.HeadCell className=" min-w-40">Beat</Table.HeadCell>
             <Table.HeadCell>Guard</Table.HeadCell>
             <Table.HeadCell>Abandoned By</Table.HeadCell>
             <Table.HeadCell>Status</Table.HeadCell>
-            <Table.HeadCell className="w-52">Start Time</Table.HeadCell>
-            <Table.HeadCell className="w-52">End Time</Table.HeadCell>
+            <Table.HeadCell className="min-w-60">Start Time</Table.HeadCell>
+            <Table.HeadCell className=" min-w-60">End Time</Table.HeadCell>
           </Table.Head>
           <Table.Body className="divide-y">
-            {isFetching && (
+            {isLoading && (
               <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
                 <Table.Cell
                   colSpan={7}
@@ -181,18 +191,17 @@ const PatrolHistory = () => {
                 </Table.Cell>
               </Table.Row>
             )}
-            {!isFetching &&
-              patrolInstancesApiResponse.patrols?.length === 0 && (
-                <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                  <Table.Cell
-                    colSpan={9}
-                    className="whitespace-nowrap font-medium text-center text-gray-900 dark:text-white"
-                  >
-                    No History
-                  </Table.Cell>
-                </Table.Row>
-              )}
-            {!isFetching &&
+            {!isLoading && patrolInstancesApiResponse.patrols?.length === 0 && (
+              <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
+                <Table.Cell
+                  colSpan={9}
+                  className="whitespace-nowrap font-medium text-center text-gray-900 dark:text-white"
+                >
+                  No History
+                </Table.Cell>
+              </Table.Row>
+            )}
+            {!isLoading &&
               patrolInstancesApiResponse.patrols?.map((instance, index) => (
                 <Table.Row
                   key={index}

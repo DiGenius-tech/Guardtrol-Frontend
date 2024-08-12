@@ -7,7 +7,7 @@ import { api } from "../redux/services/api";
 import { persistor } from "../redux/store";
 import { API_BASE_URL, ASSET_URL } from "../constants/api";
 import { clientModuleList } from "../modules/Client/client.module-list";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useGetAllModificationsQuery } from "../redux/services/modifications";
 import { FaBell } from "react-icons/fa";
 import brandLogo from "../images/brand-logo.svg";
@@ -194,7 +194,7 @@ const ClientToolbar = (props) => {
                   <button
                     onClick={handleProfileDropdownToggle}
                     type="button"
-                    className="relative w-fit h-fit flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                    className="relative w-fit h-fit flex rounded-full  bg-white text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
                     id="user-menu-button"
                     aria-expanded="false"
                     aria-haspopup="true"
@@ -232,26 +232,28 @@ const ClientToolbar = (props) => {
                   aria-labelledby="user-menu-button"
                   tabIndex="-1"
                 >
-                  <a
-                    href="#"
+                  <Link
                     className="block px-4 py-2 text-sm text-gray-700"
                     role="menuitem"
                     tabIndex="-1"
                     id="user-menu-item-0"
-                    onClick={() => navigate("/client/settings/billing")}
+                    to="/client/settings/personal-information"
                   >
                     Your Profile
-                  </a>
-                  <a
-                    href="#"
-                    className="block px-4 py-2 text-sm text-gray-700"
-                    role="menuitem"
-                    tabIndex="-1"
-                    id="user-menu-item-1"
-                    onClick={() => navigate("/client/settings")}
-                  >
-                    Settings
-                  </a>
+                  </Link>
+                  {(userRole?.name === "Owner" ||
+                    userRole?.name === "Manager") && (
+                    <a
+                      href="#"
+                      className="block px-4 py-2 text-sm text-gray-700"
+                      role="menuitem"
+                      tabIndex="-1"
+                      id="user-menu-item-1"
+                      onClick={() => navigate("/client/settings")}
+                    >
+                      Settings
+                    </a>
+                  )}
                   <a
                     href="#"
                     onClick={handleLogout}

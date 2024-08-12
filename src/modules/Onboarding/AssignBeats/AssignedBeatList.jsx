@@ -22,6 +22,7 @@ import axios from "axios";
 import { API_BASE_URL } from "../../../constants/api";
 import { setOnboardingLevel } from "../../../redux/slice/onboardingSlice";
 import { useGetSubscriptionQuery } from "../../../redux/services/subscriptions";
+import { POOLING_TIME } from "../../../constants/static";
 // const guardList = [
 //   {
 //     id: 1,
@@ -158,7 +159,7 @@ function AssignedBeatList(props) {
   } = useGetBeatsQuery(
     { organization },
     {
-      skip: organization ? false : true,
+      skip: organization ? false : true,    pollingInterval: POOLING_TIME,
     }
   );
 
@@ -172,6 +173,8 @@ function AssignedBeatList(props) {
 
   const finish = async () => {
     try {
+      dispatch(suspenseShow());
+
       setisFinishLoading(true);
       const check = beatsApiResponse?.beats?.some((beat) => {
         return beat.guards.length > 0;
@@ -201,6 +204,8 @@ function AssignedBeatList(props) {
       // dispatch(setOnboardingLevel(4));
     } catch (error) {
     } finally {
+      dispatch(suspenseHide());
+
       setisFinishLoading(false);
     }
   };

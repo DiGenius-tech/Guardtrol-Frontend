@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { selectUser } from "../../redux/selectors/auth";
 import { useGetPointsQuery } from "../../redux/services/points";
+import { formatDateTime } from "../../utils/dateUtils";
 
 function BeatsMobileView(props) {
   const navigate = useNavigate();
@@ -48,6 +49,12 @@ function BeatsMobileView(props) {
                 className="px-6 py-3 whitespace-nowrap lowercase first-letter:uppercase"
               >
                 Status
+              </th>
+              <th
+                scope="col"
+                className="px-6 py-3 whitespace-nowrap lowercase first-letter:uppercase"
+              >
+                Last Seen
               </th>
               <th
                 scope="col"
@@ -107,6 +114,11 @@ function BeatsMobileView(props) {
                       ) : (
                         <span className="text-red-400">Not active</span>
                       )}
+                    </td>
+                    <td className="px-6 py-4">
+                      {beat?.lastseen
+                        ? formatDateTime(beat?.lastseen)
+                        : "-------------"}
                     </td>
                     <td className="px-6 py-4">
                       <Dropdown

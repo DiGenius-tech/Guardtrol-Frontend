@@ -31,7 +31,6 @@ const LogOut = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    console.log("LOGOUT");
     persistor.purge();
     dispatch(api.util.resetApiState());
     dispatch(logout());

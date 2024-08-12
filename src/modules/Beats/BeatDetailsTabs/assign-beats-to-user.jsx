@@ -4,12 +4,14 @@ import MultiSelectField from "../../Sandbox/SelectField/MultiSelectField";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 import { selectOrganization } from "../../../redux/selectors/auth";
+import { useGetGuardsQuery } from "../../../redux/services/guards";
+import { useParams } from "react-router-dom";
 import { POOLING_TIME } from "../../../constants/static";
 
-const AssignBeatsToUser = ({ selectedBeats, setSelectedBeats }) => {
+const AssignGuardToPatrol = ({ selectedGuards, setSelectedGuards }) => {
   const organization = useSelector(selectOrganization);
-
-  const { data: beatsApiResponse, error } = useGetBeatsQuery(
+  const { beatId } = useParams();
+  const { data: beatsApiResponse, refetch: refetchBeats } = useGetBeatsQuery(
     { organization },
     {
       skip: organization ? false : true,
@@ -17,37 +19,37 @@ const AssignBeatsToUser = ({ selectedBeats, setSelectedBeats }) => {
     }
   );
 
+  const [selectedBeat, setSelectedBeat] = useState({});
+
   useEffect(() => {
-    if (error) {
-      toast.error("Failed to fetch beats");
-    }
-  }, [error]);
+    setSelectedBeat(beatsApiResponse?.beats?.find((b) => b?._id === beatId));
+  }, [beatsApiResponse]);
 
   const handleBeatSelection = (selectedOptions) => {
-    setSelectedBeats(selectedOptions);
+    setSelectedGuards(selectedOptions);
   };
 
   return (
     <div className="mb-6">
       <MultiSelectField
-        selectedOptions={selectedBeats}
-        setSelectedOptions={setSelectedBeats}
-        value={selectedBeats}
-        name="beats"
+        selectedOptions={selectedGuards}
+        setSelectedOptions={setSelectedGuards}
+        value={selectedGuards}
+        name="guars"
         multiple={true}
         id="beats"
         multipleSelect={true}
-        label="Select Beats"
+        label="Select Guards"
         semibold_label={true}
         handleChangeOption={handleBeatSelection}
-        optionList={beatsApiResponse?.beats?.map((beat) => ({
-          value: beat?._id,
-          _id: beat?._id,
-          name: beat?.name,
+        optionList={selectedBeat?.guards?.map((beat) => ({
+          value: beat._id,
+          _id: beat._id,
+          name: beat.name,
         }))}
       />
     </div>
   );
 };
 
-export default AssignBeatsToUser;
+export default AssignGuardToPatrol;

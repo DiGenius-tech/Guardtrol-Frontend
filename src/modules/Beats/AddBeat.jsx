@@ -22,6 +22,7 @@ import {
   useGetBeatsQuery,
 } from "../../redux/services/beats";
 import Swal from "sweetalert2";
+import { POOLING_TIME } from "../../constants/static";
 
 const AddBeat = () => {
   const [validationErrors, setValidationErrors] = useState({});
@@ -53,6 +54,7 @@ const AddBeat = () => {
     { organization },
     {
       skip: organization ? false : true,
+      pollingInterval: POOLING_TIME,
     }
   );
   useEffect(() => {

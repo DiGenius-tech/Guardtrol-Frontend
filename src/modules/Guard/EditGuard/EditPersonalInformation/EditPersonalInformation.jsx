@@ -4,7 +4,8 @@ import SelectField from "../../../Sandbox/SelectField/SelectField";
 import RegularButton from "../../../Sandbox/Buttons/RegularButton";
 import { toast } from "react-toastify";
 import useHttpRequest from "../../../../shared/Hooks/HttpRequestHook";
-
+import * as Yup from "yup";
+import { useFormik } from "formik";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import {
@@ -13,6 +14,7 @@ import {
 } from "../../../../redux/selectors/auth";
 import { patch } from "../../../../lib/methods";
 import { useGetGuardsQuery } from "../../../../redux/services/guards";
+import { POOLING_TIME } from "../../../../constants/static";
 
 const sexOptions = [
   {
@@ -63,29 +65,75 @@ const stateOfOriginList = [
   { name: "Zamfara", value: "zamfara" },
   { name: "FCT", value: "fct" }, // Federal Capital Territory
 ];
+const validationSchema = Yup.object({
+  name: Yup.string().required("Name is required"),
+  dob: Yup.date().required("Date of Birth is required"),
+  height: Yup.number()
+    .required("Height is required")
+    .min(1, "Height must be greater than 0"),
+  sex: Yup.string().required("Sex is required"),
+  state: Yup.string().required("State of Origin is required"),
+  altphone: Yup.string().matches(
+    /^[0-9]{10,14}$/,
+    "Alternate Phone must be a valid phone number"
+  ),
+});
+
 const EditPersonalInformation = (props) => {
+  console.log(props.guard?.personalinformation);
   const { guardId } = useParams();
   const organization = useSelector(selectOrganization);
   const { data: guards, refetch } = useGetGuardsQuery(organization, {
     skip: organization ? false : true,
+    pollingInterval: POOLING_TIME,
   });
-
-  const { user, token } = useSelector(selectAuth);
+  const { token } = useSelector(selectAuth);
   const [loading, setLoading] = useState(false);
-  const { isLoading, error, responseData, sendRequest } = useHttpRequest();
-  const [validationErrors, setValidationErrors] = useState({});
 
-  const [formData, setFormData] = useState({
-    name: props.guard?.name || "",
-    height: props.guard?.personalinformation?.height || "",
-    dob: props.guard?.personalinformation?.dob || "",
-    sex: props.guard?.personalinformation?.sex || "",
-    altphone: props.guard?.personalinformation?.altphone || "",
-    state: props.guard?.personalinformation?.state || "",
+  const formik = useFormik({
+    initialValues: {
+      name: props.guard?.name || "",
+      height: props.guard?.personalinformation?.height || "",
+      dob: props.guard?.personalinformation?.dob || "",
+      sex: props.guard?.personalinformation?.sex || "",
+      altphone: props.guard?.personalinformation?.altphone || "",
+      state: props.guard?.personalinformation?.state || "",
+    },
+    validationSchema,
+    onSubmit: async (values) => {
+      setLoading(true);
+      try {
+        const guardData = {
+          name: values.name,
+          personalinformation: {
+            height: values.height,
+            dob: values.dob,
+            sex: values.sex,
+            altphone: values.altphone,
+            state: values.state,
+          },
+        };
+
+        const data = await patch(
+          `guard/personalinformation/${guardId}`,
+          guardData,
+          token
+        );
+
+        if (data.status) {
+          refetch();
+          toast("Personal Information Updated");
+        }
+      } catch (error) {
+        toast.error("Error updating personal information");
+      } finally {
+        setLoading(false);
+      }
+    },
   });
 
   useEffect(() => {
-    setFormData({
+    formik.setValues({
       name: props.guard?.name,
       height: props.guard?.personalinformation?.height,
       dob: props.guard?.personalinformation?.dob,
@@ -93,70 +141,11 @@ const EditPersonalInformation = (props) => {
       altphone: props.guard?.personalinformation?.altphone,
       state: props.guard?.personalinformation?.state,
     });
-  }, [props]);
-
-  useEffect(() => {
-    if (error) {
-      toast.error(error);
-    }
-  }, [error]);
-
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-    setValidationErrors({ ...validationErrors, [e.target.name]: "" });
-    // console.log("formData: ", formData)
-  };
-
-  const handleSelectChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-    setValidationErrors({ ...validationErrors, [e.target.name]: "" });
-  };
-
-  const save = async (e) => {
-    setLoading(true);
-    try {
-      e.preventDefault();
-      if (!formData.sex) {
-        toast.warn("select a valid gender");
-        return;
-      }
-      if (!formData.state) {
-        toast.warn("select a valid state");
-        return;
-      }
-      const guardData = {
-        name: formData.name,
-        personalinformation: {
-          height: formData?.height,
-          dob: formData.dob,
-          sex: formData.sex,
-          altphone: formData.altphone,
-          state: formData.state,
-        },
-      };
-
-      const data = await patch(
-        `guard/personalinformation/${guardId}`,
-        guardData,
-        token
-      ).then((data) => {
-        if (data.status) {
-          refetch();
-          toast("Personal Information Updated");
-          // props.setGuard({});
-        }
-      });
-    } catch (error) {
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, [props.guard]);
 
   return (
     <>
-      {/* edit-personal-information-app works! */}
-
-      <form action="" onSubmit={save}>
+      <form onSubmit={formik.handleSubmit}>
         <div className="mx-auto max-w-xl">
           <fieldset>
             <legend className="text-xl font-semibold mb-8 text-center">
@@ -172,12 +161,11 @@ const EditPersonalInformation = (props) => {
                   placeholder="Enter name"
                   required="required"
                   name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  error={validationErrors["name"]}
+                  value={formik.values.name}
+                  onChange={formik.handleChange}
+                  error={formik.touched.name && formik.errors.name}
                 />
               </div>
-
               <div className="col-span-12 sm:col-span-6">
                 <TextInputField
                   label="Date of Birth"
@@ -186,9 +174,9 @@ const EditPersonalInformation = (props) => {
                   id="dob"
                   required="required"
                   name="dob"
-                  value={formData.dob}
-                  onChange={handleChange}
-                  error={validationErrors["dob"]}
+                  value={formik.values.dob}
+                  onChange={formik.handleChange}
+                  error={formik.touched.dob && formik.errors.dob}
                 />
               </div>
               <div className="col-span-12 sm:col-span-6">
@@ -200,35 +188,37 @@ const EditPersonalInformation = (props) => {
                   id="height"
                   required="required"
                   name="height"
-                  value={formData.height}
-                  onChange={handleChange}
-                  error={validationErrors["height"]}
+                  value={formik.values.height}
+                  onChange={formik.handleChange}
+                  error={formik.touched.height && formik.errors.height}
                 />
               </div>
               <div className="col-span-12 sm:col-span-6">
                 <SelectField
                   name="sex"
                   id="sex"
-                  defaultValue={props.guard?.personalinformation?.sex || ""}
-                  value={formData?.sex || ""}
+                  value={formik.values.sex}
+                  defaultValue={formik.values.sex}
                   label="Sex"
                   semibold_label={true}
-                  handleChangeOption={handleSelectChange}
+                  handleChangeOption={formik.handleChange}
                   optionList={sexOptions}
                   multipleSelect={false}
+                  error={formik.touched.sex && formik.errors.sex}
                 />
               </div>
               <div className="col-span-12 sm:col-span-6">
                 <SelectField
-                  value={formData?.state || ""}
                   name="state"
                   id="state"
-                  defaultValue={props.guard?.personalinformation?.state || ""}
+                  defaultValue={formik.values.state}
+                  value={formik.values.state}
                   label="State of Origin"
                   semibold_label={true}
-                  handleChangeOption={handleSelectChange}
+                  handleChangeOption={formik.handleChange}
                   optionList={stateOfOriginList}
                   multipleSelect={false}
+                  error={formik.touched.state && formik.errors.state}
                 />
               </div>
               <div className="col-span-6">
@@ -239,9 +229,9 @@ const EditPersonalInformation = (props) => {
                   placeholder="Enter alternate phone"
                   id="altphone"
                   name="altphone"
-                  value={formData.altphone}
-                  onChange={handleChange}
-                  error={validationErrors["altphone"]}
+                  value={formik.values.altphone}
+                  onChange={formik.handleChange}
+                  error={formik.touched.altphone && formik.errors.altphone}
                 />
               </div>
             </div>
@@ -256,5 +246,4 @@ const EditPersonalInformation = (props) => {
     </>
   );
 };
-
 export default EditPersonalInformation;

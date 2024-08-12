@@ -16,6 +16,10 @@ import { useFetchTimelineLogsQuery } from "../../redux/services/timelinelogs";
 import { useGetBeatsQuery } from "../../redux/services/beats";
 import { useGetGuardsQuery } from "../../redux/services/guards";
 import { TimelineLogs } from "./TimelineLogs";
+import RenewSubscription from "../Settings/RenewSubscription";
+import { useGetSubscriptionQuery } from "../../redux/services/subscriptions";
+import AuthToolbar from "../Auth/AuthToolbar";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
   const user = useSelector(selectUser);
@@ -74,14 +78,51 @@ const Dashboard = () => {
       skip: !organization,
     }
   );
+  const {
+    data: subscription,
+    isError,
+    isFetching: isFetchingActiveSubscription,
+    refetch: refetchActiveSubscription,
+    isUninitialized,
+  } = useGetSubscriptionQuery(organization, { skip: token ? false : true });
 
   const formatDate = (date) => format(new Date(date), "yyyy-MM-dd HH:mm:ss");
-
+  const location = useLocation();
+  const navigate = useNavigate();
   // useEffect(() => {
   //   if (organization) {
   //     refetch();
   //   }
   // }, [organization, filterStatus, filterDate, refetch]);
+
+  // if (isFetchingActiveSubscription) {
+  //   return (
+  //     <div className="absolute top-0 right-0 z-40 bg-white flex w-full h-full justify-center items-center">
+  //       <Spinner size={"xl"} color="success" />
+  //     </div>
+  //   );
+  // }
+
+  // useEffect(() => {
+  //   if (!subscription && !isFetchingActiveSubscription) {
+  //     navigate("/client/settings/billing");
+  //   }
+  // }, [location]);
+
+  // if (!subscription && !isFetchingActiveSubscription) {
+  //   return (
+  //     <div className=" absolute top-0 right-0 z-40 bg-white w-full h-full justify-center items-center">
+  //       <div className=" w-full relative  top-24">
+  //         <RenewSubscription
+  //           isExpired={true}
+  //           subscription={subscription}
+  //           openModal={true}
+  //           setRenewalModal={() => null}
+  //         />{" "}
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   const renderLogs = () => {
     if (!logsAPiResponse?.logs?.length) {

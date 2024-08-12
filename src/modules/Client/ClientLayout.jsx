@@ -1,21 +1,75 @@
 import React, { useEffect, useState } from "react";
-import { Outlet, useLocation } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import brandLogo from "../../images/brand-logo.svg";
 import "./Client.scss";
 import { HiX } from "react-icons/hi";
 import ClientToolbar from "../../components/ClientToolbar";
 import ClientSidebar from "../../components/ClientSidebar";
+import { useGetSubscriptionQuery } from "../../redux/services/subscriptions";
+import { selectOrganization, selectToken } from "../../redux/selectors/auth";
+import { useDispatch, useSelector } from "react-redux";
+import RenewSubscription from "../Settings/RenewSubscription";
+import { persistor } from "../../redux/store";
+import { api } from "../../redux/services/api";
+import { logout } from "../../redux/slice/authSlice";
+import { Spinner } from "flowbite-react";
 
 const Client = () => {
   const [isOpenSidenav, setIsOpenSidenav] = useState(false);
+  const navigate = useNavigate();
+  const organization = useSelector(selectOrganization);
+  const token = useSelector(selectToken);
+  const dispatch = useDispatch();
+
+  const {
+    data: subscription,
+    isError,
+    isFetching: isFetchingActiveSubscription,
+    refetch: refetchActiveSubscription,
+    isUninitialized,
+  } = useGetSubscriptionQuery(organization, { skip: token ? false : true });
+
   let location = useLocation();
   const handleOpenSidenav = () => {
     setIsOpenSidenav(!isOpenSidenav);
   };
 
-  useEffect(() => {
-    setIsOpenSidenav(false);
-  }, [location]);
+  const handleLogout = () => {
+    persistor.purge();
+    dispatch(api.util.resetApiState());
+    dispatch(logout());
+    navigate("/auth");
+  };
+
+  // useEffect(() => {
+  //   setIsOpenSidenav(false);
+  //   if (!subscription && !isFetchingActiveSubscription) {
+  //     navigate("/client/settings/billing");
+  //   }
+  // }, [location]);
+
+  if (isFetchingActiveSubscription) {
+    return (
+      <div className="absolute top-0 right-0 z-40 bg-white flex w-full h-full justify-center items-center">
+        <Spinner size={"xl"} color="success" />
+      </div>
+    );
+  }
+
+  if (!subscription && !isFetchingActiveSubscription) {
+    return (
+      <div className=" absolute top-0 right-0 z-40 bg-white w-full h-full justify-center items-center">
+        <div className=" w-full relative  top-24">
+          <RenewSubscription
+            isExpired={true}
+            subscription={subscription}
+            openModal={true}
+            setRenewalModal={() => null}
+          />{" "}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -57,7 +111,7 @@ const Client = () => {
               <ClientSidebar />
             </div>
           </div>
-          <div className="col-span-12 md:col-span-10  h-full">
+          <div className="col-span-12 md:col-span-10  h-[calc(100vh-80px)]">
             <div className="bg-[#faffff] min-h-full  h-full px-4 pt-3">
               <Outlet />
             </div>

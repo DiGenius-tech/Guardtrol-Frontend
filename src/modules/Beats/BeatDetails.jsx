@@ -8,6 +8,7 @@ import BeatDetailsHeader from "./BeatDetailsTabs/BeatDetailsHeader";
 import PatrolGuardList from "../Guard/PatrolGuardList/PatrolGuardList";
 import InactivePatrolGuards from "../Guard/PatrolGuardList/InactivePatrolGuards";
 import ActivePatrolGuards from "../Guard/PatrolGuardList/ActivePatrolGuards";
+import { POOLING_TIME } from "../../constants/static";
 
 const BeatDetails = () => {
   const { beatId } = useParams();
@@ -78,6 +79,7 @@ export const BeatDetailsRouter = () => {
     { organization },
     {
       skip: organization ? false : true,
+      pollingInterval: POOLING_TIME,
     }
   );
 

@@ -26,6 +26,7 @@ import { addOnboardingGuard } from "../../../redux/slice/onboardingSlice";
 import { useGetSubscriptionQuery } from "../../../redux/services/subscriptions";
 import Swal from "sweetalert2";
 import { suspenseHide, suspenseShow } from "../../../redux/slice/suspenseSlice";
+import { toast } from "react-toastify";
 
 function AddGuard({ onBoarding = true }) {
   const [isGotIt, setIsGotIt] = useState(false);
@@ -150,8 +151,8 @@ function AddGuard({ onBoarding = true }) {
       } else {
         if (guards?.length >= sub?.maxbeats * 5 + sub?.maxextraguards) {
           Swal.fire({
-            title: "OOPS!! You've ran out of Beats",
-            text: "Would you like to subscribe for more beats?",
+            title: "OOPS!! You've ran out of Guards",
+            text: "Would you like to subscribe for more Guards?",
             icon: "warning",
             showCancelButton: true,
             confirmButtonColor: "#008080",
@@ -171,9 +172,10 @@ function AddGuard({ onBoarding = true }) {
           dispatch(suspenseShow());
           const { data } = await addGuard({ organization, guard });
           if (data) {
-            refetch();
+            await refetch();
             navigate(-1);
             dispatch(suspenseHide());
+            toast("Guard Added Successfully");
           }
         }
       }

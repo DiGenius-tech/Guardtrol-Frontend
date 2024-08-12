@@ -20,6 +20,7 @@ const GuardsLog = () => {
   const [selectedGuard, setSelectedGuard] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [entriesPerPage, setEntriesPerPage] = useState(10);
+  const [selectedGuardData, setselectedGuardData] = useState();
 
   const { data: guards } = useGetGuardsQuery(organization, {
     skip: organization ? false : true,
@@ -28,6 +29,7 @@ const GuardsLog = () => {
   const {
     data: logsAPiResponse,
     refetch,
+    isLoading,
     isFetching,
   } = useFetchTimelineLogsQuery(
     {
@@ -77,7 +79,7 @@ const GuardsLog = () => {
           startDate && endDate ? startDate + " - " + endDate : "All"
         } `,
       ],
-      [`Selected Guard: ${selectedGuard || "All Guards"}`],
+      [`Selected Guard: ${selectedGuardData?.name || "All Guards"}`],
       [],
       columns.map((col) => col.header),
     ];
@@ -139,7 +141,16 @@ const GuardsLog = () => {
         />
         <select
           value={selectedGuard}
-          onChange={(e) => setSelectedGuard(e.target.value)}
+          onChange={(e) => {
+            const selectedGuardId = e.target.value;
+            setSelectedGuard(selectedGuardId);
+
+            const selectedGuard = guards?.find(
+              (beat) => beat._id === selectedGuardId
+            );
+
+            setselectedGuardData(selectedGuard);
+          }}
           className="border px-2 min-w-40 h-10 border-gray-300 rounded-md m-0 w-full sm:w-[48%] md:w-auto"
         >
           <option value="">Select Guard</option>
@@ -177,12 +188,12 @@ const GuardsLog = () => {
       <div className="min-h-[300px] max-h-80 overflow-y-auto">
         <Table>
           <Table.Head>
-            <Table.HeadCell>Date</Table.HeadCell>
+            <Table.HeadCell className=" w-52">Date</Table.HeadCell>
             <Table.HeadCell>Guard</Table.HeadCell>
             <Table.HeadCell>Message</Table.HeadCell>
           </Table.Head>
           <Table.Body>
-            {isFetching && (
+            {isLoading && (
               <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
                 <Table.Cell
                   colSpan={3}
@@ -197,7 +208,7 @@ const GuardsLog = () => {
                 </Table.Cell>
               </Table.Row>
             )}
-            {!isFetching &&
+            {!isLoading &&
               (!logsAPiResponse?.logs ||
                 logsAPiResponse?.logs.length === 0) && (
                 <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
@@ -209,7 +220,7 @@ const GuardsLog = () => {
                   </Table.Cell>
                 </Table.Row>
               )}
-            {!isFetching &&
+            {!isLoading &&
               logsAPiResponse?.logs?.map((log) => (
                 <Table.Row key={log._id}>
                   <Table.Cell>{formatDateTime(log.createdAt)}</Table.Cell>

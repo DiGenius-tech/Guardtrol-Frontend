@@ -17,6 +17,7 @@ const BeatsHistory = () => {
   const [selectedBeat, setSelectedBeat] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [entriesPerPage, setEntriesPerPage] = useState(10);
+  const [selectedBeatData, setselectedBeatData] = useState();
 
   const organization = useSelector(selectOrganization);
   const token = useSelector(selectToken);
@@ -30,6 +31,7 @@ const BeatsHistory = () => {
 
   const {
     data: patrolsApiResponse,
+    isLoading,
     isFetching,
     refetch,
   } = useFetchBeatHistoryQuery(
@@ -43,7 +45,7 @@ const BeatsHistory = () => {
     },
     { skip: !organization, pollingInterval: POOLING_TIME }
   );
-  console.log(patrolsApiResponse);
+
   const aggregatedData = patrolsApiResponse?.patrols || [];
   const totalEntries = patrolsApiResponse?.total || 0;
 
@@ -55,7 +57,7 @@ const BeatsHistory = () => {
           startDate && endDate ? `${startDate} - ${endDate}` : "All"
         }`,
       ],
-      [`Selected Beat: ${selectedBeat || "All Beats"}`],
+      [`Selected Beat: ${selectedBeatData?.name || "All Beats"}`],
       [],
       [
         "beatName",
@@ -120,7 +122,15 @@ const BeatsHistory = () => {
             id="beat"
             className="min-w-40 h-10"
             value={selectedBeat}
-            onChange={(e) => setSelectedBeat(e.target.value)}
+            onChange={(e) => {
+              const selectedBeatId = e.target.value;
+              setSelectedBeat(selectedBeatId);
+              const selectedBeat = beatsApiResponse?.beats?.find(
+                (beat) => beat._id === selectedBeatId
+              );
+
+              setselectedBeatData(selectedBeat);
+            }}
             placeholder="Select Beat"
           >
             <option value="">All Beats</option>
@@ -172,7 +182,7 @@ const BeatsHistory = () => {
             <Table.HeadCell>Avg Clock-out Time</Table.HeadCell>
           </Table.Head>
           <Table.Body className="divide-y">
-            {isFetching && (
+            {isLoading && (
               <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
                 <Table.Cell
                   colSpan={6}
@@ -187,7 +197,7 @@ const BeatsHistory = () => {
                 </Table.Cell>
               </Table.Row>
             )}
-            {!isFetching && aggregatedData.length === 0 && (
+            {!isLoading && aggregatedData.length === 0 && (
               <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
                 <Table.Cell
                   colSpan={6}
@@ -197,7 +207,7 @@ const BeatsHistory = () => {
                 </Table.Cell>
               </Table.Row>
             )}
-            {!isFetching &&
+            {!isLoading &&
               aggregatedData.map((beat, index) => (
                 <Table.Row
                   key={index}
