@@ -157,7 +157,7 @@ function ActivePatrolGuards() {
               if (result.isConfirmed) {
                 removeFromPatrols = true;
 
-                Swal.fire({
+                await Swal.fire({
                   text: `${
                     guardToUnassign?.name || "Guard"
                   } will be removed from patrol.`,
@@ -165,23 +165,25 @@ function ActivePatrolGuards() {
                   confirmButtonColor: "#008080",
                 });
               }
-            });
-          }
 
-          const { data } = await UnAssignGuard({
-            beat: selectedBeat,
-            guard: guardToUnassign,
-            removeFromPatrols: removeFromPatrols,
-          });
+              const { data } = await UnAssignGuard({
+                beat: selectedBeat,
+                guard: guardToUnassign,
+                removeFromPatrols: removeFromPatrols,
+              });
 
-          refetchGuards();
-          refetchBeats();
-          if (data?.status) {
-            Swal.fire({
-              title: "Unassigned!",
-              text: `${guardToUnassign?.name || "Guard"} has been unassigned.`,
-              icon: "success",
-              confirmButtonColor: "#008080",
+              if (data) {
+                await refetchGuards();
+                await refetchBeats();
+                Swal.fire({
+                  title: "Unassigned!",
+                  text: `${
+                    guardToUnassign?.name || "Guard"
+                  } has been unassigned.`,
+                  icon: "success",
+                  confirmButtonColor: "#008080",
+                });
+              }
             });
           }
         }

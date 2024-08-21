@@ -74,7 +74,7 @@ function InactivePatrolGuards() {
     { skip: guardToUnassignId ? false : true }
   );
 
-  const { data: beatsApiResponse } = useGetBeatsQuery(
+  const { data: beatsApiResponse, refetch: refetchBeats } = useGetBeatsQuery(
     { organization },
     {
       skip: organization ? false : true,
@@ -145,7 +145,7 @@ function InactivePatrolGuards() {
               if (result.isConfirmed) {
                 removeFromPatrols = true;
 
-                Swal.fire({
+                await Swal.fire({
                   text: `${
                     guardToUnassign?.name || "Guard"
                   } will be removed from patrol.`,
@@ -153,22 +153,24 @@ function InactivePatrolGuards() {
                   confirmButtonColor: "#008080",
                 });
               }
-            });
-          }
 
-          const { data } = await UnAssignGuard({
-            beat: selectedBeat,
-            guard: guardToUnassign,
-            removeFromPatrols: removeFromPatrols,
-          });
-
-          refetchGuards();
-          if (data?.status) {
-            Swal.fire({
-              title: "Unassigned!",
-              text: `${guardToUnassign?.name || "Guard"} has been unassigned.`,
-              icon: "success",
-              confirmButtonColor: "#008080",
+              const { data } = await UnAssignGuard({
+                beat: selectedBeat,
+                guard: guardToUnassign,
+                removeFromPatrols: removeFromPatrols,
+              });
+              if (data) {
+                await refetchGuards();
+                await refetchBeats();
+                Swal.fire({
+                  title: "Unassigned!",
+                  text: `${
+                    guardToUnassign?.name || "Guard"
+                  } has been unassigned.`,
+                  icon: "success",
+                  confirmButtonColor: "#008080",
+                });
+              }
             });
           }
         }
