@@ -19,7 +19,6 @@ jobs:
 
       - name: 🔨 Build project
         run: |
-          cp .env.staging .env
           export NODE_OPTIONS=--max-old-space-size=4096
           CI=false npm run build-staging
         env:
