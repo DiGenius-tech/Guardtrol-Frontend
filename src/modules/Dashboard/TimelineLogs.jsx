@@ -16,6 +16,7 @@ import { useFetchTimelineLogsQuery } from "../../redux/services/timelinelogs";
 import { useGetBeatsQuery } from "../../redux/services/beats";
 import { useGetGuardsQuery } from "../../redux/services/guards";
 import { formatDateTime } from "../../utils/dateUtils";
+import { POOLING_TIME } from "../../constants/static";
 
 export const TimelineLogs = () => {
   const user = useSelector(selectUser);
@@ -65,6 +66,7 @@ export const TimelineLogs = () => {
   const {
     data: logsAPiResponse,
     refetch,
+    isLoading: isLoadingLogs,
     isFetching: isFetchingLogs,
   } = useFetchTimelineLogsQuery(
     {
@@ -75,6 +77,7 @@ export const TimelineLogs = () => {
       type: filterStatus !== "All" ? filterStatus : undefined,
     },
     {
+      pollingInterval: POOLING_TIME,
       skip: !organization,
     }
   );
@@ -166,7 +169,7 @@ export const TimelineLogs = () => {
           </div>
         </div>
         <ul className="activities | text-sm max-h-64 overflow-y-scroll min-h-64">
-          {isFetchingLogs ? (
+          {isLoadingLogs ? (
             <div className="w-full h-full justify-center flex items-center">
               <Spinner color="success" aria-label="Success spinner example" />
             </div>

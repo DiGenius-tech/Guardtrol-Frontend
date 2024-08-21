@@ -1,6 +1,10 @@
+import { TChargeAuthorization } from "./charge-authorization";
+
 export type TSubscription = {
   _id: string;
   user: string;
+  retries: number;
+  charge: TChargeAuthorization;
   plan: "monthly" | "yearly";
   maxbeats: number;
   maxextraguards?: number;

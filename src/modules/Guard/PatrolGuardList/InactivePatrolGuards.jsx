@@ -23,6 +23,7 @@ import Pagination from "../../../shared/Pagination/Pagination";
 import Swal from "sweetalert2";
 import { POOLING_TIME } from "../../../constants/static";
 import { useDebouncedValue } from "../../../utils/assetHelper";
+import { useGetPatrolsQuery } from "../../../redux/services/patrol";
 
 const duty_status = {
   OFF_DUTY: 0,
@@ -42,6 +43,7 @@ function InactivePatrolGuards() {
   const [open, setOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [entriesPerPage, setEntriesPerPage] = useState(5);
+  const [guardToUnassignId, setGuardToUnassignId] = useState();
 
   const organization = useSelector(selectOrganization);
   const {
@@ -60,6 +62,18 @@ function InactivePatrolGuards() {
       pollingInterval: POOLING_TIME,
     }
   );
+
+  const {
+    data: patrolsAssignedToGuard,
+    refetch: refetchPatrolsAssignedToGuard,
+  } = useGetPatrolsQuery(
+    {
+      guard: guardToUnassignId,
+      beat: beatId,
+    },
+    { skip: guardToUnassignId ? false : true }
+  );
+
   const { data: beatsApiResponse } = useGetBeatsQuery(
     { organization },
     {
@@ -101,6 +115,8 @@ function InactivePatrolGuards() {
   const [UnAssignGuard] = useUnAssignFromGuardToBeatMutation();
 
   const handleUnAssignGuard = (guardToUnassign) => {
+    let removeFromPatrols;
+    setGuardToUnassignId(guardToUnassign?._id);
     try {
       Swal.fire({
         title: "Are you sure?",
@@ -112,11 +128,40 @@ function InactivePatrolGuards() {
         confirmButtonText: " Unassign",
       }).then(async (result) => {
         if (result.isConfirmed) {
+          const { data: patrolsAssignedToGuard } =
+            await refetchPatrolsAssignedToGuard();
+
+          if (patrolsAssignedToGuard.length) {
+            await Swal.fire({
+              title: "Guard is assigned to patrols?",
+              text: "Would you like to remove the guard from the patrols in this Beat!",
+              icon: "warning",
+              showCancelButton: true,
+              confirmButtonColor: "#008080",
+              cancelButtonColor: "#d33",
+              confirmButtonText: "Yes",
+              cancelButtonText: "No",
+            }).then(async (result) => {
+              if (result.isConfirmed) {
+                removeFromPatrols = true;
+
+                Swal.fire({
+                  text: `${
+                    guardToUnassign?.name || "Guard"
+                  } will be removed from patrol.`,
+                  icon: "success",
+                  confirmButtonColor: "#008080",
+                });
+              }
+            });
+          }
+
           const { data } = await UnAssignGuard({
             beat: selectedBeat,
             guard: guardToUnassign,
+            removeFromPatrols: removeFromPatrols,
           });
-          console.log(data);
+
           refetchGuards();
           if (data?.status) {
             Swal.fire({

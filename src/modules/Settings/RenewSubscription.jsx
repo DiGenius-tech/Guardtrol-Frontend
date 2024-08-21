@@ -47,7 +47,7 @@ const RenewSubscription = ({
 }) => {
   const psConfig = useSelector(selectPsConfig);
   const organization = useSelector(selectOrganization);
-
+  // const paystack = new PaystackPop();
   const token = useSelector(selectToken);
   const {
     data: subscription,
@@ -67,7 +67,6 @@ const RenewSubscription = ({
   const fwConfig = useSelector(selectFwConfig);
 
   const currentDate = new Date();
-  console.log(organization);
   const { data: availableGuards } = useGetGuardsQuery(
     { organization },
     {
@@ -114,6 +113,7 @@ const RenewSubscription = ({
         ? new Date(subscription?.expiresat).toLocaleDateString()
         : "--"
     );
+
   const [newSubscriptionTotalAmount, setNewSubscriptionTotalAmount] = useState(
     subscription?.totalamount
   );
@@ -128,22 +128,22 @@ const RenewSubscription = ({
     const newBeats = parseInt(e.target.value);
 
     if (subscriptionAction === "reduce") {
-      setNewMaxBeats(newBeats);
+      setNewMaxBeats(Math.abs(newBeats));
     } else if (subscriptionAction === "increase") {
-      setNewMaxBeats(newBeats);
+      setNewMaxBeats(Math.abs(newBeats));
     } else {
-      setNewMaxBeats(subscription?.maxbeats);
+      setNewMaxBeats(Math.abs(subscription?.maxbeats));
     }
   };
 
   const handleGuardChange = (e) => {
     const newGuards = parseInt(e.target.value);
     if (subscriptionAction === "reduce") {
-      setNewMaxExtraGuards(newGuards);
+      setNewMaxExtraGuards(Math.abs(newGuards));
     } else if (subscriptionAction === "increase") {
-      setNewMaxExtraGuards(newGuards);
+      setNewMaxExtraGuards(Math.abs(newGuards));
     } else {
-      setNewMaxExtraGuards(subscription?.maxextraguards);
+      setNewMaxExtraGuards(Math.abs(subscription?.maxextraguards));
     }
   };
 
@@ -157,12 +157,14 @@ const RenewSubscription = ({
 
   const subscriptionActions = [
     { value: "reduce", label: "Reduce" },
-    { value: "renewal", label: "Renewal" },
     { value: "increase", label: "Increase" },
+    ...(mySuscriptions?.[0] && mySuscriptions[0].plan !== "free trial"
+      ? [{ value: "renewal", label: "Renewal" }]
+      : []),
   ];
   const paymentOptions = [
     { value: "paystack", label: "Paystack" },
-    { value: "flutterwave", label: "Flutter wave" },
+    { value: "flutterwave", label: "Flutterwave" },
   ];
 
   const handleFlutterPayment = useFlutterwave({
@@ -188,30 +190,31 @@ const RenewSubscription = ({
     },
   });
 
-  const handleCreatePlan = async () => {
-    const { data } = await axios.post(
-      "https://api.paystack.co/plan",
-      {
-        name: `${user.name}-${new Date()}-${newSubscription}`,
-        interval: newSubscription,
-        amount: newSubscriptionTotalAmount * 100,
-      },
-      {
-        headers: {
-          Authorization: `Bearer sk_test_b2c61ba5551dea400c429e6d82860a227247b11b`,
-        },
-      }
-    );
+  // const handleCreatePlan = async () => {
+  //   const { data } = await axios.post(
+  //     "https://api.paystack.co/plan",
+  //     {
+  //       name: `${user.name}-${new Date()}-${newSubscription}`,
+  //       interval: newSubscription,
+  //       amount: newSubscriptionTotalAmount * 100,
+  //     },
+  //     {
+  //       headers: {
+  //         Authorization: `Bearer sk_test_b2c61ba5551dea400c429e6d82860a227247b11b`,
+  //       },
+  //     }
+  //   );
 
-    return data;
-  };
+  //   return data;
+  // };
+
   const navigate = useNavigate();
 
-  const handlePaystackPayment = usePaystackPayment({
-    ...psConfig,
-    email: user.email,
-    amount: newSubscriptionTotalAmount * 100,
-  });
+  // const handlePaystackPayment = usePaystackPayment({
+  //   ...psConfig,
+  //   email: user.email,
+  //   amount: newSubscriptionTotalAmount * 100,
+  // });
 
   const payWithFlutterwave = async () => {
     dispatch(suspenseShow());
@@ -237,10 +240,23 @@ const RenewSubscription = ({
     navigate("/auth");
   };
 
+  let paymentConfig = {
+    publicKey: psConfig.publicKey,
+    email: user.email,
+    amount: newSubscriptionTotalAmount * 100, // amount in kobo
+    reference: new Date().getTime().toString(),
+  };
+
+  const handlePaystackPayment = usePaystackPayment(paymentConfig);
+
+  const onClose = () => {
+    dispatch(suspenseHide());
+    toast.error("Payment was closed");
+  };
   const payWithPaystack = async () => {
     try {
       dispatch(suspenseShow());
-      const { data: planData } = await handleCreatePlan();
+      // const { data: planData } = await handleCreatePlan();
 
       const paymentData = {
         key: psConfig.publicKey,
@@ -261,29 +277,31 @@ const RenewSubscription = ({
             },
           ],
         },
-        plan: planData?.plan_code,
+        // plan: planData?.plan_code,
         onSuccess: (transaction) => {
-          // Swal.fire({
-          //   title: "Renewal succefull",
-          //   text: `Your subscription has been updated!`,
-          //   icon: "success",
-          //   confirmButtonColor: "#008080",
-          // });
-          console.log(1);
           if (!isExpired) {
             setRenewalModal(false);
           }
-          console.log(2);
+
           updateSubscription(transaction);
         },
         onCancel: () => {
-          console.log("Payment canceled");
           dispatch(suspenseHide());
         },
       };
+
       const initiatePayment = () => {
-        const paystack = new PaystackPop();
-        paystack.newTransaction(paymentData);
+        console.log("first");
+        const res = handlePaystackPayment({
+          onSuccess: (transaction) => {
+            console.log(transaction);
+
+            updateSubscription(transaction);
+          },
+          onClose,
+        });
+        console.log(res);
+        // paystack.newTransaction(paymentData);
       };
 
       initiatePayment();
@@ -348,7 +366,6 @@ const RenewSubscription = ({
         startsAt: subscription ? subscription.expiresat : Date.now(),
         paymentgateway: paymentOption,
       };
-      console.log(6);
       const { data } = await createSubscription({
         organization,
         body: reqData,
@@ -358,13 +375,10 @@ const RenewSubscription = ({
       await refetchActiveSubscription();
       await refetchInvoices();
 
-      console.log(3);
-
       if (!isExpired) {
         setRenewalModal(false);
       }
       dispatch(suspenseHide());
-      console.log(4);
       if (data) {
         Swal.fire({
           title: "Renewal succefull",
@@ -414,7 +428,11 @@ const RenewSubscription = ({
     let guardCost = 0;
     let newTotalBeats = 0;
     let newTotalGuards = 0;
-    if (subscriptionAction === "renewal") {
+    if (
+      subscriptionAction === "renewal" &&
+      mySuscriptions?.[0].plan !== "free trial"
+    ) {
+      console.log();
       setNewSubscriptionTotalAmount(mySuscriptions?.[0]?.totalamount * months);
       return;
     }
@@ -432,7 +450,6 @@ const RenewSubscription = ({
       newTotalBeats =
         newMaxBeats + (subscription?.maxbeats || mySuscriptions[0]?.maxbeats);
 
-      console.log(newTotalGuards, newTotalBeats);
       if (newMaxBeats) {
         beatCost = newTotalBeats * BEAT_PRICE;
       } else {

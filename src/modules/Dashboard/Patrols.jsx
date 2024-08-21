@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 import { ASSET_URL } from "../../constants/api";
 import { useFetchPatrolInstancesQuery } from "../../redux/services/patrol";
 import { formatDateTime } from "../../utils/dateUtils";
+import { POOLING_TIME } from "../../constants/static";
 
 const Patrols = () => {
   const organization = useSelector(selectOrganization);
@@ -38,6 +39,7 @@ const Patrols = () => {
     data: patrolInstancesApiResponse,
     refetch,
     isFetching: isPatrolInstacesFetching,
+    isLoading: isPatrolInstacesLoading,
   } = useFetchPatrolInstancesQuery(
     {
       organizationId: organization,
@@ -45,6 +47,7 @@ const Patrols = () => {
       ...(filterPatrolsType && { status: filterPatrolsType }),
     },
     {
+      pollingInterval: POOLING_TIME,
       skip: !organization,
     }
   );
@@ -109,7 +112,7 @@ const Patrols = () => {
                 <Table.HeadCell>Date</Table.HeadCell>
               </Table.Head>
               <Table.Body className="divide-y overflow-y-scroll">
-                {isPatrolInstacesFetching && (
+                {isPatrolInstacesLoading && (
                   <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
                     <Table.Cell
                       colSpan={4}
@@ -124,7 +127,7 @@ const Patrols = () => {
                     </Table.Cell>
                   </Table.Row>
                 )}
-                {!isPatrolInstacesFetching &&
+                {!isPatrolInstacesLoading &&
                   patrolInstancesApiResponse?.patrols?.map((patrolInstance) => (
                     <Table.Row
                       className="bg-white dark:border-gray-700 dark:bg-gray-800"
@@ -181,9 +184,9 @@ const Patrols = () => {
                       </Table.Cell>
                     </Table.Row>
                   ))}
-                {((!isPatrolInstacesFetching &&
+                {((!isPatrolInstacesLoading &&
                   patrolInstancesApiResponse?.patrols?.length === 0) ||
-                  (!isPatrolInstacesFetching &&
+                  (!isPatrolInstacesLoading &&
                     !patrolInstancesApiResponse?.patrols)) && (
                   <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
                     <Table.Cell

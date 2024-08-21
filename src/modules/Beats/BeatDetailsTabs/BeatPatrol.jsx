@@ -65,6 +65,7 @@ const BeatPatrol = () => {
   useEffect(() => {
     setSelectedBeat(beatsApiResponse?.beats?.find((b) => b?._id === beatId));
   }, [beatsApiResponse]);
+
   const handleDelete = async (patrolToDelete) => {
     try {
       Swal.fire({
@@ -104,6 +105,7 @@ const BeatPatrol = () => {
     try {
       const updatedPatrol = {
         ...currentPatrol,
+        guards: selectedGuards.map((g) => g.value),
       };
       await updatePatrol(updatedPatrol);
       refetchPatrols();

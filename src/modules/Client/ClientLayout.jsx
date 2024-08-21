@@ -22,6 +22,7 @@ import { toast } from "react-toastify";
 import { addNotification } from "../../redux/slice/notificationSlice";
 import { SocketProvider, useSocket } from "../../hooks/useSocket";
 import { useSocketEvent } from "../../hooks/useSocketEvent";
+import { selectPsConfig } from "../../redux/selectors/selectedPlan";
 
 const Client = () => {
   const [isOpenSidenav, setIsOpenSidenav] = useState(false);
@@ -46,6 +47,7 @@ const Client = () => {
   };
 
   const SupportUser = useSelector(selectSupportUser);
+  const psConfig = useSelector(selectPsConfig);
 
   const handleLogout = () => {
     persistor.purge();

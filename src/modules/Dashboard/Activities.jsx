@@ -6,6 +6,7 @@ import { format } from "date-fns";
 import { useFetchTimelineLogsQuery } from "../../redux/services/timelinelogs";
 import { Spinner } from "flowbite-react";
 import { formatDateTime } from "../../utils/dateUtils";
+import { POOLING_TIME } from "../../constants/static";
 
 const activity_status = {
   CLOCKED_ACTION: "Clock Action",
@@ -55,6 +56,7 @@ const Activities = () => {
       type: filterStatus !== "All" ? filterStatus : undefined,
     },
     {
+      pollingInterval: POOLING_TIME,
       skip: !organization,
     }
   );

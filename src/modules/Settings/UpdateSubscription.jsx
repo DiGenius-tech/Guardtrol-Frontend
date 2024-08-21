@@ -212,6 +212,7 @@ const UpdateSubscription = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     pay();
+
     const updatedSubscription = {
       ...currentSubscription,
       beats: currentSubscription?.beats + additionalBeats,
