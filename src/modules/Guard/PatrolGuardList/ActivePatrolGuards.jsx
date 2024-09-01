@@ -145,8 +145,8 @@ function ActivePatrolGuards() {
 
           if (patrolsAssignedToGuard.length) {
             await Swal.fire({
-              title: "Guard is assigned to patrols?",
-              text: "Would you like to remove the guard from the patrols in this Beat!",
+              title: "Guard is assigned to patrols",
+              text: "Would you like to remove the guard from the patrols in this Beat?",
               icon: "warning",
               showCancelButton: true,
               confirmButtonColor: "#008080",
