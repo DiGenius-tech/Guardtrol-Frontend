@@ -10,6 +10,7 @@ import { format } from "date-fns";
 import { useGetBeatsQuery } from "../../../redux/services/beats";
 import { useFetchPatrolInstancesQuery } from "../../../redux/services/patrol";
 import { formatDate, formatTime } from "../../../utils/dateUtils";
+import { Badge } from "../../../components/badge";
 
 const PatrolHistory = () => {
   const organization = useSelector(selectOrganization);
@@ -90,6 +91,12 @@ const PatrolHistory = () => {
     XLSX.writeFile(workbook, "patrol_history.xlsx");
   };
 
+  const formatPatrolInstancesData = (data) => {
+    return data.map((patrolInstance) => ({
+      ...patrolInstance,
+      status: <Badge status={patrolInstance.status} type={"PATROL_STATUS"} />,
+    }));
+  };
   // const formattedTime = (date) => format(new Date(date), "hh:mm a");
   // const formatDate = (date) => format(new Date(date), "yyyy-MM-dd");
 
@@ -202,7 +209,9 @@ const PatrolHistory = () => {
               </Table.Row>
             )}
             {!isLoading &&
-              patrolInstancesApiResponse.patrols?.map((instance, index) => (
+              formatPatrolInstancesData(
+                patrolInstancesApiResponse.patrols
+              )?.map((instance, index) => (
                 <Table.Row
                   key={index}
                   className="bg-white dark:border-gray-700 dark:bg-gray-800"

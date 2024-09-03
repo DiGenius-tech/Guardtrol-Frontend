@@ -86,13 +86,14 @@ const RenewSubscription = ({
       skip: organization ? false : true,
     });
   const [createSubscription] = useAddSubscriptionMutation();
-  const { data: invoices, refetch: refetchInvoices } = useGetInvoicesQuery(
-    organization,
-    {
-      skip: organization ? false : true,
-      pollingInterval: POOLING_TIME,
-    }
-  );
+  const { data: invoicesApiResponse, refetch: refetchInvoices } =
+    useGetInvoicesQuery(
+      { organization },
+      {
+        skip: organization ? false : true,
+        pollingInterval: POOLING_TIME,
+      }
+    );
 
   const activeSubscriptions = mySuscriptions?.filter(
     (subscription) => parseDate(subscription?.expiresat) > currentDate
@@ -428,11 +429,12 @@ const RenewSubscription = ({
     let guardCost = 0;
     let newTotalBeats = 0;
     let newTotalGuards = 0;
+    console.log(mySuscriptions);
+
     if (
       subscriptionAction === "renewal" &&
       mySuscriptions?.[0].plan !== "free trial"
     ) {
-      console.log();
       setNewSubscriptionTotalAmount(mySuscriptions?.[0]?.totalamount * months);
       return;
     }
