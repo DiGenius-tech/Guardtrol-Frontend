@@ -71,7 +71,6 @@ const Client = () => {
   // useSocketEvent("new-ticket", (data) => {
   //   console.log("New message received:", handleNewTicket(data));
   // });
-
   if (isFetchingActiveSubscription) {
     return (
       <div className="absolute top-0 right-0 z-40 bg-white flex w-full h-full justify-center items-center">

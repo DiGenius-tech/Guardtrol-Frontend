@@ -109,7 +109,6 @@ const Patrols = () => {
                 <Table.HeadCell>Guard Name</Table.HeadCell>
                 <Table.HeadCell>Time</Table.HeadCell>
                 <Table.HeadCell>Status</Table.HeadCell>
-                <Table.HeadCell>Date</Table.HeadCell>
               </Table.Head>
               <Table.Body className="divide-y overflow-y-scroll">
                 {isPatrolInstacesLoading && (
@@ -157,7 +156,7 @@ const Patrols = () => {
                       </Table.Cell>
                       <Table.Cell className="text-center w-20">
                         {patrolInstance?.starttime &&
-                          formattedTime(patrolInstance?.starttime)}
+                          formatDateTime(patrolInstance?.starttime)}
                       </Table.Cell>
                       <Table.Cell>
                         {patrolInstance.status === "pending" && (
@@ -178,10 +177,10 @@ const Patrols = () => {
                           {patrolInstance?.beat?.name}
                         </span>
                       </Table.Cell>
-                      <Table.Cell className="text-left">
+                      {/* <Table.Cell className="text-left">
                         {patrolInstance?.createdAt &&
                           formatDateTime(patrolInstance?.createdAt)}
-                      </Table.Cell>
+                      </Table.Cell> */}
                     </Table.Row>
                   ))}
                 {((!isPatrolInstacesLoading &&
