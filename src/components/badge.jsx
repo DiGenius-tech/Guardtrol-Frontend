@@ -21,11 +21,11 @@ const badgeStyles = {
 
 const PATROL_STATUS = {
   pending: {
-    label: "pending",
+    label: "Pending",
     className: badgeStyles.orange100,
   },
   abandoned: {
-    label: "abandoned",
+    label: "Abandoned",
     className: badgeStyles.red100,
   },
   completed: {
