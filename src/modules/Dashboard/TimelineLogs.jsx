@@ -98,7 +98,7 @@ export const TimelineLogs = () => {
           <div className="grid grid-cols-12">
             <div className="col-span-12 md:col-span-3 md:p-[15px]">
               <div className="text-sm font-semibold">
-                {formatDateTime(log.createdAt)}
+                {formatDateTime(log.happendAt)}
               </div>
             </div>
             <div className="hidden md:block dot-wrap | col-span-2 p-[20px]">

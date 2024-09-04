@@ -20,6 +20,7 @@ const PatrolHistory = () => {
   const [endDate, setEndDate] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedBeat, setSelectedBeat] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [entriesPerPage, setEntriesPerPage] = useState(5);
   const [selectedBeatData, setselectedBeatData] = useState();
@@ -42,6 +43,7 @@ const PatrolHistory = () => {
       startDate: startDate ? new Date(startDate).toISOString() : undefined,
       endDate: endDate ? new Date(endDate).toISOString() : undefined,
       guardName: searchQuery ? searchQuery : undefined,
+      ...(selectedStatus && { status: selectedStatus }),
       beatId: selectedBeat ? selectedBeat : undefined,
       page: currentPage,
       limit: entriesPerPage,
@@ -117,6 +119,18 @@ const PatrolHistory = () => {
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
           />
+          <select
+            value={selectedStatus}
+            onChange={(e) => {
+              setSelectedStatus(e.target.value);
+            }}
+            className="border px-2 border-gray-300 rounded-md min-w-40 h-10 sm:w-[48%] md:w-auto"
+          >
+            <option value="">Select Status</option>
+            <option value="pending">Pending</option>
+            <option value="abandoned">Abandoned</option>
+            <option value="completed">Completed</option>
+          </select>
           <select
             value={selectedBeat}
             onChange={(e) => {

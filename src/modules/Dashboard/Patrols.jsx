@@ -8,6 +8,7 @@ import { ASSET_URL } from "../../constants/api";
 import { useFetchPatrolInstancesQuery } from "../../redux/services/patrol";
 import { formatDateTime } from "../../utils/dateUtils";
 import { POOLING_TIME } from "../../constants/static";
+import { Badge } from "../../components/badge";
 
 const Patrols = () => {
   const organization = useSelector(selectOrganization);
@@ -52,6 +53,12 @@ const Patrols = () => {
     }
   );
 
+  const formatPatrolInstancesData = (data) => {
+    return data.map((patrolInstance) => ({
+      ...patrolInstance,
+      status: <Badge status={patrolInstance.status} type={"PATROL_STATUS"} />,
+    }));
+  };
   // useEffect(() => {
   //   if (organization) {
   //     refetch();
@@ -107,7 +114,7 @@ const Patrols = () => {
             <Table>
               <Table.Head>
                 <Table.HeadCell>Guard Name</Table.HeadCell>
-                <Table.HeadCell>Time</Table.HeadCell>
+                <Table.HeadCell className="min-w-32">Time</Table.HeadCell>
                 <Table.HeadCell>Status</Table.HeadCell>
               </Table.Head>
               <Table.Body className="divide-y overflow-y-scroll">
@@ -127,7 +134,9 @@ const Patrols = () => {
                   </Table.Row>
                 )}
                 {!isPatrolInstacesLoading &&
-                  patrolInstancesApiResponse?.patrols?.map((patrolInstance) => (
+                  formatPatrolInstancesData(
+                    patrolInstancesApiResponse.patrols
+                  )?.map((patrolInstance) => (
                     <Table.Row
                       className="bg-white dark:border-gray-700 dark:bg-gray-800"
                       key={patrolInstance._id}
@@ -159,9 +168,11 @@ const Patrols = () => {
                           formatDateTime(patrolInstance?.starttime)}
                       </Table.Cell>
                       <Table.Cell>
-                        {patrolInstance.status === "pending" && (
+                        {" "}
+                        {patrolInstance.status}
+                        {/* {patrolInstance.status === "pending" && (
                           <span className="text-orange-400 uppercase">
-                            {patrolInstance.status}
+                          
                           </span>
                         )}
                         {patrolInstance.status === "abandoned" && (
@@ -171,11 +182,11 @@ const Patrols = () => {
                         )}
                         {patrolInstance.status === "completed" && (
                           <span className="text-green-400">Completed</span>
-                        )}
+                        )} */}
                         <br />
-                        <span className="whitespace-nowrap">
+                        <div className="whitespace-nowrap mt-3">
                           {patrolInstance?.beat?.name}
-                        </span>
+                        </div>
                       </Table.Cell>
                       {/* <Table.Cell className="text-left">
                         {patrolInstance?.createdAt &&

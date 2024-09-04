@@ -45,7 +45,9 @@ const BeatList = () => {
   } = useGetBeatsQuery(
     {
       organization,
+      limit: entriesPerPage,
       page: currentPage,
+
       ...(debouncedSearchQuery && { searchQuery: debouncedSearchQuery }),
     },
     {
