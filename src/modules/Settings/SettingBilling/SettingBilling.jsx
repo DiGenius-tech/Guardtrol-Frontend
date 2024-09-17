@@ -29,6 +29,7 @@ import { useReactToPrint } from "react-to-print";
 import ViewInvoice from "../ViewInvoice";
 import { formatDateTime } from "../../../utils/dateUtils";
 import Pagination from "../../../shared/Pagination/Pagination";
+import { Spinner } from "flowbite-react";
 
 const savedPaymentCards = [
   {
@@ -89,12 +90,13 @@ const SettingBilling = () => {
     skip: organization ? false : true,
   });
 
-  const { data: invoicesApiResponse } = useGetInvoicesQuery(
-    { organization: organization, page: invoicePage, limit: invoiceLimit },
-    {
-      skip: organization ? false : true,
-    }
-  );
+  const { data: invoicesApiResponse, ...invoicesApiResponseDetails } =
+    useGetInvoicesQuery(
+      { organization: organization, page: invoicePage, limit: invoiceLimit },
+      {
+        skip: organization ? false : true,
+      }
+    );
 
   const totalPages = subs?.length;
 
@@ -246,51 +248,75 @@ const SettingBilling = () => {
             <h3 className="font-bold">Invoices</h3>
           </div>
           <div className="col-span-12 sm:col-span-9  pb-20 relative">
-            {invoicesApiResponse?.invoices ? (
-              <div className="relative overflow-x-auto">
-                <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                  <thead className="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400">
-                    <tr>
-                      <th scope="col" className="px-6 py-3 rounded-s-lg">
-                        Date
-                      </th>
-                      <th scope="col" className="px-6 py-3 ">
-                        Expires
-                      </th>
-                      {/* <th scope="col" className="px-6 py-3">
+            <div className="relative overflow-x-auto">
+              <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                <thead className="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400">
+                  <tr>
+                    <th scope="col" className="px-6 py-3 rounded-s-lg">
+                      Date
+                    </th>
+                    <th scope="col" className="px-6 py-3 ">
+                      Expires
+                    </th>
+                    <th scope="col" className="px-6 py-3 ">
+                      Action
+                    </th>
+                    {/* <th scope="col" className="px-6 py-3">
                         Plan
                       </th> */}
-                      {/* <th scope="col" className="px-6 py-3">
+                    {/* <th scope="col" className="px-6 py-3">
                         Status
                       </th> */}
-                      <th
-                        scope="col"
-                        className="px-6 py-3 rounded-e-lg"
-                        aria-label="action"
-                      ></th>
+                    <th
+                      scope="col"
+                      className="px-6 py-3 rounded-e-lg"
+                      aria-label="action"
+                    ></th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {invoicesApiResponseDetails.isLoading && (
+                    <tr className="bg-white dark:bg-gray-800">
+                      <td colSpan={3}>
+                        <div className="w-full py-6 flex justify-center items-center">
+                          <Spinner
+                            aria-label="Loading spinner"
+                            color={"success"}
+                          />
+                        </div>
+                      </td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {invoicesApiResponse?.invoices?.map((invoice, i) => {
+                  )}
+                  {invoicesApiResponse?.invoices === 0 ? (
+                    <tr className="bg-white dark:bg-gray-800">
+                      <td colSpan={3}>
+                        <div className="w-full py-6 flex justify-center items-center">
+                          <p>No invoice recorded!</p>
+                        </div>
+                      </td>
+                    </tr>
+                  ) : (
+                    invoicesApiResponse?.invoices?.map((invoice, i) => {
                       return (
                         <tr
                           key={invoice?._id}
                           className="bg-white dark:bg-gray-800"
                         >
-                          <th
+                          <td
                             scope="row"
                             className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                           >
                             {invoice?.subscription?.expiresat &&
                               formatDateTime(invoice?.subscription?.createdAt)}
-                          </th>
-                          <th
+                          </td>
+                          <td
                             scope="row"
                             className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                           >
                             {invoice?.subscription?.expiresat &&
                               formatDateTime(invoice?.subscription?.expiresat)}
-                          </th>
+                          </td>
                           {/* <td className="px-6 py-4">{s?.plan} plan</td> */}
                           {/* <td className="px-6 py-4">Paid</td> */}
                           <td className="px-6 py-4">
@@ -304,13 +330,12 @@ const SettingBilling = () => {
                           </td>
                         </tr>
                       );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            ) : (
-              <p>No invoice recorded!</p>
-            )}
+                    })
+                  )}
+                </tbody>
+              </table>
+            </div>
+
             <Pagination
               totalEntries={invoicesApiResponse?.total || 0}
               entriesPerPage={invoiceLimit}

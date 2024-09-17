@@ -222,11 +222,11 @@ function AssignNewBeat({ isOnboarding = true }) {
               value={guard}
               name="guard"
               multiple={true}
-              multiSelect={
-                beatsApiResponse?.beats?.length >= 10
-                  ? beatsApiResponse?.beats?.length - 5
-                  : beatsApiResponse?.beats?.length
-              }
+              // multiSelect={
+              //   beatsApiResponse?.beats?.length >= 10
+              //     ? beatsApiResponse?.beats?.length - 5
+              //     : beatsApiResponse?.beats?.length
+              // }
               id="guard"
               multipleSelect={true}
               label="Select Guard"

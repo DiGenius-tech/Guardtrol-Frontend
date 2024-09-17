@@ -229,7 +229,7 @@ const OrganizationAudits = () => {
             {!isLoading &&
               auditsApiResponse?.audits?.map((audit) => (
                 <Table.Row key={audit._id}>
-                  <Table.Cell>{formatDateTime(audit.createdAt)}</Table.Cell>
+                  <Table.Cell>{formatDateTime(audit.happendAt)}</Table.Cell>
                   <Table.Cell>{audit?.message}</Table.Cell>
                   <Table.Cell>
                     {audit?.performer?.name ? audit?.performer?.name : "-----"}

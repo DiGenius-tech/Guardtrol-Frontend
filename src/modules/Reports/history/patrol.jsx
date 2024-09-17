@@ -191,7 +191,7 @@ const PatrolHistory = () => {
             <Table.HeadCell>Patrol</Table.HeadCell>
             <Table.HeadCell className=" min-w-40">Beat</Table.HeadCell>
             <Table.HeadCell>Guard</Table.HeadCell>
-            <Table.HeadCell>Abandoned By</Table.HeadCell>
+            <Table.HeadCell className=" min-w-40">Abandoned By</Table.HeadCell>
             <Table.HeadCell>Status</Table.HeadCell>
             <Table.HeadCell className="min-w-60">Start Time</Table.HeadCell>
             <Table.HeadCell className=" min-w-60">End Time</Table.HeadCell>

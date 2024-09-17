@@ -206,7 +206,7 @@ const BeatsLog = () => {
           <Table.Head>
             <Table.HeadCell>Beat</Table.HeadCell>
             <Table.HeadCell className=" w-36">Type</Table.HeadCell>
-            <Table.HeadCell className=" w-52">Date</Table.HeadCell>
+            <Table.HeadCell className=" min-w-56">Date</Table.HeadCell>
             <Table.HeadCell>Message</Table.HeadCell>
           </Table.Head>
           <Table.Body>
@@ -247,7 +247,7 @@ const BeatsLog = () => {
                       log.message.includes("Bypass") ? " (Bypass)" : ""
                     }`}</span>
                   </Table.Cell>
-                  <Table.Cell>{formatDateTime(log.createdAt)}</Table.Cell>
+                  <Table.Cell>{formatDateTime(log.happendAt)}</Table.Cell>
                   <Table.Cell>{log.message}</Table.Cell>
                 </Table.Row>
               ))}

@@ -117,7 +117,15 @@ const BeatList = () => {
   return (
     <div className="relative  pb-40">
       <div className="flex justify-between items-center mb-3 flex-wrap">
-        <h2 className=" text-2xl font-bold">All Beats</h2>
+        <div className="min-w-40 max-w-64 flex justify-start items-end">
+          <h2 className=" text-2xl font-bold">All Beats</h2>
+          <label
+            htmlFor="entriesPerPage"
+            className="text-base font-medium text-gray-400"
+          >
+            Total: {beatsApiResponse.totalBeats || 0}
+          </label>
+        </div>
 
         <div className="flex justify-end items-center gap-3 flex-wrap ">
           <div className="min-w-40 max-w-64 h-10">

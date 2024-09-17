@@ -163,6 +163,7 @@ function AddGuard({ onBoarding = true }) {
             cancelButtonColor: "#d33",
           }).then((result) => {
             if (result.isConfirmed) {
+              navigate("/client/settings/billing");
               // Swal.fire({
               //   title: "Deleted!",
               //   text: "Your file has been deleted.",

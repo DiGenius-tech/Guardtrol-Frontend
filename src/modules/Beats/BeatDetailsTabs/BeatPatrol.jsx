@@ -41,7 +41,9 @@ const BeatPatrol = () => {
     data: patrols,
     refetch: refetchPatrols,
     isLoading,
-  } = useGetPatrolsQuery();
+  } = useGetPatrolsQuery({});
+
+  console.log(patrols);
   const [selectedBeat, setSelectedBeat] = useState({});
 
   const [startTime, setStartTime] = useState();

@@ -2,29 +2,30 @@ import React, { useState } from "react";
 
 function MultiSelectField(props) {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedOptions, setSelectedOptions] = useState([]);
+  const [searchTerm, setSearchTerm] = useState(""); // State for search input
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
 
   const handleOptionToggle = (option) => {
-    console.log(
-      props.selectedOptions.find((opt) => opt.value === option.value)
-    );
-
     if (props.selectedOptions.find((opt) => opt._id === option._id)) {
       props.setSelectedOptions(
-        props.selectedOptions.filter((item) => item.value !== option.value)
+        props.selectedOptions.filter((item) => item._id !== option._id)
       );
     } else {
       props.setSelectedOptions([...props.selectedOptions, option]);
     }
   };
 
-  const clearSelectedOptions = () => {
-    props.setSelectedOptions([]);
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
   };
+
+  // Filter options based on the search term
+  const filteredOptions = props?.optionList?.filter((option) =>
+    option.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="relative">
@@ -37,8 +38,11 @@ function MultiSelectField(props) {
       >
         {props?.label}
       </label>
-      <div className="relative" onClick={toggleDropdown}>
-        <div className="flex items-center justify-between w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 cursor-pointer border border-gray-300 text-gray-900 text-sm sm:text-base rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 sm:py-4 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500">
+      <div className="relative">
+        <div
+          onClick={toggleDropdown}
+          className="flex items-center justify-between w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 cursor-pointer text-gray-900 text-sm sm:text-base rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 sm:py-4 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500"
+        >
           <div className="flex flex-wrap flex-grow overflow-hidden">
             {props?.selectedOptions &&
               props.selectedOptions.map((option) => (
@@ -91,24 +95,34 @@ function MultiSelectField(props) {
           </button>
         </div>
         {isOpen && (
-          <div className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-lg">
-            {props?.optionList?.map((option) => (
-              <label
-                key={option._id}
-                className="flex items-center px-4 py-2 cursor-pointer hover:bg-gray-100"
-              >
-                <input
-                  type="checkbox"
-                  className="form-checkbox h-5 w-5 text-green-500"
-                  value={option}
-                  checked={props.selectedOptions.find(
-                    (opt) => opt._id === option._id
-                  )}
-                  onChange={() => handleOptionToggle(option)}
-                />
-                <span className="ml-2">{option.name}</span>
-              </label>
-            ))}
+          <div className="absolute z-10 mt-1  w-full  bg-white border border-gray-300 rounded-md shadow-lg">
+            {/* Search Input Field */}
+            <input
+              type="text"
+              placeholder="Search..."
+              value={searchTerm}
+              onChange={handleSearchChange}
+              className="w-full px-4 py-2 border-b border-gray-300 focus:outline-none"
+            />
+            {/* Filtered Options List */}
+            <div className="w-full max-h-[300px]  overflow-y-scroll">
+              {filteredOptions.map((option) => (
+                <label
+                  key={option._id}
+                  className="flex items-center px-4 py-2 cursor-pointer hover:bg-gray-100"
+                >
+                  <input
+                    type="checkbox"
+                    className="form-checkbox h-5 w-5 text-green-500"
+                    checked={props.selectedOptions.find(
+                      (opt) => opt._id === option._id
+                    )}
+                    onChange={() => handleOptionToggle(option)}
+                  />
+                  <span className="ml-2">{option.name}</span>
+                </label>
+              ))}
+            </div>
           </div>
         )}
       </div>

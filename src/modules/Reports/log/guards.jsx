@@ -226,7 +226,7 @@ const GuardsLog = () => {
             {!isLoading &&
               logsAPiResponse?.logs?.map((log) => (
                 <Table.Row key={log._id}>
-                  <Table.Cell>{formatDateTime(log.createdAt)}</Table.Cell>
+                  <Table.Cell>{formatDateTime(log.happendAt)}</Table.Cell>
                   <Table.Cell>{log?.guard?.name}</Table.Cell>
                   <Table.Cell>{log.message}</Table.Cell>
                 </Table.Row>

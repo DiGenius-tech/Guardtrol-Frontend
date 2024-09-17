@@ -5,7 +5,7 @@ import { TPatrol } from "../../types/patrol";
 export const PatrolsApi = api.injectEndpoints({
   endpoints: (build) => ({
     getPatrols: build.query<TPatrol[], any>({
-      query: ({ params }) => ({ url: `patrols`, params }),
+      query: (params) => ({ url: `patrols`, params }),
       providesTags: (result = []) => [
         ...result.map(({ _id }) => ({ type: "Patrols", _id } as const)),
         { type: "Patrols" as const, id: "LIST" },
