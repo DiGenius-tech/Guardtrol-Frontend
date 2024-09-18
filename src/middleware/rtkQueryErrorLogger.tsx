@@ -8,8 +8,6 @@ import { api as toolkitApi } from "../redux/services/api";
 export const rtkQueryErrorLogger =
   (api: MiddlewareAPI) => (next: any) => (action: any) => {
     if (isRejectedWithValue(action)) {
-      console.log(action?.payload?.data?.error);
-
       if (action?.payload?.data?.error) {
         toast.error(action?.payload?.data?.error, {});
         return;

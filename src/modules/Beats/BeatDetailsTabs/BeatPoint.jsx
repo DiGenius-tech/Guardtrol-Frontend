@@ -35,7 +35,6 @@ const BeatPoint = () => {
       }).then(async (result) => {
         if (result.isConfirmed) {
           const { data } = await deletePoint(pointToDelete._id);
-          console.log(data);
           refetchPoints();
           if (data?.status) {
             Swal.fire({

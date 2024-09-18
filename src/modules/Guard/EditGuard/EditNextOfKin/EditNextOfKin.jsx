@@ -87,7 +87,6 @@ const EditNextOfKin = (props) => {
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     setValidationErrors({ ...validationErrors, [e.target.name]: "" });
-    // console.log("formData: ", formData)
   };
 
   const handleFileChange = async (event) => {
@@ -102,8 +101,6 @@ const EditNextOfKin = (props) => {
 
       try {
         const compressedFile = await imageCompression(uploadedFile, options);
-        console.log("Original file size:", uploadedFile.size);
-        console.log("Compressed file size:", compressedFile.size);
 
         setFormData({
           ...formData,

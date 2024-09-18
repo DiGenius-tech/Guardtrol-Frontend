@@ -61,7 +61,6 @@ const Client = () => {
     dispatch(
       api.util.invalidateTags([{ type: "Tickets", _id: ticketResponse.ticket }])
     );
-    console.log(location.pathname);
     dispatch(addNotification(ticketResponse.ticket));
   };
 
@@ -69,7 +68,6 @@ const Client = () => {
     handleNewTicketResponse(data)
   );
   // useSocketEvent("new-ticket", (data) => {
-  //   console.log("New message received:", handleNewTicket(data));
   // });
   if (isFetchingActiveSubscription) {
     return (

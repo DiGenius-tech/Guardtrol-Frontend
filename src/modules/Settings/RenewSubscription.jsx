@@ -292,16 +292,12 @@ const RenewSubscription = ({
       };
 
       const initiatePayment = () => {
-        console.log("first");
         const res = handlePaystackPayment({
           onSuccess: (transaction) => {
-            console.log(transaction);
-
             updateSubscription(transaction);
           },
           onClose,
         });
-        console.log(res);
         // paystack.newTransaction(paymentData);
       };
 
@@ -429,7 +425,6 @@ const RenewSubscription = ({
     let guardCost = 0;
     let newTotalBeats = 0;
     let newTotalGuards = 0;
-    console.log(mySuscriptions);
 
     if (
       subscriptionAction === "renewal" &&

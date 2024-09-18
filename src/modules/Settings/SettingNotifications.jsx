@@ -113,7 +113,6 @@ const SettingNotifications = () => {
                     name="notificationFrequency"
                     optionList={notificationFrequencyOptions}
                     handleChangeOption={(e) => {
-                      console.log(e.target);
                       formik.values.notificationFrequency = e.target.value;
                     }}
                     {...formik.getFieldProps("notificationFrequency")}

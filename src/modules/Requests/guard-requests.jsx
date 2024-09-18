@@ -258,9 +258,16 @@ const GuardRequestsHistory = () => {
 
   return (
     <div className="container mx-auto relative pb-40 sm:pb-20">
-      <section className="mb-2">
-        <h2 className="text-xl font-semibold">Requests </h2>
-
+      <div className="flex justify-between items-center mb-3 flex-wrap">
+        <div className="min-w-40 max-w-64 flex justify-start items-center gap-2">
+          <h2 className=" text-2xl font-bold">Guard Requests</h2>
+          <label
+            htmlFor="entriesPerPage"
+            className="text-base font-medium text-gray-400"
+          >
+            Total: {modifications?.totalBeats || 0}
+          </label>
+        </div>
         <div className="flex gap-2 mt-1 flex-wrap overflow-y-scroll remove-scrollbar py-1">
           <input
             className="border-gray-300 rounded-md min-w-40 h-10"
@@ -312,7 +319,7 @@ const GuardRequestsHistory = () => {
             )}
           </Button>
         </div>
-      </section>
+      </div>
 
       <div className=" min-h-[300px] max-h-80  overflow-y-auto">
         <Table striped>

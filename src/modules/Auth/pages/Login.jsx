@@ -64,7 +64,6 @@ const Login = () => {
       );
       const data = response.data;
       if (data?.supportUserData && data?.clientUserData) {
-        console.log(data);
         dispatch(updateSupportUser(data.supportUserData));
         dispatch(setOnboardingLevel(null));
         dispatch(setOnboardingGuards([]));

@@ -30,7 +30,6 @@ function PatrolGuardListToolbar() {
     "/client/patrol-guard/addguard",
     `/client/beats/details/${beatId}/addguard`,
   ];
-  console.log(userRole);
   return (
     <>
       {/* patrol-guard-list-toolbar-app works! */}

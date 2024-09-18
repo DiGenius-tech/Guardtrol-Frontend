@@ -68,7 +68,6 @@ const Shop = () => {
     // Check each input field's validity and set errors accordingly
     for (const el of form.elements) {
       if (el.nodeName === "INPUT" && !el.validity.valid) {
-        console.log(el.name);
         newErrors[el.name] = el.validationMessage;
       }
 
@@ -184,7 +183,6 @@ const Shop = () => {
   // Function to handle button click in the modal
   const handleModalButtonClick = () => {
     // Add your logic here for the button click inside the modal
-    console.log("Modal button clicked");
   };
 
   // const fwConfig = {

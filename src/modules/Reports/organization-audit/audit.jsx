@@ -151,7 +151,6 @@ const OrganizationAudits = () => {
               (beat) => beat._id === selectedBeatId
             );
 
-            console.log(selectedBeat);
             setselectedBeatData(selectedBeat);
           }}
           className="border px-2 border-gray-300 rounded-md min-w-40 h-10 sm:w-[48%] md:w-auto"

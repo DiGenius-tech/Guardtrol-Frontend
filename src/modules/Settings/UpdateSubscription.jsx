@@ -92,7 +92,6 @@ const UpdateSubscription = () => {
     },
   });
 
-  console.log(totalCost);
   const handlePaystackPayment = usePaystackPayment({
     publicKey: psConfigState.publicKey,
     email: user.email,
@@ -105,7 +104,6 @@ const UpdateSubscription = () => {
     handleFlutterPayment({
       callback: (response) => {
         if (response.status === "successful") {
-          console.log(response);
           handleUpdateSubscription(response);
         }
       },
@@ -120,7 +118,6 @@ const UpdateSubscription = () => {
     dispatch(suspenseShow());
     handlePaystackPayment({
       onSuccess: (response) => {
-        console.log(response);
         handleUpdateSubscription(response);
       },
       onClose: () => {
@@ -146,7 +143,6 @@ const UpdateSubscription = () => {
         paymentgateway: paymentOption,
       };
 
-      console.log(reqData);
       const { data } = await updateSubscription({
         organization,
         body: reqData,
@@ -193,7 +189,6 @@ const UpdateSubscription = () => {
     const diffInDays = Math.ceil(
       (expirationDate - today) / (1000 * 60 * 60 * 24)
     );
-    console.log(diffInDays);
     setRemainingDays(diffInDays);
   }, [currentSubscription?.expirationDate]);
 

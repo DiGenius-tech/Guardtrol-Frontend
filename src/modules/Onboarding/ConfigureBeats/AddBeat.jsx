@@ -103,7 +103,6 @@ function AddBeat() {
 
         dispatch(suspenseShow);
         await addBeat({ organization, beat });
-        console.log(user);
         const d = await refetchBeats();
         if (d) {
           dispatch(suspenseHide);

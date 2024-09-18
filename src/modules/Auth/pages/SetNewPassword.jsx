@@ -63,7 +63,6 @@ function SetNewPassword() {
     // Check each input field's validity and set errors accordingly
     for (const el of form.elements) {
       if (el.nodeName === "INPUT" && !el.validity.valid) {
-        console.log(el.name);
         newErrors[el.name] = el.validationMessage;
       }
 

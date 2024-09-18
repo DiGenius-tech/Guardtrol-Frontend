@@ -80,7 +80,6 @@ const validationSchema = Yup.object({
 });
 
 const EditPersonalInformation = (props) => {
-  console.log(props.guard?.personalinformation);
   const { guardId } = useParams();
   const organization = useSelector(selectOrganization);
   const { data: guards, refetch } = useGetGuardsQuery(

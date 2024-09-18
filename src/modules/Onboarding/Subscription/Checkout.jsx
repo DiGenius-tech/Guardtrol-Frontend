@@ -87,9 +87,7 @@ const Checkout = (props) => {
 
     handleFlutterPayment({
       callback: (response) => {
-        console.log(response);
         if (response.status === "successful") {
-          console.log(response);
           createSubscription(response);
         }
         closePaymentModal();
@@ -128,7 +126,6 @@ const Checkout = (props) => {
       };
 
       const data = await post(`users/subscribe/${user.userid}`, reqData, token);
-      console.log(data);
       if (data && data.message === "subscribed") {
         dispatch(setOnboardingLevel(0));
         dispatch(suspenseHide());

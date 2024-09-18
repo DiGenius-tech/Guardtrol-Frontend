@@ -53,7 +53,6 @@ const PatrolGuardDetails = () => {
       pollingInterval: POOLING_TIME,
     }
   );
-  console.log(organization);
   const {
     data: guards,
     refetch: refetchGuards,
@@ -114,8 +113,6 @@ const PatrolGuardDetails = () => {
 
       try {
         const compressedFile = await imageCompression(file, options);
-        console.log("Original file size:", file.size);
-        console.log("Compressed file size:", compressedFile.size);
 
         setFileName(compressedFile.name);
         setProfile(compressedFile);

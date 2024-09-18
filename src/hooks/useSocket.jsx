@@ -14,18 +14,14 @@ export const useSocket = () => {
     const socket = io(SOCKET_API_BASE_URL);
 
     socket.on("connect", () => {
-      console.log("Socket connected");
       setIsConnected(true);
     });
 
     socket.on("disconnect", (reason) => {
-      console.log("Socket disconnected:", reason);
       setIsConnected(false);
     });
 
-    socket.on("connect_error", (error) => {
-      console.log("Connection error:", error);
-    });
+    socket.on("connect_error", (error) => {});
 
     socketRef.current = socket;
   }, []);
@@ -49,9 +45,7 @@ export const SocketProvider = ({ children }) => {
     if (socket) {
       socket.emit("join", `organization-${organization}`);
 
-      socket.socket?.onAny((eventName, ...args) => {
-        console.log(`Received event: ${eventName}`, args);
-      });
+      socket.socket?.onAny((eventName, ...args) => {});
     }
   }, [socket, organization]);
   return (

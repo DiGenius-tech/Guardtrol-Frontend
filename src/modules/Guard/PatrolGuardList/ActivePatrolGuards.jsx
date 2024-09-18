@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import { useContext, useEffect, useState } from "react";
 
 import {
+  useClockoutGuardMutation,
   useDeleteGuardMutation,
   useGetGuardsQuery,
 } from "../../../redux/services/guards";
@@ -80,6 +81,7 @@ function ActivePatrolGuards() {
   }, [beatsApiResponse]);
 
   const [deleteGuard] = useDeleteGuardMutation();
+  const [clockoutGuard] = useClockoutGuardMutation();
   const [UnAssignGuard] = useUnAssignFromGuardToBeatMutation();
 
   const {
@@ -107,12 +109,47 @@ function ActivePatrolGuards() {
         if (result.isConfirmed) {
           dispatch(suspenseShow());
           const { data } = await deleteGuard(guardToDelete);
-          console.log(data);
           await refetchGuards();
           if (data?.status) {
             Swal.fire({
               title: "Deleted!",
               text: `${guardToDelete?.name || "Guard"} has been deleted.`,
+              icon: "success",
+              confirmButtonColor: "#008080",
+            });
+          }
+          dispatch(suspenseHide());
+        }
+      });
+    } catch (error) {
+    } finally {
+      dispatch(suspenseHide());
+    }
+  };
+
+  const handleClockoutGuard = (guardToClockout) => {
+    try {
+      Swal.fire({
+        title: "You won't be able to revert this!",
+        text: "Are you sure you want to clock out this Guard?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#008080",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Clock Out!",
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          dispatch(suspenseShow());
+          const { data } = await clockoutGuard({
+            guard: guardToClockout._id,
+            beat: beatId,
+            organization,
+          });
+          await refetchGuards();
+          if (data?.status) {
+            Swal.fire({
+              title: "Guard Clock Out!",
+              text: `${guardToClockout?.name || "Guard"} has been clocked out.`,
               icon: "success",
               confirmButtonColor: "#008080",
             });
@@ -215,37 +252,49 @@ function ActivePatrolGuards() {
   return (
     <div className="relative pb-32">
       {/* active-patrol-guards-app works! */}
-      <div className="flex gap-2 justify-start mb-2">
-        <div className="min-w-40 max-w-64 h-10">
-          <TextInput
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search by Guard Name"
-          />
+      <div className="flex gap-2 justify-between mb-2">
+        <div className="min-w-40 max-w-64 flex justify-start items-center gap-2">
+          <h2 className=" text-2xl font-bold">Active Guards</h2>
+          <label
+            htmlFor="entriesPerPage"
+            className="text-base font-medium text-gray-400"
+          >
+            Total: {activeGuards?.length || 0}
+          </label>
         </div>
-        <Button
-          color={"green"}
-          onClick={refetchGuards}
-          className="bg-green-500 text-white px-4 rounded min-w-40 h-10"
-          disabled={isFetching}
-        >
-          {isFetching ? (
-            <Spinner
-              aria-label="Loading spinner"
-              className="mr-2"
-              size="sm"
-              light
+        <div className="flex justify-end  gap-2">
+          <div className="min-w-40 max-w-64 h-10">
+            <TextInput
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search by Guard Name"
             />
-          ) : (
-            "Refresh"
-          )}
-        </Button>
+          </div>
+          <Button
+            color={"green"}
+            onClick={refetchGuards}
+            className="bg-green-500 text-white px-4 rounded min-w-40 h-10"
+            disabled={isFetching}
+          >
+            {isFetching ? (
+              <Spinner
+                aria-label="Loading spinner"
+                className="mr-2"
+                size="sm"
+                light
+              />
+            ) : (
+              "Refresh"
+            )}
+          </Button>
+        </div>
       </div>
       <div className="hidden sm:block">
         <Card>
           <PatrolGuardListDesktopView
             duty_status={duty_status}
+            handleClockoutGuard={handleClockoutGuard}
             icon_menu_dots={icon_menu_dots}
             isLoading={isLoading}
             handleDeleteGuard={handleDeleteGuard}
@@ -258,6 +307,7 @@ function ActivePatrolGuards() {
         <PatrolGuardListMobileView
           duty_status={duty_status}
           handleDeleteGuard={handleDeleteGuard}
+          handleClockoutGuard={handleClockoutGuard}
           icon_menu_dots={icon_menu_dots}
           isLoading={isLoading}
           guards={paginatedGuards}
@@ -268,6 +318,7 @@ function ActivePatrolGuards() {
         totalEntries={activeGuards?.length || 0}
         entriesPerPage={entriesPerPage}
         currentPage={currentPage}
+        handleDeleteGuard={handleDeleteGuard}
         onPageChange={setCurrentPage}
         onEntriesPerPageChange={setEntriesPerPage}
       />

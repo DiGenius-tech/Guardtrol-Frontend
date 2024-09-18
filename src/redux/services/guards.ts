@@ -82,6 +82,20 @@ export const GuardApi = api.injectEndpoints({
         { type: "TimelineLogs" },
       ],
     }),
+
+    clockoutGuard: build.mutation<{ success: boolean; _id: number }, any>({
+      query(body) {
+        return {
+          url: `guard/clock-out/${body.organization}`,
+          method: "PATCH",
+          body,
+        };
+      },
+      invalidatesTags: (guard) => [
+        { type: "Guards", _id: guard?._id },
+        { type: "TimelineLogs" },
+      ],
+    }),
     getErrorProne: build.query<{ success: boolean }, void>({
       query: () => "error-prone",
     }),
@@ -91,6 +105,7 @@ export const GuardApi = api.injectEndpoints({
 
 export const {
   useAddGuardsMutation,
+  useClockoutGuardMutation,
   useAddGuardMutation,
   useDeleteGuardMutation,
   useActivateGuardMutation,

@@ -58,9 +58,7 @@ const SubmitTicketForm = () => {
 
   const handleSubmitTicket = async (values) => {
     dispatch(suspenseShow());
-    console.log(values);
     const data = await addTicket({ organization, data: values }).unwrap();
-    console.log(data);
 
     if (data) {
       toast("Ticket has been submitted");

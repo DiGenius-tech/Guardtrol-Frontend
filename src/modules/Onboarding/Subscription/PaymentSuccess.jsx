@@ -32,7 +32,6 @@ const PaymentSuccess = () => {
     skip: organization ? false : true,
   });
 
-  // console.log(sub);
   // useEffect(() => {
   //   const payed = localStorage.getItem("paymentComplete") || false;
 
@@ -52,10 +51,8 @@ const PaymentSuccess = () => {
     }
   };
   useEffect(() => {
-    // console.log(tick_icon_ref)
+    // (tick_icon_ref)
     const tick_icon = tick_icon_ref?.current;
-    // console.log("tick_icon: ", tick_icon)
-    // console.log("tick_icon.classList.contains('hide'): ", tick_icon.classList.contains("hide"))
     // tick_icon.classList.remove("hide")
     // tick_icon ? (tick_icon.classList.contains("hide") ? tick_icon.classList.remove("hide") :
     //     null) : null;

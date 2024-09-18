@@ -57,8 +57,6 @@ const EditBeatInformation = ({ setPage }) => {
 
     validationSchema: BeatInformationSchema,
     onSubmit: (values) => {
-      console.log(values);
-
       setLoading(true);
       try {
         handleUpdateBeat(values);

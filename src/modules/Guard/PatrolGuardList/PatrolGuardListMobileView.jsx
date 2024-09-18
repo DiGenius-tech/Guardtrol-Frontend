@@ -119,15 +119,28 @@ function PatrolGuardListMobileView(props) {
                               {location.pathname.includes(
                                 "/beats/details/"
                               ) && (
-                                <Dropdown.Item>
-                                  <button
-                                    onClick={() =>
-                                      props.handleUnAssignGuard(guard)
-                                    }
-                                  >
-                                    Unassign Guard
-                                  </button>
-                                </Dropdown.Item>
+                                <>
+                                  <Dropdown.Item>
+                                    <button
+                                      onClick={() =>
+                                        props.handleUnAssignGuard(guard)
+                                      }
+                                    >
+                                      Unassign Guard
+                                    </button>
+                                  </Dropdown.Item>
+                                  {guard.status === "on duty" && (
+                                    <Dropdown.Item>
+                                      <button
+                                        onClick={() =>
+                                          props.handleClockoutGuard(guard)
+                                        }
+                                      >
+                                        Clock out
+                                      </button>
+                                    </Dropdown.Item>
+                                  )}
+                                </>
                               )}
                               <Dropdown.Item>
                                 <Link

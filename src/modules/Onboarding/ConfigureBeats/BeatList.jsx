@@ -57,7 +57,6 @@ function BeatList() {
   const handle_edit_beat = (beat) => {
     if (beat) {
       setIsEdit(true);
-      console.log(beat);
       setSelectedBeat(beat);
     }
   };

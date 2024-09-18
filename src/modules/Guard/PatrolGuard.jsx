@@ -7,7 +7,7 @@ import EditGuard from "./EditGuard/EditGuard";
 import { Outlet } from "react-router-dom";
 
 const PatrolGuard = () => {
-  const [guardToEdit, setGuardToEdit] = useState(null)
+  const [guardToEdit, setGuardToEdit] = useState(null);
 
   const [sentRequestCount, setSentRequestCount] = useState(0);
   const [guardCount, setGuardCount] = useState(0);
@@ -29,16 +29,11 @@ const PatrolGuard = () => {
     );
   };
 
-  useEffect(() => {
-    console.log("guardToEdit: ", guardToEdit)
-  }, [guardToEdit])
-
   return (
     <>
       {/* patrol-guard-app works! */}
 
       <Outlet />
-
     </>
   );
 };

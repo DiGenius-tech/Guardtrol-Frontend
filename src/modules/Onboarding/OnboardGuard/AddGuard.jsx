@@ -85,8 +85,6 @@ function AddGuard({ onBoarding = true }) {
         });
         return;
       }
-      console.log(guard);
-      console.log(onboardingGuards);
 
       if (
         guards.find((g) => g.phone === guard.phone) ||

@@ -103,7 +103,6 @@ const AddBeat = () => {
 
         return;
       }
-      console.log("creating.......");
       dispatch(suspenseShow());
 
       const { data } = await addBeat({ organization, beat });

@@ -46,7 +46,6 @@ function BulkUploadGuards() {
       const sheetName = workbook.SheetNames[0];
       const sheet = workbook.Sheets[sheetName];
       const jsonData = XLSX.utils.sheet_to_json(sheet);
-      console.log(jsonData);
 
       setGuards(
         jsonData.map((jd) => ({
@@ -66,7 +65,6 @@ function BulkUploadGuards() {
 
     guards.forEach((guard, index) => {
       const { full_name, phone } = guard;
-      console.log(guard);
 
       if (!full_name || `${full_name}`?.trim().length === 0) {
         errors.push(`Row ${index + 1}: Full Name is required.`);

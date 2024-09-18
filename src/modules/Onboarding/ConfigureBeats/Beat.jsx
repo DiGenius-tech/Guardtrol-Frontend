@@ -60,7 +60,6 @@ function Beat({ setBeats, beat, status, handle_edit_beat }) {
             beatId: beatToDelete._id,
             organization,
           });
-          console.log(data);
           await refetchBeats();
           if (data?.status) {
             Swal.fire({

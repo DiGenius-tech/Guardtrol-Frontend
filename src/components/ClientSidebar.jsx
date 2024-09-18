@@ -147,7 +147,7 @@ const ClientSidebar = () => {
               <Link
                 to={patrol_guard[0]}
                 className={
-                  (patrol_guard.includes(location.pathname) ||
+                  (location.pathname.includes("/client/patrol-guard") ||
                   use_params_keys.includes("guardId")
                     ? `bg-primary-50 `
                     : ``) +
@@ -183,7 +183,7 @@ const ClientSidebar = () => {
               <Link
                 to={beats[0]}
                 className={
-                  (beats.includes(location.pathname) ||
+                  (location.pathname.includes("/client/beats") ||
                   use_params_keys.includes("beatId")
                     ? `bg-primary-50 `
                     : ``) +
@@ -223,7 +223,7 @@ const ClientSidebar = () => {
               <Link
                 to={reports[0]}
                 className={
-                  (reports.includes(location.pathname)
+                  (location.pathname.includes("reports")
                     ? `bg-primary-50 `
                     : ``) +
                   `flex items-center p-2 text-dark-260 rounded-r-full dark:text-white hover:bg-primary-50 dark:hover:bg-primary-400 group`
@@ -241,7 +241,7 @@ const ClientSidebar = () => {
                 <Link
                   to={settings[0]}
                   className={
-                    (settings.includes(location.pathname)
+                    (location.pathname.includes("/client/settings")
                       ? `bg-primary-50 `
                       : ``) +
                     `flex items-center p-2 text-dark-260 rounded-r-full dark:text-white hover:bg-primary-50 dark:hover:bg-primary-400 group`

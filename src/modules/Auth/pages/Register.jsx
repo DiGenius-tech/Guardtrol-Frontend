@@ -77,7 +77,6 @@ const Register = () => {
 
       // Check each input field's validity and set errors accordingly
 
-      console.log(formData);
       if (formData.password.length < 8) {
         setValidationErrors({
           ...validationErrors,
@@ -95,7 +94,6 @@ const Register = () => {
       }
       for (const el of form.elements) {
         if (el.nodeName === "INPUT" && !el.validity.valid) {
-          console.log(el.name);
           newErrors[el.name] = el.validationMessage;
         }
 
@@ -165,8 +163,6 @@ const Register = () => {
       const accessToken = response.access_token;
 
       const userData = await getUserInfo(accessToken);
-
-      console.log(userData);
       const data = await post("users/signupwithgoogle", userData);
 
       if (null != data) {

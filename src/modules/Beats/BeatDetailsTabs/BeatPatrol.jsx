@@ -43,7 +43,6 @@ const BeatPatrol = () => {
     isLoading,
   } = useGetPatrolsQuery({});
 
-  console.log(patrols);
   const [selectedBeat, setSelectedBeat] = useState({});
 
   const [startTime, setStartTime] = useState();
@@ -81,7 +80,6 @@ const BeatPatrol = () => {
       }).then(async (result) => {
         if (result.isConfirmed) {
           const { data } = await deletePatrol(patrolToDelete._id);
-          console.log(data);
           refetchPatrols();
           if (data?.status) {
             Swal.fire({

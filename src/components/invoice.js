@@ -8,7 +8,6 @@ import { useReactToPrint } from "react-to-print";
 const Invoice = ({ invoice, componentRef }) => {
   const invoiceDate = new Date(invoice?.createdAt);
   const expiryDate = new Date(invoice?.subscription?.expiresat);
-  console.log(invoice);
 
   const invoiceItems = [
     {

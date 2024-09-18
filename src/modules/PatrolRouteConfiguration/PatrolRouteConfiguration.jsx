@@ -9,31 +9,30 @@ const patro_points = [
     id: 1,
     title: "Maxime ipsam debitis eum delectus minus",
     image:
-      "https://images.pexels.com/photos/4070976/pexels-photo-4070976.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+      "https://images.pexels.com/photos/4070976/pexels-photo-4070976.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
   },
   {
     id: 2,
     title: "Minus possimus vitae repellendus eum",
     image:
-      "https://images.pexels.com/photos/280229/pexels-photo-280229.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+      "https://images.pexels.com/photos/280229/pexels-photo-280229.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
   },
   {
     id: 3,
     title: "Minus possimus vitae repellendus eum",
     image:
-      "https://images.pexels.com/photos/7587825/pexels-photo-7587825.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
+      "https://images.pexels.com/photos/7587825/pexels-photo-7587825.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
   },
   {
     id: 4,
     title: "Minus possimus vitae repellendus eum",
     image:
-      "https://img.freepik.com/free-photo/house-isolated-field_1303-23773.jpg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-  }
+      "https://img.freepik.com/free-photo/house-isolated-field_1303-23773.jpg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
+  },
 ];
 
 const PatrolRouteConfiguration = () => {
   const [patrolPoints, setpatrolPoints] = useState(patro_points);
-  console.log(patrolPoints);
   return (
     <>
       {/* patrol-route-configuration-app works! */}
@@ -67,10 +66,8 @@ const PatrolRouteConfiguration = () => {
 
           <ul className="flex flex-nowrap gap-2 overflow-scroll">
             {patrolPoints.map((pt, i) => {
-              console.log("pt: ", pt);
               const { image, id } = pt;
               // let {image} = `url('${point.image}')`;
-              console.log("image: ", image);
               return (
                 <li className="min-w-[90px] sm:min-w-[130px]" key={id}>
                   <div
