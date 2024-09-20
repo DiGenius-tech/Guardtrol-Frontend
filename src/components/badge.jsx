@@ -4,8 +4,8 @@ const badgeStyles = {
   red100: "bg-red-100 text-red-800",
   blue100: "bg-blue-100 text-blue-800",
   gray100: "bg-gray-100 text-gray-800",
-  purple100: "bg-purple-100 text-purple-800",
-  teal100: "bg-teal-100 text-teal-800",
+  purple100: "bg-purple-800 text-white",
+  teal100: "bg-teal-800 text-white",
   orange100: "bg-orange-100 text-orange-800",
   pink100: "bg-pink-100 text-pink-800",
   indigo100: "bg-indigo-100 text-indigo-800",
@@ -14,7 +14,7 @@ const badgeStyles = {
   red200: "bg-red-200 text-red-800",
   green300: "bg-green-300 text-green-900",
   gray300: "bg-gray-300 text-gray-900",
-  yello300: "bg-yellow-300 text-yellow-900",
+  yello300: "bg-yellow-400 text-white",
   blue300: "bg-[#002e66] text-white",
   gray400: "bg-gray-400 text-gray-900",
 };
@@ -34,8 +34,24 @@ const PATROL_STATUS = {
   },
 };
 
+const LOG_TYPE = {
+  "clock action": {
+    label: "Clock Action",
+    className: badgeStyles.purple100,
+  },
+  "patrol action": {
+    label: "Patrol Action",
+    className: badgeStyles.yello300,
+  },
+  "guard action": {
+    label: "Guard action",
+    className: badgeStyles.teal100,
+  },
+};
+
 const OptionTypes = {
   PATROL_STATUS: PATROL_STATUS,
+  LOG_TYPE: LOG_TYPE,
 };
 
 export const Badge = ({ status, type }) => {

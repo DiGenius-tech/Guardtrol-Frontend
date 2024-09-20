@@ -241,7 +241,7 @@ function InactivePatrolGuards() {
             htmlFor="entriesPerPage"
             className="text-base font-medium text-gray-400"
           >
-            Total: {inactiveGuards.length || 0}
+            Total: {inactiveGuards?.length || 0}
           </label>
         </div>
         <div className="flex justify-end  gap-2">

@@ -11,6 +11,7 @@ import { selectOrganization } from "../../../redux/selectors/auth";
 import { useFetchTimelineLogsQuery } from "../../../redux/services/timelinelogs";
 import { POOLING_TIME } from "../../../constants/static";
 import { formatDate, formatDateTime } from "../../../utils/dateUtils";
+import { Badge } from "../../../components/badge";
 
 const BeatsLog = () => {
   const organization = useSelector(selectOrganization);
@@ -126,6 +127,12 @@ const BeatsLog = () => {
     },
   };
 
+  const formatLogsData = (logs) => {
+    return logs.map((log) => ({
+      ...log,
+      type: <Badge status={log.type} type={"LOG_TYPE"} />,
+    }));
+  };
   return (
     <div className="container mx-auto relative pb-40 sm:pb-20">
       <section className="mb-2">
@@ -204,7 +211,7 @@ const BeatsLog = () => {
         <Table>
           <Table.Head>
             <Table.HeadCell>Beat</Table.HeadCell>
-            <Table.HeadCell className=" w-36">Type</Table.HeadCell>
+            <Table.HeadCell className=" w-40">Type</Table.HeadCell>
             <Table.HeadCell className=" min-w-56">Date</Table.HeadCell>
             <Table.HeadCell>Message</Table.HeadCell>
           </Table.Head>
@@ -237,7 +244,7 @@ const BeatsLog = () => {
                 </Table.Row>
               )}
             {!isLoading &&
-              logsAPiResponse?.logs?.map((log) => (
+              formatLogsData(logsAPiResponse?.logs)?.map((log) => (
                 <Table.Row key={log._id}>
                   <Table.Cell>{log.beat?.name || "Unknown"}</Table.Cell>
                   <Table.Cell>
