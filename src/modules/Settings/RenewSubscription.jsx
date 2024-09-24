@@ -122,7 +122,7 @@ const RenewSubscription = ({
   const [newMaxExtraGuards, setNewMaxExtraGuards] = useState(
     subscription?.maxextraguards
   );
-  const [subscriptionAction, setSubscriptionAction] = useState("renew");
+  const [subscriptionAction, setSubscriptionAction] = useState("renewal");
   const [paymentType, setPaymentType] = useState("recuring");
 
   const handleBeatChange = (e) => {
@@ -159,9 +159,7 @@ const RenewSubscription = ({
   const subscriptionActions = [
     { value: "reduce", label: "Reduce" },
     { value: "increase", label: "Increase" },
-    ...(mySuscriptions?.[0] && mySuscriptions[0].plan !== "free trial"
-      ? [{ value: "renewal", label: "Renewal" }]
-      : []),
+    ...(mySuscriptions?.[0] ? [{ value: "renewal", label: "Renewal" }] : []),
   ];
   const paymentOptions = [
     { value: "paystack", label: "Paystack" },
@@ -254,6 +252,7 @@ const RenewSubscription = ({
     dispatch(suspenseHide());
     toast.error("Payment was closed");
   };
+
   const payWithPaystack = async () => {
     try {
       dispatch(suspenseShow());
@@ -426,14 +425,13 @@ const RenewSubscription = ({
     let newTotalBeats = 0;
     let newTotalGuards = 0;
 
-    if (
-      subscriptionAction === "renewal" &&
-      mySuscriptions?.[0].plan !== "free trial"
-    ) {
-      setNewSubscriptionTotalAmount(mySuscriptions?.[0]?.totalamount * months);
-      return;
-    }
-    if (subscriptionAction === "reduce") {
+    if (subscriptionAction === "renewal") {
+      beatCost = mySuscriptions?.[0]?.maxbeats * BEAT_PRICE;
+      guardCost = mySuscriptions?.[0]?.maxextraguards * BEAT_PRICE;
+      setNewSubscriptionTotalAmount(months * beatCost + guardCost);
+
+      // setNewSubscriptionTotalAmount(mySuscriptions?.[0]?.totalamount * months);
+    } else if (subscriptionAction === "reduce") {
       if (newMaxBeats) {
         beatCost = newMaxBeats * BEAT_PRICE;
       }
@@ -467,6 +465,7 @@ const RenewSubscription = ({
     newMaxExtraGuards,
     subscriptionAction,
     subscription,
+    mySuscriptions,
   ]);
 
   return (
@@ -538,6 +537,7 @@ const RenewSubscription = ({
                         <Radio
                           key={action.value}
                           value={action.value}
+                          checked={subscriptionAction === action.value}
                           style={{ color: "#008080" }}
                           id={action.value}
                           onClick={(event) =>
@@ -700,7 +700,7 @@ const RenewSubscription = ({
         <Modal.Footer>
           <Button
             isProcessing={isLoading}
-            disabled={isLoading}
+            disabled={isLoading || Number(newSubscriptionTotalAmount) === 0}
             onClick={() => pay()}
             style={{ backgroundColor: "#008080" }}
             type="submit"
