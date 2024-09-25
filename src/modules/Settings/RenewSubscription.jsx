@@ -121,13 +121,18 @@ const RenewSubscription = ({
   const [newMaxExtraGuards, setNewMaxExtraGuards] = useState(
     subscription?.maxextraguards
   );
-  const [subscriptionAction, setSubscriptionAction] = useState("renewal");
+  const [subscriptionAction, setSubscriptionAction] = useState(
+    mySuscriptions?.[0] ? "renewal" : "new-subscription"
+  );
   const [paymentType, setPaymentType] = useState("recuring");
 
   const handleBeatChange = (e) => {
     const newBeats = parseInt(e.target.value);
 
-    if (subscriptionAction === "reduce") {
+    if (
+      subscriptionAction === "reduce" ||
+      subscriptionAction === "new-subscription"
+    ) {
       setNewMaxBeats(Math.abs(newBeats));
     } else if (subscriptionAction === "increase") {
       setNewMaxBeats(Math.abs(newBeats));
@@ -138,7 +143,10 @@ const RenewSubscription = ({
 
   const handleGuardChange = (e) => {
     const newGuards = parseInt(e.target.value);
-    if (subscriptionAction === "reduce") {
+    if (
+      subscriptionAction === "reduce" ||
+      subscriptionAction === "new-subscription"
+    ) {
       setNewMaxExtraGuards(Math.abs(newGuards));
     } else if (subscriptionAction === "increase") {
       setNewMaxExtraGuards(Math.abs(newGuards));
@@ -156,9 +164,13 @@ const RenewSubscription = ({
   ];
 
   const subscriptionActions = [
-    { value: "reduce", label: "Reduce" },
-    { value: "increase", label: "Increase" },
-    ...(mySuscriptions?.[0] ? [{ value: "renewal", label: "Renewal" }] : []),
+    ...(mySuscriptions?.[0]
+      ? [
+          { value: "reduce", label: "Reduce" },
+          { value: "increase", label: "Increase" },
+          { value: "renewal", label: "Renewal" },
+        ]
+      : [{ value: "new-subscription", label: "New Subscription" }]),
   ];
   const paymentOptions = [
     { value: "paystack", label: "Paystack" },
@@ -425,6 +437,12 @@ const RenewSubscription = ({
     let newTotalBeats = 0;
     let newTotalGuards = 0;
 
+    if (subscriptionAction === "new-subscription") {
+      beatCost = newMaxBeats * BEAT_PRICE;
+      guardCost = newMaxExtraGuards * GUARD_PRICE;
+
+      // setNewSubscriptionTotalAmount(mySuscriptions?.[0]?.totalamount * months);
+    }
     if (subscriptionAction === "renewal") {
       beatCost = mySuscriptions?.[0]?.maxbeats * BEAT_PRICE;
       guardCost = mySuscriptions?.[0]?.maxextraguards * GUARD_PRICE;
@@ -463,7 +481,7 @@ const RenewSubscription = ({
           GUARD_PRICE;
       }
     }
-    setNewSubscriptionTotalAmount(months * beatCost + guardCost);
+    setNewSubscriptionTotalAmount(months * (beatCost + guardCost));
   }, [
     newSubscription,
     newMaxBeats,
@@ -558,13 +576,15 @@ const RenewSubscription = ({
               </div>
 
               {(subscriptionAction === "reduce" ||
-                subscriptionAction === "increase") && (
+                subscriptionAction === "increase" ||
+                subscriptionAction === "new-subscription") && (
                 <div className="grid grid-cols-2 gap-4">
                   <div className="">
                     <Label
                       htmlFor="newMaxBeats"
                       value={
-                        subscriptionAction === "reduce"
+                        subscriptionAction === "reduce" ||
+                        subscriptionAction === "new-subscription"
                           ? "New Total Beat(s)"
                           : "New Additional Beat(s)"
                       }
@@ -573,7 +593,8 @@ const RenewSubscription = ({
                       id="newMaxBeats"
                       type="number"
                       placeholder={
-                        subscriptionAction === "reduce"
+                        subscriptionAction === "reduce" ||
+                        subscriptionAction === "new-subscription"
                           ? "Enter Beats you would like have"
                           : "Enter Beats you would like to add"
                       }
@@ -585,7 +606,8 @@ const RenewSubscription = ({
                     <Label
                       htmlFor="newMaxExtraGuards"
                       value={
-                        subscriptionAction === "reduce"
+                        subscriptionAction === "reduce" ||
+                        subscriptionAction === "new-subscription"
                           ? "New Extra Guard(s)"
                           : "New Additional Extra Guard(s)"
                       }
@@ -594,7 +616,8 @@ const RenewSubscription = ({
                       id="newMaxExtraGuards"
                       type="number"
                       placeholder={
-                        subscriptionAction === "reduce"
+                        subscriptionAction === "reduce" ||
+                        subscriptionAction === "new-subscription"
                           ? "Enter Extra Guards you would like have"
                           : "Enter Extra Guards you would like to add"
                       }
@@ -641,13 +664,15 @@ const RenewSubscription = ({
                 </span>
               </div>
               {(subscriptionAction === "reduce" ||
-                subscriptionAction === "increase") && (
+                subscriptionAction === "increase" ||
+                subscriptionAction === "new-subscription") && (
                 <>
                   <div className=" flex flex-row justify-between items-center">
                     <Label className=" text-md" value="New Total Beat(s)" />
                     <span className=" text-gray-500 ">
                       {subscriptionAction !== "renewal"
-                        ? subscriptionAction === "reduce"
+                        ? subscriptionAction === "reduce" ||
+                          subscriptionAction === "new-subscription"
                           ? newMaxBeats || "0"
                           : (subscription?.maxbeats ||
                               mySuscriptions[0]?.maxbeats) + newMaxBeats ||
@@ -660,7 +685,8 @@ const RenewSubscription = ({
                     <Label className=" text-md" value="New Extra Guards" />
                     <span className=" text-gray-500 ">
                       {subscriptionAction !== "renewal"
-                        ? subscriptionAction === "reduce"
+                        ? subscriptionAction === "reduce" ||
+                          subscriptionAction === "new-subscription"
                           ? newMaxExtraGuards || "0"
                           : (subscription?.maxextraguards ||
                               mySuscriptions[0]?.maxextraguards) +
