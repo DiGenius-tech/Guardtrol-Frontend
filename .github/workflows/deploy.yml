@@ -26,35 +26,3 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./build/
           log-level: verbose
-# on:
-#   push:
-#     branches:
-#       - main
-# name: 🚀 Deploy website on push
-# jobs:
-#   web-deploy:
-#     name: 🎉 Deploy website
-#     runs-on: ubuntu-latest
-#     steps:
-#       - name: 🚚 Get latest code
-#         uses: actions/checkout@v4
-#       - name: 📦 Install dependencies
-#         run: npm install
-#       - name: 🔨 Build project
-#         run: |
-#           export NODE_OPTIONS=--max-old-space-size=4096
-#           CI=false npm run build
-#         env:
-#           NODE_ENV: production # Or adjust this to match your needs
-#       - name: 📂 Sync files via FTP
-#         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
-#         with:
-#           server: ${{ secrets.FTP_SERVER }}
-#           username: ${{ secrets.FTP_LIVE_USERNAME }}
-#           password: ${{ secrets.FTP_LIVE_PASSWORD }}
-#           local-dir: ./build/
-#           log-level: verbose
-
-
-u
-p &#&8~Ot!fkg.
