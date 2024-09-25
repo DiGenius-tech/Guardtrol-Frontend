@@ -369,7 +369,7 @@ const RenewSubscription = ({
       await refetchAllMySubscriptions();
       await refetchActiveSubscription();
       await refetchInvoices();
-      dispatch(api.util.invalidateTags([{ type: "Invoices", id: "LIST" }]));
+      // dispatch(api.util.invalidateTags([{ type: "Invoices", id: "LIST" }]));
 
       if (!isExpired) {
         setRenewalModal(false);
