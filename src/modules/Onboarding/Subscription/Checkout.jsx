@@ -126,10 +126,10 @@ const Checkout = (props) => {
       };
 
       const data = await post(`users/subscribe/${user.userid}`, reqData, token);
-      if (data && data.message === "subscribed") {
-        dispatch(setOnboardingLevel(0));
+      if (data.message === "subscribed") {
         dispatch(suspenseHide());
         navigate("/onboarding/membership/successful");
+        // dispatch(setOnboardingLevel(1));
       }
       refetchActiveSub();
     } catch (error) {

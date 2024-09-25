@@ -13,4 +13,10 @@ const formatDateTime = (date) => {
   return `${formatDate(date)} ${formatTime(date)}`;
 };
 
-export { formatDate, formatTime, formatDateTime };
+const formatCurrency = (amount) => {
+  console.log(amount);
+  return `₦${Number(amount)
+    ?.toFixed(2)
+    .replace(/\d(?=(\d{3})+\.)/g, "$&,")}`;
+};
+export { formatDate, formatTime, formatDateTime, formatCurrency };

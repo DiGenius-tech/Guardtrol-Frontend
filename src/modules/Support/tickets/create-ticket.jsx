@@ -19,6 +19,7 @@ import { errorHandler } from "../../../lib/errorHandler";
 import { Button, Spinner, Select } from "flowbite-react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { api } from "../../../redux/services/api";
 
 const ticketSchema = Yup.object().shape({
   subject: Yup.string().required("Subject is required"),
@@ -59,6 +60,8 @@ const SubmitTicketForm = () => {
   const handleSubmitTicket = async (values) => {
     dispatch(suspenseShow());
     const data = await addTicket({ organization, data: values }).unwrap();
+    dispatch(api.util.invalidateTags([{ type: "Tickets" }]));
+    dispatch(api.util.invalidateTags([{ type: "TicketReplies" }]));
 
     if (data) {
       toast("Ticket has been submitted");

@@ -4,26 +4,26 @@ import { Table } from "flowbite-react";
 
 import { BEAT_PRICE, GUARD_PRICE } from "../constants/static";
 import { useReactToPrint } from "react-to-print";
+import { formatCurrency } from "../utils/dateUtils";
 
 const Invoice = ({ invoice, componentRef }) => {
-  const invoiceDate = new Date(invoice?.createdAt);
-  const expiryDate = new Date(invoice?.subscription?.expiresat);
-
+  console.log(invoice);
   const invoiceItems = [
+    "",
     {
       item: "Beats",
-      quantity: invoice?.subscription?.maxbeats,
+      quantity: invoice?.maxbeats,
       rate: BEAT_PRICE,
     },
     {
       item: "Extra Guards",
-      quantity: invoice?.subscription?.maxextraguards,
+      quantity: invoice?.extraguards,
       rate: GUARD_PRICE,
     },
   ];
 
   const calculateTotal = () => {
-    return invoiceItems.reduce(
+    return invoiceItems?.reduce(
       (total, item) => total + item?.quantity * item?.rate,
       0
     );
@@ -37,9 +37,7 @@ const Invoice = ({ invoice, componentRef }) => {
       day: "numeric",
     });
   };
-  const formatCurrency = (amount) => {
-    return `₦${amount?.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, "$&,")}`;
-  };
+
   return (
     <>
       <div ref={componentRef} className="  bg-gray-50 px-10 py-5">
@@ -83,15 +81,10 @@ const Invoice = ({ invoice, componentRef }) => {
                 </div>
                 <hr />
 
-                <h6 className="mt-5 text-xl font-semi-bold">Order Details</h6>
-                <p className="my-2">
-                  Invoice for subscription from{" "}
-                  {invoice?.subscription?.startsAt
-                    ? formatDate(invoice?.subscription?.startsAt)
-                    : "Your subscription end date"}
-                  {" to "}
-                  {formatDate(invoice?.subscription?.expiresat)}
-                </p>
+                <h6 className="mt-5 text-xl font-semi-bold">
+                  Order Details ({invoice?.title})
+                </h6>
+                <p className="my-2">{invoice?.description}</p>
                 <Table striped className="">
                   <Table.Head>
                     <Table.HeadCell>Item</Table.HeadCell>
@@ -102,23 +95,28 @@ const Invoice = ({ invoice, componentRef }) => {
                   <Table.Body>
                     {invoiceItems
                       ?.filter((item) => item?.quantity !== 0)
-                      .map((item, index) => (
-                        <Table.Row key={index}>
-                          <Table.Cell>{item?.item}</Table.Cell>
-                          <Table.Cell>{item?.quantity}</Table.Cell>
-                          <Table.Cell>{formatCurrency(item.rate)}</Table.Cell>
-                          <Table.Cell>
-                            {formatCurrency(item?.quantity * item?.rate)}
-                          </Table.Cell>
-                        </Table.Row>
-                      ))}
+                      ?.map((item, index) => {
+                        if (Number(item.quantity) > 0)
+                          return (
+                            <Table.Row key={index}>
+                              <Table.Cell>{item?.item}</Table.Cell>
+                              <Table.Cell>{item?.quantity}</Table.Cell>
+                              <Table.Cell>
+                                {formatCurrency(item.rate)}
+                              </Table.Cell>
+                              <Table.Cell>
+                                {formatCurrency(item?.quantity * item?.rate)}
+                              </Table.Cell>
+                            </Table.Row>
+                          );
+                      })}
                   </Table.Body>
                 </Table>
                 <div className="grid grid-cols-1 bg-[#008080] text-white p-5">
                   <div className="grid grid-cols-2">
                     <h6>Total</h6>
                     <h4 className="font-bold text-xl text-center ml-36">
-                      {formatCurrency(calculateTotal())}
+                      {invoice.amount}
                     </h4>
                   </div>
                 </div>
@@ -134,10 +132,12 @@ const Invoice = ({ invoice, componentRef }) => {
                   </Table.Head>
                   <Table.Body>
                     <Table.Row>
-                      <Table.Cell>Paystack</Table.Cell>
                       <Table.Cell>
-                        {formatCurrency(calculateTotal())}
+                        <span className=" capitalize">
+                          {invoice.paymentgateway}
+                        </span>
                       </Table.Cell>
+                      <Table.Cell> {invoice.amount}</Table.Cell>
                       <Table.Cell>{invoice?.trxref}</Table.Cell>
                       <Table.Cell> {invoice?.transactionid} </Table.Cell>
                       <Table.Cell> Paid </Table.Cell>

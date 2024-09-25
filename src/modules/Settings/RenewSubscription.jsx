@@ -88,10 +88,9 @@ const RenewSubscription = ({
   const [createSubscription] = useAddSubscriptionMutation();
   const { data: invoicesApiResponse, refetch: refetchInvoices } =
     useGetInvoicesQuery(
-      { organization },
+      { organization: organization, page: 1, limit: 10 },
       {
         skip: organization ? false : true,
-        pollingInterval: POOLING_TIME,
       }
     );
 
@@ -370,6 +369,7 @@ const RenewSubscription = ({
       await refetchAllMySubscriptions();
       await refetchActiveSubscription();
       await refetchInvoices();
+      dispatch(api.util.invalidateTags([{ type: "Invoices", id: "LIST" }]));
 
       if (!isExpired) {
         setRenewalModal(false);
@@ -377,7 +377,7 @@ const RenewSubscription = ({
       dispatch(suspenseHide());
       if (data) {
         Swal.fire({
-          title: "Renewal succefull",
+          title: "Renewal successfull",
           text: `Your subscription has been updated!`,
           icon: "success",
           confirmButtonColor: "#008080",
@@ -427,7 +427,8 @@ const RenewSubscription = ({
 
     if (subscriptionAction === "renewal") {
       beatCost = mySuscriptions?.[0]?.maxbeats * BEAT_PRICE;
-      guardCost = mySuscriptions?.[0]?.maxextraguards * BEAT_PRICE;
+      guardCost = mySuscriptions?.[0]?.maxextraguards * GUARD_PRICE;
+
       setNewSubscriptionTotalAmount(months * beatCost + guardCost);
 
       // setNewSubscriptionTotalAmount(mySuscriptions?.[0]?.totalamount * months);
@@ -442,6 +443,7 @@ const RenewSubscription = ({
       newTotalGuards =
         newMaxExtraGuards +
         (subscription?.maxextraguards || mySuscriptions[0]?.maxextraguards);
+
       newTotalBeats =
         newMaxBeats + (subscription?.maxbeats || mySuscriptions[0]?.maxbeats);
 
@@ -456,6 +458,9 @@ const RenewSubscription = ({
           (subscription?.maxextraguards || mySuscriptions[0]?.maxextraguards) *
           GUARD_PRICE;
       } else {
+        guardCost =
+          (subscription?.maxextraguards || mySuscriptions[0]?.maxextraguards) *
+          GUARD_PRICE;
       }
     }
     setNewSubscriptionTotalAmount(months * beatCost + guardCost);

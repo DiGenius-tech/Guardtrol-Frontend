@@ -99,7 +99,7 @@ function BulkUploadBeats() {
         cancelButtonColor: "#d33",
       }).then((result) => {
         if (result.isConfirmed) {
-          navigate("/client/settings/billing");
+          navigate("/client/settings/billing?action=update");
         }
       });
     }

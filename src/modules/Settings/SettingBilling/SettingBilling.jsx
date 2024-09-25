@@ -11,7 +11,7 @@ import {
   selectToken,
   selectUser,
 } from "../../../redux/selectors/auth";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate, useSearchParams } from "react-router-dom";
 import {
   useGetAllMySubscriptionsQuery,
   useGetAllSubscriptionsQuery,
@@ -50,14 +50,20 @@ const savedPaymentCards = [
 
 const SettingBilling = () => {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const paramActionValue = searchParams.get("action");
 
   const user = useSelector(selectUser);
   const token = useSelector(selectToken);
 
   const organization = useSelector(selectOrganization);
+  console.log(paramActionValue === "action");
 
   const [isAddNewCard, setIsAddNewCard] = useState(false);
-  const [isUpdateSub, setIsUpdateSub] = useState(false);
+  const [isUpdateSub, setIsUpdateSub] = useState(
+    paramActionValue === "update" ? true : false
+  );
   const [openRenewalModal, setOpenRenewalModal] = useState(false);
   const [openViewInvoice, setOpenViewInvoice] = useState(false);
 
@@ -253,12 +259,12 @@ const SettingBilling = () => {
                 <thead className="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400">
                   <tr>
                     <th scope="col" className="px-6 py-3 rounded-s-lg">
+                      Amount
+                    </th>
+                    <th scope="col" className="px-6 py-3">
                       Date
                     </th>
-                    <th scope="col" className="px-6 py-3 ">
-                      Expires
-                    </th>
-                    <th scope="col" className="px-6 py-3 ">
+                    <th scope="col" className="px-6 py-3  rounded-e-lg">
                       Action
                     </th>
                     {/* <th scope="col" className="px-6 py-3">
@@ -307,16 +313,15 @@ const SettingBilling = () => {
                             scope="row"
                             className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                           >
-                            {invoice?.subscription?.expiresat &&
-                              formatDateTime(invoice?.subscription?.createdAt)}
+                            {invoice?.amount}
                           </td>
                           <td
                             scope="row"
                             className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                           >
-                            {invoice?.subscription?.expiresat &&
-                              formatDateTime(invoice?.subscription?.expiresat)}
+                            {invoice?.createdAt}
                           </td>
+
                           {/* <td className="px-6 py-4">{s?.plan} plan</td> */}
                           {/* <td className="px-6 py-4">Paid</td> */}
                           <td className="px-6 py-4">
