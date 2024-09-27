@@ -27,7 +27,7 @@ import { useGetInvoicesQuery } from "../../../redux/services/invoice";
 import Invoice from "../../../components/invoice";
 import { useReactToPrint } from "react-to-print";
 import ViewInvoice from "../ViewInvoice";
-import { formatDateTime } from "../../../utils/dateUtils";
+import { formatCurrency, formatDateTime } from "../../../utils/dateUtils";
 import Pagination from "../../../shared/Pagination/Pagination";
 import { Spinner } from "flowbite-react";
 
@@ -175,7 +175,7 @@ const SettingBilling = () => {
                   <div className="col-span-2 sm:col-span-1 sm:text-right">
                     {sub ? (
                       <p className="text-2xl font-bold">
-                        ₦{formatNumberWithCommas(sub?.totalamount)}
+                        {formatCurrency(sub?.totalamount)}
                       </p>
                     ) : (
                       <p className="text-base font-bold">

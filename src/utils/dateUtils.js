@@ -14,9 +14,19 @@ const formatDateTime = (date) => {
 };
 
 const formatCurrency = (amount) => {
-  console.log(amount);
-  return `₦${Number(amount)
-    ?.toFixed(2)
-    .replace(/\d(?=(\d{3})+\.)/g, "$&,")}`;
+  const roundedAmount = Math.round(amount);
+  return new Intl.NumberFormat("en-NG", {
+    style: "currency",
+    currency: "NGN",
+    minimumFractionDigits: 0,
+  }).format(roundedAmount);
 };
+
+function formatToNairaRounded(amount) {
+  const roundedAmount = Math.round(amount);
+  return new Intl.NumberFormat("en-NG", {
+    style: "currency",
+    currency: "NGN",
+  }).format(roundedAmount);
+}
 export { formatDate, formatTime, formatDateTime, formatCurrency };

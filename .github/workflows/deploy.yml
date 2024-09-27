@@ -2,6 +2,7 @@ on:
   push:
     branches:
       - staging
+      - main # Add the main branch trigger
 name: 🚀 Deploy website on push
 jobs:
   web-deploy:
@@ -12,13 +13,22 @@ jobs:
         uses: actions/checkout@v4
       - name: 📦 Install dependencies
         run: npm install
-      - name: 🔨 Build project
+      - name: 🔨 Build project for staging
+        if: github.ref == 'refs/heads/staging'
         run: |
           export NODE_OPTIONS=--max-old-space-size=4096
           CI=false npm run build-staging
         env:
           NODE_ENV: production # Or adjust this to match your needs
-      - name: 📂 Sync files via FTP
+      - name: 🔨 Build project for main
+        if: github.ref == 'refs/heads/main'
+        run: |
+          export NODE_OPTIONS=--max-old-space-size=4096
+          CI=false npm run build
+        env:
+          NODE_ENV: production
+      - name: 📂 Sync files via FTP for staging
+        if: github.ref == 'refs/heads/staging'
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: ${{ secrets.FTP_SERVER }}
@@ -26,3 +36,15 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           local-dir: ./build/
           log-level: verbose
+      - name: 📂 Sync files via FTP for main
+        if: github.ref == 'refs/heads/main'
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.FTP_SERVER}}
+          username: ${{ secrets.FTP_USERNAME_LIVE}}
+          password: ${{ secrets.FTP_PASSWORD_LIVE}}
+          local-dir: ./build/
+          log-level: verbose
+
+
+P3R[MXIDQ9V?

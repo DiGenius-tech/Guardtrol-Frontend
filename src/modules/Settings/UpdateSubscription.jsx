@@ -131,19 +131,18 @@ const UpdateSubscription = () => {
 
   const handleUpdateSubscription = async (response) => {
     dispatch(suspenseShow());
+
+    let newAdditionTototal =
+      Math.round(
+        (Math.floor(
+          additionalBeats * (subDurationDays * Math.round(BEAT_PRICE / 30))
+        ) +
+          Math.floor(
+            additionalGuards * (subDurationDays * Math.round(GUARD_PRICE / 30))
+          )) /
+          1000
+      ) * 1000;
     try {
-      console.log(
-        additionalBeats,
-        BEAT_PRICE,
-        additionalGuards,
-        GUARD_PRICE,
-        currentSubscription?.totalamount
-      );
-
-      console.log(additionalBeats * BEAT_PRICE * (subDurationDays / 30));
-      console.log(additionalGuards * GUARD_PRICE * (subDurationDays / 30));
-      console.log(currentSubscription?.totalamount);
-
       const reqData = {
         _id: currentSubscription?._id,
         paymentRes: response,
@@ -152,10 +151,7 @@ const UpdateSubscription = () => {
         newExtraguards: additionalGuards,
         maxbeats: additionalBeats + currentSubscription?.maxbeats,
         maxextraguards: additionalGuards + currentSubscription?.maxextraguards,
-        totalamount:
-          additionalBeats * BEAT_PRICE * (subDurationDays / 30) +
-          additionalGuards * GUARD_PRICE * (subDurationDays / 30) +
-          currentSubscription?.totalamount,
+        totalamount: newAdditionTototal + currentSubscription?.totalamount,
         paymentstatus: "complete",
         plan: currentSubscription?.plan,
         expiresat: currentSubscription?.expiresat,
@@ -212,13 +208,10 @@ const UpdateSubscription = () => {
     );
     const startDate = new Date(currentSubscription?.startsAt);
 
-    console.log(currentSubscription);
     const diffInDurationDays = Math.ceil(
       (expirationDate - startDate) / (1000 * 60 * 60 * 24)
     );
 
-    console.log(diffInDays);
-    console.log(diffInDurationDays);
     setsubDurationDays(diffInDurationDays);
     setRemainingDays(diffInDays);
   }, [currentSubscription?.expirationDate]);
