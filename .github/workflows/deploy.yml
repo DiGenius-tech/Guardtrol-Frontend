@@ -45,6 +45,4 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD_LIVE}}
           local-dir: ./build/
           log-level: verbose
-
-
-P3R[MXIDQ9V?
+# P3R[MXIDQ9V?
