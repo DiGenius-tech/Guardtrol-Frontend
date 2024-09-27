@@ -52,12 +52,11 @@ const EditBeatInformation = ({ setPage }) => {
       name: selectedBeat.name,
       description: selectedBeat.description,
       isactive: selectedBeat.isactive,
+      bypassRequest: selectedBeat?.bypassRequest,
     },
 
     validationSchema: BeatInformationSchema,
     onSubmit: (values) => {
-      console.log(values);
-
       setLoading(true);
       try {
         handleUpdateBeat(values);
@@ -157,26 +156,27 @@ const EditBeatInformation = ({ setPage }) => {
                         )}
                     </div>
                   </div>
-                  {/* <div className="col-span-12 sm:col-span-6">
+                  <div className="col-span-12 sm:col-span-6">
                     <label className="inline-flex items-center cursor-pointer mt-12">
                       <input
                         type="checkbox"
                         name="verification"
                         className="sr-only peer"
                         onChange={() => {
-                          formik.values.isactive = !formik.values.isactive;
-                          console.log(formik.values?.isactive);
+                          formik.values.bypassRequest =
+                            !formik.values.bypassRequest;
                         }}
-                        value={formik.values?.isactive}
+                        defaultChecked={selectedBeat.bypassRequest}
                       />
+
                       <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 dark:peer-focus:ring-green-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary-600"></div>
                       <span className="ms-3 text-sm font-semibold text-gray-900 dark:text-gray-300">
-                        {formik.values?.isactive
-                          ? "Beat is active, Deactivate?"
-                          : "Beat is'nt active, Activate?"}
+                        {formik.values?.bypassRequest
+                          ? "Beat bypass request is Active, Deactivate?"
+                          : "Beat bypass request is'nt active, Activate?"}
                       </span>
                     </label>
-                  </div> */}
+                  </div>
                 </div>
                 <RegularButton type={"submit"} width="w-50" text="Save" />
               </fieldset>

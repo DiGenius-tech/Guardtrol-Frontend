@@ -73,9 +73,12 @@ function GuardList() {
 
   const [addGuards] = useAddGuardsMutation();
   const organization = useSelector(selectOrganization);
-  const { refetch: refetchGuards } = useGetGuardsQuery(organization, {
-    skip: organization ? false : true,
-  });
+  const { refetch: refetchGuards } = useGetGuardsQuery(
+    { organization },
+    {
+      skip: organization ? false : true,
+    }
+  );
 
   const saveGuard = async () => {
     if (onboardingGuards == [] || onboardingGuards.length < 1) {

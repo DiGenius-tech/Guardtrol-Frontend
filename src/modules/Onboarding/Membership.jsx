@@ -55,7 +55,6 @@ const Membership = () => {
     // Check each input field's validity and set errors accordingly
     for (const el of form.elements) {
       if (el.nodeName === "INPUT" && !el.validity.valid) {
-        console.log(el.name);
         newErrors[el.name] = el.validationMessage;
       }
 
@@ -174,7 +173,6 @@ const Membership = () => {
   // Function to handle button click in the modal
   const handleModalButtonClick = () => {
     // Add your logic here for the button click inside the modal
-    console.log("Modal button clicked");
   };
 
   const config = {
@@ -199,7 +197,6 @@ const Membership = () => {
     ...config,
     text: "Pay with Flutterwave!",
     callback: (response) => {
-      console.log(response);
       closePaymentModal(); // this will close the modal programmatically
     },
     onClose: () => {},
@@ -210,7 +207,7 @@ const Membership = () => {
       <h1 className="font-bold text-center text-2xl text-dark-450">
         Membership
       </h1>
-      <p className="text-sm text-center mx-auto max-w-[400px] text-dark-400">
+      <p className="text-sm text-center mx-auto max-w-[430px] text-dark-400">
         The subscription goes towards getting access to the security software to
         help manage your security personnel
       </p>

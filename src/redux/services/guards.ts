@@ -4,8 +4,11 @@ import { TGuard } from "../../types/guad";
 
 export const GuardApi = api.injectEndpoints({
   endpoints: (build) => ({
-    getGuards: build.query<TGuard[], void>({
-      query: (organizationId) => ({ url: `guard/getguards/${organizationId}` }),
+    getGuards: build.query<TGuard[], any>({
+      query: ({ organization, searchQuery }) => ({
+        url: `guard/getguards/${organization}`,
+        params: { searchQuery },
+      }),
       providesTags: (result = []) => [
         ...result.map(({ _id }) => ({ type: "Guards", _id } as const)),
         { type: "Guards" as const, id: "LIST" },
@@ -79,6 +82,20 @@ export const GuardApi = api.injectEndpoints({
         { type: "TimelineLogs" },
       ],
     }),
+
+    clockoutGuard: build.mutation<{ success: boolean; _id: number }, any>({
+      query(body) {
+        return {
+          url: `guard/clock-out/${body.organization}`,
+          method: "PATCH",
+          body,
+        };
+      },
+      invalidatesTags: (guard) => [
+        { type: "Guards", _id: guard?._id },
+        { type: "TimelineLogs" },
+      ],
+    }),
     getErrorProne: build.query<{ success: boolean }, void>({
       query: () => "error-prone",
     }),
@@ -88,6 +105,7 @@ export const GuardApi = api.injectEndpoints({
 
 export const {
   useAddGuardsMutation,
+  useClockoutGuardMutation,
   useAddGuardMutation,
   useDeleteGuardMutation,
   useActivateGuardMutation,

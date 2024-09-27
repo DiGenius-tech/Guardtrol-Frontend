@@ -6,6 +6,7 @@ import { selectAuth, selectUser } from "../../redux/selectors/auth";
 import { persistor } from "../../redux/store";
 import { api } from "../../redux/services/api";
 import { logout } from "../../redux/slice/authSlice";
+import { clearNotifications } from "../../redux/slice/notificationSlice";
 
 const AuthToolbar = () => {
   const location = useLocation();
@@ -16,6 +17,7 @@ const AuthToolbar = () => {
     persistor.purge();
     dispatch(api.util.resetApiState());
     dispatch(logout());
+    dispatch(clearNotifications());
   };
   return (
     <>

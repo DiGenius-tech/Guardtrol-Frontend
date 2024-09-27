@@ -47,7 +47,7 @@ const RenewSubscription = ({
 }) => {
   const psConfig = useSelector(selectPsConfig);
   const organization = useSelector(selectOrganization);
-
+  // const paystack = new PaystackPop();
   const token = useSelector(selectToken);
   const {
     data: subscription,
@@ -67,10 +67,12 @@ const RenewSubscription = ({
   const fwConfig = useSelector(selectFwConfig);
 
   const currentDate = new Date();
-  console.log(organization);
-  const { data: availableGuards } = useGetGuardsQuery(organization, {
-    skip: organization ? false : true,
-  });
+  const { data: availableGuards } = useGetGuardsQuery(
+    { organization },
+    {
+      skip: organization ? false : true,
+    }
+  );
   const { data: beatsApiResponse } = useGetBeatsQuery(
     { organization },
     {
@@ -84,13 +86,13 @@ const RenewSubscription = ({
       skip: organization ? false : true,
     });
   const [createSubscription] = useAddSubscriptionMutation();
-  const { data: invoices, refetch: refetchInvoices } = useGetInvoicesQuery(
-    organization,
-    {
-      skip: organization ? false : true,
-      pollingInterval: POOLING_TIME,
-    }
-  );
+  const { data: invoicesApiResponse, refetch: refetchInvoices } =
+    useGetInvoicesQuery(
+      { organization: organization, page: 1, limit: 10 },
+      {
+        skip: organization ? false : true,
+      }
+    );
 
   const activeSubscriptions = mySuscriptions?.filter(
     (subscription) => parseDate(subscription?.expiresat) > currentDate
@@ -111,6 +113,7 @@ const RenewSubscription = ({
         ? new Date(subscription?.expiresat).toLocaleDateString()
         : "--"
     );
+
   const [newSubscriptionTotalAmount, setNewSubscriptionTotalAmount] = useState(
     subscription?.totalamount
   );
@@ -118,29 +121,37 @@ const RenewSubscription = ({
   const [newMaxExtraGuards, setNewMaxExtraGuards] = useState(
     subscription?.maxextraguards
   );
-  const [subscriptionAction, setSubscriptionAction] = useState("renew");
+  const [subscriptionAction, setSubscriptionAction] = useState(
+    mySuscriptions?.[0] ? "renewal" : "new-subscription"
+  );
   const [paymentType, setPaymentType] = useState("recuring");
 
   const handleBeatChange = (e) => {
     const newBeats = parseInt(e.target.value);
 
-    if (subscriptionAction === "reduce") {
-      setNewMaxBeats(newBeats);
+    if (
+      subscriptionAction === "reduce" ||
+      subscriptionAction === "new-subscription"
+    ) {
+      setNewMaxBeats(Math.abs(newBeats));
     } else if (subscriptionAction === "increase") {
-      setNewMaxBeats(newBeats);
+      setNewMaxBeats(Math.abs(newBeats));
     } else {
-      setNewMaxBeats(subscription?.maxbeats);
+      setNewMaxBeats(Math.abs(subscription?.maxbeats));
     }
   };
 
   const handleGuardChange = (e) => {
     const newGuards = parseInt(e.target.value);
-    if (subscriptionAction === "reduce") {
-      setNewMaxExtraGuards(newGuards);
+    if (
+      subscriptionAction === "reduce" ||
+      subscriptionAction === "new-subscription"
+    ) {
+      setNewMaxExtraGuards(Math.abs(newGuards));
     } else if (subscriptionAction === "increase") {
-      setNewMaxExtraGuards(newGuards);
+      setNewMaxExtraGuards(Math.abs(newGuards));
     } else {
-      setNewMaxExtraGuards(subscription?.maxextraguards);
+      setNewMaxExtraGuards(Math.abs(subscription?.maxextraguards));
     }
   };
 
@@ -153,13 +164,17 @@ const RenewSubscription = ({
   ];
 
   const subscriptionActions = [
-    { value: "reduce", label: "Reduce" },
-    { value: "renewal", label: "Renewal" },
-    { value: "increase", label: "Increase" },
+    ...(mySuscriptions?.[0]
+      ? [
+          { value: "reduce", label: "Reduce" },
+          { value: "increase", label: "Increase" },
+          { value: "renewal", label: "Renewal" },
+        ]
+      : [{ value: "new-subscription", label: "New Subscription" }]),
   ];
   const paymentOptions = [
     { value: "paystack", label: "Paystack" },
-    { value: "flutterwave", label: "Flutter wave" },
+    { value: "flutterwave", label: "Flutterwave" },
   ];
 
   const handleFlutterPayment = useFlutterwave({
@@ -185,30 +200,31 @@ const RenewSubscription = ({
     },
   });
 
-  const handleCreatePlan = async () => {
-    const { data } = await axios.post(
-      "https://api.paystack.co/plan",
-      {
-        name: `${user.name}-${new Date()}-${newSubscription}`,
-        interval: newSubscription,
-        amount: newSubscriptionTotalAmount * 100,
-      },
-      {
-        headers: {
-          Authorization: `Bearer sk_test_b2c61ba5551dea400c429e6d82860a227247b11b`,
-        },
-      }
-    );
+  // const handleCreatePlan = async () => {
+  //   const { data } = await axios.post(
+  //     "https://api.paystack.co/plan",
+  //     {
+  //       name: `${user.name}-${new Date()}-${newSubscription}`,
+  //       interval: newSubscription,
+  //       amount: newSubscriptionTotalAmount * 100,
+  //     },
+  //     {
+  //       headers: {
+  //         Authorization: `Bearer sk_test_b2c61ba5551dea400c429e6d82860a227247b11b`,
+  //       },
+  //     }
+  //   );
 
-    return data;
-  };
+  //   return data;
+  // };
+
   const navigate = useNavigate();
 
-  const handlePaystackPayment = usePaystackPayment({
-    ...psConfig,
-    email: user.email,
-    amount: newSubscriptionTotalAmount * 100,
-  });
+  // const handlePaystackPayment = usePaystackPayment({
+  //   ...psConfig,
+  //   email: user.email,
+  //   amount: newSubscriptionTotalAmount * 100,
+  // });
 
   const payWithFlutterwave = async () => {
     dispatch(suspenseShow());
@@ -234,10 +250,24 @@ const RenewSubscription = ({
     navigate("/auth");
   };
 
+  let paymentConfig = {
+    publicKey: psConfig.publicKey,
+    email: user.email,
+    amount: newSubscriptionTotalAmount * 100, // amount in kobo
+    reference: new Date().getTime().toString(),
+  };
+
+  const handlePaystackPayment = usePaystackPayment(paymentConfig);
+
+  const onClose = () => {
+    dispatch(suspenseHide());
+    toast.error("Payment was closed");
+  };
+
   const payWithPaystack = async () => {
     try {
       dispatch(suspenseShow());
-      const { data: planData } = await handleCreatePlan();
+      // const { data: planData } = await handleCreatePlan();
 
       const paymentData = {
         key: psConfig.publicKey,
@@ -258,29 +288,27 @@ const RenewSubscription = ({
             },
           ],
         },
-        plan: planData?.plan_code,
+        // plan: planData?.plan_code,
         onSuccess: (transaction) => {
-          // Swal.fire({
-          //   title: "Renewal succefull",
-          //   text: `Your subscription has been updated!`,
-          //   icon: "success",
-          //   confirmButtonColor: "#008080",
-          // });
-          console.log(1);
           if (!isExpired) {
             setRenewalModal(false);
           }
-          console.log(2);
+
           updateSubscription(transaction);
         },
         onCancel: () => {
-          console.log("Payment canceled");
           dispatch(suspenseHide());
         },
       };
+
       const initiatePayment = () => {
-        const paystack = new PaystackPop();
-        paystack.newTransaction(paymentData);
+        const res = handlePaystackPayment({
+          onSuccess: (transaction) => {
+            updateSubscription(transaction);
+          },
+          onClose,
+        });
+        // paystack.newTransaction(paymentData);
       };
 
       initiatePayment();
@@ -345,7 +373,6 @@ const RenewSubscription = ({
         startsAt: subscription ? subscription.expiresat : Date.now(),
         paymentgateway: paymentOption,
       };
-      console.log(6);
       const { data } = await createSubscription({
         organization,
         body: reqData,
@@ -354,17 +381,15 @@ const RenewSubscription = ({
       await refetchAllMySubscriptions();
       await refetchActiveSubscription();
       await refetchInvoices();
-
-      console.log(3);
+      // dispatch(api.util.invalidateTags([{ type: "Invoices", id: "LIST" }]));
 
       if (!isExpired) {
         setRenewalModal(false);
       }
       dispatch(suspenseHide());
-      console.log(4);
       if (data) {
         Swal.fire({
-          title: "Renewal succefull",
+          title: "Renewal successfull",
           text: `Your subscription has been updated!`,
           icon: "success",
           confirmButtonColor: "#008080",
@@ -411,11 +436,21 @@ const RenewSubscription = ({
     let guardCost = 0;
     let newTotalBeats = 0;
     let newTotalGuards = 0;
-    if (subscriptionAction === "renewal") {
-      setNewSubscriptionTotalAmount(mySuscriptions?.[0]?.totalamount * months);
-      return;
+
+    if (subscriptionAction === "new-subscription") {
+      beatCost = newMaxBeats * BEAT_PRICE;
+      guardCost = newMaxExtraGuards * GUARD_PRICE;
+
+      // setNewSubscriptionTotalAmount(mySuscriptions?.[0]?.totalamount * months);
     }
-    if (subscriptionAction === "reduce") {
+    if (subscriptionAction === "renewal") {
+      beatCost = mySuscriptions?.[0]?.maxbeats * BEAT_PRICE;
+      guardCost = mySuscriptions?.[0]?.maxextraguards * GUARD_PRICE;
+
+      setNewSubscriptionTotalAmount(months * beatCost + guardCost);
+
+      // setNewSubscriptionTotalAmount(mySuscriptions?.[0]?.totalamount * months);
+    } else if (subscriptionAction === "reduce") {
       if (newMaxBeats) {
         beatCost = newMaxBeats * BEAT_PRICE;
       }
@@ -426,10 +461,10 @@ const RenewSubscription = ({
       newTotalGuards =
         newMaxExtraGuards +
         (subscription?.maxextraguards || mySuscriptions[0]?.maxextraguards);
+
       newTotalBeats =
         newMaxBeats + (subscription?.maxbeats || mySuscriptions[0]?.maxbeats);
 
-      console.log(newTotalGuards, newTotalBeats);
       if (newMaxBeats) {
         beatCost = newTotalBeats * BEAT_PRICE;
       } else {
@@ -441,15 +476,19 @@ const RenewSubscription = ({
           (subscription?.maxextraguards || mySuscriptions[0]?.maxextraguards) *
           GUARD_PRICE;
       } else {
+        guardCost =
+          (subscription?.maxextraguards || mySuscriptions[0]?.maxextraguards) *
+          GUARD_PRICE;
       }
     }
-    setNewSubscriptionTotalAmount(months * beatCost + guardCost);
+    setNewSubscriptionTotalAmount(months * (beatCost + guardCost));
   }, [
     newSubscription,
     newMaxBeats,
     newMaxExtraGuards,
     subscriptionAction,
     subscription,
+    mySuscriptions,
   ]);
 
   return (
@@ -521,6 +560,7 @@ const RenewSubscription = ({
                         <Radio
                           key={action.value}
                           value={action.value}
+                          checked={subscriptionAction === action.value}
                           style={{ color: "#008080" }}
                           id={action.value}
                           onClick={(event) =>
@@ -536,13 +576,15 @@ const RenewSubscription = ({
               </div>
 
               {(subscriptionAction === "reduce" ||
-                subscriptionAction === "increase") && (
+                subscriptionAction === "increase" ||
+                subscriptionAction === "new-subscription") && (
                 <div className="grid grid-cols-2 gap-4">
                   <div className="">
                     <Label
                       htmlFor="newMaxBeats"
                       value={
-                        subscriptionAction === "reduce"
+                        subscriptionAction === "reduce" ||
+                        subscriptionAction === "new-subscription"
                           ? "New Total Beat(s)"
                           : "New Additional Beat(s)"
                       }
@@ -551,7 +593,8 @@ const RenewSubscription = ({
                       id="newMaxBeats"
                       type="number"
                       placeholder={
-                        subscriptionAction === "reduce"
+                        subscriptionAction === "reduce" ||
+                        subscriptionAction === "new-subscription"
                           ? "Enter Beats you would like have"
                           : "Enter Beats you would like to add"
                       }
@@ -563,7 +606,8 @@ const RenewSubscription = ({
                     <Label
                       htmlFor="newMaxExtraGuards"
                       value={
-                        subscriptionAction === "reduce"
+                        subscriptionAction === "reduce" ||
+                        subscriptionAction === "new-subscription"
                           ? "New Extra Guard(s)"
                           : "New Additional Extra Guard(s)"
                       }
@@ -572,7 +616,8 @@ const RenewSubscription = ({
                       id="newMaxExtraGuards"
                       type="number"
                       placeholder={
-                        subscriptionAction === "reduce"
+                        subscriptionAction === "reduce" ||
+                        subscriptionAction === "new-subscription"
                           ? "Enter Extra Guards you would like have"
                           : "Enter Extra Guards you would like to add"
                       }
@@ -619,13 +664,15 @@ const RenewSubscription = ({
                 </span>
               </div>
               {(subscriptionAction === "reduce" ||
-                subscriptionAction === "increase") && (
+                subscriptionAction === "increase" ||
+                subscriptionAction === "new-subscription") && (
                 <>
                   <div className=" flex flex-row justify-between items-center">
                     <Label className=" text-md" value="New Total Beat(s)" />
                     <span className=" text-gray-500 ">
                       {subscriptionAction !== "renewal"
-                        ? subscriptionAction === "reduce"
+                        ? subscriptionAction === "reduce" ||
+                          subscriptionAction === "new-subscription"
                           ? newMaxBeats || "0"
                           : (subscription?.maxbeats ||
                               mySuscriptions[0]?.maxbeats) + newMaxBeats ||
@@ -638,7 +685,8 @@ const RenewSubscription = ({
                     <Label className=" text-md" value="New Extra Guards" />
                     <span className=" text-gray-500 ">
                       {subscriptionAction !== "renewal"
-                        ? subscriptionAction === "reduce"
+                        ? subscriptionAction === "reduce" ||
+                          subscriptionAction === "new-subscription"
                           ? newMaxExtraGuards || "0"
                           : (subscription?.maxextraguards ||
                               mySuscriptions[0]?.maxextraguards) +
@@ -683,7 +731,7 @@ const RenewSubscription = ({
         <Modal.Footer>
           <Button
             isProcessing={isLoading}
-            disabled={isLoading}
+            disabled={isLoading || Number(newSubscriptionTotalAmount) === 0}
             onClick={() => pay()}
             style={{ backgroundColor: "#008080" }}
             type="submit"

@@ -90,7 +90,7 @@ const GuardsHistory = () => {
           />
           <TextInput
             type="text"
-            className="min-w-40 h-10"
+            className="min-w-40 h-10 max-w-52"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search by Guard Name"

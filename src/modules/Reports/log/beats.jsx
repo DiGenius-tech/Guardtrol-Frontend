@@ -11,6 +11,7 @@ import { selectOrganization } from "../../../redux/selectors/auth";
 import { useFetchTimelineLogsQuery } from "../../../redux/services/timelinelogs";
 import { POOLING_TIME } from "../../../constants/static";
 import { formatDate, formatDateTime } from "../../../utils/dateUtils";
+import { Badge } from "../../../components/badge";
 
 const BeatsLog = () => {
   const organization = useSelector(selectOrganization);
@@ -126,6 +127,12 @@ const BeatsLog = () => {
     },
   };
 
+  const formatLogsData = (logs) => {
+    return logs.map((log) => ({
+      ...log,
+      type: <Badge status={log.type} type={"LOG_TYPE"} />,
+    }));
+  };
   return (
     <div className="container mx-auto relative pb-40 sm:pb-20">
       <section className="mb-2">
@@ -164,7 +171,6 @@ const BeatsLog = () => {
               (beat) => beat._id === selectedBeatId
             );
 
-            console.log(selectedBeat);
             setselectedBeatData(selectedBeat);
           }}
           className="border px-2 border-gray-300 rounded-md min-w-40 h-10 sm:w-[48%] md:w-auto"
@@ -205,8 +211,8 @@ const BeatsLog = () => {
         <Table>
           <Table.Head>
             <Table.HeadCell>Beat</Table.HeadCell>
-            <Table.HeadCell className=" w-36">Type</Table.HeadCell>
-            <Table.HeadCell className=" w-52">Date</Table.HeadCell>
+            <Table.HeadCell className=" w-40">Type</Table.HeadCell>
+            <Table.HeadCell className=" min-w-56">Date</Table.HeadCell>
             <Table.HeadCell>Message</Table.HeadCell>
           </Table.Head>
           <Table.Body>
@@ -238,11 +244,16 @@ const BeatsLog = () => {
                 </Table.Row>
               )}
             {!isLoading &&
-              logsAPiResponse?.logs?.map((log) => (
+              formatLogsData(logsAPiResponse?.logs)?.map((log) => (
                 <Table.Row key={log._id}>
                   <Table.Cell>{log.beat?.name || "Unknown"}</Table.Cell>
-                  <Table.Cell>{log.type}</Table.Cell>
-                  <Table.Cell>{formatDateTime(log.createdAt)}</Table.Cell>
+                  <Table.Cell>
+                    {log.type}
+                    <span className=" font-semibold">{`${
+                      log.message.includes("Bypass") ? " (Bypass)" : ""
+                    }`}</span>
+                  </Table.Cell>
+                  <Table.Cell>{formatDateTime(log.happendAt)}</Table.Cell>
                   <Table.Cell>{log.message}</Table.Cell>
                 </Table.Row>
               ))}

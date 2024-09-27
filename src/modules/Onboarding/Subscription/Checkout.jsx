@@ -87,9 +87,7 @@ const Checkout = (props) => {
 
     handleFlutterPayment({
       callback: (response) => {
-        console.log(response);
         if (response.status === "successful") {
-          console.log(response);
           createSubscription(response);
         }
         closePaymentModal();
@@ -128,12 +126,10 @@ const Checkout = (props) => {
       };
 
       const data = await post(`users/subscribe/${user.userid}`, reqData, token);
-
-      if (data && data.message === "subscribed") {
-        console.log(data.subscription);
-        dispatch(setOnboardingLevel(0));
+      if (data.message === "subscribed") {
         dispatch(suspenseHide());
         navigate("/onboarding/membership/successful");
+        // dispatch(setOnboardingLevel(1));
       }
       refetchActiveSub();
     } catch (error) {
@@ -151,7 +147,7 @@ const Checkout = (props) => {
       {/* checkout-app works! */}
 
       <h1 className="font-bold text-center text-2xl text-dark-450">Payment</h1>
-      <p className="text-sm text-center mx-auto max-w-[400px] text-dark-400">
+      <p className="text-sm text-center mx-auto max-w-[430px] text-dark-400">
         Your subscription provides access to advanced security software designed
         to help you efficiently manage your security personnel.
       </p>

@@ -55,7 +55,6 @@ function EditBeat({ beatToEdit, openModal, handleUpdateBeat, setOpenModal }) {
   };
 
   useEffect(() => {
-    // console.log("useEffect: ", beatToEdit)
     if (beatToEdit) {
       setBeat({
         id: beatToEdit?._id,

@@ -53,14 +53,16 @@ const PatrolGuardDetails = () => {
       pollingInterval: POOLING_TIME,
     }
   );
-
   const {
     data: guards,
     refetch: refetchGuards,
     isUninitialized,
-  } = useGetGuardsQuery(organization, {
-    skip: organization ? false : true,
-  });
+  } = useGetGuardsQuery(
+    { organization },
+    {
+      skip: organization ? false : true,
+    }
+  );
 
   const guard = guards.find((g) => g._id === guardId);
 
@@ -111,8 +113,6 @@ const PatrolGuardDetails = () => {
 
       try {
         const compressedFile = await imageCompression(file, options);
-        console.log("Original file size:", file.size);
-        console.log("Compressed file size:", compressedFile.size);
 
         setFileName(compressedFile.name);
         setProfile(compressedFile);
@@ -157,8 +157,9 @@ const PatrolGuardDetails = () => {
     const data = patch(`guard/comment/${guardId}`, commentData, token).then(
       async (data) => {
         if (data?.status) {
-          toast("Comment Updated");
+          toast("Remark Saved");
           setIsComment(false);
+          setComment("");
           await refetchGuards();
           // setGuard({});
           // handleSentRequest();
@@ -312,26 +313,31 @@ const PatrolGuardDetails = () => {
           </div>
         </div>
         <div className="col-span-12 sm:col-span-8">
-          <div className="h-full p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+          <div className="h-full  p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
             {!isComment ? (
               <>
                 <h5 className="text-md font-bold text-gray-900 dark:text-white">
-                  Comment
+                  Remarks
                 </h5>
-                <p className="font-normal text-gray-700 dark:text-gray-400">
-                  {guard?.comment?.comment || "No Comment Here Yet"}
-                </p>
+                <div className="max-h-[240px] overflow-y-scroll">
+                  {guard.remarks.map((remark) => (
+                    <div className="  border-t border-gray-100">
+                      <p className="font-normal text-gray-700 dark:text-gray-400">
+                        {remark?.comment || "No Comment Here Yet"}
+                      </p>
+                      <small className="text-dark-250 font-semibold">
+                        {moment(remark?.updatedat).format("h:mm a ddd D MMM")}
+                      </small>
+                      <div className="my-4"></div>
+                    </div>
+                  ))}
+                </div>
 
-                <div className="my-2"></div>
-                <small className="text-dark-250 font-semibold">
-                  {moment(guard?.comment?.updatedat).format("h:mm a ddd D MMM")}
-                </small>
-                <div className="my-4"></div>
                 <button
                   onClick={() => setIsComment(true)}
                   className="text-secondary-500 font-semibold"
                 >
-                  Edit comment
+                  Leave remark
                 </button>
               </>
             ) : (

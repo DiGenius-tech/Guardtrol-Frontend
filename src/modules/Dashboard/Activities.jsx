@@ -6,6 +6,7 @@ import { format } from "date-fns";
 import { useFetchTimelineLogsQuery } from "../../redux/services/timelinelogs";
 import { Spinner } from "flowbite-react";
 import { formatDateTime } from "../../utils/dateUtils";
+import { POOLING_TIME } from "../../constants/static";
 
 const activity_status = {
   CLOCKED_ACTION: "Clock Action",
@@ -55,6 +56,7 @@ const Activities = () => {
       type: filterStatus !== "All" ? filterStatus : undefined,
     },
     {
+      pollingInterval: POOLING_TIME,
       skip: !organization,
     }
   );
@@ -93,7 +95,9 @@ const Activities = () => {
                 <div className="grid grid-cols-12">
                   <div className="col-span-12 md:col-span-3 md:p-[15px]">
                     <div className="text-sm font-semibold">
-                      {formatDateTime(activity.createdAt)}
+                      {activity.happendAt
+                        ? formatDateTime(activity.happendAt)
+                        : formatDateTime(activity.createdAt)}
                     </div>
                   </div>
                   <div className="hidden md:block dot-wrap | col-span-2 p-[20px]">
@@ -109,10 +113,12 @@ const Activities = () => {
                         role="alert"
                       >
                         <h3 className="title font-semibold">
-                          {activity.type}
-                          {activity.message.inclues("(Bypass)")
-                            ? "(Bypass)"
-                            : ""}
+                          {`${activity.type}
+                          ${
+                            activity.message.includes("Bypass")
+                              ? "(Bypass)"
+                              : ""
+                          }`}
                         </h3>
                         <p className="body">{activity.message}</p>
                       </div>

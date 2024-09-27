@@ -7,6 +7,8 @@ import { Link } from "react-router-dom";
 import { ASSET_URL } from "../../constants/api";
 import { useFetchPatrolInstancesQuery } from "../../redux/services/patrol";
 import { formatDateTime } from "../../utils/dateUtils";
+import { POOLING_TIME } from "../../constants/static";
+import { Badge } from "../../components/badge";
 
 const Patrols = () => {
   const organization = useSelector(selectOrganization);
@@ -30,7 +32,7 @@ const Patrols = () => {
           endDate: yesterday.toISOString().split("T")[0],
         };
       default:
-        return {};
+        return { startDate: undefined, endDate: undefined };
     }
   };
 
@@ -38,17 +40,25 @@ const Patrols = () => {
     data: patrolInstancesApiResponse,
     refetch,
     isFetching: isPatrolInstacesFetching,
+    isLoading: isPatrolInstacesLoading,
   } = useFetchPatrolInstancesQuery(
     {
       organizationId: organization,
       ...getDateFilter(),
-      status: filterPatrolsType || undefined,
+      ...(filterPatrolsType && { status: filterPatrolsType }),
     },
     {
+      pollingInterval: POOLING_TIME,
       skip: !organization,
     }
   );
 
+  const formatPatrolInstancesData = (data) => {
+    return data.map((patrolInstance) => ({
+      ...patrolInstance,
+      status: <Badge status={patrolInstance.status} type={"PATROL_STATUS"} />,
+    }));
+  };
   // useEffect(() => {
   //   if (organization) {
   //     refetch();
@@ -100,16 +110,15 @@ const Patrols = () => {
           </div>
         </div>
         <div className="flex">
-          <div className="overflow-x-auto max-h-64 min-h-64 ">
+          <div className="overflow-x-auto w-full max-h-64 min-h-64 ">
             <Table>
               <Table.Head>
                 <Table.HeadCell>Guard Name</Table.HeadCell>
-                <Table.HeadCell>Time</Table.HeadCell>
+                <Table.HeadCell className="min-w-32">Time</Table.HeadCell>
                 <Table.HeadCell>Status</Table.HeadCell>
-                <Table.HeadCell>Date</Table.HeadCell>
               </Table.Head>
               <Table.Body className="divide-y overflow-y-scroll">
-                {isPatrolInstacesFetching && (
+                {isPatrolInstacesLoading && (
                   <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
                     <Table.Cell
                       colSpan={4}
@@ -124,8 +133,10 @@ const Patrols = () => {
                     </Table.Cell>
                   </Table.Row>
                 )}
-                {!isPatrolInstacesFetching &&
-                  patrolInstancesApiResponse?.patrols?.map((patrolInstance) => (
+                {!isPatrolInstacesLoading &&
+                  formatPatrolInstancesData(
+                    patrolInstancesApiResponse.patrols
+                  )?.map((patrolInstance) => (
                     <Table.Row
                       className="bg-white dark:border-gray-700 dark:bg-gray-800"
                       key={patrolInstance._id}
@@ -154,12 +165,14 @@ const Patrols = () => {
                       </Table.Cell>
                       <Table.Cell className="text-center w-20">
                         {patrolInstance?.starttime &&
-                          formattedTime(patrolInstance?.starttime)}
+                          formatDateTime(patrolInstance?.starttime)}
                       </Table.Cell>
                       <Table.Cell>
-                        {patrolInstance.status === "pending" && (
+                        {" "}
+                        {patrolInstance.status}
+                        {/* {patrolInstance.status === "pending" && (
                           <span className="text-orange-400 uppercase">
-                            {patrolInstance.status}
+                          
                           </span>
                         )}
                         {patrolInstance.status === "abandoned" && (
@@ -169,21 +182,21 @@ const Patrols = () => {
                         )}
                         {patrolInstance.status === "completed" && (
                           <span className="text-green-400">Completed</span>
-                        )}
+                        )} */}
                         <br />
-                        <span className="whitespace-nowrap">
+                        <div className="whitespace-nowrap mt-3">
                           {patrolInstance?.beat?.name}
-                        </span>
+                        </div>
                       </Table.Cell>
-                      <Table.Cell className="text-left">
+                      {/* <Table.Cell className="text-left">
                         {patrolInstance?.createdAt &&
                           formatDateTime(patrolInstance?.createdAt)}
-                      </Table.Cell>
+                      </Table.Cell> */}
                     </Table.Row>
                   ))}
-                {((!isPatrolInstacesFetching &&
+                {((!isPatrolInstacesLoading &&
                   patrolInstancesApiResponse?.patrols?.length === 0) ||
-                  (!isPatrolInstacesFetching &&
+                  (!isPatrolInstacesLoading &&
                     !patrolInstancesApiResponse?.patrols)) && (
                   <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
                     <Table.Cell

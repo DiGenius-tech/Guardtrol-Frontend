@@ -42,7 +42,6 @@ const EditShiftModal = ({ openModal, closeEditShiftModal, shiftToEdit }) => {
           _id: shiftToEdit?._id,
         });
 
-        console.log(data);
         closeEditShiftModal();
         if (data.status) {
           Swal.fire({

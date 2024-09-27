@@ -14,7 +14,6 @@ const ClientSidebar = () => {
   const location = useLocation();
 
   let use_params = useParams();
-  console.log("use_params: ", use_params);
   /**QUERIES */
   const use_params_keys = [];
   for (const key in use_params) {

@@ -83,11 +83,13 @@ function PatrolGuardListMobileView(props) {
                           <div className="flex flex-col items-end">
                             <div>{guard.phone}</div>
                             <div>
-                              {guard.dutyStatus === "off-duty" ? (
+                              {guard.status === "off-duty" ||
+                              guard.status === "off duty" ? (
                                 <span className="text-yellow-300 font-semibold">
                                   Off duty
                                 </span>
-                              ) : guard.dutyStatus === "on-duty" ? (
+                              ) : guard.status === "on-duty" ||
+                                guard.status === "on duty" ? (
                                 <span className="text-green-300 font-semibold">
                                   On duty
                                 </span>
@@ -119,15 +121,28 @@ function PatrolGuardListMobileView(props) {
                               {location.pathname.includes(
                                 "/beats/details/"
                               ) && (
-                                <Dropdown.Item>
-                                  <button
-                                    onClick={() =>
-                                      props.handleUnAssignGuard(guard)
-                                    }
-                                  >
-                                    Unassign Guard
-                                  </button>
-                                </Dropdown.Item>
+                                <>
+                                  <Dropdown.Item>
+                                    <button
+                                      onClick={() =>
+                                        props.handleUnAssignGuard(guard)
+                                      }
+                                    >
+                                      Unassign Guard
+                                    </button>
+                                  </Dropdown.Item>
+                                  {guard.status === "on duty" && (
+                                    <Dropdown.Item>
+                                      <button
+                                        onClick={() =>
+                                          props.handleClockoutGuard(guard)
+                                        }
+                                      >
+                                        Clock out
+                                      </button>
+                                    </Dropdown.Item>
+                                  )}
+                                </>
                               )}
                               <Dropdown.Item>
                                 <Link

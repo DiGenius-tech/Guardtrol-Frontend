@@ -26,6 +26,7 @@ import {
 import { setCurrentSubscription } from "../../../redux/slice/subscriptionSlice";
 import { persistor } from "../../../redux/store";
 import { api } from "../../../redux/services/api";
+import { clearNotifications } from "../../../redux/slice/notificationSlice";
 
 const LogOut = () => {
   const dispatch = useDispatch();
@@ -34,6 +35,7 @@ const LogOut = () => {
     persistor.purge();
     dispatch(api.util.resetApiState());
     dispatch(logout());
+    dispatch(clearNotifications());
   }, []);
   return <></>;
 };

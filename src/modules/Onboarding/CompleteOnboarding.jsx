@@ -25,7 +25,6 @@ const OnboardingComplete = () => {
       dispatch(suspenseShow());
       const UpdatedUser = await refetch();
 
-      console.log(UpdatedUser);
       dispatch(updateUser(UpdatedUser.data));
       dispatch(setOnboardingLevel(null));
       navigate("/client/dashboard");
@@ -35,13 +34,7 @@ const OnboardingComplete = () => {
     }
   };
   useEffect(() => {
-    // console.log(tick_icon_ref)
     const tick_icon = tick_icon_ref?.current;
-    // console.log("tick_icon: ", tick_icon)
-    // console.log("tick_icon.classList.contains('hide'): ", tick_icon.classList.contains("hide"))
-    // tick_icon.classList.remove("hide")
-    // tick_icon ? (tick_icon.classList.contains("hide") ? tick_icon.classList.remove("hide") :
-    //     null) : null;
 
     if (tick_icon) {
       if (tick_icon.classList.contains("hide")) {

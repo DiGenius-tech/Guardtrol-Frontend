@@ -4,7 +4,7 @@
 /node_modules
 /.pnp
 .pnp.js
-
+.env*
 # testing
 /coverage
 
@@ -13,10 +13,11 @@
 .env
 # misc
 .DS_Store
-.env.local
+.env
 .env.development.local
 .env.test.local
 .env.production.local
+.env
 
 npm-debug.log*
 yarn-debug.log*
@@ -31,3 +32,4 @@ yarn-error.log*
 /src/email-templates/package-lock.json
 /src/email-templates/package.json
 /src/email-templates/tailwind.config.js
+.env

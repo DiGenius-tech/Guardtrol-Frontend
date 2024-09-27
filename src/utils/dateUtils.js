@@ -13,4 +13,20 @@ const formatDateTime = (date) => {
   return `${formatDate(date)} ${formatTime(date)}`;
 };
 
-export { formatDate, formatTime, formatDateTime };
+const formatCurrency = (amount) => {
+  const roundedAmount = Math.round(amount);
+  return new Intl.NumberFormat("en-NG", {
+    style: "currency",
+    currency: "NGN",
+    minimumFractionDigits: 0,
+  }).format(roundedAmount);
+};
+
+function formatToNairaRounded(amount) {
+  const roundedAmount = Math.round(amount);
+  return new Intl.NumberFormat("en-NG", {
+    style: "currency",
+    currency: "NGN",
+  }).format(roundedAmount);
+}
+export { formatDate, formatTime, formatDateTime, formatCurrency };

@@ -4,8 +4,8 @@ import { TPatrol } from "../../types/patrol";
 
 export const PatrolsApi = api.injectEndpoints({
   endpoints: (build) => ({
-    getPatrols: build.query<TPatrol[], void>({
-      query: () => ({ url: `patrols` }),
+    getPatrols: build.query<TPatrol[], any>({
+      query: (params) => ({ url: `patrols`, params }),
       providesTags: (result = []) => [
         ...result.map(({ _id }) => ({ type: "Patrols", _id } as const)),
         { type: "Patrols" as const, id: "LIST" },
@@ -25,13 +25,15 @@ export const PatrolsApi = api.injectEndpoints({
         url: `patrols/get-instances/${organizationId}`,
         params: { startDate, endDate, guardName, beatId, page, limit, status },
       }),
-      providesTags: (result) => [
-        ...result?.patrols?.map(({ _id }: any) => ({
-          type: "PatrolInstances",
-          _id,
-        })),
-        { type: "PatrolInstances", id: "LIST" },
-      ],
+      providesTags: (result) => {
+        return [
+          ...result?.patrols?.map(({ _id }: any) => ({
+            type: "PatrolInstances",
+            _id,
+          })),
+          { type: "PatrolInstances", id: "LIST" },
+        ];
+      },
     }),
 
     createPatrol: build.mutation<TPatrol, Partial<any>>({

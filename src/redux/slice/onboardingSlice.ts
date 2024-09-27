@@ -23,7 +23,6 @@ const onboardingSlice = createSlice({
       state.onboardingLevel = action.payload;
     },
     setOnboardingGuards(state, action) {
-      console.log(action.payload);
       state.guards = action.payload;
     },
     addOnboardingGuard(state, action) {

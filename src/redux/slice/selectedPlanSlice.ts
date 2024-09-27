@@ -157,7 +157,6 @@ const SelectedPlanSlice = createSlice({
         type: string;
       }>
     ) {
-      console.log(action);
       state.plan = {
         amount: action.payload.amount,
         extraguards: action.payload.extraguards,

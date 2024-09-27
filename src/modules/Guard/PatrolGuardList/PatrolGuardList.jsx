@@ -24,10 +24,6 @@ const PatrolGuardList = (props) => {
   const [deleteGuard, { isLoading: isUpdating, status }] =
     useDeleteGuardMutation();
 
-  useEffect(() => {
-    console.log(props);
-  }, [props]);
-
   // if (status) {
   //   toast("Guard Deleted Successfully");
   //   setOpen(false);

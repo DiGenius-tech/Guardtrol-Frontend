@@ -16,6 +16,7 @@ import { useFetchTimelineLogsQuery } from "../../redux/services/timelinelogs";
 import { useGetBeatsQuery } from "../../redux/services/beats";
 import { useGetGuardsQuery } from "../../redux/services/guards";
 import { formatDateTime } from "../../utils/dateUtils";
+import { POOLING_TIME } from "../../constants/static";
 
 export const TimelineLogs = () => {
   const user = useSelector(selectUser);
@@ -27,9 +28,12 @@ export const TimelineLogs = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [entriesPerPage, setEntriesPerPage] = useState(10);
 
-  const { data: guards } = useGetGuardsQuery(organization, {
-    skip: !organization,
-  });
+  const { data: guards } = useGetGuardsQuery(
+    { organization },
+    {
+      skip: !organization,
+    }
+  );
 
   const { data: beatsApiResponse } = useGetBeatsQuery(
     { organization: organization },
@@ -62,6 +66,7 @@ export const TimelineLogs = () => {
   const {
     data: logsAPiResponse,
     refetch,
+    isLoading: isLoadingLogs,
     isFetching: isFetchingLogs,
   } = useFetchTimelineLogsQuery(
     {
@@ -72,6 +77,7 @@ export const TimelineLogs = () => {
       type: filterStatus !== "All" ? filterStatus : undefined,
     },
     {
+      pollingInterval: POOLING_TIME,
       skip: !organization,
     }
   );
@@ -92,7 +98,9 @@ export const TimelineLogs = () => {
           <div className="grid grid-cols-12">
             <div className="col-span-12 md:col-span-3 md:p-[15px]">
               <div className="text-sm font-semibold">
-                {formatDateTime(log.createdAt)}
+                {log.happendAt
+                  ? formatDateTime(log.happendAt)
+                  : formatDateTime(log.createdAt)}
               </div>
             </div>
             <div className="hidden md:block dot-wrap | col-span-2 p-[20px]">
@@ -114,7 +122,8 @@ export const TimelineLogs = () => {
                       ? "Clock in"
                       : log.message.includes("clocked out")
                       ? "Clock out"
-                      : log.type}
+                      : log.type}{" "}
+                    {`${log.message.includes("Bypass") ? "(Bypass)" : ""}`}
                   </h3>
                   <p className="body">{log.message}</p>
                 </div>
@@ -162,7 +171,7 @@ export const TimelineLogs = () => {
           </div>
         </div>
         <ul className="activities | text-sm max-h-64 overflow-y-scroll min-h-64">
-          {isFetchingLogs ? (
+          {isLoadingLogs ? (
             <div className="w-full h-full justify-center flex items-center">
               <Spinner color="success" aria-label="Success spinner example" />
             </div>

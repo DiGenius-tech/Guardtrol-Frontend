@@ -32,7 +32,6 @@ const PaymentSuccess = () => {
     skip: organization ? false : true,
   });
 
-  // console.log(sub);
   // useEffect(() => {
   //   const payed = localStorage.getItem("paymentComplete") || false;
 
@@ -52,10 +51,8 @@ const PaymentSuccess = () => {
     }
   };
   useEffect(() => {
-    // console.log(tick_icon_ref)
+    // (tick_icon_ref)
     const tick_icon = tick_icon_ref?.current;
-    // console.log("tick_icon: ", tick_icon)
-    // console.log("tick_icon.classList.contains('hide'): ", tick_icon.classList.contains("hide"))
     // tick_icon.classList.remove("hide")
     // tick_icon ? (tick_icon.classList.contains("hide") ? tick_icon.classList.remove("hide") :
     //     null) : null;
@@ -75,7 +72,7 @@ const PaymentSuccess = () => {
       <h1 className="font-bold text-center text-2xl text-dark-450">
         Membership
       </h1>
-      <p className="text-sm text-center mx-auto max-w-[400px] text-dark-400">
+      <p className="text-sm text-center mx-auto max-w-[430px] text-dark-400">
         The subscription goes towards getting access to the security software to
         help manage your security personnel
       </p>

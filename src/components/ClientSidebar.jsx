@@ -9,13 +9,16 @@ import {
   HiOutlineCog,
   HiUser,
   HiUsers,
+  HiHeadset,
 } from "react-icons/hi";
+import { FaHeadset } from "react-icons/fa";
 import { Link, useLocation, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { selectOrganization, selectUser } from "../redux/selectors/auth";
 import { useGetUserOrganizationRoleQuery } from "../redux/services/role";
 import { useGetAllModificationsQuery } from "../redux/services/modifications";
 import { POOLING_TIME } from "../constants/static";
+import { selectUnreadTickets } from "../redux/selectors/notification";
 
 const ClientSidebar = () => {
   const location = useLocation();
@@ -101,7 +104,7 @@ const ClientSidebar = () => {
 
     return () => {};
   }, []);
-
+  const unreadTickets = useSelector(selectUnreadTickets);
   return (
     <>
       {/* client-sidebar-app works! */}
@@ -144,7 +147,7 @@ const ClientSidebar = () => {
               <Link
                 to={patrol_guard[0]}
                 className={
-                  (patrol_guard.includes(location.pathname) ||
+                  (location.pathname.includes("/client/patrol-guard") ||
                   use_params_keys.includes("guardId")
                     ? `bg-primary-50 `
                     : ``) +
@@ -180,7 +183,7 @@ const ClientSidebar = () => {
               <Link
                 to={beats[0]}
                 className={
-                  (beats.includes(location.pathname) ||
+                  (location.pathname.includes("/client/beats") ||
                   use_params_keys.includes("beatId")
                     ? `bg-primary-50 `
                     : ``) +
@@ -220,7 +223,7 @@ const ClientSidebar = () => {
               <Link
                 to={reports[0]}
                 className={
-                  (reports.includes(location.pathname)
+                  (location.pathname.includes("reports")
                     ? `bg-primary-50 `
                     : ``) +
                   `flex items-center p-2 text-dark-260 rounded-r-full dark:text-white hover:bg-primary-50 dark:hover:bg-primary-400 group`
@@ -238,7 +241,7 @@ const ClientSidebar = () => {
                 <Link
                   to={settings[0]}
                   className={
-                    (settings.includes(location.pathname)
+                    (location.pathname.includes("/client/settings")
                       ? `bg-primary-50 `
                       : ``) +
                     `flex items-center p-2 text-dark-260 rounded-r-full dark:text-white hover:bg-primary-50 dark:hover:bg-primary-400 group`
@@ -251,6 +254,27 @@ const ClientSidebar = () => {
                 </Link>
               </li>
             )}
+            <li className="relative">
+              <Link
+                to={"support"}
+                className={
+                  (location.pathname.includes("support")
+                    ? `bg-primary-50 `
+                    : ``) +
+                  `flex items-center p-2 text-dark-260 rounded-r-full dark:text-white hover:bg-primary-50 dark:hover:bg-primary-400 group`
+                }
+              >
+                <FaHeadset fontSize={"1.5rem"} />
+                <span className="flex items-center ms-3 h-5 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white">
+                  Support
+                </span>
+                {unreadTickets?.length > 0 && (
+                  <span className="absolute top-[11px] right-6 inline-flex items-center justify-center px-1 pt-1 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full">
+                    {unreadTickets?.length}
+                  </span>
+                )}
+              </Link>
+            </li>
           </ul>
         </div>
       </aside>

@@ -23,6 +23,7 @@ import { useFlutterwave } from "flutterwave-react-v3";
 import { suspenseHide, suspenseShow } from "../../redux/slice/suspenseSlice";
 import { toast } from "react-toastify";
 import { useGetInvoicesQuery } from "../../redux/services/invoice";
+import { api } from "../../redux/services/api";
 
 const UpdateSubscription = () => {
   const token = useSelector(selectToken);
@@ -46,21 +47,23 @@ const UpdateSubscription = () => {
       skip: organization ? false : true,
     });
 
-  const { data: invoices, refetch: refetchInvoices } = useGetInvoicesQuery(
-    organization,
-    {
-      skip: organization ? false : true,
-      pollingInterval: POOLING_TIME,
-    }
-  );
+  const { data: invoicesApiResponse, refetch: refetchInvoices } =
+    useGetInvoicesQuery(
+      { organization: organization, page: 1, limit: 10 },
+      {
+        skip: organization ? false : true,
+        pollingInterval: POOLING_TIME,
+      }
+    );
   const [updateSubscription] = useUpdateSubscriptionMutation();
 
   const [remainingDays, setRemainingDays] = useState(0);
+  const [subDurationDays, setsubDurationDays] = useState(0);
   const [psConfigState, setPsConfigState] = useState(psConfig);
   const [additionalBeats, setAdditionalBeats] = useState(0);
   const [additionalGuards, setAdditionalGuards] = useState(0);
   const [totalCost, setTotalCost] = useState(0);
-  const [paymentOption, setPaymentOption] = useState("");
+  const [paymentOption, setPaymentOption] = useState("paystack");
   const [isLoading, setIsLoading] = useState(false);
 
   const paymentOptions = [
@@ -91,7 +94,6 @@ const UpdateSubscription = () => {
     },
   });
 
-  console.log(totalCost);
   const handlePaystackPayment = usePaystackPayment({
     publicKey: psConfigState.publicKey,
     email: user.email,
@@ -104,7 +106,6 @@ const UpdateSubscription = () => {
     handleFlutterPayment({
       callback: (response) => {
         if (response.status === "successful") {
-          console.log(response);
           handleUpdateSubscription(response);
         }
       },
@@ -119,7 +120,6 @@ const UpdateSubscription = () => {
     dispatch(suspenseShow());
     handlePaystackPayment({
       onSuccess: (response) => {
-        console.log(response);
         handleUpdateSubscription(response);
       },
       onClose: () => {
@@ -131,25 +131,39 @@ const UpdateSubscription = () => {
 
   const handleUpdateSubscription = async (response) => {
     dispatch(suspenseShow());
+
+    let newAdditionTototal =
+      Math.round(
+        (Math.floor(
+          additionalBeats * (subDurationDays * Math.round(BEAT_PRICE / 30))
+        ) +
+          Math.floor(
+            additionalGuards * (subDurationDays * Math.round(GUARD_PRICE / 30))
+          )) /
+          1000
+      ) * 1000;
     try {
       const reqData = {
         _id: currentSubscription?._id,
-        ...response,
+        paymentRes: response,
         transactionid: response.transaction,
+        newBeats: additionalBeats,
+        newExtraguards: additionalGuards,
         maxbeats: additionalBeats + currentSubscription?.maxbeats,
         maxextraguards: additionalGuards + currentSubscription?.maxextraguards,
-        totalamount: totalCost + currentSubscription?.totalamount,
+        totalamount: newAdditionTototal + currentSubscription?.totalamount,
         paymentstatus: "complete",
         plan: currentSubscription?.plan,
         expiresat: currentSubscription?.expiresat,
         paymentgateway: paymentOption,
       };
 
-      console.log(reqData);
       const { data } = await updateSubscription({
         organization,
         body: reqData,
       });
+      dispatch(api.util.invalidateTags([{ type: "Invoices", id: "LIST" }]));
+
       await refetchInvoices();
       await refetchAllMySubscriptions();
       await refetchActiveSubscription();
@@ -192,7 +206,13 @@ const UpdateSubscription = () => {
     const diffInDays = Math.ceil(
       (expirationDate - today) / (1000 * 60 * 60 * 24)
     );
-    console.log(diffInDays);
+    const startDate = new Date(currentSubscription?.startsAt);
+
+    const diffInDurationDays = Math.ceil(
+      (expirationDate - startDate) / (1000 * 60 * 60 * 24)
+    );
+
+    setsubDurationDays(diffInDurationDays);
     setRemainingDays(diffInDays);
   }, [currentSubscription?.expirationDate]);
 
@@ -212,6 +232,7 @@ const UpdateSubscription = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     pay();
+
     const updatedSubscription = {
       ...currentSubscription,
       beats: currentSubscription?.beats + additionalBeats,
@@ -247,7 +268,9 @@ const UpdateSubscription = () => {
               id="email-address-icon"
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500"
               value={additionalBeats}
-              onChange={(e) => setAdditionalBeats(parseInt(e.target.value))}
+              onChange={(e) =>
+                setAdditionalBeats(Math.abs(parseInt(e.target.value)))
+              }
             />
           </div>
         </div>
@@ -277,7 +300,9 @@ const UpdateSubscription = () => {
               id="email-address-icon"
               className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full ps-10 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-green-500 dark:focus:border-green-500"
               value={additionalGuards}
-              onChange={(e) => setAdditionalGuards(parseInt(e.target.value))}
+              onChange={(e) =>
+                setAdditionalGuards(Math.abs(parseInt(e.target.value)))
+              }
             />
           </div>
         </div>

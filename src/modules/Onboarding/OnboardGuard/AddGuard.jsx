@@ -41,9 +41,12 @@ function AddGuard({ onBoarding = true }) {
   const onboardingGuards = useSelector(selectOnboardingGuards);
 
   const organization = useSelector(selectOrganization);
-  const { data: guards, refetch } = useGetGuardsQuery(organization, {
-    skip: organization ? false : true,
-  });
+  const { data: guards, refetch } = useGetGuardsQuery(
+    { organization },
+    {
+      skip: organization ? false : true,
+    }
+  );
 
   const navigate = useNavigate();
 
@@ -82,8 +85,6 @@ function AddGuard({ onBoarding = true }) {
         });
         return;
       }
-      console.log(guard);
-      console.log(onboardingGuards);
 
       if (
         guards.find((g) => g.phone === guard.phone) ||
@@ -160,6 +161,7 @@ function AddGuard({ onBoarding = true }) {
             cancelButtonColor: "#d33",
           }).then((result) => {
             if (result.isConfirmed) {
+              navigate("/client/settings/billing?action=update");
               // Swal.fire({
               //   title: "Deleted!",
               //   text: "Your file has been deleted.",

@@ -47,7 +47,6 @@ const ShiftConfigForm = (props) => {
     onSubmit: (values) => {
       setIsLoading(true);
       try {
-        console.log(shifts);
         if (shifts?.find((s) => s.name === values.name)) {
           setValidationErrors({
             ...validationErrors,
@@ -64,7 +63,6 @@ const ShiftConfigForm = (props) => {
       }
     },
   });
-  console.log(formik.errors);
 
   const handleUpdateProfile = async (values) => {
     dispatch(suspenseShow());

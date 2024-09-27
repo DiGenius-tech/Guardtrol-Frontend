@@ -128,7 +128,6 @@ const SettingPersonalInformation = () => {
 
       if (userRes) {
         dispatch(updateUser(userRes));
-        console.log("first");
         dispatch(suspenseHide());
 
         toast("Profile Updated");

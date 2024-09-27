@@ -11,7 +11,7 @@ import {
   selectToken,
   selectUser,
 } from "../../../redux/selectors/auth";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate, useSearchParams } from "react-router-dom";
 import {
   useGetAllMySubscriptionsQuery,
   useGetAllSubscriptionsQuery,
@@ -27,7 +27,9 @@ import { useGetInvoicesQuery } from "../../../redux/services/invoice";
 import Invoice from "../../../components/invoice";
 import { useReactToPrint } from "react-to-print";
 import ViewInvoice from "../ViewInvoice";
-import { formatDateTime } from "../../../utils/dateUtils";
+import { formatCurrency, formatDateTime } from "../../../utils/dateUtils";
+import Pagination from "../../../shared/Pagination/Pagination";
+import { Spinner } from "flowbite-react";
 
 const savedPaymentCards = [
   {
@@ -48,19 +50,26 @@ const savedPaymentCards = [
 
 const SettingBilling = () => {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const paramActionValue = searchParams.get("action");
 
   const user = useSelector(selectUser);
   const token = useSelector(selectToken);
 
   const organization = useSelector(selectOrganization);
+  console.log(paramActionValue === "action");
 
   const [isAddNewCard, setIsAddNewCard] = useState(false);
-  const [isUpdateSub, setIsUpdateSub] = useState(false);
+  const [isUpdateSub, setIsUpdateSub] = useState(
+    paramActionValue === "update" ? true : false
+  );
   const [openRenewalModal, setOpenRenewalModal] = useState(false);
   const [openViewInvoice, setOpenViewInvoice] = useState(false);
 
   const [subscriptionsState, setSubscriptionsState] = useState();
-  const [currentPage, setCurrentPage] = useState(1);
+  const [invoiceLimit, setInvoiceLimit] = useState(10);
+  const [invoicePage, setInvoicePage] = useState(1);
   const [filteredData, setFilteredData] = useState([]);
   const [defaultCard, setDefaultCard] = useState({
     id: "",
@@ -77,15 +86,24 @@ const SettingBilling = () => {
     skip: organization ? false : true,
   });
 
-  const { data: guards } = useGetGuardsQuery(organization, {
-    skip: organization ? false : true,
-  });
+  const { data: guards } = useGetGuardsQuery(
+    { organization },
+    {
+      skip: organization ? false : true,
+    }
+  );
   const { data: subs } = useGetAllSubscriptionsQuery(organization, {
     skip: organization ? false : true,
   });
-  const { data: invoices } = useGetInvoicesQuery(organization, {
-    skip: organization ? false : true,
-  });
+
+  const { data: invoicesApiResponse, ...invoicesApiResponseDetails } =
+    useGetInvoicesQuery(
+      { organization: organization, page: invoicePage, limit: invoiceLimit },
+      {
+        skip: organization ? false : true,
+      }
+    );
+
   const totalPages = subs?.length;
 
   const { data: mySuscriptions } = useGetAllMySubscriptionsQuery(organization, {
@@ -107,23 +125,6 @@ const SettingBilling = () => {
     setOpenViewInvoice(true);
   };
 
-  const filterData = () => {
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    const slicedData = subs?.slice(startIndex, endIndex);
-    setFilteredData(slicedData);
-  };
-  const goToPreviousPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
-
-  const goToNextPage = () => {
-    if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
   useEffect(() => {
     setSubscriptionsState(mySuscriptions);
   }, [mySuscriptions]);
@@ -141,10 +142,6 @@ const SettingBilling = () => {
 
     return a;
   };
-
-  useEffect(() => {
-    filterData();
-  }, [currentPage, subs]);
 
   return (
     <>
@@ -164,11 +161,11 @@ const SettingBilling = () => {
         />
       )}
       <div className="p-4 sm:p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-        <div className="sm:max-w-4xl grid grid-cols-12 gap-4 sm:gap-8">
-          <div className="hidden sm:block col-span-12 sm:col-span-5">
+        <div className="sm:max-w-4xl grid  grid-cols-12 gap-4 sm:gap-8">
+          <div className="hidden sm:block col-span-12 sm:col-span-3">
             <h3 className="font-bold">Current Plan</h3>
           </div>
-          <div className="col-span-12 sm:col-span-7">
+          <div className="col-span-12 sm:col-span-9">
             <div className="p-4 sm:p-6 bg-dark-400 text-white border border-gray-200 rounded-lg shadow">
               <ul className="flex flex-col gap-4">
                 <li className="grid grid-cols-2 items-center">
@@ -178,7 +175,7 @@ const SettingBilling = () => {
                   <div className="col-span-2 sm:col-span-1 sm:text-right">
                     {sub ? (
                       <p className="text-2xl font-bold">
-                        ₦{formatNumberWithCommas(sub?.totalamount)}
+                        {formatCurrency(sub?.totalamount)}
                       </p>
                     ) : (
                       <p className="text-base font-bold">
@@ -253,135 +250,104 @@ const SettingBilling = () => {
               </ul>
             </div>
           </div>
-          <div className="hidden sm:block col-span-12 sm:col-span-5">
+          <div className="hidden sm:block col-span-12 sm:col-span-3">
             <h3 className="font-bold">Invoices</h3>
           </div>
-          <div className="col-span-12 sm:col-span-7">
-            <div className="">
-              {filteredData ? (
-                <div className="relative overflow-x-auto">
-                  <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                    <thead className="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400">
-                      <tr>
-                        <th scope="col" className="px-6 py-3 rounded-s-lg">
-                          Date
-                        </th>
-                        <th scope="col" className="px-6 py-3 ">
-                          Expires
-                        </th>
-                        {/* <th scope="col" className="px-6 py-3">
+          <div className="col-span-12 sm:col-span-9  pb-20 relative">
+            <div className="relative overflow-x-auto">
+              <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                <thead className="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400">
+                  <tr>
+                    <th scope="col" className="px-6 py-3 rounded-s-lg">
+                      Amount
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      Date
+                    </th>
+                    <th scope="col" className="px-6 py-3  rounded-e-lg">
+                      Action
+                    </th>
+                    {/* <th scope="col" className="px-6 py-3">
                         Plan
                       </th> */}
-                        {/* <th scope="col" className="px-6 py-3">
+                    {/* <th scope="col" className="px-6 py-3">
                         Status
                       </th> */}
-                        <th
-                          scope="col"
-                          className="px-6 py-3 rounded-e-lg"
-                          aria-label="action"
-                        ></th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {invoices?.map((invoice, i) => {
-                        return (
-                          <tr
-                            key={invoice?._id}
-                            className="bg-white dark:bg-gray-800"
-                          >
-                            <th
-                              scope="row"
-                              className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                            >
-                              {invoice?.subscription?.expiresat &&
-                                formatDateTime(
-                                  invoice?.subscription?.createdAt
-                                )}
-                            </th>
-                            <th
-                              scope="row"
-                              className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                            >
-                              {invoice?.subscription?.expiresat &&
-                                formatDateTime(
-                                  invoice?.subscription?.expiresat
-                                )}
-                            </th>
-                            {/* <td className="px-6 py-4">{s?.plan} plan</td> */}
-                            {/* <td className="px-6 py-4">Paid</td> */}
-                            <td className="px-6 py-4">
-                              <span
-                                onClick={() => handleInvoiceClick(invoice)}
-                                href="#"
-                                className=" cursor-pointer font-semibold text-primary-500 whitespace-nowrap"
-                              >
-                                Get Invoice
-                              </span>
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
+                    <th
+                      scope="col"
+                      className="px-6 py-3 rounded-e-lg"
+                      aria-label="action"
+                    ></th>
+                  </tr>
+                </thead>
 
-                    <tfoot>
-                      <tr className="font-semibold text-gray-900 dark:text-white">
-                        <th
-                          scope="row"
-                          colSpan={"4"}
-                          className="px-6 py-3 text-sm font-light text-right"
+                <tbody>
+                  {invoicesApiResponseDetails.isLoading && (
+                    <tr className="bg-white dark:bg-gray-800">
+                      <td colSpan={3}>
+                        <div className="w-full py-6 flex justify-center items-center">
+                          <Spinner
+                            aria-label="Loading spinner"
+                            color={"success"}
+                          />
+                        </div>
+                      </td>
+                    </tr>
+                  )}
+                  {invoicesApiResponse?.invoices === 0 ? (
+                    <tr className="bg-white dark:bg-gray-800">
+                      <td colSpan={3}>
+                        <div className="w-full py-6 flex justify-center items-center">
+                          <p>No invoice recorded!</p>
+                        </div>
+                      </td>
+                    </tr>
+                  ) : (
+                    invoicesApiResponse?.invoices?.map((invoice, i) => {
+                      return (
+                        <tr
+                          key={invoice?._id}
+                          className="bg-white dark:bg-gray-800"
                         >
-                          <div className="inline-flex items-center justify-end gap-4">
-                            {/* Render page numbers */}
-                            {subs &&
-                              [
-                                ...Array(
-                                  Math.ceil(subs?.length / itemsPerPage)
-                                ).keys(),
-                              ].map((index) => (
-                                <a
-                                  key={index}
-                                  href="#"
-                                  className={`inline-flex items-center justify-center border border-gray-300 text-sm rounded-lg w-full p-1.5 font-semibold min-w-10 min-h-8 ${
-                                    currentPage === index + 1
-                                      ? "bg-accent-200"
-                                      : ""
-                                  }`}
-                                  onClick={() => setCurrentPage(index + 1)}
-                                >
-                                  {index + 1}
-                                </a>
-                              ))}
-                            <div>
-                              of&nbsp;<span>{totalPages}</span>
-                            </div>
-                            <div className="flex items-center">
-                              {/* Render previous button */}
-                              <a
-                                href="#"
-                                className="inline-flex items-center justify-center bg-accent-200 text-dark-70 hover:bg-accent-300 hover:text-secondary-500 border border-gray-300 text-sm rounded-s-lg w-full p-2 min-w-10 min-h-8"
-                                onClick={goToPreviousPage}
-                              >
-                                <GrPrevious />
-                              </a>
-                              {/* Render next button */}
-                              <a
-                                href="#"
-                                className="inline-flex items-center justify-center bg-accent-200 text-dark-70 hover:bg-accent-300 hover:text-secondary-500 border border-gray-300 text-sm rounded-r-lg w-full p-2 min-w-10 min-h-8"
-                                onClick={goToNextPage}
-                              >
-                                <GrNext />
-                              </a>
-                            </div>
-                          </div>
-                        </th>
-                      </tr>
-                    </tfoot>
-                  </table>
-                </div>
-              ) : (
-                <p>No invoice recorded!</p>
-              )}
+                          <td
+                            scope="row"
+                            className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                          >
+                            {invoice?.amount}
+                          </td>
+                          <td
+                            scope="row"
+                            className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                          >
+                            {invoice?.createdAt}
+                          </td>
+
+                          {/* <td className="px-6 py-4">{s?.plan} plan</td> */}
+                          {/* <td className="px-6 py-4">Paid</td> */}
+                          <td className="px-6 py-4">
+                            <span
+                              onClick={() => handleInvoiceClick(invoice)}
+                              href="#"
+                              className=" cursor-pointer font-semibold text-primary-500 whitespace-nowrap"
+                            >
+                              Get Invoice
+                            </span>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
             </div>
+
+            <Pagination
+              totalEntries={invoicesApiResponse?.total || 0}
+              entriesPerPage={invoiceLimit}
+              currentPage={invoicePage}
+              onPageChange={(p) => setInvoicePage(p)}
+              onEntriesPerPageChange={(l) => setInvoiceLimit(l)}
+            />
           </div>
 
           {/* <div className="hidden sm:block col-span-12 sm:col-span-5">

@@ -151,7 +151,6 @@ const OrganizationAudits = () => {
               (beat) => beat._id === selectedBeatId
             );
 
-            console.log(selectedBeat);
             setselectedBeatData(selectedBeat);
           }}
           className="border px-2 border-gray-300 rounded-md min-w-40 h-10 sm:w-[48%] md:w-auto"
@@ -229,7 +228,7 @@ const OrganizationAudits = () => {
             {!isLoading &&
               auditsApiResponse?.audits?.map((audit) => (
                 <Table.Row key={audit._id}>
-                  <Table.Cell>{formatDateTime(audit.createdAt)}</Table.Cell>
+                  <Table.Cell>{formatDateTime(audit.happendAt)}</Table.Cell>
                   <Table.Cell>{audit?.message}</Table.Cell>
                   <Table.Cell>
                     {audit?.performer?.name ? audit?.performer?.name : "-----"}

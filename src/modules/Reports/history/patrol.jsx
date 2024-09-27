@@ -10,6 +10,7 @@ import { format } from "date-fns";
 import { useGetBeatsQuery } from "../../../redux/services/beats";
 import { useFetchPatrolInstancesQuery } from "../../../redux/services/patrol";
 import { formatDate, formatTime } from "../../../utils/dateUtils";
+import { Badge } from "../../../components/badge";
 
 const PatrolHistory = () => {
   const organization = useSelector(selectOrganization);
@@ -19,6 +20,7 @@ const PatrolHistory = () => {
   const [endDate, setEndDate] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedBeat, setSelectedBeat] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [entriesPerPage, setEntriesPerPage] = useState(5);
   const [selectedBeatData, setselectedBeatData] = useState();
@@ -41,6 +43,7 @@ const PatrolHistory = () => {
       startDate: startDate ? new Date(startDate).toISOString() : undefined,
       endDate: endDate ? new Date(endDate).toISOString() : undefined,
       guardName: searchQuery ? searchQuery : undefined,
+      ...(selectedStatus && { status: selectedStatus }),
       beatId: selectedBeat ? selectedBeat : undefined,
       page: currentPage,
       limit: entriesPerPage,
@@ -90,6 +93,12 @@ const PatrolHistory = () => {
     XLSX.writeFile(workbook, "patrol_history.xlsx");
   };
 
+  const formatPatrolInstancesData = (data) => {
+    return data.map((patrolInstance) => ({
+      ...patrolInstance,
+      status: <Badge status={patrolInstance.status} type={"PATROL_STATUS"} />,
+    }));
+  };
   // const formattedTime = (date) => format(new Date(date), "hh:mm a");
   // const formatDate = (date) => format(new Date(date), "yyyy-MM-dd");
 
@@ -110,6 +119,18 @@ const PatrolHistory = () => {
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
           />
+          <select
+            value={selectedStatus}
+            onChange={(e) => {
+              setSelectedStatus(e.target.value);
+            }}
+            className="border px-2 border-gray-300 rounded-md min-w-40 h-10 sm:w-[48%] md:w-auto"
+          >
+            <option value="">Select Status</option>
+            <option value="pending">Pending</option>
+            <option value="abandoned">Abandoned</option>
+            <option value="completed">Completed</option>
+          </select>
           <select
             value={selectedBeat}
             onChange={(e) => {
@@ -170,7 +191,7 @@ const PatrolHistory = () => {
             <Table.HeadCell>Patrol</Table.HeadCell>
             <Table.HeadCell className=" min-w-40">Beat</Table.HeadCell>
             <Table.HeadCell>Guard</Table.HeadCell>
-            <Table.HeadCell>Abandoned By</Table.HeadCell>
+            <Table.HeadCell className=" min-w-40">Abandoned By</Table.HeadCell>
             <Table.HeadCell>Status</Table.HeadCell>
             <Table.HeadCell className="min-w-60">Start Time</Table.HeadCell>
             <Table.HeadCell className=" min-w-60">End Time</Table.HeadCell>
@@ -202,7 +223,9 @@ const PatrolHistory = () => {
               </Table.Row>
             )}
             {!isLoading &&
-              patrolInstancesApiResponse.patrols?.map((instance, index) => (
+              formatPatrolInstancesData(
+                patrolInstancesApiResponse.patrols
+              )?.map((instance, index) => (
                 <Table.Row
                   key={index}
                   className="bg-white dark:border-gray-700 dark:bg-gray-800"

@@ -27,9 +27,12 @@ function SentRequest(props) {
     data: guards,
     isLoading,
     error,
-  } = useGetGuardsQuery(organization, {
-    skip: organization ? false : true,
-  });
+  } = useGetGuardsQuery(
+    { organization },
+    {
+      skip: organization ? false : true,
+    }
+  );
 
   const [deleteGuard, { isLoading: isUpdating, status }] =
     useDeleteGuardMutation();

@@ -32,7 +32,6 @@ const useHttpRequest = () => {
           ...headers,
         },
       });
-      console.log(data);
       if (!data) {
         return setError(data.message || "Something went wrong!");
       }

@@ -49,9 +49,12 @@ const EditIdentification = (props) => {
     data: guards,
     refetch: refetchGuards,
     isUninitialized,
-  } = useGetGuardsQuery(organization, {
-    skip: organization ? false : true,
-  });
+  } = useGetGuardsQuery(
+    { organization },
+    {
+      skip: organization ? false : true,
+    }
+  );
 
   const { isLoading, error, responseData, sendRequest } = useHttpRequest();
   const [validationErrors, setValidationErrors] = useState({});
@@ -80,7 +83,6 @@ const EditIdentification = (props) => {
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     setValidationErrors({ ...validationErrors, [e.target.name]: "" });
-    // console.log("formData: ", formData)
   };
 
   const handleSelectChange = (e) => {
@@ -101,10 +103,6 @@ const EditIdentification = (props) => {
 
       try {
         const compressedFile = await imageCompression(uploadedFile, options);
-        console.log("Original file size:", uploadedFile.size);
-        console.log("Compressed file size:", compressedFile.size);
-
-        console.log(compressedFile);
         setFormData({ ...formData, guardIdentificationFile: compressedFile });
 
         const reader = new FileReader();
@@ -121,7 +119,6 @@ const EditIdentification = (props) => {
     setLoading(true);
     try {
       e.preventDefault();
-      console.log(formData);
 
       if (!formData.idname) {
         toast.warn("select a valid identification type");

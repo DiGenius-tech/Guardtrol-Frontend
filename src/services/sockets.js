@@ -1,0 +1,6 @@
+// import io from "socket.io-client";
+// import { API_BASE_URL, SOCKET_API_BASE_URL } from "../constants/api";
+
+// const socket = io(SOCKET_API_BASE_URL);
+
+// export default socket;

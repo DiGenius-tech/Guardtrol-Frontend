@@ -36,9 +36,12 @@ const UpdateSubscriptionPlan = () => {
     skip: organization ? false : true,
   });
 
-  const { data: guards } = useGetGuardsQuery(organization, {
-    skip: organization ? false : true,
-  });
+  const { data: guards } = useGetGuardsQuery(
+    { organization },
+    {
+      skip: organization ? false : true,
+    }
+  );
   const [defaultCard, setDefaultCard] = useState({
     id: "",
   });

@@ -18,8 +18,6 @@ function Form() {
   const [confirm_password, setConfirm_password] = useState("");
   const [confirmpassword_type, setConfirmPassword_type] = useState("password");
 
-  //   console.log("password_field_ref: ", password_field_ref.current.type);
-  //   console.log("confirm_password_field_ref: ", confirm_password_field_ref.current.type);
   const handle_password_change = (e) => {
     setPassword(e.target.value);
   };
@@ -109,7 +107,7 @@ function PasswordField({
   handle_password_change,
   password_type,
   toggle_pwd_type,
-  id
+  id,
 }) {
   return (
     <>

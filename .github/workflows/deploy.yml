@@ -1,32 +1,67 @@
+name: 🚀 Deploy to Staging and Live
+
 on:
   push:
     branches:
       - staging
-
-name: 🚀 Deploy website on push
+      - main # Live deployment branch
 
 jobs:
   web-deploy:
     name: 🎉 Deploy website
     runs-on: ubuntu-latest
-
     steps:
-      # Checkout the repository
       - name: 🚚 Get latest code
         uses: actions/checkout@v4
 
-      # Install dependencies and build the project
-      - name: 🔨 Build the project
-        run: |
-          npm install
-          CI=false npm run build
+      - name: 📦 Install dependencies
+        run: npm install
 
-      # Sync files via FTP
-      - name: 📂 Sync files via FTP
+      # Build and Deploy for Staging
+      - name: 🔨 Build project for Staging
+        if: github.ref == 'refs/heads/staging'
+        run: |
+          export NODE_OPTIONS=--max-old-space-size=4096
+          CI=false npm run build
+        env:
+          REACT_APP_FLUTTERWAVE_KEY: FLWPUBK_TEST-6a146f6e7fa13c60abe1b94f4d67e516-X
+          REACT_APP_PAYSTACK_KEY: pk_test_68a44d9db9eca0558935c5eac89e94144b35570d
+          REACT_APP_API_BASE_URL: https://guardtroltestapi.alphatrol.com/api/
+          REACT_APP_SOCKET_API_BASE_URL: https://guardtroltestapi.alphatrol.com
+          REACT_APP_NODE_ENV: staging
+          REACT_APP_ASSET_URL: https://guardtroltestapi.alphatrol.com/
+
+      - name: 📂 Sync files via FTP for Staging
+        if: github.ref == 'refs/heads/staging'
         uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./build/ # Update this path according to your project's output directory
+          local-dir: ./build/
+          log-level: verbose
+
+      # Build and Deploy for Live (Production)
+      - name: 🔨 Build project for Live
+        if: github.ref == 'refs/heads/main'
+        run: |
+          export NODE_OPTIONS=--max-old-space-size=4096
+          CI=false npm run build-main
+        env:
+          REACT_APP_FLUTTERWAVE_KEY: FLWPUBK-a1be03107079ab0523984695c59cbbed-X
+          REACT_APP_PAYSTACK_KEY: pk_live_416911733368dd26a192e925467fe800eaea8aeb
+          REACT_APP_API_BASE_URL: https://guardtrolapi.alphatrol.com/api/
+          REACT_APP_SOCKET_API_BASE_URL: https://guardtrolapi.alphatrol.com
+          REACT_APP_NODE_ENV: production
+          REACT_APP_ASSET_URL: https://guardtrolapi.alphatrol.com/
+          GENERATE_SOURCEMAP: false
+
+      - name: 📂 Sync files via FTP for Live
+        if: github.ref == 'refs/heads/main'
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME_LIVE }}
+          password: ${{ secrets.FTP_PASSWORD_LIVE }}
+          local-dir: ./build/
           log-level: verbose

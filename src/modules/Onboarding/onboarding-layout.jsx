@@ -60,7 +60,7 @@ const OnboardingLayout = () => {
 
       if (userData) {
         if (userData?.subscriptions?.length > 0) {
-          if (userData.beats.length > 0) {
+          if (userData?.beats?.length > 0) {
             if (userData?.guards?.length > 0) {
               if (userData?.beats?.some((beat) => beat?.guards?.length > 0)) {
                 dispatch(setOnboardingLevel(4));

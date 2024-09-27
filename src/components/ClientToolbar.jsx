@@ -13,6 +13,8 @@ import { FaBell } from "react-icons/fa";
 import brandLogo from "../images/brand-logo.svg";
 import { useGetUserOrganizationRoleQuery } from "../redux/services/role";
 import { POOLING_TIME } from "../constants/static";
+import { selectUnreadTickets } from "../redux/selectors/notification";
+import { clearNotifications } from "../redux/slice/notificationSlice";
 
 const ClientToolbar = (props) => {
   const organization = useSelector(selectOrganization);
@@ -88,12 +90,14 @@ const ClientToolbar = (props) => {
     persistor.purge();
     dispatch(api.util.resetApiState());
     dispatch(logout());
+    dispatch(clearNotifications());
     navigate("/auth");
   };
 
   const pendingCount = modifications?.filter(
     (mod) => mod.status === "pending"
   ).length;
+  const unreadTickets = useSelector(selectUnreadTickets);
 
   const resolvedCount = modifications?.filter(
     (mod) => mod.status === "approved"
@@ -153,7 +157,7 @@ const ClientToolbar = (props) => {
                         key={rol?.organization?._id}
                         value={rol?.organization?._id}
                       >
-                        {rol?.organization?.name}-{rol?.name}
+                        {rol?.organization?.name} - {rol?.name}
                       </option>
                     ))}
                   </Select>
@@ -165,9 +169,10 @@ const ClientToolbar = (props) => {
                         className="relative flex items-center text-gray-600 focus:outline-none"
                       >
                         <FaBell className="text-2xl" />
-                        {pendingCount > 0 && (
+                        {(pendingCount > 0 || unreadTickets.length > 0) && (
                           <span className="absolute top-0 right-0 inline-flex items-center justify-center px-1 pt-1 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full">
-                            {pendingCount}
+                            {Number(pendingCount) +
+                              Number(unreadTickets.length)}
                           </span>
                         )}
                       </button>
@@ -181,6 +186,9 @@ const ClientToolbar = (props) => {
                       >
                         <div className="block px-4 py-2 text-sm text-gray-700">
                           Pending modification requests: {pendingCount}
+                        </div>
+                        <div className="block px-4 py-2 text-sm text-gray-700">
+                          Ticket Update: {unreadTickets.length}
                         </div>
                         {/* <div className="block px-4 py-2 text-sm text-gray-700">
                         Approved: {resolvedCount}

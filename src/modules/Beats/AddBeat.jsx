@@ -23,6 +23,7 @@ import {
 } from "../../redux/services/beats";
 import Swal from "sweetalert2";
 import { POOLING_TIME } from "../../constants/static";
+import { api } from "../../redux/services/api";
 
 const AddBeat = () => {
   const [validationErrors, setValidationErrors] = useState({});
@@ -97,18 +98,17 @@ const AddBeat = () => {
           cancelButtonColor: "#d33",
         }).then((result) => {
           if (result.isConfirmed) {
-            navigate("/client/settings/billing");
+            navigate("/client/settings/billing?action=update");
           }
         });
 
         return;
       }
-      console.log("creating.......");
       dispatch(suspenseShow());
 
       const { data } = await addBeat({ organization, beat });
-      await refetchBeats();
-
+      // await refetchBeats();
+      dispatch(api.util.invalidateTags([{ type: "Beats", id: "LIST" }]));
       if (data && data.status) {
         toast("Beat Created Successfully");
         navigate("/client/beats");

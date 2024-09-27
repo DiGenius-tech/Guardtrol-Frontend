@@ -46,11 +46,17 @@ export const api = createApi({
     "Subscription",
     "Guards",
     "Users",
+    "FaqCategories",
+    "Faqs",
+    "Tickets",
     "User",
+    "TicketReplies",
+    "TicketsCategories",
     "Subscriptions",
     "PatrolInstances",
     "UserRole",
     "Roles",
+    "Modifications",
     "Invoices",
     "UserSubscriptions",
     "Points",
@@ -67,10 +73,4 @@ export const api = createApi({
    * If you want all endpoints defined in the same file, they could be included here instead
    */
   endpoints: () => ({}),
-});
-
-export const enhancedApi = api.enhanceEndpoints({
-  endpoints: () => ({
-    getPost: () => "test",
-  }),
 });

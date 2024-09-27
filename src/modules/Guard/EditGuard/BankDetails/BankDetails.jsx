@@ -26,7 +26,6 @@ const BankDetails = (props) => {
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     setValidationErrors({ ...validationErrors, [e.target.name]: "" });
-    // console.log("formData: ", formData)
   };
 
   useEffect(() => {
@@ -47,7 +46,6 @@ const BankDetails = (props) => {
     try {
       setLoading(true);
       e.preventDefault();
-      console.log(formData.accountnumber.length);
       if (formData.accountnumber.length !== 10) {
         setValidationErrors({
           ...validationErrors,

@@ -41,7 +41,8 @@ const BeatPatrol = () => {
     data: patrols,
     refetch: refetchPatrols,
     isLoading,
-  } = useGetPatrolsQuery();
+  } = useGetPatrolsQuery({});
+
   const [selectedBeat, setSelectedBeat] = useState({});
 
   const [startTime, setStartTime] = useState();
@@ -65,6 +66,7 @@ const BeatPatrol = () => {
   useEffect(() => {
     setSelectedBeat(beatsApiResponse?.beats?.find((b) => b?._id === beatId));
   }, [beatsApiResponse]);
+
   const handleDelete = async (patrolToDelete) => {
     try {
       Swal.fire({
@@ -78,7 +80,6 @@ const BeatPatrol = () => {
       }).then(async (result) => {
         if (result.isConfirmed) {
           const { data } = await deletePatrol(patrolToDelete._id);
-          console.log(data);
           refetchPatrols();
           if (data?.status) {
             Swal.fire({
@@ -104,6 +105,7 @@ const BeatPatrol = () => {
     try {
       const updatedPatrol = {
         ...currentPatrol,
+        guards: selectedGuards.map((g) => g.value),
       };
       await updatePatrol(updatedPatrol);
       refetchPatrols();

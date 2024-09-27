@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import debounce from "lodash.debounce";
 
 export const toAbsoluteUrl = (pathname) => {
-  console.log(process.env.PUBLIC_URL);
   return process.env.PUBLIC_URL + pathname;
 };
 
