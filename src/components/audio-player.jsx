@@ -2,7 +2,6 @@ import React from "react";
 import ReactPlayer from "react-player";
 
 const AudioPlayer = ({ url }) => {
-  console.log(url);
   return (
     <div className="w-full min-w-80">
       <ReactPlayer

@@ -80,17 +80,18 @@ const PaymentSuccess = () => {
           dispatch(api.util.invalidateTags([{ type: "Subscription" }]));
           dispatch(api.util.invalidateTags([{ type: "Subscriptions" }]));
           dispatch(api.util.invalidateTags([{ type: "UserSubscriptions" }]));
-          // if (invoicesApiDetails.isUninitialized) {
-          //   await refetchInvoices();
-          // }
 
-          // if (allSubApiDetails.isUninitialized) {
-          //   await refetchAllMySubscriptions();
-          // }
+          if (invoicesApiDetails.isUninitialized) {
+            await refetchInvoices();
+          }
 
-          // if (activeSubApiDetails.isUninitialized) {
-          //   await refetchActiveSubscription();
-          // }
+          if (allSubApiDetails.isUninitialized) {
+            await refetchAllMySubscriptions();
+          }
+
+          if (activeSubApiDetails.isUninitialized) {
+            await refetchActiveSubscription();
+          }
           navigate("/dashboard");
         });
       } else {
