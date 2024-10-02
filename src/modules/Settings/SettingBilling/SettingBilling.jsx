@@ -235,8 +235,8 @@ const SettingBilling = () => {
           <div className="hidden sm:block col-span-12 sm:col-span-3">
             <h3 className="font-bold">Invoices</h3>
           </div>
-          <div className="col-span-12 sm:col-span-9  pb-20 relative">
-            <div className="relative overflow-x-auto">
+          <div className="col-span-12 sm:col-span-9   pb-40 md:pb-20  relative">
+            <div className="relative overflow-x-auto ">
               <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead className="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400">
                   <tr>

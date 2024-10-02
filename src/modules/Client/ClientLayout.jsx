@@ -35,7 +35,7 @@ const Client = () => {
   const {
     data: subscription,
     isError,
-    isFetching: isFetchingActiveSubscription,
+    isLoading: isLoadingActiveSubscription,
     refetch: refetchActiveSubscription,
     isUninitialized,
   } = useGetSubscriptionQuery(organization, {
@@ -69,7 +69,7 @@ const Client = () => {
   );
   // useSocketEvent("new-ticket", (data) => {
   // });
-  if (isFetchingActiveSubscription) {
+  if (isLoadingActiveSubscription) {
     return (
       <div className="absolute top-0 right-0 z-40 bg-white flex w-full h-full justify-center items-center">
         <Spinner size={"xl"} color="success" />
@@ -77,7 +77,7 @@ const Client = () => {
     );
   }
 
-  if (!subscription && !isFetchingActiveSubscription) {
+  if (!subscription && !isLoadingActiveSubscription) {
     return (
       <div className="absolute top-0 right-0 z-40 bg-white w-full h-full flex justify-center items-center">
         <div className="w-full relative top-24">
