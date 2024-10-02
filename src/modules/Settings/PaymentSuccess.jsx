@@ -76,31 +76,16 @@ const PaymentSuccess = () => {
           confirmButtonText: "OK",
           confirmButtonColor: "#008080",
         }).then(async () => {
-          console.log(
-            allSubApiDetails.isUninitialized,
-            invoicesApiDetails.isUninitialized,
-            activeSubApiDetails.isUninitialized
-          );
-          dispatch(api.util.invalidateTags([{ type: "Invoices" }]));
-          dispatch(api.util.invalidateTags([{ type: "Subscription" }]));
-          dispatch(api.util.invalidateTags([{ type: "Subscriptions" }]));
-          dispatch(api.util.invalidateTags([{ type: "UserSubscriptions" }]));
-          console.log(
-            allSubApiDetails.isUninitialized,
-            invoicesApiDetails.isUninitialized,
-            activeSubApiDetails.isUninitialized
-          );
-          if (invoicesApiDetails.isUninitialized) {
-            await refetchInvoices();
-          }
+          // dispatch(api.util.invalidateTags([{ type: "Invoices" }]));
+          // dispatch(api.util.invalidateTags([{ type: "Subscription" }]));
+          // dispatch(api.util.invalidateTags([{ type: "Subscriptions" }]));
+          // dispatch(api.util.invalidateTags([{ type: "UserSubscriptions" }]));
 
-          if (allSubApiDetails.isUninitialized) {
-            await refetchAllMySubscriptions();
-          }
-          if (activeSubApiDetails.isUninitialized) {
-            await refetchActiveSubscription();
-          }
-          // navigate("/dashboard");
+          await refetchInvoices();
+          await refetchAllMySubscriptions();
+          await refetchActiveSubscription();
+
+          navigate("/client/settings/billing");
         });
       } else {
         // Handle payment failure
