@@ -11,6 +11,7 @@ import {
 } from "../../redux/services/subscriptions";
 import { selectOrganization } from "../../redux/selectors/auth";
 import { useGetInvoicesQuery } from "../../redux/services/invoice";
+import { Spinner } from "flowbite-react";
 
 const debounce = (func, delay) => {
   let timeoutId;
@@ -126,7 +127,10 @@ const PaymentSuccess = () => {
 
   return (
     <div className="payment-success-page">
-      {isLoading ? (
+      {isLoading ||
+      activeSubApiDetails.isLoading ||
+      invoicesApiDetails.isLoading ||
+      allSubApiDetails.isLoading ? (
         <div className=" bg-white flex w-full h-full justify-center items-center">
           <Spinner size={"xl"} color="success" />
         </div>
