@@ -76,11 +76,20 @@ const PaymentSuccess = () => {
           confirmButtonText: "OK",
           confirmButtonColor: "#008080",
         }).then(async () => {
+          console.log(
+            allSubApiDetails.isUninitialized,
+            invoicesApiDetails.isUninitialized,
+            activeSubApiDetails.isUninitialized
+          );
           dispatch(api.util.invalidateTags([{ type: "Invoices" }]));
           dispatch(api.util.invalidateTags([{ type: "Subscription" }]));
           dispatch(api.util.invalidateTags([{ type: "Subscriptions" }]));
           dispatch(api.util.invalidateTags([{ type: "UserSubscriptions" }]));
-
+          console.log(
+            allSubApiDetails.isUninitialized,
+            invoicesApiDetails.isUninitialized,
+            activeSubApiDetails.isUninitialized
+          );
           if (invoicesApiDetails.isUninitialized) {
             await refetchInvoices();
           }
@@ -88,7 +97,6 @@ const PaymentSuccess = () => {
           if (allSubApiDetails.isUninitialized) {
             await refetchAllMySubscriptions();
           }
-
           if (activeSubApiDetails.isUninitialized) {
             await refetchActiveSubscription();
           }
@@ -104,7 +112,7 @@ const PaymentSuccess = () => {
           confirmButtonColor: "#008080",
         }).then(() => {
           // Redirect back to subscription page
-          navigate("/subscription");
+          navigate("/client/settings/billing");
         });
       }
     } catch (error) {
@@ -116,7 +124,7 @@ const PaymentSuccess = () => {
         confirmButtonText: "OK",
         confirmButtonColor: "#008080",
       }).then(() => {
-        navigate("/dashboard");
+        navigate("/client/settings/billing");
       });
     } finally {
       dispatch(suspenseHide());
