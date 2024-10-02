@@ -30,20 +30,6 @@ function Beat({ setBeats, beat, status, handle_edit_beat }) {
     }
   );
 
-  // const handleDelete = async (_id) => {
-  //   setOpen(false);
-  //   dispatch(suspenseShow());
-
-  //   try {
-  //     const data = await deleteBeat({ beatId: _id });
-
-  //     toast("Beat deleted");
-  //     await refetchBeats();
-  //   } catch (error) {
-  //   } finally {
-  //     dispatch(suspenseHide());
-  //   }
-  // };
   const handleDelete = async (beatToDelete) => {
     try {
       Swal.fire({
@@ -71,17 +57,10 @@ function Beat({ setBeats, beat, status, handle_edit_beat }) {
           }
         }
       });
-      // console.log(beatToDelete);
-      // const data = await deleteBeat({ beatId: beatToDelete._id });
-      // setOpen(false);
-      // toast("Beat deleted");
-      // console.log(data);
     } catch (error) {}
   };
   return (
     <>
-      {/* beat-app works! */}
-
       <Card>
         <div className="grid grid-cols-12 gap-3 items-center justify-between">
           <div className="col-span-2">
@@ -116,14 +95,6 @@ function Beat({ setBeats, beat, status, handle_edit_beat }) {
           </div>
         </div>
       </Card>
-      {/* <AlertDialog
-        open={open}
-        title="Delete Beat ?"
-        description="Are You Sure You Want To Delete This Beat ?, You won't Be Able To Revert This Action"
-        setOpen={setOpen}
-        actionText="Delete"
-        action={() => handleDelete(beat?._id)}
-      /> */}
     </>
   );
 }

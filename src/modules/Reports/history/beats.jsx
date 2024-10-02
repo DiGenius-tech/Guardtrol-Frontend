@@ -8,8 +8,6 @@ import Pagination from "../../../shared/Pagination/Pagination";
 import * as XLSX from "xlsx";
 import { useFetchBeatHistoryQuery } from "../../../redux/services/reports";
 import { POOLING_TIME } from "../../../constants/static";
-// import jsPDF from "jspdf";
-// import "jspdf-autotable";
 
 const BeatsHistory = () => {
   const [startDate, setStartDate] = useState("");
@@ -86,20 +84,6 @@ const BeatsHistory = () => {
     XLSX.writeFile(wb, "beats_history.xlsx");
   };
 
-  // const exportToPdf = () => {
-  //   const doc = new jsPDF();
-  //   doc.autoTable({
-  //     head: [["Beat name", "Total Patrols", "Avg Clock-in Time", "Avg Clock-out Time"]],
-  //     body: aggregatedData.map((beat) => [
-  //       beat.beatName,
-  //       beat.totalPatrols,
-  //       beat.avgClockInTime,
-  //       beat.avgClockOutTime,
-  //     ]),
-  //   });
-  //   doc.save("beats_history.pdf");
-  // };
-
   return (
     <div className="container mx-auto relative pb-40 sm:pb-20">
       <section className="mb-2">
@@ -146,12 +130,7 @@ const BeatsHistory = () => {
           >
             Export to Excel
           </button>
-          {/* <button
-            onClick={exportToPdf}
-            className="bg-red-500 text-white px-4 rounded min-w-40 h-10"
-          >
-            Export to PDF
-          </button> */}
+
           <Button
             color={"green"}
             onClick={refetch}

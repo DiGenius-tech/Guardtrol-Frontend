@@ -70,39 +70,12 @@ const Membership = () => {
       setValidationErrors(newErrors);
       e.stopPropagation();
     } else {
-      // Form is valid, handle submission
-      //auth.loading(true);
-      // try {
-      //   const data = await sendRequest(
-      //     "users/signup",
-      //     "POST",
-      //     formData,
-      //     {
-      //       "Content-Type": "application/json"
-      //     }
-      //   );
-
-      //   if (null != data) {
-      //     if (auth.login(data)) {
-      //       navigate('../verify-email', { replace: true }) //should be dashboard
-      //       window.location.reload();
-      //     }
-      //     // navigate('../verify-email', {replace: true})
-      //     // window.location.reload();
-
-      //   }
-      // } catch (err) {
-      //   console.log(err);
-      // } finally {
-      //   auth.loading(false);
-      // }
       if (null == selectedPlan) {
         toast.error("Please Select A Plan That Works For You");
         return;
       }
 
       localStorage.setItem("selectedPlan", JSON.stringify(selectedPlan));
-      // localStorage.setItem("onBoardingLevel", 1);
 
       dispatch(setOnboardingLevel(1));
       navigate("/onboarding/configure-beats");
@@ -165,15 +138,11 @@ const Membership = () => {
     setSelectedPlan(JSON.parse(e.target.value));
   };
 
-  // Function to handle modal close
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
 
-  // Function to handle button click in the modal
-  const handleModalButtonClick = () => {
-    // Add your logic here for the button click inside the modal
-  };
+  const handleModalButtonClick = () => {};
 
   const config = {
     public_key: "FLWPUBK-a1be03107079ab0523984695c59cbbed-X",

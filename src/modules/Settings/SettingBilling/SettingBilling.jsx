@@ -31,23 +31,6 @@ import { formatCurrency, formatDateTime } from "../../../utils/dateUtils";
 import Pagination from "../../../shared/Pagination/Pagination";
 import { Spinner } from "flowbite-react";
 
-const savedPaymentCards = [
-  {
-    id: "1",
-    title: "Mastercard",
-    default: true,
-    lastFourDigits: 2378,
-    brandLogo: logo_mastercard,
-  },
-  {
-    id: "2",
-    title: "VISA",
-    default: false,
-    lastFourDigits: 1334,
-    brandLogo: logo_visa,
-  },
-];
-
 const SettingBilling = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -145,7 +128,6 @@ const SettingBilling = () => {
 
   return (
     <>
-      {/* setting-billing-app works! */}
       {(sub || sub === null) && (
         <RenewSubscription
           subscription={sub}
@@ -267,12 +249,7 @@ const SettingBilling = () => {
                     <th scope="col" className="px-6 py-3  rounded-e-lg">
                       Action
                     </th>
-                    {/* <th scope="col" className="px-6 py-3">
-                        Plan
-                      </th> */}
-                    {/* <th scope="col" className="px-6 py-3">
-                        Status
-                      </th> */}
+
                     <th
                       scope="col"
                       className="px-6 py-3 rounded-e-lg"
@@ -319,11 +296,9 @@ const SettingBilling = () => {
                             scope="row"
                             className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                           >
-                            {invoice?.createdAt}
+                            {formatDateTime(invoice?.createdAt)}
                           </td>
 
-                          {/* <td className="px-6 py-4">{s?.plan} plan</td> */}
-                          {/* <td className="px-6 py-4">Paid</td> */}
                           <td className="px-6 py-4">
                             <span
                               onClick={() => handleInvoiceClick(invoice)}
@@ -349,168 +324,7 @@ const SettingBilling = () => {
               onEntriesPerPageChange={(l) => setInvoiceLimit(l)}
             />
           </div>
-
-          {/* <div className="hidden sm:block col-span-12 sm:col-span-5">
-          <h3 className="font-bold">Card details</h3>
         </div>
-        <div className="col-span-12 sm:col-span-7">
-          <form action="">
-            <ul className="flex flex-col gap-4">
-              {savedPaymentCards.map((card) => {
-                return (
-                  <li key={card.id}>
-                    <div className="p-4 sm:flex items-start gap-4 bg-white border border-gray-200 rounded-lg shadow md:flex-row md:max-w-xl dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
-                      <img
-                        className="object-cover rounded-t-lg h-auto w-12 mt-2"
-                        src={card.brandLogo}
-                        alt={card.title}
-                      />
-                      <div
-                        className={
-                          (defaultCard === card.id
-                            ? `default-payment-card | `
-                            : ``) +
-                          `sm:flex w-full gap-4 justify-between leading-normal`
-                        }
-                      >
-                        <div>
-                          <h5 className="title mb-2 text-lg font-semibold tracking-tight text-gray-900 dark:text-white">
-                            {card.title}
-                          </h5>
-                          <p className="mb-3 font-normal text-dark-350">
-                            Ending with&nbsp;{card.lastFourDigits}
-                          </p>
-                        </div>
-                        <div className="flex items-center gap-4">
-                          {defaultCard !== card.id ? (
-                            <label
-                              htmlFor={card.id}
-                              className="cursor-pointer text-sm font-semibold text-primary-500"
-                            >
-                              Make this default
-                              <input
-                                type="radio"
-                                name="defaultCard"
-                                id={card.id}
-                                value={card.id}
-                                onChange={(e) => handleDefaultCard(e)}
-                                className="absolute invisible"
-                              />
-                            </label>
-                          ) : (
-                            ""
-                          )}
-                          <button
-                            aria-label="delete card"
-                            className="text-red-500 hover:text-red-600"
-                          >
-                            <FaRegTrashAlt />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </li>
-                );
-              })}
-            </ul>
-          </form>
-
-          <div className="my-4"></div>
-
-          {isAddNewCard ? (
-            <div className="bg-white p-8 rounded shadow-md">
-              <h1 className="text-md font-semibold mb-4">Add Card Details</h1>
-              <form>
-                <div className="mb-4">
-                  <label
-                    htmlFor="cardNumber"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Card Number
-                  </label>
-                  <input
-                    type="text"
-                    id="cardNumber"
-                    name="cardNumber"
-                    className="mt-1 focus:ring-primary-500 focus:border-primary-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-                  />
-                </div>
-                <div className="grid grid-cols-12 gap-4 mb-4">
-                  <div className="col-span-8">
-                    <label
-                      htmlFor="expiry"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      Expiry Date
-                    </label>
-                    <input
-                      type="text"
-                      id="expiry"
-                      name="expiry"
-                      placeholder="MM/YY"
-                      className="mt-1 focus:ring-primary-500 focus:border-primary-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-                    />
-                  </div>
-                  <div className="col-span-4">
-                    <label
-                      htmlFor="cvv"
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      CVV
-                    </label>
-                    <input
-                      type="number"
-                      min={`100`}
-                      max={`999`}
-                      id="cvv"
-                      name="cvv"
-                      placeholder="123"
-                      className="mt-1 focus:ring-primary-500 focus:border-primary-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-                    />
-                  </div>
-                </div>
-                <div className="mb-4">
-                  <label
-                    htmlFor="cardHolder"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Card Holder Name
-                  </label>
-                  <input
-                    type="text"
-                    id="cardHolder"
-                    name="cardHolder"
-                    className="mt-1 focus:ring-primary-500 focus:border-primary-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-                  />
-                </div>
-                <div className="flex items-center justify-between">
-                  <button
-                    type="submit"
-                    className="bg-primary-500 text-white py-2 px-4 rounded-md hover:bg-primary-600"
-                  >
-                    Add card
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setIsAddNewCard(false);
-                    }}
-                    className="bg-gray-300 text-white py-2 px-4 rounded-md hover:bg-gray-400"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </form>
-            </div> : <button type='submit' onClick={() => { setIsAddNewCard(!isAddNewCard) }} className="text-sm font-semibold text-primary-500">+&nbsp;Add Another Card</button>
-
-          }
-
-        </div> */}
-        </div>
-        {/* <div className="my-4"></div>
-                <div className="text-right">
-                    <RegularButton text="Save Changes" width="auto" padding="px-4 py-2" textSize="text-sm" />
-                </div> */}
       </div>
     </>
   );

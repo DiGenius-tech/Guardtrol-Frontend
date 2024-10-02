@@ -65,13 +65,6 @@ const PatrolGuardDetails = () => {
   );
 
   const guard = guards.find((g) => g._id === guardId);
-
-  // const handleSentRequest = () => {
-  //   const data = get(`guard/getguard/${guardId}`, token).then((data) => {
-
-  //   });
-  // };
-
   const handleUpdateImage = async () => {
     try {
       dispatch(suspenseShow());
@@ -131,22 +124,6 @@ const PatrolGuardDetails = () => {
     }
   };
 
-  // const handleUpdateImage = async (values) => {
-  //   dispatch(suspenseShow());
-  //   const data = await put(
-  //     "guard/image",
-  //     { guardId, image: `data:image/png;base64,${base}` },
-  //     token,
-  //     true,
-  //     "Profile image updated"
-  //   );
-  //   if (data) {
-  //   }
-  // };
-  // useEffect(() => {
-  //   handleSentRequest();
-  // }, [token, guardId]);
-
   const AddComment = (e) => {
     e.preventDefault();
     const commentData = {
@@ -161,28 +138,10 @@ const PatrolGuardDetails = () => {
           setIsComment(false);
           setComment("");
           await refetchGuards();
-          // setGuard({});
-          // handleSentRequest();
         }
       }
     );
   };
-
-  // const getSelectedFile = (event) => {
-  //   const file = event.target.files[0];
-  //   if (file) {
-  //     setFileName(file.name);
-  //     setProfile(event.target.files[0]);
-  //     const reader = new FileReader();
-  //     reader.onloadend = () => {
-  //       setPreview(reader.result);
-  //       setBase(reader.result.split(",")[1]);
-  //     };
-  //     reader.readAsDataURL(file);
-  //   } else {
-  //     setFileName("");
-  //   }
-  // };
 
   const verify = async (e) => {
     dispatch(suspenseShow());
@@ -195,28 +154,10 @@ const PatrolGuardDetails = () => {
     toast("Guard Status Updated");
     await refetchBeats();
     await refetchGuards();
-
-    // const data = sendRequest(
-    //   `guard/verify/${guardId}`,
-    //   "PATCH",
-    //   JSON.stringify(statusData),
-    //   {
-    //     "Content-Type": "application/json",
-    //     Authorization: `Bearer ${token}`,
-    //   }
-    // ).then((data) => {
-    //   if (data.status) {
-    //     toast.clearWaitingQueue();
-    //     toast("Guard Status Updated");
-    //     handleSentRequest();
-    //     return;
-    //   }
-    // });
   };
 
   return (
     <>
-      {/* patrol-guard-details-app works! */}
       <div className="grid grid-cols-12 gap-4 items-stretch">
         <div className="col-span-12 sm:col-span-4">
           <div className="h-full p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">

@@ -1,6 +1,11 @@
 import { Button, Modal, Label, TextInput, Select, Radio } from "flowbite-react";
 import { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import PaystackPop from "@paystack/inline-js";
+import {
+  selectFwConfig,
+  selectPsConfig,
+} from "../../redux/selectors/selectedPlan";
 import {
   selectOrganization,
   selectToken,
@@ -10,6 +15,9 @@ import { usePaystackPayment } from "react-paystack";
 import { toast } from "react-toastify";
 import moment from "moment";
 import { suspenseHide, suspenseShow } from "../../redux/slice/suspenseSlice";
+import RegularButton from "../Sandbox/Buttons/RegularButton";
+import { useFlutterwave, closePaymentModal } from "flutterwave-react-v3";
+import { post } from "../../lib/methods";
 import Swal from "sweetalert2";
 import { useGetGuardsQuery } from "../../redux/services/guards";
 import { useGetBeatsQuery } from "../../redux/services/beats";
@@ -19,6 +27,7 @@ import {
   useGetSubscriptionQuery,
 } from "../../redux/services/subscriptions";
 import { BEAT_PRICE, GUARD_PRICE, POOLING_TIME } from "../../constants/static";
+import axios from "axios";
 import { useGetInvoicesQuery } from "../../redux/services/invoice";
 import { persistor } from "../../redux/store";
 import { api } from "../../redux/services/api";
@@ -36,6 +45,7 @@ const RenewSubscription = ({
   setRenewalModal,
   isExpired = false,
 }) => {
+  const psConfig = useSelector(selectPsConfig);
   const organization = useSelector(selectOrganization);
   const token = useSelector(selectToken);
   const {
@@ -51,6 +61,8 @@ const RenewSubscription = ({
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
   const user = useSelector(selectUser);
+
+  const fwConfig = useSelector(selectFwConfig);
 
   const currentDate = new Date();
   const { data: availableGuards } = useGetGuardsQuery(
@@ -83,6 +95,7 @@ const RenewSubscription = ({
   const activeSubscriptions = mySuscriptions?.filter(
     (subscription) => parseDate(subscription?.expiresat) > currentDate
   );
+
   // Check if the user has more than one active or future subscription
   const hasTooManyActiveSubscriptions = activeSubscriptions?.length > 1;
 
@@ -162,7 +175,47 @@ const RenewSubscription = ({
     { value: "flutterwave", label: "Flutterwave" },
   ];
 
+  const handleFlutterPayment = useFlutterwave({
+    public_key: fwConfig.public_key,
+    tx_ref: Date.now(),
+    amount: newSubscriptionTotalAmount,
+    currency: "NGN",
+    payment_options: "all",
+    payment_plan: undefined,
+    customer: {
+      email: user.email,
+      phone_number: user.phone,
+      name: user.name,
+    },
+    meta: {
+      counsumer_id: user._id,
+      consumer_mac: undefined,
+    },
+    customizations: {
+      title: "Guardtrol Lite Subscription",
+      description: undefined,
+      logo: "https://guardtrol.alphatrol.com/logo192.png",
+    },
+  });
+
   const navigate = useNavigate();
+
+  const payWithFlutterwave = async () => {
+    dispatch(suspenseShow());
+
+    handleFlutterPayment({
+      callback: (response) => {
+        if (response.status === "successful") {
+          updateSubscription(response);
+        }
+        closePaymentModal();
+      },
+      onClose: () => {
+        dispatch(suspenseHide());
+        toast.warn("Payment Window Closed, Payment Cancelled");
+      },
+    });
+  };
 
   const handleLogout = () => {
     persistor.purge();
@@ -171,8 +224,70 @@ const RenewSubscription = ({
     navigate("/auth");
   };
 
+  let paymentConfig = {
+    publicKey: psConfig.publicKey,
+    email: user.email,
+    amount: newSubscriptionTotalAmount * 100, // amount in kobo
+    reference: new Date().getTime().toString(),
+  };
+
+  const handlePaystackPayment = usePaystackPayment(paymentConfig);
+
   const onClose = () => {
+    dispatch(suspenseHide());
     toast.error("Payment was closed");
+  };
+
+  const payWithPaystack = async () => {
+    try {
+      dispatch(suspenseShow());
+      // const { data: planData } = await handleCreatePlan();
+
+      const paymentData = {
+        key: psConfig.publicKey,
+        email: user.email,
+
+        channels: ["card"],
+        metadata: {
+          custom_fields: [
+            {
+              display_name: "Beats",
+              variable_name: "beats",
+              value: newMaxBeats,
+            },
+            {
+              display_name: "Guards",
+              variable_name: "guards",
+              value: newMaxExtraGuards,
+            },
+          ],
+        },
+        // plan: planData?.plan_code,
+        onSuccess: (transaction) => {
+          if (!isExpired) {
+            setRenewalModal(false);
+          }
+
+          updateSubscription(transaction);
+        },
+        onCancel: () => {
+          dispatch(suspenseHide());
+        },
+      };
+
+      const initiatePayment = () => {
+        const res = handlePaystackPayment({
+          onSuccess: (transaction) => {
+            updateSubscription(transaction);
+          },
+          onClose,
+        });
+      };
+
+      initiatePayment();
+    } catch (error) {
+    } finally {
+    }
   };
 
   const pay = async (e) => {
@@ -199,15 +314,17 @@ const RenewSubscription = ({
     }
     e?.preventDefault();
     setIsLoading(true);
-    updateSubscription();
-
+    if (paymentOption === "flutterwave") {
+      payWithFlutterwave();
+    } else {
+      payWithPaystack();
+    }
     setIsLoading(false);
   };
 
   const updateSubscription = async (transaction) => {
     try {
-      dispatch(suspenseShow());
-      const s = {
+      const reqData = {
         ...transaction,
         maxbeats:
           subscriptionAction === "renewal"
@@ -228,52 +345,27 @@ const RenewSubscription = ({
         startsAt: subscription ? subscription.expiresat : Date.now(),
         paymentgateway: paymentOption,
       };
-
-      let reqData = {
-        newSubscription: {
-          totalamount: newSubscriptionTotalAmount,
-          maxbeats:
-            subscriptionAction === "renewal"
-              ? subscription
-                ? subscription?.maxbeats
-                : mySuscriptions[0]?.maxbeats
-              : newMaxBeats,
-          maxextraguards:
-            subscriptionAction === "renewal"
-              ? subscription
-                ? subscription?.maxextraguards
-                : mySuscriptions[0]?.maxextraguards
-              : newMaxExtraGuards,
-          expiresat: newSubscriptionExpirationDate,
-          plan: newSubscription,
-          email: user.email,
-          paymentgateway: paymentOption,
-          startsAt: subscription ? subscription.expiresat : Date.now(),
-        },
-      };
-
       const { data } = await createSubscription({
         organization,
         body: reqData,
       });
 
-      window.location.href = data.paymentUrl;
-      // await refetchAllMySubscriptions();
-      // await refetchActiveSubscription();
-      // await refetchInvoices();
+      await refetchAllMySubscriptions();
+      await refetchActiveSubscription();
+      await refetchInvoices();
 
-      // if (!isExpired) {
-      //   setRenewalModal(false);
-      // }
-      // dispatch(suspenseHide());
-      // if (data) {
-      //   Swal.fire({
-      //     title: "Renewal successfull",
-      //     text: `Your subscription has been updated!`,
-      //     icon: "success",
-      //     confirmButtonColor: "#008080",
-      //   });
-      // }
+      if (!isExpired) {
+        setRenewalModal(false);
+      }
+      dispatch(suspenseHide());
+      if (data) {
+        Swal.fire({
+          title: "Renewal successfull",
+          text: `Your subscription has been updated!`,
+          icon: "success",
+          confirmButtonColor: "#008080",
+        });
+      }
     } catch (error) {
     } finally {
       dispatch(suspenseHide());

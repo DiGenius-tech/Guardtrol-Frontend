@@ -22,7 +22,6 @@ const PaymentSuccess = () => {
     }
   );
   const dispatch = useDispatch();
-  //   dispatch(suspenseHide());
 
   const {
     data: sub,
@@ -31,14 +30,6 @@ const PaymentSuccess = () => {
   } = useGetSubscriptionQuery(organization, {
     skip: organization ? false : true,
   });
-
-  // useEffect(() => {
-  //   const payed = localStorage.getItem("paymentComplete") || false;
-
-  //   if (!payed) {
-  //     navigate("/onboarding/membership");
-  //   }
-  // });
 
   const handleNext = async () => {
     try {
@@ -51,11 +42,7 @@ const PaymentSuccess = () => {
     }
   };
   useEffect(() => {
-    // (tick_icon_ref)
     const tick_icon = tick_icon_ref?.current;
-    // tick_icon.classList.remove("hide")
-    // tick_icon ? (tick_icon.classList.contains("hide") ? tick_icon.classList.remove("hide") :
-    //     null) : null;
 
     if (tick_icon) {
       if (tick_icon.classList.contains("hide")) {

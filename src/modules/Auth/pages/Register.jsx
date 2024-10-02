@@ -41,14 +41,10 @@ const Register = () => {
   });
   const [isLoading, setIsLoading] = useState(false);
 
-  /**toggle password field type */
   const password_field_ref = useRef();
   const [password_type, setPassword_type] = useState("password");
   const [confirm_password_type, setConfirm_password_type] =
     useState("password");
-
-  // const [isPassword_confirm, setIsPassword_confirm] = useState(true);
-  // const [isPassword, setIsPassword] = useState(true);
 
   const toggle_pwd_type = () => {
     password_type === "password"
@@ -75,8 +71,6 @@ const Register = () => {
       const form = e.currentTarget;
       const newErrors = {};
 
-      // Check each input field's validity and set errors accordingly
-
       if (formData.password.length < 8) {
         setValidationErrors({
           ...validationErrors,
@@ -97,7 +91,6 @@ const Register = () => {
           newErrors[el.name] = el.validationMessage;
         }
 
-        // Add the condition to check if passwords match
         if (
           el.name === "password" &&
           el.value !== formData.password_confirmation
@@ -112,12 +105,9 @@ const Register = () => {
       }
 
       if (Object.keys(newErrors).length > 0) {
-        // If there are validation errors, update state and stop submission
         setValidationErrors(newErrors);
         e.stopPropagation();
       } else {
-        // Form is valid, handle submission
-
         const data = await post("users/signup", {
           ...formData,
           email: formData?.email?.toLowerCase(),
@@ -133,10 +123,7 @@ const Register = () => {
             dispatch(updateUserOrganization(data.userid));
             toast("Sign Up Successful");
             navigate("/auth/verify-email", { replace: true }); //should be dashboard
-            // window.location.reload();
           }
-          // navigate('../verify-email', {replace: true})
-          // window.location.reload();
         }
       }
     } catch (err) {

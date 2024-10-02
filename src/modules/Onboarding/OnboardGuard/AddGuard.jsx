@@ -162,11 +162,6 @@ function AddGuard({ onBoarding = true }) {
           }).then((result) => {
             if (result.isConfirmed) {
               navigate("/client/settings/billing?action=update");
-              // Swal.fire({
-              //   title: "Deleted!",
-              //   text: "Your file has been deleted.",
-              //   icon: "success",
-              // });
             }
           });
           return;
@@ -236,25 +231,6 @@ function AddGuard({ onBoarding = true }) {
                 />
                 <HistoryButton type="button" text="Cancel" />
               </div>
-              {/* static tooltip */}
-              {/* {!isGotIt && onBoarding ? (
-                <div className="mt-2 sm:mt-0 absolute sm:top-0 sm:left-24 ms-2">
-                  <div className="relative bg-secondary-500 text-white inline-flex flex-col rounded-lg p-4 max-w-sm">
-                    <div className="hidden sm:block tip absolute top-4 -left-2"></div>
-                    <div className="sm:hidden tip sm-scrn absolute -top-2 left-6"></div>
-                    <p className="text-xs mb-4">
-                      When you click on “save” a message will be sent to the
-                      guard to finish the onboading
-                    </p>
-                    <button
-                      className="underline inline-flex font-semibold text-xs"
-                      onClick={handle_is_got_it}
-                    >
-                      Got it
-                    </button>
-                  </div>
-                </div>
-              ) : null} */}
             </div>
           </div>
         </form>

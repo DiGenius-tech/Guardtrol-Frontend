@@ -99,9 +99,6 @@ const PatrolHistory = () => {
       status: <Badge status={patrolInstance.status} type={"PATROL_STATUS"} />,
     }));
   };
-  // const formattedTime = (date) => format(new Date(date), "hh:mm a");
-  // const formatDate = (date) => format(new Date(date), "yyyy-MM-dd");
-
   return (
     <div className="container mx-auto relative pb-40 sm:pb-20">
       <section className="mb-2">

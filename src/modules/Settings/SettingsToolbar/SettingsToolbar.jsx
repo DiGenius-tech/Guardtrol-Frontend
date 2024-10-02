@@ -64,19 +64,7 @@ const SettingsToolbar = () => {
               Security
             </Link>
           </li>
-          {/* <li>
-            <Link
-              to={`shift-schedule`}
-              className={
-                (shiftSchedule.includes(location.pathname)
-                  ? `active font-semibold border-primary-500 text-primary-500 hover:border-primary-400 hover:text-primary-400 `
-                  : `border-transparent `) +
-                `flex items-center justify-center whitespace-nowrap p-4 text-sm font-medium first:ml-0 disabled:cursor-not-allowed disabled:text-gray-400 disabled:dark:text-gray-500 rounded-t-lg border-b-2 text-gray-500 hover:border-gray-300 hover:text-gray-600`
-              }
-            >
-              Shift Schedule
-            </Link>
-          </li> */}
+
           {(userRole?.name === "Owner" || userRole?.name === "Manager") && (
             <li>
               <Link

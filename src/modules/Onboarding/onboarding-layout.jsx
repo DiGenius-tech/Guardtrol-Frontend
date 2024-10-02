@@ -78,32 +78,6 @@ const OnboardingLayout = () => {
         }
       }
       dispatch(suspenseHide());
-      // get(`users/getuser/${user.userid}`, token)
-      //   .then((response) => {
-      //     if (response) {
-      //       if (response?.subscriptions?.length > 0) {
-      //         if (response.beats.length > 0) {
-      //           if (response?.guards?.length > 0) {
-      //             if (
-      //               response?.beats?.some((beat) => beat?.guards?.length > 0)
-      //             ) {
-      //               dispatch(setOnboardingLevel(4));
-      //             } else {
-      //               dispatch(setOnboardingLevel(3));
-      //             }
-      //           } else {
-      //             dispatch(setOnboardingLevel(2));
-      //           }
-      //         } else {
-      //           dispatch(setOnboardingLevel(1));
-      //         }
-      //       } else {
-      //         dispatch(setOnboardingLevel(0));
-      //       }
-      //     }
-      //   })
-      //   .catch(console.error)
-      //   .finally(() => dispatch(suspenseHide()));
     }
   }, [token, user, dispatch, userData]);
 

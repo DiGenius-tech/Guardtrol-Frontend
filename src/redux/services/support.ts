@@ -2,7 +2,6 @@ import { api } from "./api";
 
 export const supportApi = api.injectEndpoints({
   endpoints: (build) => ({
-    // FAQs
     getFaqCategories: build.query({
       query: () => "faqs-categories",
       providesTags: ["FaqCategories"],
@@ -11,8 +10,6 @@ export const supportApi = api.injectEndpoints({
       query: (categoryId) => `faqs`,
       providesTags: ["Faqs"],
     }),
-
-    // Support Tickets
     getTickets: build.query({
       query: ({ organization, ...params }) => ({
         url: `tickets/${organization}`,

@@ -14,7 +14,6 @@ function PatrolGuardListDesktopView(props) {
   const location = useLocation();
   return (
     <>
-      {/* patrol-guard-list-desktop-view-app works! */}
       {!props.guards?.length ? (
         <div className="bg-white p-8 rounded ">
           <p className="text-gray-700 text-center">No Guards Here Yet</p>
@@ -31,9 +30,7 @@ function PatrolGuardListDesktopView(props) {
                   <th scope="col" className="px-6 py-3 whitespace-nowrap">
                     Phone Number
                   </th>
-                  {/* <th scope="col" className="px-6 py-3 whitespace-nowrap">
-                  Email address
-                </th> */}
+
                   <th scope="col" className="px-6 py-3 whitespace-nowrap">
                     Status
                   </th>

@@ -24,36 +24,13 @@ const PatrolGuardList = (props) => {
   const [deleteGuard, { isLoading: isUpdating, status }] =
     useDeleteGuardMutation();
 
-  // if (status) {
-  //   toast("Guard Deleted Successfully");
-  //   setOpen(false);
-  // }
-
-  // useEffect(() => {
-  //   handleSentRequest();
-  // }, [auth.token]);
-
-  // useEffect(() => {
-  //   const activeguards = guards.filter((guard) => guard.isactive);
-  //   props.setGuardCount(activeguards.length);
-  // }, [guards]);
-
   return (
     <>
-      {/* patrol-guard-list-app works! */}
       <PatrolGuardListToolbar />
       <div className="my-4"></div>
       <div className="px-4">
         <Outlet />
       </div>
-      {/* <AlertDialog 
-        open={open}
-        title={`Delete Guard ?`}
-        description={`Are You Sure You Want To Delete This Guard ?`}
-        setOpen={setOpen}
-        actionText="Delete"
-        action={deleteGuard}
-      /> */}
     </>
   );
 };

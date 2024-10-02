@@ -60,7 +60,6 @@ const SettingSecurity = () => {
 
   return (
     <>
-      {/* setting-security-app works! */}
       <div className="p-4 sm:p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
         <form onSubmit={formik.handleSubmit} className="max-w-3xl">
           <div className="grid grid-cols-12 gap-4 sm:gap-8">
@@ -79,10 +78,6 @@ const SettingSecurity = () => {
                     {...formik.getFieldProps("currentPassword")}
                     id="cuurentPassword"
                     semibold_label={true}
-                    //   error={validationErrors["currentPassword"]}
-                    //   onChange={handleChange}
-                    //   required="required"
-                    //   value={formData.currentPassword}
                   />
                   <div className="mb-3">
                     {formik.touched.currentPassword &&
@@ -104,10 +99,6 @@ const SettingSecurity = () => {
                     class="mb-1"
                     id="newPassword"
                     semibold_label={true}
-                    //   error={validationErrors["newPassword"]}
-                    //   onChange={handleChange}
-                    //   required="required"
-                    //   value={formData.newPassword}
                   />
                   <div className="mb-3">
                     {formik.touched.newPassword &&
@@ -129,10 +120,6 @@ const SettingSecurity = () => {
                     {...formik.getFieldProps("confirmPassword")}
                     id="confirmPassword"
                     semibold_label={true}
-                    //   error={validationErrors["confirmPassword"]}
-                    //   onChange={handleChange}
-                    //   required="required"
-                    //   value={formData.confirmPassword}
                   />{" "}
                   <div className="mb-3">
                     {formik.touched.confirmPassword &&

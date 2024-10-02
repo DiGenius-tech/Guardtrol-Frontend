@@ -25,7 +25,6 @@ function BeatList() {
   const [isEdit, setIsEdit] = useState(false);
   const user = useSelector(selectUser);
   const dispatch = useDispatch();
-  //dispatch(suspenseHide());
   const token = useSelector(selectToken);
   const organization = useSelector(selectOrganization);
 
@@ -61,15 +60,6 @@ function BeatList() {
     }
   };
 
-  // const addBeat = useCallback(
-  //   (beat, index) => {
-  //     beats[index] = beat;
-  //     setBeats(beats);
-  //     //setBeats((prevBeats) => [...prevBeats, beat]);
-  //   },
-  //   [beats, setBeats]
-  // );
-
   const cancelEdit = () => {
     setIsEdit(false);
   };
@@ -88,22 +78,12 @@ function BeatList() {
       dispatch(suspenseHide());
     }, 1000);
 
-    // const data = await addBeats({ userId: user.userid, body: beats }).finally(
-    //
-    // );
-
     dispatch(setOnboardingLevel(2));
     navigate("/onboarding/onboard-guard");
   };
 
-  // useEffect(() => {
-  //   if (error) {
-  //     toast.error(error);
-  //   }
-  // }, [error]);
   return (
     <>
-      {/* beat-list-app works! */}
       <div className="max-w-md mx-auto block mb-20 sm:mb-16">
         {isEdit ? (
           <div className="mb-8">

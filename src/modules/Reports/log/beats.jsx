@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import ReactApexChart from "react-apexcharts";
 import "tailwindcss/tailwind.css";
 import { useGetBeatsQuery } from "../../../redux/services/beats";
-import { Button, Spinner, Table } from "flowbite-react";
+import { Button, Label, Modal, Spinner, Table } from "flowbite-react";
 import * as XLSX from "xlsx";
 import { format } from "date-fns";
 import Pagination from "../../../shared/Pagination/Pagination"; // Adjust the import based on your project structure
@@ -12,6 +12,8 @@ import { useFetchTimelineLogsQuery } from "../../../redux/services/timelinelogs"
 import { POOLING_TIME } from "../../../constants/static";
 import { formatDate, formatDateTime } from "../../../utils/dateUtils";
 import { Badge } from "../../../components/badge";
+import AudioPlayer from "../../../components/audio-player";
+import { ASSET_URL } from "../../../constants/api";
 
 const BeatsLog = () => {
   const organization = useSelector(selectOrganization);
@@ -22,6 +24,8 @@ const BeatsLog = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [selectedBeatData, setselectedBeatData] = useState();
+  const [selectedLog, setSelectedLog] = useState(null);
+  const [showModal, setShowModal] = useState(false);
 
   const { data: beatsApiResponse } = useGetBeatsQuery(
     { organization: organization },
@@ -30,6 +34,10 @@ const BeatsLog = () => {
       pollingInterval: POOLING_TIME,
     }
   );
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
 
   const {
     data: logsAPiResponse,
@@ -214,6 +222,7 @@ const BeatsLog = () => {
             <Table.HeadCell className=" w-40">Type</Table.HeadCell>
             <Table.HeadCell className=" min-w-56">Date</Table.HeadCell>
             <Table.HeadCell>Message</Table.HeadCell>
+            <Table.HeadCell>Action</Table.HeadCell>
           </Table.Head>
           <Table.Body>
             {isLoading && (
@@ -255,6 +264,21 @@ const BeatsLog = () => {
                   </Table.Cell>
                   <Table.Cell>{formatDateTime(log.happendAt)}</Table.Cell>
                   <Table.Cell>{log.message}</Table.Cell>
+                  <Table.Cell>
+                    <div className="flex gap-2">
+                      <>
+                        <Button
+                          className="bg-[#008080]"
+                          onClick={() => {
+                            setSelectedLog(log);
+                            setShowModal(true);
+                          }}
+                        >
+                          View
+                        </Button>
+                      </>
+                    </div>
+                  </Table.Cell>
                 </Table.Row>
               ))}
           </Table.Body>
@@ -277,6 +301,86 @@ const BeatsLog = () => {
           height={350}
         />
       </div>
+      <Modal show={showModal} onClose={handleCloseModal}>
+        <Modal.Header>{"View Log"}</Modal.Header>
+        <Modal.Body>
+          <div className="space-y-4">
+            <div className="row flex justify-between">
+              <div className="col-6">
+                <Label
+                  htmlFor="HappendAt"
+                  className="text-md"
+                  value="Happend At:"
+                />
+              </div>
+              <div className="col-6">
+                <span className=" text-gray-500 ">
+                  {selectedLog?.happendAt}
+                </span>
+              </div>
+            </div>
+            <div className="row flex justify-between">
+              <div className="col-6">
+                <Label htmlFor="Message" className="text-md" value="Message" />
+              </div>
+              <div className="col-6">
+                <span className=" text-gray-500 ">
+                  {selectedLog?.message || "No Message"}
+                </span>
+              </div>
+            </div>
+            <div className="row flex justify-between">
+              <div className="col-6">
+                <Label htmlFor="Beat" className="text-md" value="Beat" />
+              </div>
+              <div className="col-6">
+                <span className=" text-gray-500 ">
+                  {selectedLog?.beat?.name || "No Beat"}
+                </span>
+              </div>
+            </div>{" "}
+            {selectedLog?.clockInstance ? (
+              <>
+                <div className="row flex justify-between">
+                  <div className="col-6">
+                    <Label
+                      htmlFor="message"
+                      className="text-md"
+                      value="Clock Message"
+                    />
+                  </div>
+                  <div className="col-6">
+                    <span className=" text-gray-500 ">
+                      {selectedLog?.clockInstance.message || "N/A"}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="row flex justify-between">
+                  <div className="col-6">
+                    <Label htmlFor="Audio" className="text-md" value="Audio" />
+                  </div>
+                  <div className="col-6">
+                    <span className=" text-gray-500 ">
+                      {selectedLog?.clockInstance?.audio ? (
+                        <AudioPlayer
+                          url={`${
+                            ASSET_URL + selectedLog?.clockInstance?.audio
+                          }`}
+                        />
+                      ) : (
+                        "No Audio"
+                      )}
+                    </span>
+                  </div>
+                </div>
+              </>
+            ) : (
+              ""
+            )}
+          </div>
+        </Modal.Body>
+      </Modal>
     </div>
   );
 };

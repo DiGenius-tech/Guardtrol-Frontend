@@ -14,6 +14,7 @@ import BeatsRoutes from "../Beats/beats.routes";
 import { useGetUserOrganizationRoleQuery } from "../../redux/services/role";
 import { useSelector } from "react-redux";
 import { selectOrganization } from "../../redux/selectors/auth";
+import PaymentSuccess from "./PaymentSuccess";
 
 const SettingsRouter = () => {
   const organization = useSelector(selectOrganization);
@@ -36,6 +37,7 @@ const SettingsRouter = () => {
             <Route path="shift-schedule" element={<SettingShiftSchedule />} />
             <Route path="notification" element={<SettingNotifications />} />
             <Route path="users" element={<OrganizationUsers />} />
+            <Route path="verify-payment" element={<PaymentSuccess />} />
             <Route path="billing" element={<SettingBilling />}>
               <Route index element={<UpdateSubscriptionPlan />} />
               <Route

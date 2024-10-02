@@ -9,12 +9,16 @@ export const InvoiceApi = api.injectEndpoints({
         url: `invoices`,
         params,
       }),
-      providesTags: (result = []) => [
-        ...result?.invoices?.map(
-          ({ _id }: any) => ({ type: "Invoices", _id } as const)
-        ),
-        { type: "Invoices" as const, id: "LIST" },
-      ],
+      providesTags: (result = []) =>
+        result
+          ? [
+              ...result?.invoices?.map(({ _id }: any) => ({
+                type: "Invoices",
+                id: _id,
+              })),
+              { type: "Invoices", id: "LIST" },
+            ]
+          : [{ type: "Invoices", id: "LIST" }],
     }),
 
     addInvoice: build.mutation<TInvoice, Partial<any>>({

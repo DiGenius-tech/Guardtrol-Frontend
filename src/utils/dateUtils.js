@@ -8,7 +8,6 @@ const formatTime = (date) => {
   return format(new Date(date), "hh:mm:ss a");
 };
 
-// Combined Date and Time
 const formatDateTime = (date) => {
   return `${formatDate(date)} ${formatTime(date)}`;
 };

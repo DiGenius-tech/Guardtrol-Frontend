@@ -4,14 +4,14 @@ import { TSubscription } from "../../types/subscription";
 
 export const SubscriptionApi = api.injectEndpoints({
   endpoints: (build) => ({
-    getSubscription: build.query<TSubscription, void>({
+    getSubscription: build.query<TSubscription, any>({
       query: (organization) => ({
         url: `subscriptions/user/active/${organization}`,
       }),
       providesTags: ["Subscription"],
     }),
 
-    getAllSubscriptions: build.query<TSubscription[], void>({
+    getAllSubscriptions: build.query<TSubscription[], any>({
       query: (organization) => ({
         url: `users/getallsubscription/${organization}`,
       }),
@@ -19,7 +19,7 @@ export const SubscriptionApi = api.injectEndpoints({
       transformResponse: (response: any, meta, arg) => response.subscriptions,
     }),
 
-    getAllMySubscriptions: build.query<TSubscription[], void>({
+    getAllMySubscriptions: build.query<TSubscription[], any>({
       query: (organization) => ({ url: `subscriptions/${organization}` }),
       providesTags: ["UserSubscriptions"],
     }),

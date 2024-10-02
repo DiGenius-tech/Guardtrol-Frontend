@@ -183,11 +183,14 @@ const EditGuarantorForm = (props) => {
         newFormData.append(key, formData[key]);
       });
 
-      const { data } = await patch(
+      const data = await patch(
         `guard/guarantor/${guardId}`,
         newFormData,
         token
       );
+
+      console.log(data);
+
       if (data.status) {
         toast("Guarantor Information Updated");
       }

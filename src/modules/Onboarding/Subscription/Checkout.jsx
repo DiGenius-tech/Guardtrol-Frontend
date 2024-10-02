@@ -49,8 +49,6 @@ const Checkout = (props) => {
   const suspenseState = useSelector(selectSuspenseShow);
 
   const dispatch = useDispatch();
-  //   dispatch(suspenseHide());
-  //   dispatch(suspenseShow());
 
   const { isLoading, error, responseData, sendRequest } = useHttpRequest();
   const [selectedPlan, setSelectedPlan] = useState(null);
@@ -98,10 +96,6 @@ const Checkout = (props) => {
         dispatch(suspenseHide());
       },
     });
-
-    // localStorage.setItem('onBoardingLevel', 1) //this should be after a successful payment
-    // navigate("/onboarding/configure-beats")
-    // window.location.reload()
   };
 
   const payWithPaystack = async () => {
@@ -126,6 +120,7 @@ const Checkout = (props) => {
       };
 
       const data = await post(`users/subscribe/${user.userid}`, reqData, token);
+
       if (data.message === "subscribed") {
         dispatch(suspenseHide());
         navigate("/onboarding/membership/successful");

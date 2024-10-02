@@ -51,25 +51,6 @@ function GuardList() {
   const cancelEdit = () => {
     setIsEdit(false);
   };
-  // const addGuard = useCallback(
-  //   (guard, index) => {
-  //     guards[index] = guard;
-  //     setGuards(guards);
-  //   },
-  //   [guards, setGuards]
-  // );
-
-  // useEffect(() => {
-  //   const savedGuards = localStorage.getItem("guards");
-
-  //   if (savedGuards) {
-  //     const parsedGuards = JSON.parse(savedGuards);
-  //     if (!isGuardsLoaded) {
-  //       setIsGuardsLoaded(true);
-  //       parsedGuards.forEach(addGuard);
-  //     }
-  //   }
-  // }, [isGuardsLoaded]);
 
   const [addGuards] = useAddGuardsMutation();
   const organization = useSelector(selectOrganization);
@@ -96,24 +77,12 @@ function GuardList() {
         if (d) {
           dispatch(setOnboardingLevel(3));
         }
-
-        //navigate("/onboarding/assign-beats");
       }
 
       dispatch(suspenseHide());
     } catch (error) {
       dispatch(suspenseHide());
     }
-
-    // const data = await sendRequest(
-    //   `guard/addguard/${user.userid}`,
-    //   "POST",
-    //   JSON.stringify(guards),
-    //   {
-    //     "Content-Type": "application/json",
-    //     Authorization: `Bearer ${token}`,
-    //   }
-    // ).finally(dispatch(suspenseHide()));
   };
 
   useEffect(() => {
@@ -123,7 +92,6 @@ function GuardList() {
   }, [error]);
   return (
     <>
-      {/* guard-list-app works! */}
       <div className="max-w-md mx-auto block mb-20 sm:mb-16">
         {isEdit ? (
           <div className="mb-8">

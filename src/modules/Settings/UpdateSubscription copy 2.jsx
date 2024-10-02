@@ -17,7 +17,9 @@ import {
   selectFwConfig,
   selectPsConfig,
 } from "../../redux/selectors/selectedPlan";
+import { usePaystackPayment } from "react-paystack";
 import Swal from "sweetalert2";
+import { useFlutterwave } from "flutterwave-react-v3";
 import { suspenseHide, suspenseShow } from "../../redux/slice/suspenseSlice";
 import { toast } from "react-toastify";
 import { useGetInvoicesQuery } from "../../redux/services/invoice";
@@ -25,7 +27,9 @@ import { api } from "../../redux/services/api";
 
 const UpdateSubscription = () => {
   const token = useSelector(selectToken);
+  const psConfig = useSelector(selectPsConfig);
   const user = useSelector(selectUser);
+  const fwConfig = useSelector(selectFwConfig);
   const organization = useSelector(selectOrganization);
 
   const dispatch = useDispatch();
@@ -55,6 +59,7 @@ const UpdateSubscription = () => {
 
   const [remainingDays, setRemainingDays] = useState(0);
   const [subDurationDays, setsubDurationDays] = useState(0);
+  const [psConfigState, setPsConfigState] = useState(psConfig);
   const [additionalBeats, setAdditionalBeats] = useState(0);
   const [additionalGuards, setAdditionalGuards] = useState(0);
   const [totalCost, setTotalCost] = useState(0);
@@ -66,7 +71,67 @@ const UpdateSubscription = () => {
     { value: "flutterwave", label: "Flutter wave" },
   ];
 
-  const handleUpdateSubscription = async () => {
+  const handleFlutterPayment = useFlutterwave({
+    public_key: fwConfig.public_key,
+    tx_ref: Date.now(),
+    amount: totalCost,
+    currency: "NGN",
+    payment_options: "all",
+    payment_plan: undefined,
+    customer: {
+      email: user.email,
+      phone_number: user.phone,
+      name: user.name,
+    },
+    meta: {
+      counsumer_id: user._id,
+      consumer_mac: undefined,
+    },
+    customizations: {
+      title: "Guardtrol Lite Subscription",
+      description: undefined,
+      logo: "https://guardtrol.alphatrol.com/logo192.png",
+    },
+  });
+
+  const handlePaystackPayment = usePaystackPayment({
+    publicKey: psConfigState.publicKey,
+    email: user.email,
+    amount: totalCost * 100,
+  });
+
+  const payWithFlutterwave = async () => {
+    dispatch(suspenseShow());
+
+    handleFlutterPayment({
+      callback: (response) => {
+        if (response.status === "successful") {
+          handleUpdateSubscription(response);
+        }
+      },
+      onClose: () => {
+        dispatch(suspenseHide());
+        toast.warn("Payment Window Closed, Payment Cancelled");
+      },
+    });
+  };
+
+  const payWithPaystack = async () => {
+    dispatch(suspenseShow());
+    handlePaystackPayment({
+      onSuccess: (response) => {
+        handleUpdateSubscription(response);
+      },
+      onClose: () => {
+        toast.warn("Payment Window Closed, Payment Cancelled");
+        dispatch(suspenseHide());
+      },
+    });
+  };
+
+  const handleUpdateSubscription = async (response) => {
+    dispatch(suspenseShow());
+
     let newAdditionTototal =
       Math.round(
         (Math.floor(
@@ -80,47 +145,58 @@ const UpdateSubscription = () => {
     try {
       const reqData = {
         _id: currentSubscription?._id,
+        paymentRes: response,
+        transactionid: response.transaction,
         newBeats: additionalBeats,
         newExtraguards: additionalGuards,
         maxbeats: additionalBeats + currentSubscription?.maxbeats,
         maxextraguards: additionalGuards + currentSubscription?.maxextraguards,
         totalamount: newAdditionTototal + currentSubscription?.totalamount,
-        totalCost,
         paymentstatus: "complete",
         plan: currentSubscription?.plan,
         expiresat: currentSubscription?.expiresat,
-        paymentGateway: paymentOption,
+        paymentgateway: paymentOption,
       };
 
       const { data } = await updateSubscription({
         organization,
         body: reqData,
       });
+      dispatch(api.util.invalidateTags([{ type: "Invoices", id: "LIST" }]));
 
-      window.location.href = data.paymentUrl;
-      // dispatch(api.util.invalidateTags([{ type: "Invoices", id: "LIST" }]));
+      await refetchInvoices();
+      await refetchAllMySubscriptions();
+      await refetchActiveSubscription();
 
-      // await refetchInvoices();
-      // await refetchAllMySubscriptions();
-      // await refetchActiveSubscription();
+      Swal.fire({
+        title: "Subscription updated successfully",
+        text: `Your subscription has been updated!`,
+        icon: "success",
+        confirmButtonColor: "#008080",
+      });
 
-      // Swal.fire({
-      //   title: "Subscription updated successfully",
-      //   text: `Your subscription has been updated!`,
-      //   icon: "success",
-      //   confirmButtonColor: "#008080",
-      // });
+      // if (data) {
+      //   Swal.fire({
+      //     title: "Renewal succefull",
+      //     text: `Your subscription has been updated!`,
+      //     icon: "success",
+      //     confirmButtonColor: "#008080",
+      //   });
+      // }
     } catch (error) {
     } finally {
-      // dispatch(suspenseHide());
+      dispatch(suspenseHide());
     }
   };
 
   const pay = async (e) => {
-    dispatch(suspenseShow());
     e?.preventDefault();
     setIsLoading(true);
-    await handleUpdateSubscription();
+    if (paymentOption === "flutterwave") {
+      payWithFlutterwave();
+    } else {
+      payWithPaystack();
+    }
     setIsLoading(false);
   };
 

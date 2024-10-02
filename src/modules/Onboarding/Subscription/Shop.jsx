@@ -42,18 +42,6 @@ const Shop = () => {
   const [isModalOpen, setIsModalOpen] = useState(false); // State variable to control modal visibility
   const [isLoading, setisLoading] = useState(false); // State variable to control modal visibility
 
-  // useEffect(() => {
-  //   const plan = JSsubscriptionsON.parse(localStorage.getItem("selectedPlan"));
-
-  //   if (plan && plan.amount) {
-  //     setSelectedPlan(plan);
-  //     setPlanFormData({
-  //       numberofbeats: plan.numberofbeats,
-  //       extraguards: plan.extraguards,
-  //     });
-  //   }
-  // }, [setSelectedPlan, setPlanFormData]);
-
   const handleChange = (e) => {
     setPlanFormData({ ...planFormData, [e.target.name]: e.target.value });
     setValidationErrors({ ...validationErrors, [e.target.name]: "" });
@@ -65,7 +53,6 @@ const Shop = () => {
     const form = e.currentTarget;
     const newErrors = {};
 
-    // Check each input field's validity and set errors accordingly
     for (const el of form.elements) {
       if (el.nodeName === "INPUT" && !el.validity.valid) {
         newErrors[el.name] = el.validationMessage;
@@ -85,7 +72,6 @@ const Shop = () => {
     }
 
     if (Object.keys(newErrors).length > 0) {
-      // If there are validation errors, update state and stop submission
       setValidationErrors(newErrors);
       e.stopPropagation();
     } else {
@@ -180,20 +166,7 @@ const Shop = () => {
     setIsModalOpen(false);
   };
 
-  // Function to handle button click in the modal
-  const handleModalButtonClick = () => {
-    // Add your logic here for the button click inside the modal
-  };
-
-  // const fwConfig = {
-  //   ...config,
-  //   text: "Pay with Flutterwave!",
-  //   callback: (response) => {
-  //     console.log(response);
-  //     closePaymentModal(); // this will close the modal programmatically
-  //   },
-  //   onClose: () => {},
-  // };
+  const handleModalButtonClick = () => {};
 
   return (
     <>
