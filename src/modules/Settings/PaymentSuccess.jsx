@@ -76,10 +76,10 @@ const PaymentSuccess = () => {
           confirmButtonText: "OK",
           confirmButtonColor: "#008080",
         }).then(async () => {
-          // dispatch(api.util.invalidateTags([{ type: "Invoices" }]));
-          // dispatch(api.util.invalidateTags([{ type: "Subscription" }]));
-          // dispatch(api.util.invalidateTags([{ type: "Subscriptions" }]));
-          // dispatch(api.util.invalidateTags([{ type: "UserSubscriptions" }]));
+          dispatch(api.util.invalidateTags([{ type: "Invoices" }]));
+          dispatch(api.util.invalidateTags([{ type: "Subscription" }]));
+          dispatch(api.util.invalidateTags([{ type: "Subscriptions" }]));
+          dispatch(api.util.invalidateTags([{ type: "UserSubscriptions" }]));
 
           if (invoicesApiDetails.isUninitialized) {
             await refetchInvoices();
@@ -92,7 +92,7 @@ const PaymentSuccess = () => {
           if (activeSubApiDetails.isUninitialized) {
             await refetchActiveSubscription();
           }
-          navigate("/dashboard");
+          // navigate("/dashboard");
         });
       } else {
         // Handle payment failure
