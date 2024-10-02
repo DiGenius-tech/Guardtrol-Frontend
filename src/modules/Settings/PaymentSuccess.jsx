@@ -127,7 +127,9 @@ const PaymentSuccess = () => {
   return (
     <div className="payment-success-page">
       {isLoading ? (
-        <div className="loader">Processing payment...</div>
+        <div className=" bg-white flex w-full h-full justify-center items-center">
+          <Spinner size={"xl"} color="success" />
+        </div>
       ) : (
         <div className="message">Redirecting...</div>
       )}
