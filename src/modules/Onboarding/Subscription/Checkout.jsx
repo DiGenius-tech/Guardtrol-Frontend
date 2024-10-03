@@ -121,7 +121,9 @@ const Checkout = (props) => {
 
       const data = await post(`users/subscribe/${user.userid}`, reqData, token);
 
-      if (data.message === "subscribed") {
+      console.log(data);
+
+      if (data) {
         dispatch(suspenseHide());
         navigate("/onboarding/membership/successful");
         // dispatch(setOnboardingLevel(1));

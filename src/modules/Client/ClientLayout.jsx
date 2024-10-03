@@ -31,7 +31,6 @@ const Client = () => {
   const token = useSelector(selectToken);
   const dispatch = useDispatch();
   let location = useLocation();
-
   const {
     data: subscription,
     isError,
@@ -77,7 +76,11 @@ const Client = () => {
     );
   }
 
-  if (!subscription && !isLoadingActiveSubscription) {
+  if (
+    !subscription &&
+    !isLoadingActiveSubscription &&
+    !location.pathname.includes("verify-payment")
+  ) {
     return (
       <div className="absolute top-0 right-0 z-40 bg-white w-full h-full flex justify-center items-center">
         <div className="w-full relative top-24">

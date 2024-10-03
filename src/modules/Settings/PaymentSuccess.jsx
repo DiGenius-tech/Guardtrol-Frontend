@@ -68,6 +68,11 @@ const PaymentSuccess = () => {
         transaction_id,
       });
 
+      dispatch(api.util.invalidateTags([{ type: "Invoices" }]));
+      dispatch(api.util.invalidateTags([{ type: "Subscription" }]));
+      dispatch(api.util.invalidateTags([{ type: "Subscriptions" }]));
+      dispatch(api.util.invalidateTags([{ type: "UserSubscriptions" }]));
+
       if (response.status === "success") {
         // Update UI to show success message
         Swal.fire({
@@ -77,11 +82,6 @@ const PaymentSuccess = () => {
           confirmButtonText: "OK",
           confirmButtonColor: "#008080",
         }).then(async () => {
-          // dispatch(api.util.invalidateTags([{ type: "Invoices" }]));
-          // dispatch(api.util.invalidateTags([{ type: "Subscription" }]));
-          // dispatch(api.util.invalidateTags([{ type: "Subscriptions" }]));
-          // dispatch(api.util.invalidateTags([{ type: "UserSubscriptions" }]));
-
           await refetchInvoices();
           await refetchAllMySubscriptions();
           await refetchActiveSubscription();
