@@ -37,6 +37,9 @@ const RenewSubscription = ({
   isExpired = false,
 }) => {
   const organization = useSelector(selectOrganization);
+  const USED_BEAT_PRICE = organization.BEAT_PRICE || BEAT_PRICE;
+  const USED_GUARD_PRICE = organization.GUARD_PRICE || GUARD_PRICE;
+
   const token = useSelector(selectToken);
   const {
     data: subscription,
@@ -258,16 +261,17 @@ const RenewSubscription = ({
       });
 
       const { paymentUrl } = data;
-      const paymentWindow = window.open(paymentUrl);
+      // const paymentWindow = window.open(paymentUrl);
+      window.location.href = paymentUrl;
 
-      if (paymentWindow) {
-        const interval = setInterval(() => {
-          if (paymentWindow.closed) {
-            window.location.href = "/checkout-success";
-            clearInterval(interval);
-          }
-        }, 1000);
-      }
+      // if (paymentWindow) {
+      //   const interval = setInterval(() => {
+      //     if (paymentWindow.closed) {
+      //       window.location.href = "/checkout-success";
+      //       clearInterval(interval);
+      //     }
+      //   }, 1000);
+      // }
       // await refetchAllMySubscriptions();
       // await refetchActiveSubscription();
       // await refetchInvoices();
@@ -322,20 +326,20 @@ const RenewSubscription = ({
     let newTotalGuards = 0;
 
     if (subscriptionAction === "new-subscription") {
-      beatCost = newMaxBeats * BEAT_PRICE;
-      guardCost = newMaxExtraGuards * GUARD_PRICE;
+      beatCost = newMaxBeats * USED_BEAT_PRICE;
+      guardCost = newMaxExtraGuards * USED_GUARD_PRICE;
     }
     if (subscriptionAction === "renewal") {
-      beatCost = mySuscriptions?.[0]?.maxbeats * BEAT_PRICE;
-      guardCost = mySuscriptions?.[0]?.maxextraguards * GUARD_PRICE;
+      beatCost = mySuscriptions?.[0]?.maxbeats * USED_BEAT_PRICE;
+      guardCost = mySuscriptions?.[0]?.maxextraguards * USED_GUARD_PRICE;
 
       setNewSubscriptionTotalAmount(months * (beatCost + guardCost));
     } else if (subscriptionAction === "reduce") {
       if (newMaxBeats) {
-        beatCost = newMaxBeats * BEAT_PRICE;
+        beatCost = newMaxBeats * USED_BEAT_PRICE;
       }
       if (newMaxExtraGuards) {
-        guardCost = newMaxExtraGuards * GUARD_PRICE;
+        guardCost = newMaxExtraGuards * USED_GUARD_PRICE;
       }
     } else if (subscriptionAction === "increase") {
       newTotalGuards =
@@ -346,19 +350,20 @@ const RenewSubscription = ({
         newMaxBeats + (subscription?.maxbeats || mySuscriptions[0]?.maxbeats);
 
       if (newMaxBeats) {
-        beatCost = newTotalBeats * BEAT_PRICE;
+        beatCost = newTotalBeats * USED_BEAT_PRICE;
       } else {
         beatCost =
-          (subscription?.maxbeats || mySuscriptions[0]?.maxbeats) * BEAT_PRICE;
+          (subscription?.maxbeats || mySuscriptions[0]?.maxbeats) *
+          USED_BEAT_PRICE;
       }
       if (newMaxExtraGuards) {
         guardCost =
           (subscription?.maxextraguards || mySuscriptions[0]?.maxextraguards) *
-          GUARD_PRICE;
+          USED_GUARD_PRICE;
       } else {
         guardCost =
           (subscription?.maxextraguards || mySuscriptions[0]?.maxextraguards) *
-          GUARD_PRICE;
+          USED_GUARD_PRICE;
       }
     }
     setNewSubscriptionTotalAmount(months * (beatCost + guardCost));

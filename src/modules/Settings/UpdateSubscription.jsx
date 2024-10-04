@@ -27,6 +27,8 @@ const UpdateSubscription = () => {
   const token = useSelector(selectToken);
   const user = useSelector(selectUser);
   const organization = useSelector(selectOrganization);
+  const USED_BEAT_PRICE = organization.BEAT_PRICE || BEAT_PRICE;
+  const USED_GUARD_PRICE = organization.GUARD_PRICE || GUARD_PRICE;
 
   const dispatch = useDispatch();
   const {
@@ -71,10 +73,11 @@ const UpdateSubscription = () => {
     let newAdditionTototal =
       Math.round(
         (Math.floor(
-          additionalBeats * (subDurationDays * Math.round(BEAT_PRICE / 30))
+          additionalBeats * (subDurationDays * Math.round(USED_BEAT_PRICE / 30))
         ) +
           Math.floor(
-            additionalGuards * (subDurationDays * Math.round(GUARD_PRICE / 30))
+            additionalGuards *
+              (subDurationDays * Math.round(USED_GUARD_PRICE / 30))
           )) /
           1000
       ) * 1000;
@@ -152,8 +155,9 @@ const UpdateSubscription = () => {
   }, [currentSubscription?.expirationDate]);
 
   useEffect(() => {
-    const beatCost = additionalBeats * BEAT_PRICE * (remainingDays / 30);
-    const guardCost = additionalGuards * GUARD_PRICE * (remainingDays / 30);
+    const beatCost = additionalBeats * USED_BEAT_PRICE * (remainingDays / 30);
+    const guardCost =
+      additionalGuards * USED_GUARD_PRICE * (remainingDays / 30);
 
     setTotalCost(Math.ceil(beatCost + guardCost));
   }, [
