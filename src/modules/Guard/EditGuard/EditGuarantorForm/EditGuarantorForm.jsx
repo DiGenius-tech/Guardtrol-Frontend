@@ -189,8 +189,6 @@ const EditGuarantorForm = (props) => {
         token
       );
 
-      console.log(data);
-
       if (data.status) {
         toast("Guarantor Information Updated");
       }

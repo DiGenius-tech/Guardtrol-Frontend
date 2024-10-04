@@ -257,7 +257,17 @@ const RenewSubscription = ({
         body: reqData,
       });
 
-      window.location.href = data.paymentUrl;
+      const { paymentUrl } = data;
+      const paymentWindow = window.open(paymentUrl);
+
+      if (paymentWindow) {
+        const interval = setInterval(() => {
+          if (paymentWindow.closed) {
+            window.location.href = "/checkout-success";
+            clearInterval(interval);
+          }
+        }, 1000);
+      }
       // await refetchAllMySubscriptions();
       // await refetchActiveSubscription();
       // await refetchInvoices();
@@ -276,7 +286,6 @@ const RenewSubscription = ({
       // }
     } catch (error) {
     } finally {
-      dispatch(suspenseHide());
     }
   };
 

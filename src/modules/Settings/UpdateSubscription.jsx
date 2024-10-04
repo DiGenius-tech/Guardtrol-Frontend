@@ -18,7 +18,7 @@ import {
   selectPsConfig,
 } from "../../redux/selectors/selectedPlan";
 import Swal from "sweetalert2";
-import { suspenseHide, suspenseShow } from "../../redux/slice/suspenseSlice";
+import { suspenseShow } from "../../redux/slice/suspenseSlice";
 import { toast } from "react-toastify";
 import { useGetInvoicesQuery } from "../../redux/services/invoice";
 import { api } from "../../redux/services/api";
@@ -67,6 +67,7 @@ const UpdateSubscription = () => {
   ];
 
   const handleUpdateSubscription = async () => {
+    dispatch(suspenseShow());
     let newAdditionTototal =
       Math.round(
         (Math.floor(
@@ -91,13 +92,24 @@ const UpdateSubscription = () => {
         expiresat: currentSubscription?.expiresat,
         paymentGateway: paymentOption,
       };
-
       const { data } = await updateSubscription({
         organization,
         body: reqData,
       });
 
-      window.location.href = data.paymentUrl;
+      const { paymentUrl } = data;
+
+      // Open Paystack payment page in a new tab
+      const paymentWindow = window.open(paymentUrl);
+
+      if (paymentWindow) {
+        const interval = setInterval(() => {
+          if (paymentWindow.closed) {
+            window.location.href = "/subscription/verify-payment";
+            clearInterval(interval);
+          }
+        }, 1000);
+      }
       // dispatch(api.util.invalidateTags([{ type: "Invoices", id: "LIST" }]));
 
       // await refetchInvoices();
@@ -117,7 +129,6 @@ const UpdateSubscription = () => {
   };
 
   const pay = async (e) => {
-    dispatch(suspenseShow());
     e?.preventDefault();
     setIsLoading(true);
     await handleUpdateSubscription();

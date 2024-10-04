@@ -62,7 +62,7 @@ const PaymentSuccess = () => {
       dispatch(suspenseShow());
 
       // Verify payment with your backend
-      const response = await post("/webhook/verify-payment", {
+      const response = await post("/subscription/verify-payment", {
         tx_ref,
         reference,
         transaction_id,
