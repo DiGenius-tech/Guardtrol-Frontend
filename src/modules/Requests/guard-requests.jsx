@@ -21,6 +21,7 @@ const guardAttributes = {
   idname: "Identification Name",
   idfile: "Identification File",
   idnumber: "Identification Number",
+  phone: "Phone number",
   name: "Name",
   personalinformation: "Personal Information",
   height: "Guard height",

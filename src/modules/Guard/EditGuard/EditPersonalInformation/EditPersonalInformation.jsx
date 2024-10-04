@@ -67,6 +67,7 @@ const stateOfOriginList = [
 ];
 const validationSchema = Yup.object({
   name: Yup.string().required("Name is required"),
+  phone: Yup.string().required("Phone is required"),
   dob: Yup.date().required("Date of Birth is required"),
   height: Yup.number()
     .required("Height is required")
@@ -97,6 +98,7 @@ const EditPersonalInformation = (props) => {
       name: props.guard?.name || "",
       height: props.guard?.personalinformation?.height || "",
       dob: props.guard?.personalinformation?.dob || "",
+      phone: props.guard?.phone || "",
       sex: props.guard?.personalinformation?.sex || "",
       altphone: props.guard?.personalinformation?.altphone || "",
       state: props.guard?.personalinformation?.state || "",
@@ -107,6 +109,7 @@ const EditPersonalInformation = (props) => {
       try {
         const guardData = {
           name: values.name,
+          phone: values.phone,
           personalinformation: {
             height: values.height,
             dob: values.dob,
@@ -137,6 +140,7 @@ const EditPersonalInformation = (props) => {
   useEffect(() => {
     formik.setValues({
       name: props.guard?.name,
+      phone: props.guard?.phone,
       height: props.guard?.personalinformation?.height,
       dob: props.guard?.personalinformation?.dob,
       sex: props.guard?.personalinformation?.sex,
@@ -166,6 +170,20 @@ const EditPersonalInformation = (props) => {
                   value={formik.values.name}
                   onChange={formik.handleChange}
                   error={formik.touched.name && formik.errors.name}
+                />
+              </div>
+              <div className="col-span-12 sm:col-span-6">
+                <TextInputField
+                  label="Phone"
+                  semibold_label={true}
+                  type="text"
+                  id="phone"
+                  placeholder="Enter phone"
+                  required="required"
+                  name="phone"
+                  value={formik.values.phone}
+                  onChange={formik.handleChange}
+                  error={formik.touched.phone && formik.errors.phone}
                 />
               </div>
               <div className="col-span-12 sm:col-span-6">
