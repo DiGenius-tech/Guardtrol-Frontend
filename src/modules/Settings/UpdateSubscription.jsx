@@ -103,16 +103,16 @@ const UpdateSubscription = () => {
       const { paymentUrl } = data;
 
       // Open Paystack payment page in a new tab
-      const paymentWindow = window.open(paymentUrl);
-
-      if (paymentWindow) {
-        const interval = setInterval(() => {
-          if (paymentWindow.closed) {
-            window.location.href = "/subscription/verify-payment";
-            clearInterval(interval);
-          }
-        }, 1000);
-      }
+      // const paymentWindow = window.open(paymentUrl);
+      window.location.href = paymentUrl;
+      // if (paymentWindow) {
+      //   const interval = setInterval(() => {
+      //     if (paymentWindow.closed) {
+      //       window.location.href = "/subscription/verify-payment";
+      //       clearInterval(interval);
+      //     }
+      //   }, 1000);
+      // }
       // dispatch(api.util.invalidateTags([{ type: "Invoices", id: "LIST" }]));
 
       // await refetchInvoices();
