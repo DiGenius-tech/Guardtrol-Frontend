@@ -18,7 +18,7 @@ import {
   selectPsConfig,
 } from "../../redux/selectors/selectedPlan";
 import Swal from "sweetalert2";
-import { suspenseShow } from "../../redux/slice/suspenseSlice";
+import { suspenseHide, suspenseShow } from "../../redux/slice/suspenseSlice";
 import { toast } from "react-toastify";
 import { useGetInvoicesQuery } from "../../redux/services/invoice";
 import { api } from "../../redux/services/api";
@@ -132,6 +132,7 @@ const UpdateSubscription = () => {
       //   confirmButtonColor: "#008080",
       // });
     } catch (error) {
+      dispatch(suspenseHide());
     } finally {
       // dispatch(suspenseHide());
     }

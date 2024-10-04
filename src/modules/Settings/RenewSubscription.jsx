@@ -296,6 +296,7 @@ const RenewSubscription = ({
       //   });
       // }
     } catch (error) {
+      dispatch(suspenseHide());
     } finally {
     }
   };
