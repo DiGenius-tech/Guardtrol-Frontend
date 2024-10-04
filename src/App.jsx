@@ -5,7 +5,7 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
-import { Provider, useSelector } from "react-redux";
+import { Provider, useDispatch, useSelector } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { toast } from "react-toastify";
 import "./App.scss";
@@ -28,16 +28,15 @@ import OnboardingComplete from "./modules/Onboarding/CompleteOnboarding";
 import OnboardingToolbar from "./modules/Onboarding/components/OnboardingToolbar/OnboardingToolbar";
 import OnboardingProgressBar from "./modules/Onboarding/components/OnboardingProgressBar/OnboardingProgressBar";
 import LogOut from "./modules/Auth/pages/LogOut";
+import { suspenseHide, suspenseShow } from "./redux/slice/suspenseSlice";
 
 function App() {
   const user = useSelector(selectUser);
   const suspense = useSelector(selectSuspenseShow);
   const { error } = useHttpRequest();
-
-  const [suspenseState, setSuspenseState] = useState(suspense);
-
+  const dispatch = useDispatch();
   useInactivityTimeout();
-
+  console.log(suspense);
   useEffect(() => {
     if (error) {
       toast.error(error);
@@ -45,17 +44,13 @@ function App() {
   }, [error]);
 
   useEffect(() => {
-    setSuspenseState(suspense);
-  }, [suspense]);
-
-  useEffect(() => {
-    setSuspenseState(false);
+    dispatch(suspenseHide());
   }, []);
 
   return (
     <Provider store={store}>
       <PersistGate persistor={persistor}>
-        {suspenseState && <LoadingSpinner />}
+        {suspense && <LoadingSpinner />}
         <Router>
           <Routes>
             {user ? (

@@ -22,13 +22,19 @@ import { suspenseShow } from "../../redux/slice/suspenseSlice";
 import { toast } from "react-toastify";
 import { useGetInvoicesQuery } from "../../redux/services/invoice";
 import { api } from "../../redux/services/api";
+import { useGetUserOrganizationRoleQuery } from "../../redux/services/role";
 
 const UpdateSubscription = () => {
   const token = useSelector(selectToken);
   const user = useSelector(selectUser);
   const organization = useSelector(selectOrganization);
-  const USED_BEAT_PRICE = organization.BEAT_PRICE || BEAT_PRICE;
-  const USED_GUARD_PRICE = organization.GUARD_PRICE || GUARD_PRICE;
+
+  const { data: userRole } = useGetUserOrganizationRoleQuery(organization, {
+    skip: organization ? false : true,
+  });
+
+  const USED_BEAT_PRICE = userRole?.organization?.BEAT_PRICE || BEAT_PRICE;
+  const USED_GUARD_PRICE = userRole?.organization?.GUARD_PRICE || GUARD_PRICE;
 
   const dispatch = useDispatch();
   const {
@@ -170,6 +176,8 @@ const UpdateSubscription = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    dispatch(suspenseShow());
+
     pay();
 
     const updatedSubscription = {

@@ -24,6 +24,7 @@ import { persistor } from "../../redux/store";
 import { api } from "../../redux/services/api";
 import { logout } from "../../redux/slice/authSlice";
 import { useNavigate } from "react-router-dom";
+import { useGetUserOrganizationRoleQuery } from "../../redux/services/role";
 
 // Constants for pricing
 
@@ -37,8 +38,13 @@ const RenewSubscription = ({
   isExpired = false,
 }) => {
   const organization = useSelector(selectOrganization);
-  const USED_BEAT_PRICE = organization.BEAT_PRICE || BEAT_PRICE;
-  const USED_GUARD_PRICE = organization.GUARD_PRICE || GUARD_PRICE;
+
+  const { data: userRole } = useGetUserOrganizationRoleQuery(organization, {
+    skip: organization ? false : true,
+  });
+
+  const USED_BEAT_PRICE = userRole?.organization?.BEAT_PRICE || BEAT_PRICE;
+  const USED_GUARD_PRICE = userRole?.organization?.GUARD_PRICE || GUARD_PRICE;
 
   const token = useSelector(selectToken);
   const {
@@ -202,6 +208,7 @@ const RenewSubscription = ({
     }
     e?.preventDefault();
     setIsLoading(true);
+    dispatch(suspenseShow());
     updateSubscription();
 
     setIsLoading(false);
