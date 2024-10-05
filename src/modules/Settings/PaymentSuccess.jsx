@@ -7,6 +7,7 @@ import Swal from "sweetalert2";
 import { post } from "../../lib/methods";
 import {
   useGetAllMySubscriptionsQuery,
+  useGetAllSubscriptionsQuery,
   useGetSubscriptionQuery,
 } from "../../redux/services/subscriptions";
 import { selectOrganization } from "../../redux/selectors/auth";
@@ -33,7 +34,10 @@ const PaymentSuccess = () => {
     skip: !organization, // Fetch when organization is available
   });
 
-  const allSubApiDetails = useGetAllMySubscriptionsQuery(organization, {
+  const allMySubsApiDetails = useGetAllMySubscriptionsQuery(organization, {
+    skip: !organization, // Fetch when organization is available
+  });
+  const allSubApiDetails = useGetAllSubscriptionsQuery(organization, {
     skip: !organization, // Fetch when organization is available
   });
 
@@ -63,9 +67,9 @@ const PaymentSuccess = () => {
         dispatch(
           api.util.invalidateTags([
             { type: "Invoices", id: "LIST" },
-            { type: "Subscriptions", id: "LIST" },
+
             { type: "Subscription" },
-            { type: "UserSubscriptions", id: "LIST" },
+            { type: "UserSubscriptions" },
           ])
         );
 
@@ -73,6 +77,7 @@ const PaymentSuccess = () => {
         await Promise.all([
           invoicesApiDetails.refetch(),
           allSubApiDetails.refetch(),
+          allMySubsApiDetails.refetch(),
           activeSubApiDetails.refetch(),
         ]);
 

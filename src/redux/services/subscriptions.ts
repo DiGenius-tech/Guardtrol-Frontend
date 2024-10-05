@@ -22,14 +22,11 @@ export const SubscriptionApi = api.injectEndpoints({
     getAllMySubscriptions: build.query<any, any>({
       query: (organization) => ({ url: `subscriptions/${organization}` }),
       providesTags: (result = []) =>
-        result
-          ? [
-              ...result.map(({ _id }: any) => ({
-                type: "UserSubscriptions",
-                id: _id,
-              })),
-              { type: "UserSubscriptions", id: "LIST" },
-            ]
+        result.length
+          ? result.map(({ _id }: any) => ({
+              type: "UserSubscriptions",
+              id: _id,
+            }))
           : [{ type: "UserSubscriptions", id: "LIST" }],
     }),
 
@@ -39,7 +36,7 @@ export const SubscriptionApi = api.injectEndpoints({
         method: "POST",
         body,
       }),
-      invalidatesTags: [{ type: "UserSubscriptions", id: "LIST" }],
+      invalidatesTags: [{ type: "UserSubscriptions" }],
     }),
 
     updateSubscription: build.mutation<TSubscription, Partial<TSubscription>>({
@@ -51,7 +48,7 @@ export const SubscriptionApi = api.injectEndpoints({
       invalidatesTags: (subscription) => [
         { type: "Subscription", id: subscription?._id },
         { type: "Subscriptions", id: "LIST" },
-        { type: "UserSubscriptions", id: "LIST" },
+        { type: "UserSubscriptions" },
       ],
     }),
 
