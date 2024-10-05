@@ -5,17 +5,45 @@ import RegularButton from "../Sandbox/Buttons/RegularButton";
 import { useNavigate, useLocation } from "react-router-dom";
 import { setOnboardingLevel } from "../../redux/slice/onboardingSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { selectUser } from "../../redux/selectors/auth";
+import { selectOrganization, selectUser } from "../../redux/selectors/auth";
 import { useGetUserQuery } from "../../redux/services/user";
 import { updateUser } from "../../redux/slice/authSlice";
 import { suspenseHide, suspenseShow } from "../../redux/slice/suspenseSlice";
+import {
+  useGetAllMySubscriptionsQuery,
+  useGetSubscriptionQuery,
+} from "../../redux/services/subscriptions";
+import { useGetInvoicesQuery } from "../../redux/services/invoice";
+import { POOLING_TIME } from "../../constants/static";
 
 const OnboardingComplete = () => {
   const tick_icon_ref = useRef();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const organization = useSelector(selectOrganization);
   const user = useSelector(selectUser);
+  const {
+    data: currentSubscription,
+    isError,
+    refetch: refetchActiveSubscription,
+    isUninitialized,
+  } = useGetSubscriptionQuery(organization, {
+    skip: organization ? false : true,
+  });
 
+  const { data: mySuscriptions, refetch: refetchAllMySubscriptions } =
+    useGetAllMySubscriptionsQuery(organization, {
+      skip: organization ? false : true,
+    });
+
+  const { data: invoicesApiResponse, refetch: refetchInvoices } =
+    useGetInvoicesQuery(
+      { organization: organization, page: 1, limit: 10 },
+      {
+        skip: organization ? false : true,
+        pollingInterval: POOLING_TIME,
+      }
+    );
   const { data: userData, refetch } = useGetUserQuery(user._id, {
     skip: user?._id ? false : true,
   });
@@ -24,7 +52,9 @@ const OnboardingComplete = () => {
     try {
       dispatch(suspenseShow());
       const UpdatedUser = await refetch();
-
+      // await refetchInvoices();
+      // await refetchAllMySubscriptions();
+      // await refetchActiveSubscription();
       dispatch(updateUser(UpdatedUser.data));
       dispatch(setOnboardingLevel(null));
       navigate("/client/dashboard");

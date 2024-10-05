@@ -244,6 +244,9 @@ const SettingBilling = () => {
                       Amount
                     </th>
                     <th scope="col" className="px-6 py-3">
+                      Status
+                    </th>
+                    <th scope="col" className="px-6 py-3">
                       Date
                     </th>
                     <th scope="col" className="px-6 py-3  rounded-e-lg">
@@ -291,6 +294,12 @@ const SettingBilling = () => {
                             className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                           >
                             {invoice?.amount}
+                          </td>
+                          <td
+                            scope="row"
+                            className="px-6 py-4 font-medium capitalize text-gray-900 whitespace-nowrap dark:text-white"
+                          >
+                            {invoice?.status}
                           </td>
                           <td
                             scope="row"

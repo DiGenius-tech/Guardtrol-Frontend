@@ -15,15 +15,17 @@ import {
   selectUser,
 } from "../../../redux/selectors/auth";
 import {
+  selectFwConfig,
   selectOnboarding,
   selectOnboardingLevel,
+  selectPsConfig,
 } from "../../../redux/selectors/onboarding";
 import { setOnboardingLevel } from "../../../redux/slice/onboardingSlice";
 import {
   setFwConfig,
   setPlan,
   setPsConfig,
-} from "../../../redux/slice/selectedPlanSlice";
+} from "../../../redux/slice/onboardingSlice";
 import { useGetSubscriptionQuery } from "../../../redux/services/subscriptions";
 
 const Shop = () => {
@@ -31,6 +33,8 @@ const Shop = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const token = useSelector(selectToken);
+  const psConfig = useSelector(selectPsConfig);
+  const fwConfig = useSelector(selectFwConfig);
 
   const [validationErrors, setValidationErrors] = useState({});
   const { error, responseData, sendRequest } = useHttpRequest();
@@ -79,20 +83,56 @@ const Shop = () => {
         toast.error("Please Select A Plan That Works For You");
         return;
       }
-      selectedPlan.numberofbeats = planFormData.numberofbeats;
-      selectedPlan.extraguards = planFormData.extraguards;
-      selectedPlan.amount =
-        selectedPlan.numberofbeats * 10000 + selectedPlan.extraguards * 2000;
-      if (selectedPlan.type === "yearly") {
-        selectedPlan.amount =
-          (selectedPlan.numberofbeats * 10000 +
-            selectedPlan.extraguards * 2000) *
-          12 *
-          0.8;
-      }
+      setSelectedPlan();
 
-      dispatch(setPsConfig({ ...selectedPlan, ...user }));
-      dispatch(setFwConfig({ ...selectedPlan, ...user }));
+      dispatch(
+        setPsConfig({
+          ...{
+            ...psConfig,
+            numberofbeats: planFormData.numberofbeats,
+            extraguards: planFormData.extraguards,
+            extraguards: planFormData.extraguards,
+            ...(selectedPlan.type === "yearly"
+              ? {
+                  amount:
+                    (selectedPlan.numberofbeats * 10000 +
+                      selectedPlan.extraguards * 2000) *
+                    12 *
+                    0.8,
+                }
+              : {
+                  amount:
+                    selectedPlan.numberofbeats * 10000 +
+                    selectedPlan.extraguards * 2000,
+                }),
+          },
+          ...user,
+        })
+      );
+      dispatch(
+        setFwConfig({
+          ...{
+            ...fwConfig,
+            numberofbeats: planFormData.numberofbeats,
+            extraguards: planFormData.extraguards,
+            extraguards: planFormData.extraguards,
+            ...(selectedPlan.type === "yearly"
+              ? {
+                  amount:
+                    (selectedPlan.numberofbeats * 10000 +
+                      selectedPlan.extraguards * 2000) *
+                    12 *
+                    0.8,
+                }
+              : {
+                  amount:
+                    selectedPlan.numberofbeats * 10000 +
+                    selectedPlan.extraguards * 2000,
+                }),
+          },
+          ...user,
+        })
+      );
       dispatch(setPlan(selectedPlan));
 
       navigate("/onboarding/membership/checkout");
@@ -157,7 +197,8 @@ const Shop = () => {
   ];
 
   const onSelectPlan = (e) => {
-    localStorage.setItem("selectedPlan", e.target.value);
+    console.log(e.target.value);
+    // localStorage.setItem("selectedPlan", e.target.value);
     setSelectedPlan(JSON.parse(e.target.value));
   };
 

@@ -1,25 +1,31 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import "./styles/PaymentSuccess.scss";
+import { Link } from "react-router-dom";
 import { useNavigate, useLocation } from "react-router-dom";
+import RegularButton from "../../Sandbox/Buttons/RegularButton";
 import { useDispatch, useSelector } from "react-redux";
-import { api } from "../../redux/services/api"; // Your redux API services
-import { suspenseHide, suspenseShow } from "../../redux/slice/suspenseSlice";
+import { useGetUserQuery } from "../../../redux/services/user";
+import { suspenseHide, suspenseShow } from "../../../redux/slice/suspenseSlice";
 import Swal from "sweetalert2";
-import { post } from "../../lib/methods";
+
+import { Spinner } from "flowbite-react";
 import {
   useGetAllMySubscriptionsQuery,
   useGetSubscriptionQuery,
-} from "../../redux/services/subscriptions";
-import { selectOrganization } from "../../redux/selectors/auth";
-import { useGetInvoicesQuery } from "../../redux/services/invoice";
-import { Spinner } from "flowbite-react";
-import { debounceFunc } from "../../utils/assetHelper";
+} from "../../../redux/services/subscriptions";
+import { useGetInvoicesQuery } from "../../../redux/services/invoice";
+import { selectOrganization, selectUser } from "../../../redux/selectors/auth";
+import { api } from "../../../redux/services/api";
+import { post } from "../../../lib/methods";
+import { debounceFunc } from "../../../utils/assetHelper";
 
-const PaymentSuccess = () => {
+const VerifyPayment = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(true);
-  const [isVerified, setIsVerified] = useState(false); // Prevent double verification
+  const [isVerified, setIsVerified] = useState(false);
+  const user = useSelector(selectUser);
   const organization = useSelector(selectOrganization);
 
   const queryParams = new URLSearchParams(location.search);
@@ -28,6 +34,12 @@ const PaymentSuccess = () => {
   const reference = queryParams.get("reference"); // For Paystack
   const paymentGateway = queryParams.get("paymentGateway");
 
+  const { data: userData, refetch: refetchUserData } = useGetUserQuery(
+    user._id,
+    {
+      skip: user?._id ? false : true,
+    }
+  );
   const { refetch: refetchActiveSubscription, ...activeSubApiDetails } =
     useGetSubscriptionQuery(organization, {
       skip: !organization,
@@ -46,7 +58,6 @@ const PaymentSuccess = () => {
       }
     );
   const verifyPayment = async () => {
-    if (isVerified) return; // Prevent double verification
     setIsVerified(true); // Mark as verified
 
     try {
@@ -73,11 +84,12 @@ const PaymentSuccess = () => {
           confirmButtonText: "OK",
           confirmButtonColor: "#008080",
         }).then(async () => {
+          await refetchUserData();
           await refetchInvoices();
           await refetchAllMySubscriptions();
           await refetchActiveSubscription();
 
-          navigate("/client/settings/billing");
+          navigate("/onboarding/membership/successful");
         });
       } else {
         // Handle payment failure
@@ -89,7 +101,8 @@ const PaymentSuccess = () => {
           confirmButtonColor: "#008080",
         }).then(() => {
           // Redirect back to subscription page
-          navigate("/client/settings/billing");
+
+          navigate("/onboarding/membership/checkout");
         });
       }
     } catch (error) {
@@ -101,13 +114,14 @@ const PaymentSuccess = () => {
         confirmButtonText: "OK",
         confirmButtonColor: "#008080",
       }).then(() => {
-        navigate("/client/settings/billing");
+        navigate("/onboarding/membership/checkout");
       });
     } finally {
       dispatch(suspenseHide());
       setIsLoading(false);
     }
   };
+
   const verifyPaymentDebounced = debounceFunc(verifyPayment, 1000);
 
   useEffect(() => {
@@ -132,4 +146,4 @@ const PaymentSuccess = () => {
   );
 };
 
-export default PaymentSuccess;
+export default VerifyPayment;

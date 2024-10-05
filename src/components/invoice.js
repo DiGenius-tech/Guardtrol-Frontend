@@ -140,7 +140,9 @@ const Invoice = ({ invoice, componentRef }) => {
                       <Table.Cell> {invoice.amount}</Table.Cell>
                       <Table.Cell>{invoice?.trxref}</Table.Cell>
                       <Table.Cell> {invoice?.transactionid} </Table.Cell>
-                      <Table.Cell> Paid </Table.Cell>
+                      <Table.Cell>
+                        <span className=" capitalize">{invoice?.status}</span>
+                      </Table.Cell>
                     </Table.Row>
                   </Table.Body>
                 </Table>

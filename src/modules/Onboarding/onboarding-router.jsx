@@ -15,6 +15,7 @@ import Shop from "./Subscription/Shop";
 import Checkout from "./Subscription/Checkout";
 import PaymentSuccess from "./Subscription/PaymentSuccess";
 import PaymentFailure from "./Subscription/PaymentFailure";
+import VerifyPayment from "./Subscription/VerifyPayment";
 
 const OnboardingRouter = () => {
   return (
@@ -40,6 +41,7 @@ const OnboardingRouter = () => {
         <Route path="membership" element={<Subscription />}>
           <Route path="" element={<Shop />} />
           <Route path="shop" element={<Shop />} />
+          <Route path="verify-payment" element={<VerifyPayment />} />
           <Route path="checkout" element={<Checkout />} />
           <Route path="successful" element={<PaymentSuccess />} />
           <Route path="failed" element={<PaymentFailure />} />
