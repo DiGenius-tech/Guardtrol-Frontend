@@ -50,7 +50,6 @@ const SettingBilling = () => {
   const [openRenewalModal, setOpenRenewalModal] = useState(false);
   const [openViewInvoice, setOpenViewInvoice] = useState(false);
 
-  const [subscriptionsState, setSubscriptionsState] = useState();
   const [invoiceLimit, setInvoiceLimit] = useState(10);
   const [invoicePage, setInvoicePage] = useState(1);
   const [filteredData, setFilteredData] = useState([]);
@@ -107,10 +106,6 @@ const SettingBilling = () => {
     setSelectedInvoice(invoice);
     setOpenViewInvoice(true);
   };
-
-  useEffect(() => {
-    setSubscriptionsState(mySuscriptions);
-  }, [mySuscriptions]);
 
   const getNextBillingDate = (subscriptions) => {
     const mutableSubscriptions = [...subscriptions];

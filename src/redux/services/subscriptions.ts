@@ -8,20 +8,29 @@ export const SubscriptionApi = api.injectEndpoints({
       query: (organization) => ({
         url: `subscriptions/user/active/${organization}`,
       }),
-      providesTags: ["Subscription"],
+      providesTags: [{ type: "Subscription" }],
     }),
 
     getAllSubscriptions: build.query<TSubscription[], any>({
       query: (organization) => ({
         url: `users/getallsubscription/${organization}`,
       }),
-      providesTags: ["Subscriptions"],
-      transformResponse: (response: any, meta, arg) => response.subscriptions,
+      providesTags: [{ type: "Subscriptions", id: "LIST" }],
+      transformResponse: (response: any) => response.subscriptions,
     }),
 
-    getAllMySubscriptions: build.query<TSubscription[], any>({
+    getAllMySubscriptions: build.query<any, any>({
       query: (organization) => ({ url: `subscriptions/${organization}` }),
-      providesTags: ["UserSubscriptions"],
+      providesTags: (result = []) =>
+        result
+          ? [
+              ...result.map(({ _id }: any) => ({
+                type: "UserSubscriptions",
+                id: _id,
+              })),
+              { type: "UserSubscriptions", id: "LIST" },
+            ]
+          : [{ type: "UserSubscriptions", id: "LIST" }],
     }),
 
     addSubscription: build.mutation<TSubscription, Partial<TSubscription>>({
@@ -34,17 +43,15 @@ export const SubscriptionApi = api.injectEndpoints({
     }),
 
     updateSubscription: build.mutation<TSubscription, Partial<TSubscription>>({
-      query({ organization, body }: any) {
-        return {
-          url: `subscriptions/${organization}`,
-          method: "PATCH",
-          body,
-        };
-      },
+      query: ({ organization, body }: any) => ({
+        url: `subscriptions/${organization}`,
+        method: "PATCH",
+        body,
+      }),
       invalidatesTags: (subscription) => [
         { type: "Subscription", id: subscription?._id },
-        { type: "Subscriptions", id: subscription?._id },
-        { type: "UserSubscriptions", id: subscription?._id },
+        { type: "Subscriptions", id: "LIST" },
+        { type: "UserSubscriptions", id: "LIST" },
       ],
     }),
 
@@ -52,18 +59,11 @@ export const SubscriptionApi = api.injectEndpoints({
       { success: boolean; _id: number },
       number
     >({
-      query(_id) {
-        return {
-          url: `deletesubscription/${_id}`,
-          method: "DELETE",
-        };
-      },
-      invalidatesTags: (subscription) => [
-        { type: "Subscription", _id: subscription?._id },
-      ],
-    }),
-    getErrorProne: build.query<{ success: boolean }, void>({
-      query: () => "error-prone",
+      query: (_id) => ({
+        url: `deletesubscription/${_id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: [{ type: "Subscriptions", id: "LIST" }],
     }),
   }),
   overrideExisting: true,
@@ -75,6 +75,5 @@ export const {
   useGetSubscriptionQuery,
   useGetAllSubscriptionsQuery,
   useUpdateSubscriptionMutation,
-  useGetErrorProneQuery,
   useGetAllMySubscriptionsQuery,
 } = SubscriptionApi;

@@ -46,19 +46,6 @@ const UpdateSubscription = () => {
     skip: organization ? false : true,
   });
 
-  const { data: mySuscriptions, refetch: refetchAllMySubscriptions } =
-    useGetAllMySubscriptionsQuery(organization, {
-      skip: organization ? false : true,
-    });
-
-  const { data: invoicesApiResponse, refetch: refetchInvoices } =
-    useGetInvoicesQuery(
-      { organization: organization, page: 1, limit: 10 },
-      {
-        skip: organization ? false : true,
-        pollingInterval: POOLING_TIME,
-      }
-    );
   const [updateSubscription] = useUpdateSubscriptionMutation();
 
   const [remainingDays, setRemainingDays] = useState(0);

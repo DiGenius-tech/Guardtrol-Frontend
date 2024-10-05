@@ -24,27 +24,26 @@ const PaymentSuccess = () => {
 
   const queryParams = new URLSearchParams(location.search);
   const tx_ref = queryParams.get("tx_ref"); // For Paystack
-  const transaction_id = queryParams.get("transaction_id"); // For Paystack
+  const transaction_id = queryParams.get("transaction_id"); // For Flutterwave
   const reference = queryParams.get("reference"); // For Paystack
   const paymentGateway = queryParams.get("paymentGateway");
 
-  const { refetch: refetchActiveSubscription, ...activeSubApiDetails } =
-    useGetSubscriptionQuery(organization, {
-      skip: !organization,
-    });
+  // Subscriptions and Invoices Queries
+  const activeSubApiDetails = useGetSubscriptionQuery(organization, {
+    skip: !organization, // Fetch when organization is available
+  });
 
-  const { refetch: refetchAllMySubscriptions, ...allSubApiDetails } =
-    useGetAllMySubscriptionsQuery(organization, {
-      skip: !organization,
-    });
+  const allSubApiDetails = useGetAllMySubscriptionsQuery(organization, {
+    skip: !organization, // Fetch when organization is available
+  });
 
-  const { refetch: refetchInvoices, ...invoicesApiDetails } =
-    useGetInvoicesQuery(
-      { organization: organization, page: 1, limit: 10 },
-      {
-        skip: organization ? false : true,
-      }
-    );
+  const invoicesApiDetails = useGetInvoicesQuery(
+    { organization, page: 1, limit: 10 },
+    {
+      skip: !organization, // Fetch when organization is available
+    }
+  );
+
   const verifyPayment = async () => {
     if (isVerified) return; // Prevent double verification
     setIsVerified(true); // Mark as verified
@@ -59,28 +58,34 @@ const PaymentSuccess = () => {
         transaction_id,
       });
 
-      dispatch(api.util.invalidateTags([{ type: "Invoices" }]));
-      dispatch(api.util.invalidateTags([{ type: "Subscription" }]));
-      dispatch(api.util.invalidateTags([{ type: "Subscriptions" }]));
-      dispatch(api.util.invalidateTags([{ type: "UserSubscriptions" }]));
-
       if (response.status === "success") {
-        // Update UI to show success message
+        // Invalidate cache for all related tags
+        dispatch(
+          api.util.invalidateTags([
+            { type: "Invoices", id: "LIST" },
+            { type: "Subscriptions", id: "LIST" },
+            { type: "Subscription" },
+            { type: "UserSubscriptions", id: "LIST" },
+          ])
+        );
+
+        // Manually refetch all queries
+        await Promise.all([
+          invoicesApiDetails.refetch(),
+          allSubApiDetails.refetch(),
+          activeSubApiDetails.refetch(),
+        ]);
+
         Swal.fire({
           title: "Payment Successful!",
           text: "Your subscription has been updated.",
           icon: "success",
           confirmButtonText: "OK",
           confirmButtonColor: "#008080",
-        }).then(async () => {
-          await refetchInvoices();
-          await refetchAllMySubscriptions();
-          await refetchActiveSubscription();
-
+        }).then(() => {
           navigate("/client/settings/billing");
         });
       } else {
-        // Handle payment failure
         Swal.fire({
           title: "Payment Failed!",
           text: "Something went wrong with the payment. Please try again.",
@@ -88,7 +93,6 @@ const PaymentSuccess = () => {
           confirmButtonText: "Retry",
           confirmButtonColor: "#008080",
         }).then(() => {
-          // Redirect back to subscription page
           navigate("/client/settings/billing");
         });
       }
@@ -108,6 +112,7 @@ const PaymentSuccess = () => {
       setIsLoading(false);
     }
   };
+
   const verifyPaymentDebounced = debounceFunc(verifyPayment, 1000);
 
   useEffect(() => {
