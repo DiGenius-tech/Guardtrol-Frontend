@@ -355,6 +355,20 @@ const BeatsLog = () => {
                     </span>
                   </div>
                 </div>
+                <div className="row flex justify-between">
+                  <div className="col-6">
+                    <Label
+                      htmlFor="clockoutreason"
+                      className="text-md"
+                      value="Clockout Reason"
+                    />
+                  </div>
+                  <div className="col-6">
+                    <span className=" text-gray-500 ">
+                      {selectedLog?.clockInstance?.clockoutreason || "N/A"}
+                    </span>
+                  </div>
+                </div>
 
                 <div className="row flex justify-between">
                   <div className="col-6">
