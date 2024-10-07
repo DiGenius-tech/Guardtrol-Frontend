@@ -22,7 +22,7 @@ import {
 } from "../../../redux/selectors/auth";
 import Pagination from "../../../shared/Pagination/Pagination";
 import Swal from "sweetalert2";
-import { POOLING_TIME } from "../../../constants/static";
+import { POOLING_TIME, POOLING_TIMES } from "../../../constants/static";
 import { useDebouncedValue } from "../../../utils/assetHelper";
 import { useGetPatrolsQuery } from "../../../redux/services/patrol";
 import { suspenseHide, suspenseShow } from "../../../redux/slice/suspenseSlice";
@@ -62,7 +62,7 @@ function InactivePatrolGuards() {
     },
     {
       skip: organization ? false : true,
-      pollingInterval: POOLING_TIME,
+      pollingInterval: POOLING_TIMES.MAX,
     }
   );
 

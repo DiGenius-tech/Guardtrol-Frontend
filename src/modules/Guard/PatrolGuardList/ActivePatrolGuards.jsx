@@ -25,7 +25,7 @@ import { useParams } from "react-router-dom";
 import Pagination from "../../../shared/Pagination/Pagination";
 import Swal from "sweetalert2";
 import { suspenseHide, suspenseShow } from "../../../redux/slice/suspenseSlice";
-import { POOLING_TIME } from "../../../constants/static";
+import { POOLING_TIME, POOLING_TIMES } from "../../../constants/static";
 import { useDebouncedValue } from "../../../utils/assetHelper";
 import { useGetPatrolsQuery } from "../../../redux/services/patrol";
 
@@ -62,6 +62,7 @@ function ActivePatrolGuards() {
       ...(debouncedSearchQuery && { searchQuery: debouncedSearchQuery }),
     },
     {
+      pollingInterval: POOLING_TIMES.MAX,
       skip: organization ? false : true,
     }
   );

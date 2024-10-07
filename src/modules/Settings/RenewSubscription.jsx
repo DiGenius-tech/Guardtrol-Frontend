@@ -356,6 +356,9 @@ const RenewSubscription = ({
 
       newTotalBeats =
         newMaxBeats + (subscription?.maxbeats || mySuscriptions[0]?.maxbeats);
+      newTotalGuards =
+        newMaxExtraGuards +
+        (subscription?.maxextraguards || mySuscriptions[0]?.maxextraguards);
 
       if (newMaxBeats) {
         beatCost = newTotalBeats * USED_BEAT_PRICE;
@@ -365,9 +368,7 @@ const RenewSubscription = ({
           USED_BEAT_PRICE;
       }
       if (newMaxExtraGuards) {
-        guardCost =
-          (subscription?.maxextraguards || mySuscriptions[0]?.maxextraguards) *
-          USED_GUARD_PRICE;
+        guardCost = newTotalGuards * USED_GUARD_PRICE;
       } else {
         guardCost =
           (subscription?.maxextraguards || mySuscriptions[0]?.maxextraguards) *

@@ -68,12 +68,10 @@ const stateOfOriginList = [
 const validationSchema = Yup.object({
   name: Yup.string().required("Name is required"),
   phone: Yup.string().required("Phone is required"),
-  dob: Yup.date().required("Date of Birth is required"),
-  height: Yup.number()
-    .required("Height is required")
-    .min(1, "Height must be greater than 0"),
-  sex: Yup.string().required("Sex is required"),
-  state: Yup.string().required("State of Origin is required"),
+  dob: Yup.date(),
+  height: Yup.number().min(1, "Height must be greater than 0"),
+  sex: Yup.string(),
+  state: Yup.string(),
   altphone: Yup.string().matches(
     /^[0-9]{10,14}$/,
     "Alternate Phone must be a valid phone number"
@@ -192,7 +190,6 @@ const EditPersonalInformation = (props) => {
                   semibold_label={true}
                   type="date"
                   id="dob"
-                  required="required"
                   name="dob"
                   value={formik.values.dob}
                   onChange={formik.handleChange}
@@ -206,7 +203,6 @@ const EditPersonalInformation = (props) => {
                   type="number"
                   placeholder="Enter height"
                   id="height"
-                  required="required"
                   name="height"
                   value={formik.values.height}
                   onChange={formik.handleChange}

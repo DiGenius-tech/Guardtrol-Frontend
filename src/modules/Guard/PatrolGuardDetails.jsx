@@ -64,7 +64,7 @@ const PatrolGuardDetails = () => {
     }
   );
 
-  const guard = guards.find((g) => g._id === guardId);
+  const guard = guards?.find((g) => g._id === guardId);
   const handleUpdateImage = async () => {
     try {
       dispatch(suspenseShow());
@@ -261,7 +261,7 @@ const PatrolGuardDetails = () => {
                   Remarks
                 </h5>
                 <div className="max-h-[240px] overflow-y-scroll">
-                  {guard.remarks.map((remark) => (
+                  {guard?.remarks?.map((remark) => (
                     <div className="  border-t border-gray-100">
                       <p className="font-normal text-gray-700 dark:text-gray-400">
                         {remark?.comment || "No Comment Here Yet"}

@@ -34,7 +34,7 @@ const BankDetails = (props) => {
       accountname: props.guard?.accountname,
       accountnumber: props.guard?.accountnumber,
     });
-  }, [props]);
+  }, []);
 
   useEffect(() => {
     if (error) {

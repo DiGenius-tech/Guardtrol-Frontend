@@ -76,7 +76,7 @@ const EditNextOfKin = (props) => {
       relationship: props.guard?.relationship,
       nextofkinIdentificationFile: props.guard?.nextofkinIdentificationFile,
     });
-  }, [props]);
+  }, []);
 
   useEffect(() => {
     if (error) {
@@ -143,12 +143,13 @@ const EditNextOfKin = (props) => {
       formData.nextofkinIdentificationFile
     );
 
-    const data = patch(`guard/nextofkin/${guardId}`, newFormData, token).then(
+    const data = patch(`guard/nextofkin/${guardId}`, newFormData, token)?.then(
       (data) => {
-        if (data.status) {
+        if (data?.status) {
           refetchGuards();
           toast("Next of Kin Information Updated");
           //props.setGuard({})
+        } else {
         }
       }
     );

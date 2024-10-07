@@ -43,6 +43,7 @@ const EditIdentification = (props) => {
   const user = useSelector(selectUser);
   const token = useSelector(selectToken);
   const [updateloading, setLoading] = useState(false);
+  const [selectedFile, setSelectedFile] = useState();
   const organization = useSelector(selectOrganization);
 
   const {
@@ -59,18 +60,18 @@ const EditIdentification = (props) => {
   const { isLoading, error, responseData, sendRequest } = useHttpRequest();
   const [validationErrors, setValidationErrors] = useState({});
   const [formData, setFormData] = useState({
-    idnumber: props.guard?.idnumber,
-    idname: props.guard?.idname,
-    guardIdentificationFile: null,
+    idnumber: props.guard?.idnumber || "",
+    idname: props.guard?.idnameZZ || "",
+    guardIdentificationFile: null || "",
   });
 
   useEffect(() => {
     setFormData({
-      idnumber: props.guard?.idnumber,
-      idname: props.guard?.idname,
-      guardIdentificationFile: props.guard?.identificationsFile,
+      idnumber: props.guard?.idnumber || "",
+      idname: props.guard?.idname || "",
+      guardIdentificationFile: props.guard?.identificationsFile || "",
     });
-  }, [props]);
+  }, []);
 
   useEffect(() => {
     if (error) {
@@ -142,6 +143,12 @@ const EditIdentification = (props) => {
         if (data?.status) {
           toast("Identification Information Updated");
           //props.setGuard({})
+
+          setFormData({
+            idnumber: "",
+            idname: "",
+            guardIdentificationFile: "",
+          });
           refetchGuards();
         }
       });
@@ -150,6 +157,8 @@ const EditIdentification = (props) => {
       setLoading(false);
     }
   };
+
+  console.log(formData);
   return (
     <>
       {/* edit-identification-app works! */}
@@ -215,10 +224,18 @@ const EditIdentification = (props) => {
               )}
               <FileInput
                 id="file"
-                onChange={handleFileChange}
+                // value={selectedFile}
                 accept="image/*"
                 className=" placeholder-red-900"
                 helperText="Select Upload Identification File"
+              />
+              <input
+                value={selectedFile}
+                type="file"
+                name=""
+                onChange={handleFileChange}
+                id=""
+                className="file-input"
               />
             </div>
             <RegularButton
