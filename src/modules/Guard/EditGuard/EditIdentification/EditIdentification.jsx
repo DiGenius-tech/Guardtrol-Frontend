@@ -224,18 +224,11 @@ const EditIdentification = (props) => {
               )}
               <FileInput
                 id="file"
-                // value={selectedFile}
+                value={selectedFile}
                 accept="image/*"
+                onChange={handleFileChange}
                 className=" placeholder-red-900"
                 helperText="Select Upload Identification File"
-              />
-              <input
-                value={selectedFile}
-                type="file"
-                name=""
-                onChange={handleFileChange}
-                id=""
-                className="file-input"
               />
             </div>
             <RegularButton
