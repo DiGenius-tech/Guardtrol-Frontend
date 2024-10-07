@@ -253,8 +253,8 @@ function ActivePatrolGuards() {
   return (
     <div className="relative pb-32">
       {/* active-patrol-guards-app works! */}
-      <div className="flex gap-2 justify-between mb-2">
-        <div className="min-w-40 max-w-64 flex justify-start items-center gap-2">
+      <div className="flex  flex-wrap gap-2 justify-between mb-2">
+        <div className="min-w-40 max-w-64 flex justify-start flex-wrap items-center gap-2">
           <h2 className=" text-2xl font-bold">Active Guards</h2>
           <label
             htmlFor="entriesPerPage"
@@ -263,7 +263,7 @@ function ActivePatrolGuards() {
             Total: {activeGuards?.length || 0}
           </label>
         </div>
-        <div className="flex justify-end  gap-2">
+        <div className="flex  flex-wrap justify-end  gap-2">
           <div className="min-w-40 max-w-64 h-10">
             <TextInput
               type="text"
@@ -291,8 +291,8 @@ function ActivePatrolGuards() {
           </Button>
         </div>
       </div>
-      <div className="hidden sm:block">
-        <Card>
+      <div className="hidden sm:block overflow-x-scroll">
+        <Card className=" h-full">
           <PatrolGuardListDesktopView
             duty_status={duty_status}
             handleClockoutGuard={handleClockoutGuard}
@@ -304,7 +304,7 @@ function ActivePatrolGuards() {
           />
         </Card>
       </div>
-      <div className="sm:hidden rounded-lg bg-white p-2 min-h-64">
+      <div className="sm:hidden rounded-lg h-full overflow-x-scroll bg-white p-2 min-h-64">
         <PatrolGuardListMobileView
           duty_status={duty_status}
           handleDeleteGuard={handleDeleteGuard}
