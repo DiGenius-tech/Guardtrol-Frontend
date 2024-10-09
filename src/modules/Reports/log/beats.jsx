@@ -307,11 +307,7 @@ const BeatsLog = () => {
           <div className="space-y-4">
             <div className="row flex justify-between">
               <div className="col-3">
-                <Label
-                  htmlFor="HappendAt"
-                  className="text-md"
-                  value="Happend At:"
-                />
+                <Label htmlFor="Time" className="text-md" value="Time:" />
               </div>
               <div className="col-3">
                 <span className=" text-gray-500 ">
@@ -321,9 +317,13 @@ const BeatsLog = () => {
             </div>
             <div className="row flex justify-between">
               <div className="col-3">
-                <Label htmlFor="Message:" className="text-md" value="Message" />
+                <Label
+                  htmlFor="Message:"
+                  className="text-md"
+                  value="Message:"
+                />
               </div>
-              <div className="col-6:">
+              <div className="col-6 text-right">
                 <span className=" text-gray-500 ">
                   {selectedLog?.message || "No Message"}
                 </span>
@@ -333,7 +333,7 @@ const BeatsLog = () => {
               <div className="col-3">
                 <Label htmlFor="Beat" className="text-md" value="Beat" />
               </div>
-              <div className="col-6">
+              <div className="col-6  text-right">
                 <span className=" text-gray-500 ">
                   {selectedLog?.beat?.name || "No Beat"}
                 </span>
@@ -349,7 +349,7 @@ const BeatsLog = () => {
                       value="Clock Message"
                     />
                   </div>
-                  <div className="col-6">
+                  <div className="col-6  text-right">
                     <span className=" text-gray-500 ">
                       {selectedLog?.clockInstance.message || "N/A"}
                     </span>
@@ -363,7 +363,7 @@ const BeatsLog = () => {
                       value="Clockout Reason"
                     />
                   </div>
-                  <div className="col-6">
+                  <div className="col-6  text-right">
                     <span className=" text-gray-500 ">
                       {selectedLog?.clockInstance?.clockoutreason || "N/A"}
                     </span>

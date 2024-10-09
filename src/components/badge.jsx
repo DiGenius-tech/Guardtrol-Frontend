@@ -64,7 +64,7 @@ export const Badge = ({ status, type }) => {
 
   return (
     <span
-      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium ${badge.className}`}
+      className={`inline-flex items-center text-center px-2.5 py-0.5 rounded-full text-sm font-medium ${badge.className}`}
     >
       {badge.label}
     </span>
