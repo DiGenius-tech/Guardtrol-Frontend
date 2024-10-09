@@ -67,16 +67,19 @@ const BankDetails = (props) => {
     },
     validationSchema,
     onSubmit: async (values) => {
-      setLoading(true);
       try {
-        const data = patch(`guard/banking/${guardId}`, values, token).then(
-          (data) => {
-            if (data.status) {
-              toast("Banking Information Updated");
-              //props.setGuard({})
-            }
+        setLoading(true);
+
+        const data = await patch(
+          `guard/banking/${guardId}`,
+          values,
+          token
+        ).then((data) => {
+          if (data.status) {
+            toast("Banking Information Updated");
+            //props.setGuard({})
           }
-        );
+        });
       } catch (error) {
         toast.error("Error updating personal information");
       } finally {

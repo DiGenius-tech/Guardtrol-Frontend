@@ -234,8 +234,8 @@ function InactivePatrolGuards() {
 
   return (
     <div div className="relative  pb-40">
-      <div className="flex gap-2 justify-between mb-2">
-        <div className="min-w-40 max-w-64 flex justify-start items-center gap-2">
+      <div className="flex gap-2 flex-wrap  justify-between mb-2">
+        <div className="min-w-40 max-w-64 flex justify-start flex-wrap  items-center gap-2">
           <h2 className=" text-2xl font-bold"> Inactive Guards</h2>
           <label
             htmlFor="entriesPerPage"
@@ -244,7 +244,7 @@ function InactivePatrolGuards() {
             Total: {inactiveGuards?.length || 0}
           </label>
         </div>
-        <div className="flex justify-end  gap-2">
+        <div className="flex justify-end  flex-wrap  gap-2">
           <div className="min-w-40 max-w-64 h-10">
             <TextInput
               type="text"

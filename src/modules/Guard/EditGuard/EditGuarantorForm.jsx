@@ -405,7 +405,7 @@ const EditGuarantorForm = (props) => {
   //             value={formData.identificationNumber}
   //             onChange={handleChange}
   //           />
-  //           <div className=" col-span-2">
+  //           <div className=" col-span-2 md:col-span-1">
   //             <label htmlFor="fileUpload" className="semibold_label">
   //               Upload Identification File
   //             </label>
@@ -450,96 +450,118 @@ const EditGuarantorForm = (props) => {
       <form onSubmit={formik.handleSubmit} className="max-w-[600px] w-full ">
         {/* {renderStepContent()} */}
         <div className="flex flex-col items-center justify-between mt-4 w-full">
-          <div className="grid grid-cols-2 w-full gap-3">
-            <div className="">
+          <div className="grid grid-cols-2 gap-4">
+            <div className=" col-span-2 md:col-span-1">
               <TextInputField
                 label="Title"
                 type="text"
                 {...formik.getFieldProps("title")}
               />
             </div>
-            <TextInputField
-              label="First Name"
-              type="text"
-              id="firstName"
-              error={formik.errors.firstName}
-              {...formik.getFieldProps("firstName")}
-            />
-            <TextInputField
-              label="Last Name"
-              type="text"
-              error={formik.errors.lastName}
-              {...formik.getFieldProps("lastName")}
-            />
-            <TextInputField
-              label="Email"
-              type="email"
-              error={formik.errors.email}
-              semibold_label={true}
-              required="required"
-              {...formik.getFieldProps("email")}
-            />
-            <TextInputField
-              label="Date of Birth"
-              type="date"
-              error={formik.errors.dob}
-              id="dob"
-              {...formik.getFieldProps("dob")}
-            />
-            <SelectField
-              name="sex"
-              id="sex"
-              defaultValue={props.guard?.sex}
-              error={formik.errors.sex}
-              label="Sex"
-              {...formik.getFieldProps("sex")}
-              optionList={sexOptions}
-            />
-            <TextInputField
-              label="Phone"
-              type="text"
-              error={formik.errors.phone}
-              {...formik.getFieldProps("phone")}
-            />
-            <TextInputField
-              label="Alternative Phone"
-              error={formik.errors.altPhone}
-              type="text"
-              {...formik.getFieldProps("altPhone")}
-              name="altPhone"
-            />
-            <TextInputField
-              label="Place of Work"
-              required="required"
-              error={formik.errors.placeOfWork}
-              type="text"
-              {...formik.getFieldProps("placeOfWork")}
-            />
-            <TextInputField
-              label="Rank"
-              semibold_label={true}
-              type="text"
-              error={formik.errors.rank}
-              {...formik.getFieldProps("rank")}
-            />
-            <SelectField
-              name="identificationType"
-              label="Identification Type"
-              error={formik.errors.identificationType}
-              {...formik.getFieldProps("identificationType")}
-              optionList={identificationTypeOptions}
-              multipleSelect={false}
-              defaultValue={props?.guard?.identificationType}
-            />
-            <TextInputField
-              label="Identification Number"
-              type="text"
-              error={formik.errors.identificationNumber}
-              {...formik.getFieldProps("identificationNumber")}
-              name="identificationNumber"
-            />
 
-            <div className=" col-span-2">
+            <div className=" col-span-2 md:col-span-1">
+              <TextInputField
+                label="First Name"
+                type="text"
+                id="firstName"
+                error={formik.errors.firstName}
+                {...formik.getFieldProps("firstName")}
+              />
+            </div>
+            <div className=" col-span-2 md:col-span-1">
+              <TextInputField
+                label="Last Name"
+                type="text"
+                error={formik.errors.lastName}
+                {...formik.getFieldProps("lastName")}
+              />
+            </div>
+            <div className=" col-span-2 md:col-span-1">
+              <TextInputField
+                label="Email"
+                type="email"
+                error={formik.errors.email}
+                semibold_label={true}
+                required="required"
+                {...formik.getFieldProps("email")}
+              />
+            </div>
+            <div className=" col-span-2 md:col-span-1">
+              <TextInputField
+                label="Date of Birth"
+                type="date"
+                error={formik.errors.dob}
+                id="dob"
+                {...formik.getFieldProps("dob")}
+              />
+            </div>
+            <div className=" col-span-2 md:col-span-1">
+              <SelectField
+                name="sex"
+                id="sex"
+                defaultValue={props.guard?.sex}
+                error={formik.errors.sex}
+                label="Sex"
+                {...formik.getFieldProps("sex")}
+                optionList={sexOptions}
+              />
+            </div>
+            <div className=" col-span-2 md:col-span-1">
+              <TextInputField
+                label="Phone"
+                type="text"
+                error={formik.errors.phone}
+                {...formik.getFieldProps("phone")}
+              />
+            </div>
+            <div className=" col-span-2 md:col-span-1">
+              <TextInputField
+                label="Alternative Phone"
+                error={formik.errors.altPhone}
+                type="text"
+                {...formik.getFieldProps("altPhone")}
+                name="altPhone"
+              />
+            </div>
+            <div className=" col-span-2 md:col-span-1">
+              <TextInputField
+                label="Place of Work"
+                required="required"
+                error={formik.errors.placeOfWork}
+                type="text"
+                {...formik.getFieldProps("placeOfWork")}
+              />
+            </div>
+            <div className=" col-span-2 md:col-span-1">
+              <TextInputField
+                label="Rank"
+                semibold_label={true}
+                type="text"
+                error={formik.errors.rank}
+                {...formik.getFieldProps("rank")}
+              />
+            </div>
+            <div className=" col-span-2 md:col-span-1">
+              <SelectField
+                name="identificationType"
+                label="Identification Type"
+                error={formik.errors.identificationType}
+                {...formik.getFieldProps("identificationType")}
+                optionList={identificationTypeOptions}
+                multipleSelect={false}
+                defaultValue={props?.guard?.identificationType}
+              />
+            </div>
+            <div className=" col-span-2 md:col-span-1">
+              <TextInputField
+                label="Identification Number"
+                type="text"
+                error={formik.errors.identificationNumber}
+                {...formik.getFieldProps("identificationNumber")}
+                name="identificationNumber"
+              />
+            </div>
+            <div className=" col-span-2 md:col-span-1">
               <label htmlFor="fileUpload" className="semibold_label">
                 Upload Identification File
               </label>
@@ -588,7 +610,7 @@ const EditGuarantorForm = (props) => {
               /> */}
             </div>
           </div>
-          <div className="col-span-6 justify-start items-start flex">
+          <div className="col-span-6 justify-start my-5 items-start flex">
             <RegularButton
               disabled={loading}
               isLoading={loading}

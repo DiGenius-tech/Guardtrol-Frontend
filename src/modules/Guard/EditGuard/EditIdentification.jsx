@@ -185,7 +185,7 @@ const EditIdentification = (props) => {
         newFormData.append("idnumber", values.idnumber);
         newFormData.append("guardIdentificationFile", compressedFile);
 
-        const data = patch(
+        const data = await patch(
           `guard/identification/${guardId}`,
 
           newFormData,
@@ -286,7 +286,6 @@ const EditIdentification = (props) => {
               disabled={updateloading}
               isLoading={updateloading}
               text="Update"
-              rounded="full"
             />
           </fieldset>
         </div>

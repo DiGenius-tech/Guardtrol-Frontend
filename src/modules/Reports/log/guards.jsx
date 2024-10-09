@@ -235,7 +235,7 @@ const GuardsLog = () => {
         </Table>
       </div>
 
-      <div className="relative  pt-20 md:mt-4">
+      <div className="relative pt-20  mt-32 md:mt-16">
         <Pagination
           totalEntries={logsAPiResponse?.total || 0}
           entriesPerPage={entriesPerPage}

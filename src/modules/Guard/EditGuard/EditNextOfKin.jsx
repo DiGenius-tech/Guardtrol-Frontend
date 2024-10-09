@@ -123,7 +123,7 @@ const EditNextOfKin = (props) => {
           values.nextofkinIdentificationFile
         );
 
-        const data = patch(
+        const data = await patch(
           `guard/nextofkin/${guardId}`,
           newFormData,
           token
@@ -312,7 +312,11 @@ const EditNextOfKin = (props) => {
                 </div>
               </div>
             </div>
-            <RegularButton text="Update" />
+            <RegularButton
+              text="Update"
+              isLoading={isLoading}
+              disabled={isLoading}
+            />
           </fieldset>
         </div>
       </form>

@@ -382,7 +382,7 @@ const GuardRequestsHistory = () => {
           </Table.Body>
         </Table>
       </div>
-      <div className="relative mt-16">
+      <div className="relative mt-40 md:mt-16">
         <Pagination
           totalEntries={modifications?.length || []}
           entriesPerPage={entriesPerPage}
