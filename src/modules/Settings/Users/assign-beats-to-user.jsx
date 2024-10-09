@@ -39,7 +39,7 @@ const AssignBeatsToUser = ({ selectedBeats, setSelectedBeats }) => {
         multipleSelect={true}
         label="Select Beats"
         semibold_label={true}
-        handleChangeOption={handleBeatSelection}
+        onChange={handleBeatSelection}
         optionList={beatsApiResponse?.beats?.map((beat) => ({
           value: beat?._id,
           _id: beat?._id,

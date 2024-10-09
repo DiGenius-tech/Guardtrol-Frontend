@@ -41,7 +41,7 @@ const AssignGuardToPatrol = ({ selectedGuards, setSelectedGuards }) => {
         multipleSelect={true}
         label="Select Guards"
         semibold_label={true}
-        handleChangeOption={handleBeatSelection}
+        onChange={handleBeatSelection}
         optionList={selectedBeat?.guards?.map((beat) => ({
           value: beat._id,
           _id: beat._id,

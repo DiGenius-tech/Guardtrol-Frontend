@@ -1,20 +1,17 @@
 import React, { useContext, useEffect, useState } from "react";
-import TextInputField from "../../../Sandbox/InputField/TextInputField";
-import SelectField from "../../../Sandbox/SelectField/SelectField";
-import RegularButton from "../../../Sandbox/Buttons/RegularButton";
+import TextInputField from "../../Sandbox/InputField/TextInputField";
+import SelectField from "../../Sandbox/SelectField/SelectField";
+import RegularButton from "../../Sandbox/Buttons/RegularButton";
 import { toast } from "react-toastify";
-import useHttpRequest from "../../../../shared/Hooks/HttpRequestHook";
+import useHttpRequest from "../../../shared/Hooks/HttpRequestHook";
 import * as Yup from "yup";
 import { useFormik } from "formik";
 import { useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
-import {
-  selectAuth,
-  selectOrganization,
-} from "../../../../redux/selectors/auth";
-import { patch } from "../../../../lib/methods";
-import { useGetGuardsQuery } from "../../../../redux/services/guards";
-import { POOLING_TIME } from "../../../../constants/static";
+import { selectAuth, selectOrganization } from "../../../redux/selectors/auth";
+import { patch } from "../../../lib/methods";
+import { useGetGuardsQuery } from "../../../redux/services/guards";
+import { POOLING_TIME } from "../../../constants/static";
 
 const sexOptions = [
   {
@@ -26,6 +23,7 @@ const sexOptions = [
     value: "female",
   },
 ];
+
 const stateOfOriginList = [
   { name: "Abia", value: "abia" },
   { name: "Adamawa", value: "adamawa" },
@@ -65,6 +63,7 @@ const stateOfOriginList = [
   { name: "Zamfara", value: "zamfara" },
   { name: "FCT", value: "fct" }, // Federal Capital Territory
 ];
+
 const validationSchema = Yup.object({
   name: Yup.string().required("Name is required"),
   phone: Yup.string().required("Phone is required"),
@@ -217,7 +216,7 @@ const EditPersonalInformation = (props) => {
                   defaultValue={formik.values.sex}
                   label="Sex"
                   semibold_label={true}
-                  handleChangeOption={formik.handleChange}
+                  onChange={formik.handleChange}
                   optionList={sexOptions}
                   multipleSelect={false}
                   error={formik.touched.sex && formik.errors.sex}
@@ -231,7 +230,7 @@ const EditPersonalInformation = (props) => {
                   value={formik.values.state}
                   label="State of Origin"
                   semibold_label={true}
-                  handleChangeOption={formik.handleChange}
+                  onChange={formik.handleChange}
                   optionList={stateOfOriginList}
                   multipleSelect={false}
                   error={formik.touched.state && formik.errors.state}

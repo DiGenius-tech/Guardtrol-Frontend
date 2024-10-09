@@ -252,7 +252,7 @@ const EditGuarantorForm = () => {
                       id="title"
                       label="Title"
                       semibold_label={true}
-                      handleChangeOption={handleSelectChange}
+                     onChange={handleSelectChange}
                       optionList={titleOptions}
                       multipleSelect={false}
                     />
@@ -316,7 +316,7 @@ const EditGuarantorForm = () => {
                       id="sex"
                       label="Sex"
                       semibold_label={true}
-                      handleChangeOption={handleSelectChange}
+                     onChange={handleSelectChange}
                       optionList={sexOptions}
                       multipleSelect={false}
                     />
@@ -461,7 +461,7 @@ const EditGuarantorForm = () => {
                       id="identificationType"
                       label="Identification type"
                       semibold_label={true}
-                      handleChangeOption={handleSelectChange}
+                     onChange={handleSelectChange}
                       optionList={identificationTypeOptions}
                       multipleSelect={false}
                     />

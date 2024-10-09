@@ -76,7 +76,7 @@ const PointModal = () => {
                 label="Select point"
                 semibold_label={true}
                 optionList={routeList}
-                handleChangeOption={handleChangeRoute}
+                onChange={handleChangeRoute}
               />
             </div>
 

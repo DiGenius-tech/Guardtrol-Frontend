@@ -28,7 +28,6 @@ const TextInputField = (props) => {
               name={props.name}
               readOnly={props.readOnly}
               className={
-                (props.placeholder_right ? `placeholder:text-end ` : "") +
                 (props.error
                   ? `border bg-red-50 border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500
           text-sm rounded-lg block w-full  sm:py-2.5 

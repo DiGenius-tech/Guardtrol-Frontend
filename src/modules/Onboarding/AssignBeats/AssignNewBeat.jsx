@@ -206,7 +206,7 @@ function AssignNewBeat({ isOnboarding = true }) {
                 id="beat"
                 label="Select beat"
                 semibold_label={true}
-                handleChangeOption={handleBeatSelection}
+                onChange={handleBeatSelection}
                 optionList={beatsApiResponse?.beats.map((b) => {
                   return { value: b._id, name: b.name };
                 })}
@@ -231,7 +231,7 @@ function AssignNewBeat({ isOnboarding = true }) {
               multipleSelect={true}
               label="Select Guard"
               semibold_label={true}
-              handleChangeOption={handleGuardSelection}
+              onChange={handleGuardSelection}
               optionList={guards?.filter((g) =>
                 isOnboarding
                   ? !selectedBeat?.guards?.find((gu) => gu._id === g._id)
@@ -248,7 +248,7 @@ function AssignNewBeat({ isOnboarding = true }) {
               id="frequency"
               label="Select frequency"
               semibold_label={true}
-              handleChangeOption={handleFrequencySelection}
+             onChange={handleFrequencySelection}
               optionList={initialFrequencyState}
             />
           </div> */}

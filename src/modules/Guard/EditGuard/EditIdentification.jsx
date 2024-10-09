@@ -1,23 +1,27 @@
 import React, { useContext, useEffect, useState } from "react";
-import TextInputField from "../../../Sandbox/InputField/TextInputField";
-import SelectField from "../../../Sandbox/SelectField/SelectField";
-import RegularButton from "../../../Sandbox/Buttons/RegularButton";
+import TextInputField from "../../Sandbox/InputField/TextInputField";
+import SelectField from "../../Sandbox/SelectField/SelectField";
+import RegularButton from "../../Sandbox/Buttons/RegularButton";
 import { useParams } from "react-router-dom";
 
-import useHttpRequest from "../../../../shared/Hooks/HttpRequestHook";
+import useHttpRequest from "../../../shared/Hooks/HttpRequestHook";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 import {
   selectOrganization,
   selectToken,
   selectUser,
-} from "../../../../redux/selectors/auth";
+} from "../../../redux/selectors/auth";
+import * as Yup from "yup";
+import { useFormik } from "formik";
+
 import imageCompression from "browser-image-compression";
-import { patch } from "../../../../lib/methods";
+import { patch } from "../../../lib/methods";
 import { FileInput } from "flowbite-react";
-import { useGetGuardsQuery } from "../../../../redux/services/guards";
+import { useGetGuardsQuery } from "../../../redux/services/guards";
 import { FaFileAlt } from "react-icons/fa";
-import { ASSET_URL } from "../../../../constants/api";
+import { ASSET_URL } from "../../../constants/api";
+import { COMPRESSION_OPRIONS } from "../../../constants/statics";
 
 const identificationTypeOptions = [
   {
@@ -38,6 +42,15 @@ const identificationTypeOptions = [
     value: "Voter's Card",
   },
 ];
+
+const validationSchema = Yup.object({
+  idnumber: Yup.string().required("identification number is required"),
+  idname: Yup.string().required("identification file type is required"),
+  guardIdentificationFile: Yup.mixed().required(
+    "Guard Identification File is required"
+  ),
+});
+
 const EditIdentification = (props) => {
   const { guardId } = useParams();
   const user = useSelector(selectUser);
@@ -94,25 +107,12 @@ const EditIdentification = (props) => {
 
   const handleFileChange = async (event) => {
     const uploadedFile = event.target.files[0];
-
     if (uploadedFile) {
-      const options = {
-        maxSizeMB: 0.5, // Maximum file size in MB
-        maxWidthOrHeight: 800, // Maximum width or height in pixels
-        useWebWorker: true,
-      };
-
       try {
-        const compressedFile = await imageCompression(uploadedFile, options);
-        setFormData({ ...formData, guardIdentificationFile: compressedFile });
-
-        const reader = new FileReader();
-        reader.onloadend = () => {};
-        reader.readAsDataURL(compressedFile);
+        formik.values.guardIdentificationFile = uploadedFile;
       } catch (error) {
         console.error("Error during image compression:", error);
       }
-    } else {
     }
   };
 
@@ -157,13 +157,64 @@ const EditIdentification = (props) => {
       setLoading(false);
     }
   };
+  const formik = useFormik({
+    initialValues: {
+      idnumber: props.guard?.idnumber || "",
+      idname: props.guard?.idname || "",
+      guardIdentificationFile: props.guard?.identificationsFile || "",
+    },
+    validationSchema,
+    onSubmit: async (values) => {
+      setLoading(true);
+      try {
+        let compressedFile = null;
+        if (typeof values?.guardIdentificationFile === "object") {
+          compressedFile = await imageCompression(
+            values.guardIdentificationFile,
+            COMPRESSION_OPRIONS
+          );
+        }
 
-  console.log(formData);
+        if (!values.idname) {
+          toast.warn("select a valid identification type");
+          return;
+        }
+
+        const newFormData = new FormData();
+        newFormData.append("idname", values.idname);
+        newFormData.append("idnumber", values.idnumber);
+        newFormData.append("guardIdentificationFile", compressedFile);
+
+        const data = patch(
+          `guard/identification/${guardId}`,
+
+          newFormData,
+          token
+        ).then((data) => {
+          if (data?.status) {
+            toast("Identification Information Updated");
+            //props.setGuard({})
+
+            setFormData({
+              idnumber: "",
+              idname: "",
+              guardIdentificationFile: "",
+            });
+            refetchGuards();
+          }
+        });
+      } catch (error) {
+      } finally {
+        setLoading(false);
+      }
+    },
+  });
+
   return (
     <>
       {/* edit-identification-app works! */}
 
-      <form onSubmit={save}>
+      <form onSubmit={formik.handleSubmit}>
         <div className="mx-auto max-w-xl">
           <fieldset>
             <legend className="text-xl font-semibold mb-8 text-center">
@@ -172,28 +223,21 @@ const EditIdentification = (props) => {
             <div className="grid grid-cols-12 gap-x-4">
               <div className="col-span-12">
                 <SelectField
-                  value={formData?.idname}
                   defaultValue={formData?.idname}
-                  name="idname"
-                  id="idname"
                   label="Identification Type"
-                  semibold_label={true}
-                  handleChangeOption={handleSelectChange}
                   optionList={identificationTypeOptions}
                   multipleSelect={false}
+                  error={formik.errors.idname}
+                  {...formik.getFieldProps("idname")}
                 />
               </div>
               <div className="col-span-12">
                 <TextInputField
                   label="Identification Number"
-                  semibold_label={true}
                   type="text"
-                  id="idnumber"
-                  required="required"
                   name="idnumber"
-                  value={formData?.idnumber || ""}
-                  onChange={handleChange}
-                  error={validationErrors["idnumber"]}
+                  error={formik.errors.idnumber}
+                  {...formik.getFieldProps("idnumber")}
                 />
               </div>
             </div>
@@ -222,14 +266,21 @@ const EditIdentification = (props) => {
                   </div>
                 </a>
               )}
-              <FileInput
-                id="file"
-                value={selectedFile}
-                accept="image/*"
-                onChange={handleFileChange}
-                className=" placeholder-red-900"
-                helperText="Select Upload Identification File"
-              />
+              <div className=" col-span-6">
+                <input
+                  // {...formik.getFieldProps("identificationFile")}
+                  type="file"
+                  onChange={(e) => handleFileChange(e)}
+                  className="file-input"
+                />
+                {formik.errors.guardIdentificationFile && (
+                  <p className="mt-2 text-sm text-red-600 dark:text-red-500">
+                    <span className="font-medium">
+                      {formik.errors.guardIdentificationFile}
+                    </span>
+                  </p>
+                )}
+              </div>
             </div>
             <RegularButton
               disabled={updateloading}

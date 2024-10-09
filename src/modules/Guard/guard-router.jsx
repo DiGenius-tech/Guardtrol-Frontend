@@ -1,7 +1,7 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import GuardLayout from "./guard-layout";
-import ActivePatrolGuards from "./PatrolGuardList/ActivePatrolGuards";
-import InactivePatrolGuards from "./PatrolGuardList/InactivePatrolGuards";
+import ActivePatrolGuards from "./guad-list/ActivePatrolGuards";
+import InactivePatrolGuards from "./guad-list/InactivePatrolGuards";
 import AddGuard from "../Onboarding/OnboardGuard/AddGuard";
 import PatrolGuardDetails from "./PatrolGuardDetails";
 import ActivateGuard from "./ActivateGuard";

@@ -1,7 +1,7 @@
 import { Badge, Tabs } from "flowbite-react";
 import React, { useEffect, useState } from "react";
 import "./PatrolGuard.scss";
-import PatrolGuardList from "./PatrolGuardList/PatrolGuardList";
+import PatrolGuardList from "./guad-list/PatrolGuardList";
 import SentRequest from "./SentRequest/SentRequest";
 import EditGuard from "./EditGuard/EditGuard";
 import { Outlet } from "react-router-dom";
