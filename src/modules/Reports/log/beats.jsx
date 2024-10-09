@@ -284,7 +284,7 @@ const BeatsLog = () => {
           </Table.Body>
         </Table>
       </div>
-      <div className="relative pt-20 md:mt-4">
+      <div className="relative pt-20  mt-32 md:mt-16">
         <Pagination
           totalEntries={logsAPiResponse?.total || 0}
           entriesPerPage={entriesPerPage}
@@ -306,31 +306,31 @@ const BeatsLog = () => {
         <Modal.Body>
           <div className="space-y-4">
             <div className="row flex justify-between">
-              <div className="col-6">
+              <div className="col-3">
                 <Label
                   htmlFor="HappendAt"
                   className="text-md"
                   value="Happend At:"
                 />
               </div>
-              <div className="col-6">
+              <div className="col-3">
                 <span className=" text-gray-500 ">
                   {selectedLog?.happendAt}
                 </span>
               </div>
             </div>
             <div className="row flex justify-between">
-              <div className="col-6">
-                <Label htmlFor="Message" className="text-md" value="Message" />
+              <div className="col-3">
+                <Label htmlFor="Message:" className="text-md" value="Message" />
               </div>
-              <div className="col-6">
+              <div className="col-6:">
                 <span className=" text-gray-500 ">
                   {selectedLog?.message || "No Message"}
                 </span>
               </div>
             </div>
             <div className="row flex justify-between">
-              <div className="col-6">
+              <div className="col-3">
                 <Label htmlFor="Beat" className="text-md" value="Beat" />
               </div>
               <div className="col-6">
@@ -352,6 +352,20 @@ const BeatsLog = () => {
                   <div className="col-6">
                     <span className=" text-gray-500 ">
                       {selectedLog?.clockInstance.message || "N/A"}
+                    </span>
+                  </div>
+                </div>
+                <div className="row flex justify-between">
+                  <div className="col-6">
+                    <Label
+                      htmlFor="clockoutreason"
+                      className="text-md"
+                      value="Clockout Reason"
+                    />
+                  </div>
+                  <div className="col-6">
+                    <span className=" text-gray-500 ">
+                      {selectedLog?.clockInstance?.clockoutreason || "N/A"}
                     </span>
                   </div>
                 </div>

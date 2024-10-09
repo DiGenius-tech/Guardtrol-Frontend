@@ -5,7 +5,7 @@ const SettingsLayout = () => {
   return (
     <>
       <SettingsToolbar />
-      <div className="mt-4 px-7">
+      <div className="mt-4 ">
         <Outlet />
       </div>
     </>

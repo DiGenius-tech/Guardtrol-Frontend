@@ -1,8 +1,8 @@
 import React from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
-import InactivePatrolGuards from "../../Guard/PatrolGuardList/InactivePatrolGuards";
+import InactivePatrolGuards from "../../Guard/guad-list/InactivePatrolGuards";
 import AssignNewBeat from "../../Onboarding/AssignBeats/AssignNewBeat";
-import ActivePatrolGuards from "../../Guard/PatrolGuardList/ActivePatrolGuards";
+import ActivePatrolGuards from "../../Guard/guad-list/ActivePatrolGuards";
 
 const BeatGuards = () => {
   const location = useLocation();

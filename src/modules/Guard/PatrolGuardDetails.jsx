@@ -1,9 +1,9 @@
 import { Button, Card, Tabs } from "flowbite-react";
 import React, { useContext, useEffect, useRef, useState } from "react";
-import EditIdentification from "./EditGuard/EditIdentification/EditIdentification";
-import BankDetails from "./EditGuard/BankDetails/BankDetails";
-import EditNextOfKin from "./EditGuard/EditNextOfKin/EditNextOfKin";
-import EditGuarantorForm from "./EditGuard/EditGuarantorForm/EditGuarantorForm";
+import EditIdentification from "./EditGuard/EditIdentification";
+import BankDetails from "./EditGuard/BankDetails";
+import EditNextOfKin from "./EditGuard/EditNextOfKin";
+import EditGuarantorForm from "./EditGuard/EditGuarantorForm";
 import { toast } from "react-toastify";
 import { useParams } from "react-router-dom";
 
@@ -26,7 +26,7 @@ import { get, patch, put } from "../../lib/methods";
 import { suspenseHide, suspenseShow } from "../../redux/slice/suspenseSlice";
 import { API_BASE_URL, ASSET_URL } from "../../constants/api";
 import axios from "axios";
-import EditPersonalInformation from "./EditGuard/EditPersonalInformation/EditPersonalInformation";
+import EditPersonalInformation from "./EditGuard/EditPersonalInformation";
 import { POOLING_TIME } from "../../constants/static";
 
 const PatrolGuardDetails = () => {
@@ -64,7 +64,7 @@ const PatrolGuardDetails = () => {
     }
   );
 
-  const guard = guards.find((g) => g._id === guardId);
+  const guard = guards?.find((g) => g._id === guardId);
   const handleUpdateImage = async () => {
     try {
       dispatch(suspenseShow());
@@ -261,7 +261,7 @@ const PatrolGuardDetails = () => {
                   Remarks
                 </h5>
                 <div className="max-h-[240px] overflow-y-scroll">
-                  {guard.remarks.map((remark) => (
+                  {guard?.remarks?.map((remark) => (
                     <div className="  border-t border-gray-100">
                       <p className="font-normal text-gray-700 dark:text-gray-400">
                         {remark?.comment || "No Comment Here Yet"}

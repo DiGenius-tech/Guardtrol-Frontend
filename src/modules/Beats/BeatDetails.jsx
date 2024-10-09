@@ -5,9 +5,9 @@ import { useGetBeatsQuery } from "../../redux/services/beats";
 import { useSelector } from "react-redux";
 import { selectOrganization, selectUser } from "../../redux/selectors/auth";
 import BeatDetailsHeader from "./BeatDetailsTabs/BeatDetailsHeader";
-import PatrolGuardList from "../Guard/PatrolGuardList/PatrolGuardList";
-import InactivePatrolGuards from "../Guard/PatrolGuardList/InactivePatrolGuards";
-import ActivePatrolGuards from "../Guard/PatrolGuardList/ActivePatrolGuards";
+import PatrolGuardList from "../Guard/guad-list/PatrolGuardList";
+import InactivePatrolGuards from "../Guard/guad-list/InactivePatrolGuards";
+import ActivePatrolGuards from "../Guard/guad-list/ActivePatrolGuards";
 import { POOLING_TIME } from "../../constants/static";
 
 const BeatDetails = () => {

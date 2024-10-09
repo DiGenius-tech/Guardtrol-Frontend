@@ -1,59 +1,58 @@
 import { Button, Card, Spinner, TextInput } from "flowbite-react";
-import PatrolGuardListDesktopView from "./PatrolGuardListDesktopView";
-import PatrolGuardListMobileView from "./PatrolGuardListMobileView";
-import icon_menu_dots from "../../../images/icons/icon-menu-dots.svg";
-import { toast } from "react-toastify";
 import { useContext, useEffect, useState } from "react";
-
+import { toast } from "react-toastify";
+import { useDispatch, useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
 import {
   useClockoutGuardMutation,
   useDeleteGuardMutation,
   useGetGuardsQuery,
 } from "../../../redux/services/guards";
-import axios from "axios";
-import { useDispatch, useSelector } from "react-redux";
+import {
+  useGetBeatsQuery,
+  useUnAssignFromGuardToBeatMutation,
+} from "../../../redux/services/beats";
+import icon_menu_dots from "../../../images/icons/icon-menu-dots.svg";
+import PatrolGuardListDesktopView from "./PatrolGuardListDesktopView";
+import PatrolGuardListMobileView from "./PatrolGuardListMobileView";
 import {
   selectOrganization,
   selectToken,
   selectUser,
 } from "../../../redux/selectors/auth";
-import {
-  useGetBeatsQuery,
-  useUnAssignFromGuardToBeatMutation,
-} from "../../../redux/services/beats";
-import { useParams } from "react-router-dom";
 import Pagination from "../../../shared/Pagination/Pagination";
 import Swal from "sweetalert2";
-import { suspenseHide, suspenseShow } from "../../../redux/slice/suspenseSlice";
-import { POOLING_TIME } from "../../../constants/static";
+import { POOLING_TIME, POOLING_TIMES } from "../../../constants/static";
 import { useDebouncedValue } from "../../../utils/assetHelper";
 import { useGetPatrolsQuery } from "../../../redux/services/patrol";
+import { suspenseHide, suspenseShow } from "../../../redux/slice/suspenseSlice";
 
 const duty_status = {
   OFF_DUTY: 0,
-  ON_DUTY: 1,
+  ON_DUTY: 0,
 };
 
-function ActivePatrolGuards() {
+function InactivePatrolGuards() {
   const user = useSelector(selectUser);
   const token = useSelector(selectToken);
   const dispatch = useDispatch();
-  const { beatId } = useParams();
   const [searchQuery, setSearchQuery] = useState("");
-  const [guardToUnassignId, setGuardToUnassignId] = useState();
+
+  const { beatId } = useParams();
   const debouncedSearchQuery = useDebouncedValue(searchQuery);
+  const [clockoutGuard] = useClockoutGuardMutation();
+
   const [selectedGuard, setSelectedGuard] = useState(null);
   const [open, setOpen] = useState(false);
-
   const [currentPage, setCurrentPage] = useState(1);
   const [entriesPerPage, setEntriesPerPage] = useState(5);
+  const [guardToUnassignId, setGuardToUnassignId] = useState();
 
   const organization = useSelector(selectOrganization);
   const {
     data: guards,
     isLoading,
     refetch: refetchGuards,
-    isUninitialized,
     isFetching,
     error,
   } = useGetGuardsQuery(
@@ -63,26 +62,9 @@ function ActivePatrolGuards() {
     },
     {
       skip: organization ? false : true,
+      pollingInterval: POOLING_TIMES.MAX,
     }
   );
-
-  const { data: beatsApiResponse, refetch: refetchBeats } = useGetBeatsQuery(
-    { organization },
-    {
-      skip: organization ? false : true,
-      pollingInterval: POOLING_TIME,
-    }
-  );
-
-  const [selectedBeat, setSelectedBeat] = useState({});
-
-  useEffect(() => {
-    setSelectedBeat(beatsApiResponse?.beats?.find((b) => b?._id === beatId));
-  }, [beatsApiResponse]);
-
-  const [deleteGuard] = useDeleteGuardMutation();
-  const [clockoutGuard] = useClockoutGuardMutation();
-  const [UnAssignGuard] = useUnAssignFromGuardToBeatMutation();
 
   const {
     data: patrolsAssignedToGuard,
@@ -94,6 +76,17 @@ function ActivePatrolGuards() {
     },
     { skip: guardToUnassignId ? false : true }
   );
+
+  const { data: beatsApiResponse, refetch: refetchBeats } = useGetBeatsQuery(
+    { organization },
+    {
+      skip: organization ? false : true,
+      pollingInterval: POOLING_TIME,
+    }
+  );
+
+  const [deleteGuard] = useDeleteGuardMutation();
+  const selectedBeat = beatsApiResponse?.beats?.find((b) => b._id === beatId);
 
   const handleDeleteGuard = (guardToDelete) => {
     try {
@@ -107,9 +100,8 @@ function ActivePatrolGuards() {
         confirmButtonText: "Yes, delete it!",
       }).then(async (result) => {
         if (result.isConfirmed) {
-          dispatch(suspenseShow());
           const { data } = await deleteGuard(guardToDelete);
-          await refetchGuards();
+          refetchGuards();
           if (data?.status) {
             Swal.fire({
               title: "Deleted!",
@@ -118,13 +110,9 @@ function ActivePatrolGuards() {
               confirmButtonColor: "#008080",
             });
           }
-          dispatch(suspenseHide());
         }
       });
-    } catch (error) {
-    } finally {
-      dispatch(suspenseHide());
-    }
+    } catch (error) {}
   };
 
   const handleClockoutGuard = (guardToClockout) => {
@@ -148,7 +136,7 @@ function ActivePatrolGuards() {
           await refetchGuards();
           if (data?.status) {
             Swal.fire({
-              title: "Guard Clock Out!",
+              title: "Guard Clocked Out!",
               text: `${guardToClockout?.name || "Guard"} has been clocked out.`,
               icon: "success",
               confirmButtonColor: "#008080",
@@ -162,6 +150,7 @@ function ActivePatrolGuards() {
       dispatch(suspenseHide());
     }
   };
+  const [UnAssignGuard] = useUnAssignFromGuardToBeatMutation();
 
   const handleUnAssignGuard = (guardToUnassign) => {
     let removeFromPatrols;
@@ -182,8 +171,8 @@ function ActivePatrolGuards() {
 
           if (patrolsAssignedToGuard.length) {
             await Swal.fire({
-              title: "Guard is assigned to patrols",
-              text: "Would you like to remove the guard from the patrols in this Beat?",
+              title: "Guard is assigned to patrols?",
+              text: "Would you like to remove the guard from the patrols in this Beat!",
               icon: "warning",
               showCancelButton: true,
               confirmButtonColor: "#008080",
@@ -208,7 +197,6 @@ function ActivePatrolGuards() {
                 guard: guardToUnassign,
                 removeFromPatrols: removeFromPatrols,
               });
-
               if (data) {
                 await refetchGuards();
                 await refetchBeats();
@@ -227,12 +215,7 @@ function ActivePatrolGuards() {
       });
     } catch (error) {}
   };
-
-  useEffect(() => {
-    if (isUninitialized) {
-      refetchGuards();
-    }
-  }, [token]);
+  useEffect(() => {}, [token]);
 
   useEffect(() => {
     if (error) {
@@ -240,29 +223,28 @@ function ActivePatrolGuards() {
     }
   }, [error]);
 
-  const activeGuards = beatId
-    ? selectedBeat?.guards?.filter((guard) => guard.isactive)
-    : guards?.filter((guard) => guard.isactive);
+  const inactiveGuards =
+    selectedBeat?.guards?.filter((guard) => !guard.isactive) ||
+    guards?.filter((guard) => !guard.isactive);
 
-  const paginatedGuards = activeGuards?.slice(
+  const paginatedGuards = inactiveGuards?.slice(
     (currentPage - 1) * entriesPerPage,
     currentPage * entriesPerPage
   );
 
   return (
-    <div className="relative pb-32">
-      {/* active-patrol-guards-app works! */}
-      <div className="flex gap-2 justify-between mb-2">
-        <div className="min-w-40 max-w-64 flex justify-start items-center gap-2">
-          <h2 className=" text-2xl font-bold">Active Guards</h2>
+    <div div className="relative  pb-40">
+      <div className="flex gap-2 flex-wrap  justify-between mb-2">
+        <div className="min-w-40 max-w-64 flex justify-start flex-wrap  items-center gap-2">
+          <h2 className=" text-2xl font-bold"> Inactive Guards</h2>
           <label
             htmlFor="entriesPerPage"
             className="text-base font-medium text-gray-400"
           >
-            Total: {activeGuards?.length || 0}
+            Total: {inactiveGuards?.length || 0}
           </label>
         </div>
-        <div className="flex justify-end  gap-2">
+        <div className="flex justify-end  flex-wrap  gap-2">
           <div className="min-w-40 max-w-64 h-10">
             <TextInput
               type="text"
@@ -293,32 +275,32 @@ function ActivePatrolGuards() {
       <div className="hidden sm:block">
         <Card>
           <PatrolGuardListDesktopView
-            duty_status={duty_status}
-            handleClockoutGuard={handleClockoutGuard}
-            icon_menu_dots={icon_menu_dots}
             isLoading={isLoading}
+            duty_status={duty_status}
             handleDeleteGuard={handleDeleteGuard}
             handleUnAssignGuard={handleUnAssignGuard}
+            handleClockoutGuard={handleClockoutGuard}
+            icon_menu_dots={icon_menu_dots}
             guards={paginatedGuards}
           />
         </Card>
       </div>
+
       <div className="sm:hidden rounded-lg bg-white p-2 min-h-64">
         <PatrolGuardListMobileView
           duty_status={duty_status}
-          handleDeleteGuard={handleDeleteGuard}
-          handleClockoutGuard={handleClockoutGuard}
-          icon_menu_dots={icon_menu_dots}
           isLoading={isLoading}
+          icon_menu_dots={icon_menu_dots}
+          handleUnAssignGuard={handleUnAssignGuard}
+          handleClockoutGuard={handleClockoutGuard}
           guards={paginatedGuards}
         />
       </div>
 
       <Pagination
-        totalEntries={activeGuards?.length || 0}
+        totalEntries={inactiveGuards?.length || 0}
         entriesPerPage={entriesPerPage}
         currentPage={currentPage}
-        handleDeleteGuard={handleDeleteGuard}
         onPageChange={setCurrentPage}
         onEntriesPerPageChange={setEntriesPerPage}
       />
@@ -326,4 +308,4 @@ function ActivePatrolGuards() {
   );
 }
 
-export default ActivePatrolGuards;
+export default InactivePatrolGuards;

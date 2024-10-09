@@ -383,7 +383,7 @@ const BeatRequestsHistory = () => {
           </Table.Body>
         </Table>
       </div>
-      <div className="relative mt-16">
+      <div className="relative mt-40 md:mt-16">
         <Pagination
           totalEntries={modifications?.length || []}
           entriesPerPage={entriesPerPage}
@@ -404,6 +404,10 @@ const BeatRequestsHistory = () => {
               <div>
                 <strong>Request by:</strong>{" "}
                 {selectedModification?.performer?.name}
+              </div>
+              <div>
+                <strong>Request description:</strong> Beat Modification for{" "}
+                {selectedModification?.beat?.name}
               </div>
               <div>
                 <strong className=" underline">Updates</strong>

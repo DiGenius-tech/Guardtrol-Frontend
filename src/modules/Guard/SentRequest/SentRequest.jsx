@@ -1,8 +1,8 @@
 import icon_menu_dots from "../../../../../images/icons/icon-menu-dots.svg";
 import { useEffect, useState, useContext } from "react";
 import { patrol_guards } from "../patrol-guard-list";
-import SentRequestDesktopView from "./SentRequestDesktopView/SentRequestDesktopView";
-import SentRequestMobileView from "./SentRequestMobileView/SentRequestMobileView";
+import SentRequestDesktopView from "./SentRequestDesktopView";
+import SentRequestMobileView from "./SentRequestMobileView";
 import { Card } from "flowbite-react";
 import { toast } from "react-toastify";
 

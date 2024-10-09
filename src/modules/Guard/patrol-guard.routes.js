@@ -2,9 +2,9 @@ import AddGuard from "../Onboarding/OnboardGuard/AddGuard";
 import ActivateGuard from "./ActivateGuard";
 import PatrolGuard from "./PatrolGuard";
 import PatrolGuardDetails from "./PatrolGuardDetails/PatrolGuardDetails";
-import ActivePatrolGuards from "./PatrolGuardList/ActivePatrolGuards";
-import InactivePatrolGuards from "./PatrolGuardList/InactivePatrolGuards/InactivePatrolGuards";
-import PatrolGuardList from "./PatrolGuardList/PatrolGuardList";
+import ActivePatrolGuards from "./guad-list/ActivePatrolGuards";
+import InactivePatrolGuards from "./guad-list/InactivePatrolGuards/InactivePatrolGuards";
+import PatrolGuardList from "./guad-list/PatrolGuardList";
 
 const patrol_guard_routes = {
   path: "patrol-guard",
