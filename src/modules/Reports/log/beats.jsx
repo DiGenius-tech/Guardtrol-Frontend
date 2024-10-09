@@ -306,31 +306,31 @@ const BeatsLog = () => {
         <Modal.Body>
           <div className="space-y-4">
             <div className="row flex justify-between">
-              <div className="col-6">
+              <div className="col-3">
                 <Label
                   htmlFor="HappendAt"
                   className="text-md"
                   value="Happend At:"
                 />
               </div>
-              <div className="col-6">
+              <div className="col-3">
                 <span className=" text-gray-500 ">
                   {selectedLog?.happendAt}
                 </span>
               </div>
             </div>
             <div className="row flex justify-between">
-              <div className="col-6">
-                <Label htmlFor="Message" className="text-md" value="Message" />
+              <div className="col-3">
+                <Label htmlFor="Message:" className="text-md" value="Message" />
               </div>
-              <div className="col-6">
+              <div className="col-6:">
                 <span className=" text-gray-500 ">
                   {selectedLog?.message || "No Message"}
                 </span>
               </div>
             </div>
             <div className="row flex justify-between">
-              <div className="col-6">
+              <div className="col-3">
                 <Label htmlFor="Beat" className="text-md" value="Beat" />
               </div>
               <div className="col-6">

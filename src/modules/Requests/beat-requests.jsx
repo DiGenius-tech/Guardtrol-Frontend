@@ -406,6 +406,10 @@ const BeatRequestsHistory = () => {
                 {selectedModification?.performer?.name}
               </div>
               <div>
+                <strong>Request description:</strong> Beat Modification for{" "}
+                {selectedModification?.beat?.name}
+              </div>
+              <div>
                 <strong className=" underline">Updates</strong>
                 <br />
                 {renderDifferences(

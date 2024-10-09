@@ -223,10 +223,12 @@ const GuardRequestsHistory = () => {
         }
       }
     }
+
     return differences;
   };
 
   const renderValue = (value) => {
+    console.log(value);
     if (typeof value === "object" && value !== null) {
       if (Array.isArray(value)) {
         return value.map((item, index) => (
@@ -257,6 +259,7 @@ const GuardRequestsHistory = () => {
     return value;
   };
 
+  console.log(selectedModification);
   return (
     <div className="container mx-auto relative pb-40 sm:pb-20">
       <div className="flex justify-between items-center mb-3 flex-wrap">
@@ -402,7 +405,11 @@ const GuardRequestsHistory = () => {
                 {selectedModification?.performer?.name}
               </div>
               <div>
-                <strong className=" underline">Updates</strong>
+                <strong>Request description:</strong> Guard Modification for{" "}
+                {selectedModification?.guard?.name}
+              </div>
+              <div>
+                <strong className="underline">Updates</strong>
                 <br />
                 {renderDifferences(
                   highlightDifferences(

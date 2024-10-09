@@ -106,7 +106,7 @@ function MultiSelectField(props) {
             />
             {/* Filtered Options List */}
             <div className="w-full max-h-[300px]  overflow-y-scroll">
-              {filteredOptions.map((option) => (
+              {filteredOptions?.map((option) => (
                 <label
                   key={option._id}
                   className="flex items-center px-4 py-2 cursor-pointer hover:bg-gray-100"
