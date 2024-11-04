@@ -57,6 +57,7 @@ const OrganizationAudits = () => {
       pollingInterval: POOLING_TIME,
     }
   );
+ 
 
   const exportToExcel = () => {
     const columns = [
@@ -65,7 +66,7 @@ const OrganizationAudits = () => {
       { header: "Type", key: "type" },
     ];
 
-    const data = auditsApiResponse?.audits?.map((audit) => ({
+    const data = auditsApiResponse?.logs?.map((audit) => ({
       date: format(new Date(audit.createdAt), "yyyy-MM-dd HH:mm:ss"),
       message: audit.message,
       type: audit.type,
@@ -107,7 +108,7 @@ const OrganizationAudits = () => {
       {
         name: "Audits",
         data: auditsApiResponse
-          ? auditsApiResponse?.audits?.map((audit) => ({
+          ? auditsApiResponse?.logs?.map((audit) => ({
               x: new Date(audit.createdAt).getTime(),
               y: 1,
             }))
@@ -214,8 +215,8 @@ const OrganizationAudits = () => {
               </Table.Row>
             )}
             {!isLoading &&
-              (!auditsApiResponse?.audits ||
-                auditsApiResponse?.audits.length === 0) && (
+              (!auditsApiResponse?.logs ||
+                auditsApiResponse?.logs.length === 0) && (
                 <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
                   <Table.Cell
                     colSpan={6}
@@ -226,18 +227,18 @@ const OrganizationAudits = () => {
                 </Table.Row>
               )}
             {!isLoading &&
-              auditsApiResponse?.audits?.map((audit) => (
+              auditsApiResponse?.logs?.map((audit) => (
                 <Table.Row key={audit._id}>
                   <Table.Cell>{formatDateTime(audit.happendAt)}</Table.Cell>
                   <Table.Cell>{audit?.message}</Table.Cell>
                   <Table.Cell>
-                    {audit?.performer?.name ? audit?.performer?.name : "-----"}
-                  </Table.Cell>
-                  <Table.Cell>
-                    {audit?.beat?.name ? audit?.beat?.name : "------"}
+                    {audit?.guard?.name ? audit?.guard?.name : "-----"}
                   </Table.Cell>
                   <Table.Cell>
                     {audit?.guard?.name ? audit?.guard?.name : "------"}
+                  </Table.Cell>
+                  <Table.Cell>
+                    {audit?.beat?.name ? audit?.beat?.name : "------"}
                   </Table.Cell>
                   <Table.Cell>{audit.type}</Table.Cell>
                 </Table.Row>
