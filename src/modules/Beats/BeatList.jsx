@@ -20,6 +20,7 @@ import Swal from "sweetalert2";
 import Pagination from "../../shared/Pagination/Pagination";
 import { POOLING_TIME } from "../../constants/static";
 import { useDebouncedValue } from "../../utils/assetHelper";
+import { useGetUserOrganizationRoleQuery } from "../../redux/services/role";
 
 const BeatList = () => {
   const user = useSelector(selectUser);
@@ -34,6 +35,9 @@ const BeatList = () => {
   const organization = useSelector(selectOrganization);
   const [searchQuery, setSearchQuery] = useState("");
 
+  const { data: userRole } = useGetUserOrganizationRoleQuery(organization, {
+    skip: organization ? false : true,
+  });
   const debouncedSearchQuery = useDebouncedValue(searchQuery);
 
   const {
@@ -133,12 +137,14 @@ const BeatList = () => {
               placeholder="Search by Beat Name"
             />
           </div>
-          <Button
-            className="bg-[#008080] text-white px-4 rounded min-w-28 h-10"
-            onClick={() => navigate("add/create")}
-          >
-            New Beat
-          </Button>
+          {(userRole?.name == "Owner" || userRole?.name == "Manager") && (
+            <Button
+              className="bg-[#008080] text-white px-4 rounded min-w-28 h-10"
+              onClick={() => navigate("add/create")}
+            >
+              New Beat
+            </Button>
+          )}
           <Button
             onClick={refetchBeats}
             className="bg-[#008080] text-white px-4 rounded min-w-28 h-10"

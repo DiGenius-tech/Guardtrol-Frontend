@@ -29,7 +29,7 @@ import UserListDesktopView from "./all-users-desktop";
 import UserListMobileView from "./all-users-mobile";
 import AssignBeatsToUser from "./assign-beats-to-user";
 
-const roles = ["Supervisor", "Manager"];
+const roles = ["Supervisor", "Manager", "Client"];
 
 function OrganizationUsers() {
   const token = useSelector(selectToken);
@@ -84,7 +84,7 @@ function OrganizationUsers() {
         email: user.email,
         whatsappNumber: user.whatsappNumber,
         role: user?.role?.name,
-        assignedBeats: user.assignedBeats || [], // Set beats if available
+        assignedBeats: user.assignedBeats || [],
       });
       setSelectedBeats(
         user?.role?.assignedBeats.map((b) => ({
@@ -396,12 +396,13 @@ function OrganizationUsers() {
                 </option>
               ))}
             </Select>
-            {userForm.role === "Supervisor" && selectedBeats && (
-              <AssignBeatsToUser
-                selectedBeats={selectedBeats}
-                setSelectedBeats={setSelectedBeats}
-              />
-            )}
+            {(userForm.role === "Supervisor" || userForm.role === "Client") &&
+              selectedBeats && (
+                <AssignBeatsToUser
+                  selectedBeats={selectedBeats}
+                  setSelectedBeats={setSelectedBeats}
+                />
+              )}
           </div>
         </Modal.Body>
         <Modal.Footer>

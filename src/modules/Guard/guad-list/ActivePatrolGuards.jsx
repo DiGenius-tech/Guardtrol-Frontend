@@ -147,6 +147,7 @@ function ActivePatrolGuards() {
             organization,
           });
           await refetchGuards();
+          await refetchBeats();
           if (data?.status) {
             Swal.fire({
               title: "Guard Clock Out!",
@@ -182,7 +183,7 @@ function ActivePatrolGuards() {
             await refetchPatrolsAssignedToGuard();
 
           if (patrolsAssignedToGuard.length) {
-            await Swal.fire({
+            return await Swal.fire({
               title: "Guard is assigned to patrols",
               text: "Would you like to remove the guard from the patrols in this Beat?",
               icon: "warning",
@@ -224,6 +225,23 @@ function ActivePatrolGuards() {
               }
             });
           }
+
+          const data = await UnAssignGuard({
+            beat: selectedBeat,
+            guard: guardToUnassign,
+            removeFromPatrols: removeFromPatrols,
+          });
+
+          if (data) {
+            await refetchGuards();
+            await refetchBeats();
+            Swal.fire({
+              title: "Unassigned!",
+              text: `${guardToUnassign?.name || "Guard"} has been unassigned.`,
+              icon: "success",
+              confirmButtonColor: "#008080",
+            });
+          }
         }
       });
     } catch (error) {}
@@ -240,7 +258,6 @@ function ActivePatrolGuards() {
       toast.error(error);
     }
   }, [error]);
-
   const activeGuards = beatId
     ? selectedBeat?.guards?.filter((guard) => guard.isactive)
     : guards?.filter((guard) => guard.isactive);
@@ -274,7 +291,9 @@ function ActivePatrolGuards() {
           </div>
           <Button
             color={"green"}
-            onClick={refetchGuards}
+            onClick={() => {
+              selectedBeat ? refetchBeats() : refetchGuards();
+            }}
             className="bg-green-500 text-white px-4 rounded min-w-40 h-10"
             disabled={isFetching}
           >

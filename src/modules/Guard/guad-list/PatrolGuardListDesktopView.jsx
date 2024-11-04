@@ -147,8 +147,8 @@ function PatrolGuardListDesktopView(props) {
                                 )}
                               </>
                             )}
-                            {(userRole?.name === "Owner" ||
-                              userRole?.name === "Manager") && (
+                            {(userRole?.name == "Owner" ||
+                              userRole?.name == "Manager") && (
                               <Dropdown.Item>
                                 <button
                                   onClick={() => props.handleDeleteGuard(guard)}

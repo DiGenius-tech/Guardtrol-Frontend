@@ -255,7 +255,9 @@ function InactivePatrolGuards() {
           </div>
           <Button
             color={"green"}
-            onClick={refetchGuards}
+            onClick={() => {
+              selectedBeat ? refetchBeats() : refetchGuards();
+            }}
             className="bg-green-500 text-white px-4 rounded min-w-40 h-10"
             disabled={isFetching}
           >

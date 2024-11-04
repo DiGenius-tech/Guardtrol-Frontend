@@ -65,7 +65,7 @@ const SettingsToolbar = () => {
             </Link>
           </li>
 
-          {(userRole?.name === "Owner" || userRole?.name === "Manager") && (
+          {(userRole?.name == "Owner" || userRole?.name == "Manager") && (
             <li>
               <Link
                 to={`billing`}
@@ -80,7 +80,7 @@ const SettingsToolbar = () => {
               </Link>
             </li>
           )}
-          {(userRole?.name === "Owner" || userRole?.name === "Manager") && (
+          {(userRole?.name == "Owner" || userRole?.name == "Manager") && (
             <li>
               <Link
                 to={`notification`}
@@ -95,7 +95,7 @@ const SettingsToolbar = () => {
               </Link>
             </li>
           )}
-          {userRole?.name === "Owner" && (
+          {userRole?.name == "Owner" && (
             <li>
               <Link
                 to={`users`}

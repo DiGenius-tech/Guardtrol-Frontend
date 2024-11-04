@@ -20,7 +20,7 @@ function AddBeatToolbar() {
       <nav>
         {/*  active border-cyan-600 text-cyan-600 dark:border-cyan-500 dark:text-cyan-500 */}
         <ul className="flex gap-2 text-center  mb-5 flex-wrap border-b border-gray-200 dark:border-gray-700">
-          {(userRole?.name === "Owner" || userRole?.name === "Manager") && (
+          {(userRole?.name == "Owner" || userRole?.name == "Manager") && (
             <>
               <li>
                 <Link

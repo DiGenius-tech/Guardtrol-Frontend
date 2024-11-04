@@ -161,8 +161,8 @@ const ClientToolbar = (props) => {
                       </option>
                     ))}
                   </Select>
-                  {(userRole?.name === "Owner" ||
-                    userRole?.name === "Manager") && (
+                  {(userRole?.name == "Owner" ||
+                    userRole?.name == "Manager") && (
                     <div className="relative">
                       <button
                         onClick={handleNotificationDropdownToggle}
@@ -249,8 +249,8 @@ const ClientToolbar = (props) => {
                   >
                     Your Profile
                   </Link>
-                  {(userRole?.name === "Owner" ||
-                    userRole?.name === "Manager") && (
+                  {(userRole?.name == "Owner" ||
+                    userRole?.name == "Manager") && (
                     <a
                       href="#"
                       className="block px-4 py-2 text-sm text-gray-700"

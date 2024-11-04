@@ -17,6 +17,7 @@ import { POOLING_TIME } from "../../constants/static";
 import { suspenseHide, suspenseShow } from "../../redux/slice/suspenseSlice";
 import { toast } from "react-toastify";
 import { api } from "../../redux/services/api";
+import { useGetUserOrganizationRoleQuery } from "../../redux/services/role";
 
 const guardAttributes = {
   idname: "Identification Name",
@@ -42,6 +43,9 @@ const BeatRequestsHistory = () => {
   const [selectedStatus, setSelectedStatus] = useState("");
   const dispatch = useDispatch();
 
+  const { data: userRole } = useGetUserOrganizationRoleQuery(organization, {
+    skip: organization ? false : true,
+  });
   const { data: guards, refetch: refetchGuards } = useGetGuardsQuery(
     { organization },
     {
@@ -435,26 +439,28 @@ const BeatRequestsHistory = () => {
               </div>
             </div>
           </Modal.Body>
-          <Modal.Footer>
-            <Button
-              className="bg-[#008080] text-white px-4 rounded min-w-40 h-10"
-              onClick={() => handleApprove(selectedModification?._id)}
-              disabled={selectedModification?.status !== "pending"}
-            >
-              Approve
-            </Button>
-            <Button
-              color="failure"
-              onClick={() => handleRevert(selectedModification?._id)}
-              disabled={selectedModification?.status !== "pending"}
-              className="ml-2"
-            >
-              Reject
-            </Button>
-            <Button color="dark" onClick={closeModal} className="ml-2">
-              Close
-            </Button>
-          </Modal.Footer>
+          {(userRole?.name == "Owner" || userRole?.name == "Manager") && (
+            <Modal.Footer>
+              <Button
+                className="bg-[#008080] text-white px-4 rounded min-w-40 h-10"
+                onClick={() => handleApprove(selectedModification?._id)}
+                disabled={selectedModification?.status !== "pending"}
+              >
+                Approve
+              </Button>
+              <Button
+                color="failure"
+                onClick={() => handleRevert(selectedModification?._id)}
+                disabled={selectedModification?.status !== "pending"}
+                className="ml-2"
+              >
+                Reject
+              </Button>
+              <Button color="dark" onClick={closeModal} className="ml-2">
+                Close
+              </Button>
+            </Modal.Footer>
+          )}
         </Modal>
       )}
     </div>

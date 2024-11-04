@@ -63,7 +63,7 @@ function PatrolGuardListToolbar() {
             </Link>
           </li>
 
-          {(userRole?.name === "Owner" || userRole?.name === "Manager") && (
+          {(userRole?.name == "Owner" || userRole?.name == "Manager") && (
             <>
               <li>
                 <Link

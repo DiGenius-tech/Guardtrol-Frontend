@@ -34,7 +34,7 @@ const SettingsRouter = () => {
         <Route path="security" element={<SettingSecurity />} />
         <Route path="verify-payment" element={<PaymentSuccess />} />
 
-        {(userRole?.name === "Owner" || userRole?.name === "Manager") && (
+        {(userRole?.name == "Owner" || userRole?.name == "Manager") && (
           <>
             <Route path="shift-schedule" element={<SettingShiftSchedule />} />
             <Route path="notification" element={<SettingNotifications />} />

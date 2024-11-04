@@ -196,7 +196,7 @@ const ClientSidebar = () => {
                 </span>
               </Link>
             </li>
-            {(userRole?.name === "Owner" || userRole?.name === "Manager") && (
+            {(userRole?.name == "Owner" || userRole?.name == "Manager") && (
               <li>
                 <Link
                   to={"requests"}
@@ -236,7 +236,7 @@ const ClientSidebar = () => {
               </Link>
             </li>
 
-            {(userRole?.name === "Owner" || userRole?.name === "Manager") && (
+            {(userRole?.name == "Owner" || userRole?.name == "Manager") && (
               <li>
                 <Link
                   to={settings[0]}
