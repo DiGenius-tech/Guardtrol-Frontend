@@ -28,7 +28,7 @@ const ViewBeatInformation = ({ setPage }) => {
   const handleUpdateBeat = async (state) => {
     dispatch(suspenseShow());
     await updateBeat({
-      body: { ...selectedBeat, bypassRequest: state },
+      body: { ...selectedBeat, ...state },
       userid: user?.userid,
       organization,
     }).then();
@@ -113,10 +113,37 @@ const ViewBeatInformation = ({ setPage }) => {
                   className="sr-only peer"
                   onChange={async () => {
                     dispatch(suspenseShow());
-                    await handleUpdateBeat(!selectedBeat?.bypassRequest);
+                    await handleUpdateBeat({
+                      bypassRequest: !selectedBeat?.bypassRequest,
+                    });
                     dispatch(suspenseHide());
                   }}
                   defaultChecked={selectedBeat?.bypassRequest}
+                />
+
+                <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 dark:peer-focus:ring-green-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary-600"></div>
+              </label>
+            </div>
+            <div className="col-span-12 sm:col-span-6">
+              <label className="inline-flex items-center w-full justify-between cursor-pointer ">
+                <span className=" font-semibold text-gray-900 dark:text-gray-300">
+                  <h3>
+                    Triger alert when beat is offline for more than 12{" "}
+                    {selectedBeat?.beatTrigger ? "Deactivate?" : "Activate?"}
+                  </h3>
+                </span>
+                <input
+                  type="checkbox"
+                  name="verification"
+                  className="sr-only peer"
+                  onChange={async () => {
+                    dispatch(suspenseShow());
+                    await handleUpdateBeat({
+                      beatTrigger: !selectedBeat?.beatTrigger,
+                    });
+                    dispatch(suspenseHide());
+                  }}
+                  defaultChecked={selectedBeat?.beatTrigger}
                 />
 
                 <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-300 dark:peer-focus:ring-green-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary-600"></div>
