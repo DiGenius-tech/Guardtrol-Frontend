@@ -104,7 +104,7 @@ const ViewBeatInformation = ({ setPage }) => {
                   <h3>
                     {selectedBeat?.bypassRequest
                       ? "Beat bypass request is Active, Deactivate?"
-                      : "Beat bypass request is'nt active, Activate?"}
+                      : "Beat bypass request isn't active, Activate?"}
                   </h3>
                 </span>
                 <input
@@ -128,7 +128,8 @@ const ViewBeatInformation = ({ setPage }) => {
               <label className="inline-flex items-center w-full justify-between cursor-pointer ">
                 <span className=" font-semibold text-gray-900 dark:text-gray-300">
                   <h3>
-                    Triger alert when beat is offline for more than 12{" "}
+                    Trigger alert when the beat is offline for more than 2 hours
+                    {", "}
                     {selectedBeat?.beatTrigger ? "Deactivate?" : "Activate?"}
                   </h3>
                 </span>
