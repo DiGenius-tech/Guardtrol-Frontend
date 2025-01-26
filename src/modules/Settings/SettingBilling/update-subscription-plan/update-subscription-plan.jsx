@@ -189,12 +189,33 @@ const UpdateSubscriptionPlan = () => {
                   </fieldset>
 
                   <div className="mb-4">
-                    <label
-                      htmlFor="email-address-icon"
-                      className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                    >
-                      How many beats?
-                    </label>
+                  <label
+  htmlFor="email-address-icon"
+  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+>
+  How many beats?
+  {/* Tooltip Icon */}
+  <span className="ml-2 relative group">
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="h-4 w-4 inline-block text-gray-500 cursor-pointer hover:text-gray-700"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+      />
+    </svg>
+    {/* Tooltip Text */}
+    <span className="absolute left-0 bottom-6 w-48 bg-gray-700 text-white text-sm rounded p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+      A beat is a designated patrol area consisting of multiple patrol points where guards ensure security coverage.
+    </span>
+  </span>
+</label>
                     <div className="relative">
                       <div className="absolute inset-y-0 start-0 flex items-center ps-3.5 pointer-events-none">
                         <MdAddHomeWork color="#79716b" />
