@@ -1,25 +1,15 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import googleIconImg from "../../../images/icons/google-social-icon.svg";
-import left_pattern_boxes from "../../../images/left-pattern-boxes.svg";
-import right_pattern_boxes from "../../../images/right-pattern-boxes.svg";
-
 import useHttpRequest from "../../../shared/Hooks/HttpRequestHook";
 import { toast } from "react-toastify";
 import TextInputField from "../../Sandbox/InputField/TextInputField";
 import RegularButton from "../../Sandbox/Buttons/RegularButton";
 import { useGoogleLogin } from "@react-oauth/google";
 import { useDispatch, useSelector } from "react-redux";
-import { selectOrganization, selectUser } from "../../../redux/selectors/auth";
-import { API_BASE_URL } from "../../../constants/api";
-import {
-  loginSuccess,
-  updateUserOrganization,
-} from "../../../redux/slice/authSlice";
-import {
-  setOnboardingGuards,
-  setOnboardingLevel,
-} from "../../../redux/slice/onboardingSlice";
+import { selectUser } from "../../../redux/selectors/auth";
+import { loginSuccess, updateUserOrganization } from "../../../redux/slice/authSlice";
+import { setOnboardingGuards, setOnboardingLevel } from "../../../redux/slice/onboardingSlice";
 import { setCurrentSubscription } from "../../../redux/slice/subscriptionSlice";
 import { post } from "../../../lib/methods";
 import axios from "axios";
@@ -35,6 +25,7 @@ const Register = () => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
+    countryCode: "+234", // Default country code for Nigeria
     phone: "",
     password: "",
     password_confirmation: "",
@@ -43,8 +34,7 @@ const Register = () => {
 
   const password_field_ref = useRef();
   const [password_type, setPassword_type] = useState("password");
-  const [confirm_password_type, setConfirm_password_type] =
-    useState("password");
+  const [confirm_password_type, setConfirm_password_type] = useState("password");
 
   const toggle_pwd_type = () => {
     password_type === "password"
@@ -58,9 +48,46 @@ const Register = () => {
       : setConfirm_password_type("password");
   };
 
+  const validatePhoneNumber = (phone) => {
+    // Remove all spaces for validation
+    const cleanedPhone = phone.replace(/\s/g, "");
+
+    // Ensure the phone number is exactly 11 digits
+    return cleanedPhone.length === 11 && /^[0-9]+$/.test(cleanedPhone);
+  };
+
+  const formatPhoneNumber = (phone) => {
+    // Remove all non-digit characters
+    let cleanedPhone = phone.replace(/\D/g, "");
+
+    // Limit the total length to 11 digits
+    if (cleanedPhone.length > 11) {
+      cleanedPhone = cleanedPhone.slice(0, 11);
+    }
+
+    // Add spaces for readability (e.g., 080 123 45678)
+    let formattedPhone = "";
+    for (let i = 0; i < cleanedPhone.length; i++) {
+      if (i === 3 || i === 6) {
+        formattedPhone += " "; // Add a space after the 3rd and 6th digits
+      }
+      formattedPhone += cleanedPhone[i];
+    }
+
+    return formattedPhone;
+  };
+
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-    setValidationErrors({ ...validationErrors, [e.target.name]: "" });
+    const { name, value } = e.target;
+    let newValue = value;
+
+    if (name === "phone") {
+      // Format the phone number
+      newValue = formatPhoneNumber(newValue);
+    }
+
+    setFormData({ ...formData, [name]: newValue });
+    setValidationErrors({ ...validationErrors, [name]: "" });
   };
 
   const handleSubmit = async (e) => {
@@ -70,6 +97,11 @@ const Register = () => {
       e.preventDefault();
       const form = e.currentTarget;
       const newErrors = {};
+
+      // Validate phone number
+      if (!validatePhoneNumber(formData.phone)) {
+        newErrors["phone"] = "Please enter a valid 11-digit phone number.";
+      }
 
       if (formData.password.length < 8) {
         setValidationErrors({
@@ -189,8 +221,6 @@ const Register = () => {
 
   return (
     <>
-      {/* register-app works! */}
-
       <div className="mt-16"></div>
       <h1 className="font-bold text-2xl tracking-wide text-center">
         Create an Account
@@ -223,17 +253,29 @@ const Register = () => {
             required="required"
             value={formData.email}
           />
-          <TextInputField
-            label="Phone Number"
-            name="phone"
-            type="number"
-            placeholder="Phone Number"
-            id="phone"
-            error={validationErrors["phone"]}
-            onChange={handleChange}
-            required="required"
-            value={formData.phone}
-          />
+
+          <div className="flex gap-4">
+            <TextInputField
+              label="Country Code"
+              name="countryCode"
+              type="text"
+              placeholder="Country Code"
+              id="countryCode"
+              value={formData.countryCode}
+              disabled // Disable editing for the country code
+            />
+            <TextInputField
+              label="Phone Number"
+              name="phone"
+              type="text"
+              placeholder="Phone Number (e.g., 080 123 45678)"
+              id="phone"
+              error={validationErrors["phone"]}
+              onChange={handleChange}
+              required="required"
+              value={formData.phone}
+            />
+          </div>
 
           <TextInputField
             label="Password"

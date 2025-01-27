@@ -305,6 +305,15 @@ const BeatPatrol = () => {
           </div>
         </Modal.Body>
         <Modal.Footer>
+        <Button
+            isProcessing={isUpdatingPatrol}
+            disabled={isUpdatingPatrol}
+            onClick={() => setOpenEditPatrolModal(false)}
+            color={"gray"}
+            type="submit"
+          >
+            Cancel
+          </Button>
           <Button
             isProcessing={isUpdatingPatrol}
             disabled={isUpdatingPatrol}
@@ -314,15 +323,7 @@ const BeatPatrol = () => {
           >
             Save Changes
           </Button>
-          <Button
-            isProcessing={isUpdatingPatrol}
-            disabled={isUpdatingPatrol}
-            onClick={() => setOpenEditPatrolModal(false)}
-            color={"gray"}
-            type="submit"
-          >
-            Cancel
-          </Button>
+         
         </Modal.Footer>
       </Modal>
     </div>

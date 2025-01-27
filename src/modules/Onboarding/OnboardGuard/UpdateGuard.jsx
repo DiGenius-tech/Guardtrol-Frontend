@@ -106,6 +106,9 @@ function UpdateGuard(props) {
 
           <div className="">
             <div className="flex items-center justify-between">
+            <button type="button" onClick={props.cancelEdit}>
+                Cancel
+              </button>
               <RegularButton
                 text="Update"
                 rounded="full"
@@ -113,9 +116,7 @@ function UpdateGuard(props) {
                 padding="px-8 py-2.5"
                 textSize="sm"
               />
-              <button type="button" onClick={props.cancelEdit}>
-                Cancel
-              </button>
+
             </div>
           </div>
         </form>

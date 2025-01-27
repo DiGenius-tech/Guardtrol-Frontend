@@ -122,17 +122,23 @@ function VerifyEmail() {
           <div className="mt-8"></div>
           <div className="block px-4 py-8 sm:p-8 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
             <form method="post" onSubmit={handleSubmit}>
-              <TextInputField
-                label="Enter Code"
-                name="code"
-                type="text"
-                placeholder="******"
-                id="code"
-                error={validationErrors["code"]}
-                onChange={handleChange}
-                required
-                value={formData.code}
-              />
+            <TextInputField
+  label="Enter Code"
+  name="code"
+  type="text" // Use "text" to avoid browser number handling quirks
+  placeholder="******"
+  id="code"
+  error={validationErrors["code"]}
+  onChange={(e) => {
+    const value = e.target.value;
+    if (/^\d{0,6}$/.test(value)) {
+      handleChange(e); // Allow input only if it matches the pattern
+    }
+  }}
+  required
+  value={formData.code}
+/>
+
               <RegularButton text="Continue" />
               <div className="flex justify-end pt-9">
                 <div

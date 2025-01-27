@@ -118,6 +118,9 @@ function EditBeat({ beatToEdit, openModal, handleUpdateBeat, setOpenModal }) {
               </div>
               <div className="">
                 <div className="flex items-center justify-between">
+                <button type="button" onClick={() => setOpenModal(false)}>
+                    Cancel
+                  </button>
                   <RegularButton
                     text="Update Beat"
                     rounded="full"
@@ -125,9 +128,7 @@ function EditBeat({ beatToEdit, openModal, handleUpdateBeat, setOpenModal }) {
                     padding="px-8 py-2.5"
                     textSize="sm"
                   />
-                  <button type="button" onClick={() => setOpenModal(false)}>
-                    Cancel
-                  </button>
+ 
                 </div>
               </div>
             </form>

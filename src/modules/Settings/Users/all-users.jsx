@@ -406,6 +406,9 @@ function OrganizationUsers() {
           </div>
         </Modal.Body>
         <Modal.Footer>
+        <Button color="gray" onClick={handleCloseModal}>
+            Cancel
+          </Button>
           <Button
             disabled={isUpdatingUser || isCreatingUser}
             className="bg-[#008080] "
@@ -420,9 +423,7 @@ function OrganizationUsers() {
               />
             )}
           </Button>
-          <Button color="gray" onClick={handleCloseModal}>
-            Cancel
-          </Button>
+        
         </Modal.Footer>
       </Modal>
     </div>

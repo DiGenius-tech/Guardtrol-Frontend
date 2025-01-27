@@ -302,19 +302,20 @@ const PatrolGuardDetails = () => {
                     ></textarea>
                   </div>
                   <div className="flex items-center gap-2">
-                    <button
-                      type="submit"
-                      className="text-white bg-primary-600 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
-                    >
-                      Submit
-                    </button>
-                    <button
+                  <button
                       onClick={() => setIsComment(false)}
                       type="button"
                       className="text-white bg-gray-300 focus:outline-none font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center"
                     >
                       Cancel
                     </button>
+                    <button
+                      type="submit"
+                      className="text-white bg-primary-600 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+                    >
+                      Submit
+                    </button>
+          
                   </div>
                 </form>
               </>

@@ -623,6 +623,14 @@ const RenewSubscription = ({
       </Modal.Body>
       {!hasTooManyActiveSubscriptions && (
         <Modal.Footer>
+           <Button color="gray" onClick={() => setRenewalModal(false)}>
+            Cancel
+          </Button>
+          {isExpired && (
+            <Button color="red" onClick={() => handleLogout()}>
+              Logout
+            </Button>
+          )}
           <Button
             isProcessing={isLoading}
             disabled={isLoading || Number(newSubscriptionTotalAmount) === 0}
@@ -632,14 +640,7 @@ const RenewSubscription = ({
           >
             Renew
           </Button>
-          <Button color="gray" onClick={() => setRenewalModal(false)}>
-            Cancel
-          </Button>
-          {isExpired && (
-            <Button color="red" onClick={() => handleLogout()}>
-              Logout
-            </Button>
-          )}
+         
         </Modal.Footer>
       )}
     </Modal>
