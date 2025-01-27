@@ -220,6 +220,8 @@ function AddGuard({ onBoarding = true }) {
           <div className="">
             <div className="relative">
               <div className="flex items-center justify-between">
+              <HistoryButton type="button" text="Cancel" />
+
                 <RegularButton
                   disabled={isLoading}
                   isLoading={isLoading}
@@ -229,7 +231,6 @@ function AddGuard({ onBoarding = true }) {
                   padding="px-8 py-2.5"
                   textSize="sm"
                 />
-                <HistoryButton type="button" text="Cancel" />
               </div>
             </div>
           </div>

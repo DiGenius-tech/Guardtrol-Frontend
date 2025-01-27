@@ -46,11 +46,24 @@ const Shop = () => {
   const [isModalOpen, setIsModalOpen] = useState(false); // State variable to control modal visibility
   const [isLoading, setisLoading] = useState(false); // State variable to control modal visibility
 
-  const handleChange = (e) => {
-    setPlanFormData({ ...planFormData, [e.target.name]: e.target.value });
-    setValidationErrors({ ...validationErrors, [e.target.name]: "" });
-  };
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setPlanFormData((prev) => ({
+      ...prev,
+      [name]: value, // Update the field dynamically
+    }));
+    setValidationErrors((prev) => ({ ...prev, [name]: "" })); // Clear validation error
+  };
+  
+  const handleBlur = (e) => {
+    const { name, value } = e.target;
+    setPlanFormData((prev) => ({
+      ...prev,
+      [name]: value === "" ? (name === "numberofbeats" ? 1 : 0) : value, // Reset default value if empty
+    }));
+  };
+  
   const handleSubmit = async (e) => {
     setisLoading(true);
     e.preventDefault();
@@ -94,17 +107,17 @@ const Shop = () => {
             extraguards: planFormData.extraguards,
             ...(selectedPlan.type === "yearly"
               ? {
-                  amount:
-                    (selectedPlan.numberofbeats * 10000 +
-                      selectedPlan.extraguards * 2000) *
-                    12 *
-                    0.8,
-                }
+                amount:
+                  (selectedPlan.numberofbeats * 10000 +
+                    selectedPlan.extraguards * 2000) *
+                  12 *
+                  0.8,
+              }
               : {
-                  amount:
-                    selectedPlan.numberofbeats * 10000 +
-                    selectedPlan.extraguards * 2000,
-                }),
+                amount:
+                  selectedPlan.numberofbeats * 10000 +
+                  selectedPlan.extraguards * 2000,
+              }),
           },
           ...user,
         })
@@ -118,17 +131,17 @@ const Shop = () => {
             extraguards: planFormData.extraguards,
             ...(selectedPlan.type === "yearly"
               ? {
-                  amount:
-                    (selectedPlan.numberofbeats * 10000 +
-                      selectedPlan.extraguards * 2000) *
-                    12 *
-                    0.8,
-                }
+                amount:
+                  (selectedPlan.numberofbeats * 10000 +
+                    selectedPlan.extraguards * 2000) *
+                  12 *
+                  0.8,
+              }
               : {
-                  amount:
-                    selectedPlan.numberofbeats * 10000 +
-                    selectedPlan.extraguards * 2000,
-                }),
+                amount:
+                  selectedPlan.numberofbeats * 10000 +
+                  selectedPlan.extraguards * 2000,
+              }),
           },
           ...user,
         })
@@ -171,8 +184,8 @@ const Shop = () => {
     {
       title: `₦${formatNumberWithCommas(
         (planFormData.numberofbeats * 10000 + planFormData.extraguards * 2000) *
-          12 *
-          0.8
+        12 *
+        0.8
       )}`,
       body_list: [
         `₦${formatNumberWithCommas(
@@ -188,8 +201,8 @@ const Shop = () => {
         0.8,
       readable: `₦${formatNumberWithCommas(
         (planFormData.numberofbeats * 10000 + planFormData.extraguards * 2000) *
-          12 *
-          0.8
+        12 *
+        0.8
       )} per year`,
       numberofbeats: parseInt(planFormData.numberofbeats),
       extraguards: parseInt(planFormData.extraguards),
@@ -198,7 +211,6 @@ const Shop = () => {
 
   const onSelectPlan = (e) => {
     console.log(e.target.value);
-    // localStorage.setItem("selectedPlan", e.target.value);
     setSelectedPlan(JSON.parse(e.target.value));
   };
 
@@ -207,7 +219,7 @@ const Shop = () => {
     setIsModalOpen(false);
   };
 
-  const handleModalButtonClick = () => {};
+  const handleModalButtonClick = () => { };
 
   return (
     <>
@@ -250,29 +262,30 @@ const Shop = () => {
                 </span>
               }
               semibold_label={true}
-              type="text"
               id="numberofbeats"
-              required="required"
               muted_aside_text="Maximum of 5 Guard(s) per Beat"
+              name="numberofbeats"
+              type="number"
               name="numberofbeats"
               value={planFormData.numberofbeats}
               onChange={handleChange}
-              error={validationErrors["numberofbeats"]}
+              onBlur={handleBlur} // Ensure default value on blur
+              min={1}
+              max={10}
+              error={validationErrors.numberofbeats}
             />
           </div>
           <div className="mb-6">
             <TextInputField
-              label="How many Extra Guard(s)?"
-              placeholder="₦2,000 per Guard(s)"
-              semibold_label={true}
-              type="number"
-              id="number-of-extra-guard"
-              required="required"
-              placeholder_right={true}
-              name="extraguards"
-              value={planFormData.extraguards}
-              onChange={handleChange}
-              error={validationErrors["extraguards"]}
+               label="How many Extra Guard(s)?"
+               type="number"
+               name="extraguards"
+               value={planFormData.extraguards}
+               onChange={handleChange}
+               onBlur={handleBlur} // Ensure default value on blur
+               min={0}
+               max={10}
+               error={validationErrors.extraguards}
             />
           </div>
           <div className="mb-6">
@@ -282,11 +295,14 @@ const Shop = () => {
               </legend>
 
               <ul className="flex justify-center flex-row items-center flex-wrap gap-2">
-                {membership_card_data.map((data) => {
+                {membership_card_data.map((data, index) => {
+                  const isMonthly = index === 0; // Assuming the first card is for monthly
+                  const isYearly = index === 1;  // Assuming the second card is for yearly
+
                   return (
                     <li
                       key={data.type}
-                      className=" max-w-[250px] w-[48%] min-w-[200px]"
+                      className="max-w-[250px] w-[48%] min-w-[200px]"
                     >
                       <input
                         type="radio"
@@ -297,9 +313,32 @@ const Shop = () => {
                       />
                       <label htmlFor={data.type}>
                         <span
-                          className="plan-option-card | cursor-pointer flex flex-col items-center max-w-sm p-4 sm:p-6 rounded-lg shadow dark:bg-gray-800 dark:hover:bg-gray-700
-                          text-white"
+                          className="plan-option-card | cursor-pointer flex flex-col items-center max-w-sm p-4 sm:p-6 rounded-lg shadow dark:bg-gray-800 dark:hover:bg-gray-700 text-white"
                         >
+                          {/* Header */}
+                          <h3 className="text-lg font-bold mb-4">
+                            {isMonthly && "Monthly Plan"}
+                            {isYearly && "Yearly Plan"}
+                          </h3>
+
+                          {/* Original Price */}
+
+                          {isYearly && <div className="mb-4">
+                            <span className="text-red-500 text-xl font-semibold line-through mr-2">
+                             {`₦${formatNumberWithCommas(data.amount/0.8) }` }
+                            </span>
+
+                          </div>}
+                          {/* Breaklines for design purpose if it is a monthly plan, if not it will shouw the original price slashed*/}
+                          {isMonthly && <div className="mb-4">
+                            <span className="text-red-500 text-xl font-semibold line-through mr-2">
+                            </span>
+                            <span className="text-green-500 text-2xl font-bold">
+                            </span>
+                          </div>}
+
+
+                          {/* Card Content */}
                           <div className="mb-10 sm:mb-12">
                             <h2 className="text-xl sm:text-4xl my-8 sm:my-10 font-semibold">
                               {data.title}
@@ -310,6 +349,8 @@ const Shop = () => {
                               })}
                             </ul>
                           </div>
+
+                          {/* Footer */}
                           <span className="footer text-[#9BA2A7] text-center text-[9px] sm:text-[13px] font-semibold sm:font-normal">
                             {data.footer}
                           </span>
@@ -319,6 +360,7 @@ const Shop = () => {
                   );
                 })}
               </ul>
+
             </fieldset>
           </div>
 
@@ -329,10 +371,10 @@ const Shop = () => {
               "Continue to Pay ₦" +
               (selectedPlan
                 ? `${formatNumberWithCommas(
-                    membership_card_data.filter((data) => {
-                      return data.type == selectedPlan.type;
-                    })[0].amount
-                  )}`
+                  membership_card_data.filter((data) => {
+                    return data.type == selectedPlan.type;
+                  })[0].amount
+                )}`
                 : "0")
             }
           />

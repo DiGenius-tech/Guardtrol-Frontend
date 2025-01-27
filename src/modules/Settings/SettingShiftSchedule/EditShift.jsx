@@ -162,6 +162,9 @@ const EditShiftModal = ({ openModal, closeEditShiftModal, shiftToEdit }) => {
       </Modal.Body>
 
       <Modal.Footer>
+      <Button color="gray" onClick={() => closeEditShiftModal()}>
+          Cancel
+        </Button>
         <Button
           isProcessing={isLoading}
           disabled={isLoading}
@@ -171,9 +174,7 @@ const EditShiftModal = ({ openModal, closeEditShiftModal, shiftToEdit }) => {
         >
           Update
         </Button>
-        <Button color="gray" onClick={() => closeEditShiftModal()}>
-          Cancel
-        </Button>
+       
       </Modal.Footer>
     </Modal>
   );

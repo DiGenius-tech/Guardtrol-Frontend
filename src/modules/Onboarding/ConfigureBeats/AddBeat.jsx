@@ -160,6 +160,7 @@ function AddBeat() {
           </div>
           <div className="">
             <div className="flex items-center justify-between">
+              <HistoryButton type="button" text="Cancel" />
               <RegularButton
                 text="Add Beat"
                 rounded="full"
@@ -169,7 +170,7 @@ function AddBeat() {
                 padding="px-8 py-2.5"
                 textSize="sm"
               />
-              <HistoryButton type="button" text="Cancel" />
+
             </div>
           </div>
         </form>
@@ -180,7 +181,7 @@ function AddBeat() {
         description="Would You Like To Subscribe For Another Beat?"
         setOpen={setOpen}
         actionText="Subscribe"
-        action={() => {}}
+        action={() => { }}
       />
     </>
   );

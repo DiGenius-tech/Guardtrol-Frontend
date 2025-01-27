@@ -253,14 +253,7 @@ function AssignNewBeat({ isOnboarding = true }) {
             />
           </div> */}
           <div className="flex justify-between items-center">
-            <RegularButton
-              disabled={isLoading}
-              isLoading={isLoading}
-              text="Save Changes"
-              width="[150px]"
-            />
-
-            <span
+          <span
               onClick={() => {
                 navigate(-1);
               }}
@@ -269,6 +262,14 @@ function AssignNewBeat({ isOnboarding = true }) {
             >
               Cancel
             </span>
+            <RegularButton
+              disabled={isLoading}
+              isLoading={isLoading}
+              text="Save Changes"
+              width="[150px]"
+            />
+
+           
           </div>
           {isOnboarding ? (
             <p className="text-center mx-auto pt-10 max-w-[400px] text-dark-400">

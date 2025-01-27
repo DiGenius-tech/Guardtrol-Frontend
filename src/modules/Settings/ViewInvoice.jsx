@@ -29,6 +29,9 @@ const ViewInvoice = ({ openModal, setViewInvoiceModal, invoice }) => {
         <Invoice componentRef={componentRef} invoice={invoice} />
       </Modal.Body>
       <Modal.Footer>
+      <Button color="gray" onClick={() => setViewInvoiceModal(false)}>
+          Cancel
+        </Button>
         <Button
           isProcessing={isLoading}
           disabled={isLoading}
@@ -39,9 +42,7 @@ const ViewInvoice = ({ openModal, setViewInvoiceModal, invoice }) => {
           Print
         </Button>
 
-        <Button color="gray" onClick={() => setViewInvoiceModal(false)}>
-          Cancel
-        </Button>
+  
       </Modal.Footer>
     </Modal>
   );

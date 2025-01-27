@@ -180,43 +180,43 @@ const Membership = () => {
       <div className="mx-auto max-w-[500px] my-16">
         <form onSubmit={handleSubmit} method="post">
           <div className="mb-6">
-            <TextInputField
-              label={
-                <span>
-                  How many Beat(s)?
-                  {/* Tooltip Icon */}
-                  <span className="ml-2 relative group">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-4 w-4 inline-block text-gray-500 cursor-pointer hover:text-gray-700"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                      />
-                    </svg>
-                    {/* Tooltip Text */}
-                    <span className="absolute left-0 bottom-6 w-48 bg-gray-700 text-white text-sm rounded p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                      A beat is a designated patrol area consisting of multiple patrol points where guards ensure security coverage.
-                    </span>
-                  </span>
-                </span>
-              }
-              semibold_label={true}
-              type="text"
-              id="numberofbeats"
-              required="required"
-              muted_aside_text="Maximum of 5 Guard(s) per Beat"
-              name="numberofbeats"
-              value={planFormData.numberofbeats}
-              onChange={handleChange}
-              error={validationErrors["numberofbeats"]}
-            />
+          <TextInputField
+  label={
+    <span>
+      How many Beat(s)?
+      {/* Tooltip Icon */}
+      <span className="ml-2 relative group">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-4 w-4 inline-block text-gray-500 cursor-pointer hover:text-gray-700"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+          />
+        </svg>
+        {/* Tooltip Text */}
+        <span className="absolute left-0 bottom-6 w-48 bg-gray-700 text-white text-sm rounded p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+          A beat is a designated patrol area consisting of multiple patrol points where guards ensure security coverage.
+        </span>
+      </span>
+    </span>
+  }
+  semibold_label={true}
+  type="text"
+  id="numberofbeats"
+  required="required"
+  muted_aside_text="Maximum of 5 Guard(s) per Beat"
+  name="numberofbeats"
+  value={planFormData.numberofbeats}
+  onChange={handleChange}
+  error={validationErrors["numberofbeats"]}
+/>
           </div>
           <div className="mb-6">
             <TextInputField
