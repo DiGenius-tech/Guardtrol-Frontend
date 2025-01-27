@@ -163,6 +163,8 @@ const AddBeat = () => {
           </div>
           <div className="">
             <div className="flex items-center justify-between">
+              <HistoryButton type="button" text="Cancel" />
+
               <RegularButton
                 text="Add Beat"
                 rounded="full"
@@ -172,7 +174,6 @@ const AddBeat = () => {
                 padding="px-8 py-2.5"
                 textSize="sm"
               />
-              <HistoryButton type="button" text="Cancel" />
             </div>
           </div>
         </form>

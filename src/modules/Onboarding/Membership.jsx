@@ -91,9 +91,8 @@ const Membership = () => {
 
   const membership_card_data = [
     {
-      title: `₦${
-        planFormData.numberofbeats * 10000 + planFormData.extraguards * 2000
-      }`,
+      title: `₦${planFormData.numberofbeats * 10000 + planFormData.extraguards * 2000
+        }`,
       body_list: [
         `₦${planFormData.numberofbeats * 10000} P/M`,
         `${planFormData.extraguards} Extraguards x ₦2000`,
@@ -102,18 +101,16 @@ const Membership = () => {
       type: "monthly",
       amount:
         planFormData.numberofbeats * 10000 + planFormData.extraguards * 2000,
-      readable: `₦${
-        planFormData.numberofbeats * 10000 + planFormData.extraguards * 2000
-      } per month`,
+      readable: `₦${planFormData.numberofbeats * 10000 + planFormData.extraguards * 2000
+        } per month`,
       numberofbeats: planFormData.numberofbeats,
       extraguards: planFormData.extraguards,
     },
     {
-      title: `₦${
-        (planFormData.numberofbeats * 10000 + planFormData.extraguards * 2000) *
+      title: `₦${(planFormData.numberofbeats * 10000 + planFormData.extraguards * 2000) *
         12 *
         0.8
-      }`,
+        }`,
       body_list: [
         `₦${planFormData.numberofbeats * 10000 * 12 * 0.8} P/Y`,
         `${planFormData.extraguards} Extraguards x ₦20000`,
@@ -124,11 +121,10 @@ const Membership = () => {
         (planFormData.numberofbeats * 10000 + planFormData.extraguards * 2000) *
         12 *
         0.8,
-      readable: `₦${
-        (planFormData.numberofbeats * 10000 + planFormData.extraguards * 2000) *
+      readable: `₦${(planFormData.numberofbeats * 10000 + planFormData.extraguards * 2000) *
         12 *
         0.8
-      } per year`,
+        } per year`,
       numberofbeats: planFormData.numberofbeats,
       extraguards: planFormData.extraguards,
     },
@@ -142,7 +138,7 @@ const Membership = () => {
     setIsModalOpen(false);
   };
 
-  const handleModalButtonClick = () => {};
+  const handleModalButtonClick = () => { };
 
   const config = {
     public_key: "FLWPUBK-a1be03107079ab0523984695c59cbbed-X",
@@ -168,7 +164,7 @@ const Membership = () => {
     callback: (response) => {
       closePaymentModal(); // this will close the modal programmatically
     },
-    onClose: () => {},
+    onClose: () => { },
   };
 
   return (
@@ -185,7 +181,32 @@ const Membership = () => {
         <form onSubmit={handleSubmit} method="post">
           <div className="mb-6">
             <TextInputField
-              label="How many Beat(s)?"
+              label={
+                <span>
+                  How many Beat(s)?
+                  {/* Tooltip Icon */}
+                  <span className="ml-2 relative group">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-4 w-4 inline-block text-gray-500 cursor-pointer hover:text-gray-700"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                    {/* Tooltip Text */}
+                    <span className="absolute left-0 bottom-6 w-48 bg-gray-700 text-white text-sm rounded p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                      A beat is a designated patrol area consisting of multiple patrol points where guards ensure security coverage.
+                    </span>
+                  </span>
+                </span>
+              }
               semibold_label={true}
               type="text"
               id="numberofbeats"
