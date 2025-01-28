@@ -55,7 +55,7 @@ const Shop = () => {
     }));
     setValidationErrors((prev) => ({ ...prev, [name]: "" })); // Clear validation error
   };
-  
+
   const handleBlur = (e) => {
     const { name, value } = e.target;
     setPlanFormData((prev) => ({
@@ -63,7 +63,7 @@ const Shop = () => {
       [name]: value === "" ? (name === "numberofbeats" ? 1 : 0) : value, // Reset default value if empty
     }));
   };
-  
+
   const handleSubmit = async (e) => {
     setisLoading(true);
     e.preventDefault();
@@ -234,7 +234,7 @@ const Shop = () => {
       <div className="mx-auto max-w-[500px] my-16">
         <form onSubmit={handleSubmit} method="post">
           <div className="mb-6">
-          <TextInputField
+            <TextInputField
               label={
                 <span>
                   How many Beat(s)?
@@ -277,15 +277,15 @@ const Shop = () => {
           </div>
           <div className="mb-6">
             <TextInputField
-               label="How many Extra Guard(s)?"
-               type="number"
-               name="extraguards"
-               value={planFormData.extraguards}
-               onChange={handleChange}
-               onBlur={handleBlur} // Ensure default value on blur
-               min={0}
-               max={10}
-               error={validationErrors.extraguards}
+              label="How many Extra Guard(s)?"
+              type="number"
+              name="extraguards"
+              value={planFormData.extraguards}
+              onChange={handleChange}
+              onBlur={handleBlur} // Ensure default value on blur
+              min={0}
+              max={10}
+              error={validationErrors.extraguards}
             />
           </div>
           <div className="mb-6">
@@ -324,10 +324,11 @@ const Shop = () => {
                           {/* Original Price */}
 
                           {isYearly && <div className="mb-4">
-                            <span className="text-red-500 text-xl font-semibold line-through mr-2">
-                             {`₦${formatNumberWithCommas(data.amount/0.8) }` }
+                            <span
+                              className="text-grey-500 text-xxl font-normal line-through mr-2 decoration-grey decoration-5"
+                            >
+                              {`₦${formatNumberWithCommas(data.amount / 0.8)}`}
                             </span>
-
                           </div>}
                           {/* Breaklines for design purpose if it is a monthly plan, if not it will shouw the original price slashed*/}
                           {isMonthly && <div className="mb-4">

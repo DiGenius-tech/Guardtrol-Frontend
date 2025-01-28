@@ -252,7 +252,7 @@ const Membership = () => {
                       />
                       <label htmlFor={data.type}>
                         <span
-                          className="plan-option-card | cursor-pointer flex flex-col items-center max-w-sm p-4 sm:p-6 rounded-lg shadow dark:bg-gray-800 dark:hover:bg-gray-700
+                          className="plan-option-card | cursor-pointer flex flex-col items-center max-w-sm p-4 sm:p-6 rounded-lg shadow dark:bg-gray-200 dark:hover:bg-gray-700
                           text-white"
                         >
                           <div className="mb-10 sm:mb-12">
