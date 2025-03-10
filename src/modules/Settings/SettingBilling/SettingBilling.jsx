@@ -290,9 +290,21 @@ const SettingBilling = () => {
                           >
                             {invoice?.amount}
                           </td>
-                          <td
+                          {/* <td
                             scope="row"
                             className="px-6 py-4 font-medium capitalize text-gray-900 whitespace-nowrap dark:text-white"
+                          >
+                            {invoice?.status}
+                          </td> */}
+                          <td
+                            scope="row"
+                            className={`px-6 py-4 font-medium capitalize whitespace-nowrap ${
+                              invoice?.status === 'success'
+                                ? 'text-green-600 dark:text-green-500'
+                                : invoice?.status === 'failed'
+                                ? 'text-red-600 dark:text-red-500'
+                                : 'text-amber-600 dark:text-amber-500'
+                            }`}
                           >
                             {invoice?.status}
                           </td>
