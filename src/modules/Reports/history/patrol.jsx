@@ -127,6 +127,7 @@ const PatrolHistory = () => {
             <option value="pending">Pending</option>
             <option value="abandoned">Abandoned</option>
             <option value="completed">Completed</option>
+            <option value="interrupted">Interrupted</option>
           </select>
           <select
             value={selectedBeat}
@@ -192,6 +193,7 @@ const PatrolHistory = () => {
             <Table.HeadCell>Status</Table.HeadCell>
             <Table.HeadCell className="min-w-60">Start Time</Table.HeadCell>
             <Table.HeadCell className=" min-w-60">End Time</Table.HeadCell>
+            <Table.HeadCell className=" min-w-100">Description</Table.HeadCell>
           </Table.Head>
           <Table.Body className="divide-y">
             {isLoading && (
@@ -253,6 +255,12 @@ const PatrolHistory = () => {
                         "-" +
                         formatTime(instance.endtime)
                       : "Not completed"}
+                  </Table.Cell>
+                  <Table.Cell>
+                    {instance.description
+                      ? instance.description
+                        
+                      : "No description"}
                   </Table.Cell>
                 </Table.Row>
               ))}

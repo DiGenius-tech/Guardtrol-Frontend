@@ -8,6 +8,7 @@ import BeatDetailsHeader from "./BeatDetailsTabs/BeatDetailsHeader";
 import PatrolGuardList from "../Guard/guad-list/PatrolGuardList";
 import InactivePatrolGuards from "../Guard/guad-list/InactivePatrolGuards";
 import ActivePatrolGuards from "../Guard/guad-list/ActivePatrolGuards";
+import BeatBreaks from "./BeatDetailsTabs/BeatBreaks";
 import { POOLING_TIME } from "../../constants/static";
 
 const BeatDetails = () => {

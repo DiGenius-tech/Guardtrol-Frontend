@@ -32,6 +32,10 @@ const PATROL_STATUS = {
     label: "Completed",
     className: badgeStyles.blue300,
   },
+  interrupted: {
+    label: "Interrupted",
+    className: badgeStyles.yellow100,
+  },
 };
 
 const LOG_TYPE = {
