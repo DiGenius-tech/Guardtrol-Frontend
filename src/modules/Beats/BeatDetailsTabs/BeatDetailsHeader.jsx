@@ -1,5 +1,6 @@
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { HiAdjustments, HiClipboardList, HiUserCircle } from "react-icons/hi";
+import { IoIosCafe } from "react-icons/io"; 
 import { MdDashboard } from "react-icons/md";
 import { Button, Tabs, TabsRef } from "flowbite-react";
 import { useEffect, useRef, useState } from "react";
@@ -12,6 +13,7 @@ import BeatPoint from "./BeatPoint";
 import { useGetBeatsQuery } from "../../../redux/services/beats";
 import { useSelector } from "react-redux";
 import { selectOrganization } from "../../../redux/selectors/auth";
+import BeatBreaks from "./BeatBreaks";
 import { POOLING_TIME } from "../../../constants/static";
 
 function useQuery() {
@@ -61,6 +63,9 @@ function BeatDetailsHeader() {
           </Tabs.Item>
           <Tabs.Item title="Points" icon={BiAlbum}>
             <BeatPoint />
+          </Tabs.Item>
+          <Tabs.Item title="Breaks" icon={IoIosCafe}>
+            <BeatBreaks />
           </Tabs.Item>
         </Tabs>
       </div>

@@ -45,6 +45,7 @@ export const api = createApi({
     "Patrols",
     "BeatHistory",
     "GuardHistory",
+    "Breaks"
   ],
   endpoints: () => ({}),
 });
