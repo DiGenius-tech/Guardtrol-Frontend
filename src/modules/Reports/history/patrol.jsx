@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, Spinner, Table, TextInput } from "flowbite-react";
+import { Button, Spinner, Table, TextInput, Modal } from "flowbite-react";
 import "tailwindcss/tailwind.css";
 import * as XLSX from "xlsx";
 import { useSelector } from "react-redux";
@@ -24,6 +24,10 @@ const PatrolHistory = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [entriesPerPage, setEntriesPerPage] = useState(5);
   const [selectedBeatData, setselectedBeatData] = useState();
+  
+  // State for description logs popup
+  const [showLogsModal, setShowLogsModal] = useState(false);
+  const [currentPatrolDetails, setCurrentPatrolDetails] = useState(null);
 
   const { data: beatsApiResponse } = useGetBeatsQuery(
     { organization: organization },
@@ -99,6 +103,38 @@ const PatrolHistory = () => {
       status: <Badge status={patrolInstance.status} type={"PATROL_STATUS"} />,
     }));
   };
+  
+  // Handle opening the logs modal
+  const handleViewDetails = (instance) => {
+    setCurrentPatrolDetails(instance);
+    setShowLogsModal(true);
+  };
+
+  // Helper function to prepare description for display
+  const prepareDescription = (description) => {
+    if (!description) {
+      return [];
+    }
+    
+    if (Array.isArray(description)) {
+      return description.filter(item => item && item.trim() !== "");
+    }
+    
+    if (typeof description === 'string' && description.trim() !== "") {
+      return [description];
+    }
+    
+    return [];
+  };
+
+  // Check if description has content
+  const hasDescriptionContent = (description) => {
+    if (!description) return false;
+    if (Array.isArray(description)) return description.some(item => item && item.trim() !== "");
+    if (typeof description === 'string') return description.trim() !== "";
+    return false;
+  };
+
   return (
     <div className="container mx-auto relative pb-40 sm:pb-20">
       <section className="mb-2">
@@ -199,7 +235,7 @@ const PatrolHistory = () => {
             {isLoading && (
               <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
                 <Table.Cell
-                  colSpan={7}
+                  colSpan={8}
                   className="whitespace-nowrap font-medium text-center text-gray-900 dark:text-white"
                 >
                   <div className="w-full h-full justify-center flex items-center">
@@ -214,7 +250,7 @@ const PatrolHistory = () => {
             {!isLoading && patrolInstancesApiResponse.patrols?.length === 0 && (
               <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
                 <Table.Cell
-                  colSpan={9}
+                  colSpan={8}
                   className="whitespace-nowrap font-medium text-center text-gray-900 dark:text-white"
                 >
                   No History
@@ -257,10 +293,18 @@ const PatrolHistory = () => {
                       : "Not completed"}
                   </Table.Cell>
                   <Table.Cell>
-                    {instance.description
-                      ? instance.description
-                        
-                      : "No description"}
+                    {hasDescriptionContent(instance.description) ? (
+                      <Button 
+                        size="sm" 
+                        className="bg-[#008080]"
+                        color="info"
+                        onClick={() => handleViewDetails(instance)}
+                      >
+                        View Logs
+                      </Button>
+                    ) : (
+                      <span className="text-gray-500">No description</span>
+                    )}
                   </Table.Cell>
                 </Table.Row>
               ))}
@@ -274,6 +318,97 @@ const PatrolHistory = () => {
         onPageChange={setCurrentPage}
         onEntriesPerPageChange={setEntriesPerPage}
       />
+
+      {/* Enhanced Patrol Details Modal */}
+      <Modal
+        show={showLogsModal}
+        onClose={() => setShowLogsModal(false)}
+        size="lg"
+      >
+        <Modal.Header>
+          <span className="text-lg font-semibold">
+            Patrol Details: {currentPatrolDetails?.patrol?.name || "N/A"}
+          </span>
+        </Modal.Header>
+        <Modal.Body>
+          {currentPatrolDetails && (
+            <div className="space-y-6">
+              {/* Patrol Information Section */}
+              <div className="border-b pb-4">
+                <h3 className="text-md font-semibold mb-3">Patrol Information</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-sm text-gray-500">Beat</p>
+                    <p className="font-medium">{currentPatrolDetails.beat?.name || "N/A"}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Status</p>
+                    <div className="font-medium mt-1">
+                      {typeof currentPatrolDetails.status === 'string' ? (
+                        <Badge status={currentPatrolDetails.status} type={"PATROL_STATUS"} />
+                      ) : (
+                        currentPatrolDetails.status
+                      )}
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Start Time</p>
+                    <p className="font-medium">
+                      {currentPatrolDetails.starttime
+                        ? `${formatDate(currentPatrolDetails.starttime)} ${formatTime(currentPatrolDetails.starttime)}`
+                        : "Not started"}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">End Time</p>
+                    <p className="font-medium">
+                      {currentPatrolDetails.endtime
+                        ? `${formatDate(currentPatrolDetails.endtime)} ${formatTime(currentPatrolDetails.endtime)}`
+                        : "Not completed"}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Personnel Section */}
+              <div className="border-b pb-4">
+                <h3 className="text-md font-semibold mb-3">Personnel</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-sm text-gray-500">Assigned Guard</p>
+                    <p className="font-medium capitalize">{currentPatrolDetails.guard?.name || "N/A"}</p>
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Abandoned By</p>
+                    <p className="font-medium capitalize">{currentPatrolDetails.abandonedby?.name || "N/A"}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Description/Logs Section */}
+              <div>
+                <h3 className="text-md font-semibold mb-3">Patrol Logs</h3>
+                {prepareDescription(currentPatrolDetails.description).length > 0 ? (
+                  <div className="bg-gray-50 p-4 rounded-lg">
+                    <ul className="list-disc pl-5 space-y-2">
+                      {prepareDescription(currentPatrolDetails.description).map((log, index) => (
+                        <li key={index} className="text-gray-700">
+                          {log}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : (
+                  <p className="text-gray-500 italic">No logs available for this patrol</p>
+                )}
+              </div>
+            </div>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button onClick={() => setShowLogsModal(false)}>Close</Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };
