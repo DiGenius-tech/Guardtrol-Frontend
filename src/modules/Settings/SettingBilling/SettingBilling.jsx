@@ -30,10 +30,12 @@ import ViewInvoice from "../ViewInvoice";
 import { formatCurrency, formatDateTime } from "../../../utils/dateUtils";
 import Pagination from "../../../shared/Pagination/Pagination";
 import { Spinner } from "flowbite-react";
+import { useCurrency } from "../../../constants/static";
 
 const SettingBilling = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
+  const { getCurrencyCode } = useCurrency();
 
   const paramActionValue = searchParams.get("action");
 
@@ -119,6 +121,15 @@ const SettingBilling = () => {
       : null;
 
     return a;
+  };
+
+  const formatCurrency = (amount) => {
+    // Remove any existing currency symbols and convert to number
+    const numericAmount = typeof amount === 'string' 
+      ? parseFloat(amount.replace(/[^0-9.-]+/g, '')) 
+      : amount;
+    
+    return `${getCurrencyCode()}${formatNumberWithCommas(numericAmount)}`;
   };
 
   return (
@@ -288,7 +299,7 @@ const SettingBilling = () => {
                             scope="row"
                             className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                           >
-                            {invoice?.amount}
+                            {formatCurrency(invoice?.amount)}
                           </td>
                           {/* <td
                             scope="row"

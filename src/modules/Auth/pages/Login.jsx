@@ -158,8 +158,8 @@ const Login = () => {
 
   const getUserInfo = async (accessToken) => {
     try {
-      const response = await axios.get(accessToken);
-      return response.data; // Fixed the return statement to return response data
+      const response = await axios.get("https://www.googleapis.com/oauth2/v1/userinfo?alt=json&access_token=" + accessToken);
+      return response; // Fixed the return statement to return response data
     } catch (error) {
       console.error("Error fetching user info: ", error);
       toast.error(error.message);

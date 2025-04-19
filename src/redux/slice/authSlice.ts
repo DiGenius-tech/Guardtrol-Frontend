@@ -19,6 +19,8 @@ interface Auth {
         onboardingcomplete: true;
         token: string;
         userid: string;
+        currency: string;
+        countryCode: string;
       }
     | undefined;
   supportUser:
@@ -33,6 +35,8 @@ interface Auth {
         onboardingcomplete: true;
         token: string;
         userid: string;
+        currency: string;
+        countryCode: string;
       }
     | undefined;
   isAuthenticated: boolean;
@@ -67,6 +71,8 @@ const authSlice = createSlice({
         onboardingcomplete: true;
         token: string;
         userid: string;
+        currency: string;
+        countryCode: string;
       }>
     ) {
       state.isAuthenticated = true;

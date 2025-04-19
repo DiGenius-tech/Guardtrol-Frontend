@@ -13,12 +13,14 @@ import { API_BASE_URL, ASSET_URL } from "../../../constants/api";
 import axios from "axios";
 import { useGetUserQuery } from "../../../redux/services/user";
 import { toast } from "react-toastify";
+import { countryCodes } from "../../../constants/countryCodes";
 
 const PersonalInformationSchema = Yup.object().shape({
   name: Yup.string().required("Fullname is required"),
   email: Yup.string().required("Email is required"),
   phone: Yup.string().required("PhoneNumber is required"),
   address: Yup.string().required("Address is required"),
+  countryCode: Yup.string().required("Country code is required"),
 });
 
 const SettingPersonalInformation = () => {
@@ -67,7 +69,10 @@ const SettingPersonalInformation = () => {
   const [loading, setLoading] = useState(false);
 
   const formik = useFormik({
-    initialValues: { ...user },
+    initialValues: { 
+      ...user,
+      countryCode: user?.countryCode || "+234" // Default to Nigeria's code if not set
+    },
     validationSchema: PersonalInformationSchema,
     onSubmit: async (values) => {
       setLoading(true);
@@ -91,6 +96,7 @@ const SettingPersonalInformation = () => {
         phone: values.phone,
         address: values.address,
         name: values.name,
+        countryCode: values.countryCode,
       },
       token,
       true,
@@ -267,13 +273,35 @@ const SettingPersonalInformation = () => {
               </p>
             </div>
             <div className="col-span-12 sm:col-span-6">
-              <TextInputField
-                label="Phone Number"
-                {...formik.getFieldProps("phone")}
-                type="text"
-                id="phone"
-                semibold_label={true}
-              />
+              <div className="flex gap-4">
+                <div className="w-1/3">
+                  <label htmlFor="countryCode" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                    Country Code
+                  </label>
+                  <select
+                    id="countryCode"
+                    name="countryCode"
+                    value={formik.values.countryCode}
+                    onChange={formik.handleChange}
+                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  >
+                    {countryCodes.map((country) => (
+                      <option key={country.code} value={country.code}>
+                        {country.code} - {country.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="w-2/3">
+                  <TextInputField
+                    label="Phone Number"
+                    {...formik.getFieldProps("phone")}
+                    type="text"
+                    id="phone"
+                    semibold_label={true}
+                  />
+                </div>
+              </div>
               <div className="mb-3">
                 {formik.touched.phone && formik.errors.phone && (
                   <div className="">

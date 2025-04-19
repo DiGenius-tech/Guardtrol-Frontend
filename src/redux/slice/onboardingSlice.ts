@@ -4,6 +4,8 @@ import { RootState } from "../store";
 import { TUser } from "../../types/user";
 import { TSubscription } from "../../types/subscription";
 import { PURGE } from "redux-persist";
+import { useSelector } from 'react-redux';
+import { selectUser } from '../../redux/selectors/auth';
 
 interface Subscription {
   onboardingLevel: number | null;
@@ -33,7 +35,7 @@ const initialState: Subscription | null = {
       public_key: process.env.REACT_APP_FLUTTERWAVE_KEY,
       tx_ref: Date.now(),
       amount: undefined,
-      currency: "NGN",
+      currency: undefined,
       payment_options: "all",
       payment_plan: undefined,
       customer: {
@@ -66,6 +68,7 @@ const onboardingSlice = createSlice({
         amount: number;
         name: string;
         type: string;
+        currency?: string;
       }>
     ) {
       state.subscription.psConfig = {
@@ -76,6 +79,7 @@ const onboardingSlice = createSlice({
           name: action.payload.name,
         },
         publicKey: process.env.REACT_APP_PAYSTACK_KEY,
+        currency: action.payload.currency || 'NGN',
       };
     },
 
@@ -88,13 +92,14 @@ const onboardingSlice = createSlice({
         type: string;
         userid: string;
         clientid: string;
+        currency?: string;
       }>
     ) {
       state.subscription.fwConfig = {
         public_key: process.env.REACT_APP_FLUTTERWAVE_KEY,
         tx_ref: Date.now(),
         amount: action.payload?.amount,
-        currency: "NGN",
+        currency: action.payload.currency || 'NGN',
         payment_options: "all",
         payment_plan: action.payload.type,
         customer: {

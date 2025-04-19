@@ -1,6 +1,11 @@
 import { Button, Modal, Label, TextInput, Select, Radio } from "flowbite-react";
 import { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import PaystackPop from "@paystack/inline-js";
+import {
+  selectFwConfig,
+  selectPsConfig,
+} from "../../redux/selectors/onboarding";
 import {
   selectOrganization,
   selectToken,
@@ -10,6 +15,9 @@ import { usePaystackPayment } from "react-paystack";
 import { toast } from "react-toastify";
 import moment from "moment";
 import { suspenseHide, suspenseShow } from "../../redux/slice/suspenseSlice";
+import RegularButton from "../Sandbox/Buttons/RegularButton";
+import { useFlutterwave, closePaymentModal } from "flutterwave-react-v3";
+import { post } from "../../lib/methods";
 import Swal from "sweetalert2";
 import { useGetGuardsQuery } from "../../redux/services/guards";
 import { useGetBeatsQuery } from "../../redux/services/beats";
@@ -18,7 +26,8 @@ import {
   useGetAllMySubscriptionsQuery,
   useGetSubscriptionQuery,
 } from "../../redux/services/subscriptions";
-import { BEAT_PRICE, GUARD_PRICE, POOLING_TIME } from "../../constants/static";
+import { useCurrency, POOLING_TIME } from "../../constants/static";
+import axios from "axios";
 import { useGetInvoicesQuery } from "../../redux/services/invoice";
 import { persistor } from "../../redux/store";
 import { api } from "../../redux/services/api";
@@ -37,14 +46,17 @@ const RenewSubscription = ({
   setRenewalModal,
   isExpired = false,
 }) => {
+  const { getBeatPrice, getGuardPrice, getCurrencyCode, currency } = useCurrency();
+  const psConfig = useSelector(selectPsConfig);
+
   const organization = useSelector(selectOrganization);
 
   const { data: userRole } = useGetUserOrganizationRoleQuery(organization, {
     skip: organization ? false : true,
   });
 
-  const USED_BEAT_PRICE = userRole?.organization?.BEAT_PRICE || BEAT_PRICE;
-  const USED_GUARD_PRICE = userRole?.organization?.GUARD_PRICE || GUARD_PRICE;
+  const USED_BEAT_PRICE = userRole?.organization?.BEAT_PRICE || getBeatPrice();
+  const USED_GUARD_PRICE = userRole?.organization?.GUARD_PRICE || getGuardPrice();
 
   const token = useSelector(selectToken);
   const {
@@ -99,8 +111,8 @@ const RenewSubscription = ({
   const [currentSubscription, setCurrentSubscription] = useState(
     subscription?.plan
   );
-  const [newSubscription, setNewSubscription] = useState("monthly");
-  const [paymentOption, setPaymentOption] = useState("paystack");
+  const [newSubscription, setNewSubscription] = useState("annually");
+  const [paymentOption, setPaymentOption] = useState(currency === 'USD' ? "flutterwave" : "paystack");
   const [newSubscriptionExpirationDate, setNewSubscriptionExpirationDate] =
     useState(
       subscription
@@ -119,6 +131,8 @@ const RenewSubscription = ({
     mySuscriptions?.[0] ? "renewal" : "new-subscription"
   );
   const [paymentType, setPaymentType] = useState("recuring");
+
+  const [originalAmount, setOriginalAmount] = useState(0);
 
   const handleBeatChange = (e) => {
     const newBeats = parseInt(e.target.value);
@@ -153,8 +167,8 @@ const RenewSubscription = ({
     { name: "Select Option", value: "" },
     { name: "1 Month", value: "monthly" },
     { name: "3 Months", value: "quarterly" },
-    { name: "6 Months", value: "biannually" },
-    { name: "1 Year", value: "annually" },
+    { name: "6 Months (1 Month Free)", value: "biannually" },
+    { name: "1 Year (2 Months Free)", value: "annually" },
   ];
 
   const subscriptionActions = [
@@ -167,8 +181,8 @@ const RenewSubscription = ({
       : [{ value: "new-subscription", label: "New Subscription" }]),
   ];
   const paymentOptions = [
-    { value: "paystack", label: "Paystack" },
     { value: "flutterwave", label: "Flutterwave" },
+    ...(currency !== 'USD' ? [{ value: "paystack", label: "Paystack" }] : []),
   ];
 
   const navigate = useNavigate();
@@ -268,33 +282,7 @@ const RenewSubscription = ({
       });
 
       const { paymentUrl } = data;
-      // const paymentWindow = window.open(paymentUrl);
       window.location.href = paymentUrl;
-
-      // if (paymentWindow) {
-      //   const interval = setInterval(() => {
-      //     if (paymentWindow.closed) {
-      //       window.location.href = "/checkout-success";
-      //       clearInterval(interval);
-      //     }
-      //   }, 1000);
-      // }
-      // await refetchAllMySubscriptions();
-      // await refetchActiveSubscription();
-      // await refetchInvoices();
-
-      // if (!isExpired) {
-      //   setRenewalModal(false);
-      // }
-      // dispatch(suspenseHide());
-      // if (data) {
-      //   Swal.fire({
-      //     title: "Renewal successfull",
-      //     text: `Your subscription has been updated!`,
-      //     icon: "success",
-      //     confirmButtonColor: "#008080",
-      //   });
-      // }
     } catch (error) {
       dispatch(suspenseHide());
     } finally {
@@ -316,11 +304,11 @@ const RenewSubscription = ({
     if ("Select Option" === newSubscription || "" === newSubscription) {
       setNewSubscriptionExpirationDate("");
       setNewSubscriptionTotalAmount(0);
+      setOriginalAmount(0);
       return;
     }
 
     const months = subscriptionPeriod[newSubscription];
-
     if (!months) return;
 
     const newExpirationDate = new Date(
@@ -341,7 +329,20 @@ const RenewSubscription = ({
       beatCost = mySuscriptions?.[0]?.maxbeats * USED_BEAT_PRICE;
       guardCost = mySuscriptions?.[0]?.maxextraguards * USED_GUARD_PRICE;
 
-      setNewSubscriptionTotalAmount(months * (beatCost + guardCost));
+      // Calculate original amount
+      const originalTotal = months * (beatCost + guardCost);
+      setOriginalAmount(originalTotal);
+
+      // Apply discounts based on subscription period
+      let discountMonths = 0;
+      if (newSubscription === "annually") {
+        discountMonths = 2; // 2 months free for annual subscription
+      } else if (newSubscription === "biannually") {
+        discountMonths = 1; // 1 month free for 6-month subscription
+      }
+
+      const totalCost = (months - discountMonths) * (beatCost + guardCost);
+      setNewSubscriptionTotalAmount(totalCost);
     } else if (subscriptionAction === "reduce") {
       if (newMaxBeats) {
         beatCost = newMaxBeats * USED_BEAT_PRICE;
@@ -375,7 +376,19 @@ const RenewSubscription = ({
           USED_GUARD_PRICE;
       }
     }
-    setNewSubscriptionTotalAmount(months * (beatCost + guardCost));
+
+    // Apply discounts for non-renewal actions
+    if (subscriptionAction !== "renewal") {
+      let discountMonths = 0;
+      if (newSubscription === "annually") {
+        discountMonths = 2;
+      } else if (newSubscription === "biannually") {
+        discountMonths = 1;
+      }
+      const originalTotal = months * (beatCost + guardCost);
+      setOriginalAmount(originalTotal);
+      setNewSubscriptionTotalAmount((months - discountMonths) * (beatCost + guardCost));
+    }
   }, [
     newSubscription,
     newMaxBeats,
@@ -557,6 +570,16 @@ const RenewSubscription = ({
                     : "-"}
                 </span>
               </div>
+              {newSubscription === "annually" && (
+                <div className="text-green-600 dark:text-green-500 text-sm">
+                  * Includes 2 months free (discounted from total amount)
+                </div>
+              )}
+              {newSubscription === "biannually" && (
+                <div className="text-green-600 dark:text-green-500 text-sm">
+                  * Includes 1 month free (discounted from total amount)
+                </div>
+              )}
               {(subscriptionAction === "reduce" ||
                 subscriptionAction === "increase" ||
                 subscriptionAction === "new-subscription") && (
@@ -593,13 +616,18 @@ const RenewSubscription = ({
                   </div>
                 </>
               )}
-              <div className=" flex flex-row justify-between items-center">
+              <div className="flex flex-row justify-between items-center">
                 <span className="text-lg font-semibold">Total Amount</span>
-                <span className=" text-lg font-semibold">{`₦ ${
-                  newSubscriptionTotalAmount
-                    ? newSubscriptionTotalAmount.toLocaleString()
-                    : 0
-                }`}</span>
+                <div className="flex flex-col items-end">
+                  {originalAmount > newSubscriptionTotalAmount && (
+                    <span className="text-gray-500 line-through text-sm">
+                      {getCurrencyCode()} {originalAmount.toLocaleString()}
+                    </span>
+                  )}
+                  <span className="text-lg font-semibold">
+                    {getCurrencyCode()} {newSubscriptionTotalAmount.toLocaleString()}
+                  </span>
+                </div>
               </div>
               <div>
                 <Label htmlFor="paymentOption" value="Payment Option" />

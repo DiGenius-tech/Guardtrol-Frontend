@@ -1,5 +1,19 @@
 import { RootState } from "../store.js";
 
+export interface User {
+  clientid: string;
+  email: string;
+  image: string;
+  organization: string;
+  name: string;
+  phone: string;
+  emailverified: boolean;
+  onboardingcomplete: boolean;
+  token: string;
+  userid: string;
+  currency: string;
+}
+
 export const selectAuth = (state: RootState) => state.auth;
 
 export const selectRole = (state: RootState) => selectAuth(state).role;

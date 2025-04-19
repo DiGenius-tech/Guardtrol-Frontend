@@ -25,8 +25,10 @@ import {
   useGetAllMySubscriptionsQuery,
   useGetSubscriptionQuery,
 } from "../../redux/services/subscriptions";
-import { BEAT_PRICE, GUARD_PRICE, POOLING_TIME } from "../../constants/static";
+import { getBeatPrice, getGuardPrice, POOLING_TIME } from "../../constants/static";
 import axios from "axios";
+import { useCurrency } from "../../hooks/useCurrency";
+import { useGetUserOrganizationRoleQuery } from "../../redux/services/userOrganizationRole";
 
 // Constants for pricing
 
@@ -34,7 +36,8 @@ function parseDate(dateString) {
   return new Date(dateString);
 }
 
-const RenewSubscription = ({ openModal, setRenewalModal }) => {
+const RenewSubscription = ({ openModal, setRenewalModal, isExpired = false }) => {
+  const { getBeatPrice, getGuardPrice } = useCurrency();
   const psConfig = useSelector(selectPsConfig);
   const organization = useSelector(selectOrganization);
 
@@ -110,6 +113,12 @@ const RenewSubscription = ({ openModal, setRenewalModal }) => {
   );
   const [subscriptionAction, setSubscriptionAction] = useState("renew");
   const [paymentType, setPaymentType] = useState("recuring");
+
+  const { data: userRole } = useGetUserOrganizationRoleQuery(organization, {
+    skip: organization ? false : true,
+  });
+  const USED_BEAT_PRICE = userRole?.organization?.BEAT_PRICE || getBeatPrice();
+  const USED_GUARD_PRICE = userRole?.organization?.GUARD_PRICE || getGuardPrice();
 
   const handleBeatChange = (e) => {
     const newBeats = parseInt(e.target.value);
@@ -334,22 +343,22 @@ const RenewSubscription = ({ openModal, setRenewalModal }) => {
     }
     if (subscriptionAction === "reduce") {
       if (newMaxBeats) {
-        beatCost = newMaxBeats * BEAT_PRICE;
+        beatCost = newMaxBeats * USED_BEAT_PRICE;
       }
       if (newMaxExtraGuards) {
-        guardCost = newMaxExtraGuards * GUARD_PRICE;
+        guardCost = newMaxExtraGuards * USED_GUARD_PRICE;
       }
     } else if (subscriptionAction === "increase") {
       newTotalGuards = newMaxExtraGuards + subscription?.maxextraguards;
       newTotalBeats = newMaxBeats + subscription?.maxbeats;
 
       if (newMaxBeats) {
-        beatCost = newTotalBeats * BEAT_PRICE;
+        beatCost = newTotalBeats * USED_BEAT_PRICE;
       } else {
-        beatCost = subscription?.maxbeats * BEAT_PRICE;
+        beatCost = subscription?.maxbeats * USED_BEAT_PRICE;
       }
       if (newMaxExtraGuards) {
-        guardCost = subscription?.maxextraguards * GUARD_PRICE;
+        guardCost = subscription?.maxextraguards * USED_GUARD_PRICE;
       } else {
       }
     }

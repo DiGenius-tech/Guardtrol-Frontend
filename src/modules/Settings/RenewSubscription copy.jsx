@@ -5,7 +5,7 @@ import PaystackPop from "@paystack/inline-js";
 import {
   selectFwConfig,
   selectPsConfig,
-} from "../../redux/selectors/selectedPlan";
+} from "../../redux/selectors/onboarding";
 import {
   selectOrganization,
   selectToken,
@@ -26,7 +26,7 @@ import {
   useGetAllMySubscriptionsQuery,
   useGetSubscriptionQuery,
 } from "../../redux/services/subscriptions";
-import { BEAT_PRICE, GUARD_PRICE, POOLING_TIME } from "../../constants/static";
+import { useCurrency, POOLING_TIME } from "../../constants/static";
 import axios from "axios";
 import { useGetInvoicesQuery } from "../../redux/services/invoice";
 import { persistor } from "../../redux/store";
@@ -46,13 +46,14 @@ const RenewSubscription = ({
   setRenewalModal,
   isExpired = false,
 }) => {
+  const { getBeatPrice, getGuardPrice } = useCurrency();
   const psConfig = useSelector(selectPsConfig);
 
   const { data: userRole } = useGetUserOrganizationRoleQuery(organization, {
     skip: organization ? false : true,
   });
-  const USED_BEAT_PRICE = userRole?.organization?.BEAT_PRICE || BEAT_PRICE;
-  const USED_GUARD_PRICE = userRole?.organization?.GUARD_PRICE || GUARD_PRICE;
+  const USED_BEAT_PRICE = userRole?.organization?.BEAT_PRICE || getBeatPrice();
+  const USED_GUARD_PRICE = userRole?.organization?.GUARD_PRICE || getGuardPrice();
 
   const token = useSelector(selectToken);
   const {

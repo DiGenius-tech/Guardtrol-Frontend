@@ -13,6 +13,7 @@ import {
   selectAuth,
   selectToken,
   selectUser,
+  selectOrganization,
 } from "../../../redux/selectors/auth";
 import {
   selectFwConfig,
@@ -27,6 +28,8 @@ import {
   setPsConfig,
 } from "../../../redux/slice/onboardingSlice";
 import { useGetSubscriptionQuery } from "../../../redux/services/subscriptions";
+import { useCurrency } from "../../../constants/static";
+import { useGetUserOrganizationRoleQuery } from "../../../redux/services/role";
 
 const Shop = () => {
   const user = useSelector(selectUser);
@@ -35,6 +38,14 @@ const Shop = () => {
   const token = useSelector(selectToken);
   const psConfig = useSelector(selectPsConfig);
   const fwConfig = useSelector(selectFwConfig);
+  const { getBeatPrice, getGuardPrice, getCurrencyCode, currency } = useCurrency();
+  const organization = useSelector(selectOrganization);
+
+  const { data: userRole } = useGetUserOrganizationRoleQuery(organization, {
+    skip: organization ? false : true,
+  });
+  const USED_BEAT_PRICE = userRole?.organization?.BEAT_PRICE || getBeatPrice();
+  const USED_GUARD_PRICE = userRole?.organization?.GUARD_PRICE || getGuardPrice();
 
   const [validationErrors, setValidationErrors] = useState({});
   const { error, responseData, sendRequest } = useHttpRequest();
@@ -104,20 +115,20 @@ const Shop = () => {
             ...psConfig,
             numberofbeats: planFormData.numberofbeats,
             extraguards: planFormData.extraguards,
-            extraguards: planFormData.extraguards,
             ...(selectedPlan.type === "yearly"
               ? {
                 amount:
-                  (selectedPlan.numberofbeats * 10000 +
-                    selectedPlan.extraguards * 2000) *
+                  (selectedPlan.numberofbeats * USED_BEAT_PRICE +
+                    selectedPlan.extraguards * USED_GUARD_PRICE) *
                   12 *
                   0.8,
               }
               : {
                 amount:
-                  selectedPlan.numberofbeats * 10000 +
-                  selectedPlan.extraguards * 2000,
+                  selectedPlan.numberofbeats * USED_BEAT_PRICE +
+                  selectedPlan.extraguards * USED_GUARD_PRICE,
               }),
+            currency: currency,
           },
           ...user,
         })
@@ -128,20 +139,20 @@ const Shop = () => {
             ...fwConfig,
             numberofbeats: planFormData.numberofbeats,
             extraguards: planFormData.extraguards,
-            extraguards: planFormData.extraguards,
             ...(selectedPlan.type === "yearly"
               ? {
                 amount:
-                  (selectedPlan.numberofbeats * 10000 +
-                    selectedPlan.extraguards * 2000) *
+                  (selectedPlan.numberofbeats * USED_BEAT_PRICE +
+                    selectedPlan.extraguards * USED_GUARD_PRICE) *
                   12 *
                   0.8,
               }
               : {
                 amount:
-                  selectedPlan.numberofbeats * 10000 +
-                  selectedPlan.extraguards * 2000,
+                  selectedPlan.numberofbeats * USED_BEAT_PRICE +
+                  selectedPlan.extraguards * USED_GUARD_PRICE,
               }),
+            currency: currency,
           },
           ...user,
         })
@@ -162,45 +173,45 @@ const Shop = () => {
 
   const membership_card_data = [
     {
-      title: `₦${formatNumberWithCommas(
-        planFormData.numberofbeats * 10000 + planFormData.extraguards * 2000
+      title: `${getCurrencyCode()}${formatNumberWithCommas(
+        planFormData.numberofbeats * USED_BEAT_PRICE + planFormData.extraguards * USED_GUARD_PRICE
       )}`,
       body_list: [
-        `₦${formatNumberWithCommas(
-          planFormData.numberofbeats * 10000
+        `${getCurrencyCode()}${formatNumberWithCommas(
+          planFormData.numberofbeats * USED_BEAT_PRICE
         )} per month`,
-        `${planFormData.extraguards} Extra Guard(s) x ₦2,000`,
+        `${planFormData.extraguards} Extra Guard(s) x ${getCurrencyCode()}${formatNumberWithCommas(USED_GUARD_PRICE)}`,
       ],
       footer: "Lets Get you started with the Basic Plan",
       type: "monthly",
       amount:
-        planFormData.numberofbeats * 10000 + planFormData.extraguards * 2000,
-      readable: `₦${formatNumberWithCommas(
-        planFormData.numberofbeats * 10000 + planFormData.extraguards * 2000
+        planFormData.numberofbeats * USED_BEAT_PRICE + planFormData.extraguards * USED_GUARD_PRICE,
+      readable: `${getCurrencyCode()}${formatNumberWithCommas(
+        planFormData.numberofbeats * USED_BEAT_PRICE + planFormData.extraguards * USED_GUARD_PRICE
       )} per month`,
       numberofbeats: parseInt(planFormData.numberofbeats),
       extraguards: parseInt(planFormData.extraguards),
     },
     {
-      title: `₦${formatNumberWithCommas(
-        (planFormData.numberofbeats * 10000 + planFormData.extraguards * 2000) *
+      title: `${getCurrencyCode()}${formatNumberWithCommas(
+        (planFormData.numberofbeats * USED_BEAT_PRICE + planFormData.extraguards * USED_GUARD_PRICE) *
         12 *
         0.8
       )}`,
       body_list: [
-        `₦${formatNumberWithCommas(
-          planFormData.numberofbeats * 10000 * 12 * 0.8
+        `${getCurrencyCode()}${formatNumberWithCommas(
+          (planFormData.numberofbeats * USED_BEAT_PRICE * 12 * 0.8).toFixed(2)
         )} per year`,
-        `${planFormData.extraguards} Extra Guard(s) x ₦20,000`,
+        `${planFormData.extraguards} Extra Guard(s) x ${getCurrencyCode()}${formatNumberWithCommas((USED_GUARD_PRICE * 12 * 0.8).toFixed(2))}`,
       ],
       footer: "20% Discount when you select this Plan",
       type: "yearly",
       amount:
-        (planFormData.numberofbeats * 10000 + planFormData.extraguards * 2000) *
+        (planFormData.numberofbeats * USED_BEAT_PRICE + planFormData.extraguards * USED_GUARD_PRICE) *
         12 *
         0.8,
-      readable: `₦${formatNumberWithCommas(
-        (planFormData.numberofbeats * 10000 + planFormData.extraguards * 2000) *
+      readable: `${getCurrencyCode()}${formatNumberWithCommas(
+        (planFormData.numberofbeats * USED_BEAT_PRICE + planFormData.extraguards * USED_GUARD_PRICE) *
         12 *
         0.8
       )} per year`,
@@ -266,7 +277,6 @@ const Shop = () => {
               muted_aside_text="Maximum of 5 Guard(s) per Beat"
               name="numberofbeats"
               type="number"
-              name="numberofbeats"
               value={planFormData.numberofbeats}
               onChange={handleChange}
               onBlur={handleBlur} // Ensure default value on blur
@@ -327,7 +337,7 @@ const Shop = () => {
                             <span
                               className="text-grey-500 text-xxl font-normal line-through mr-2 decoration-grey decoration-5"
                             >
-                              {`₦${formatNumberWithCommas(data.amount / 0.8)}`}
+                              {`${getCurrencyCode()}${formatNumberWithCommas(data.amount / 0.8)}`}
                             </span>
                           </div>}
                           {/* Breaklines for design purpose if it is a monthly plan, if not it will shouw the original price slashed*/}
@@ -369,12 +379,11 @@ const Shop = () => {
             disabled={isLoading}
             isLoading={isLoading}
             text={
-              "Continue to Pay ₦" +
+              "Continue to Pay " +
+              getCurrencyCode() +
               (selectedPlan
                 ? `${formatNumberWithCommas(
-                  membership_card_data.filter((data) => {
-                    return data.type == selectedPlan.type;
-                  })[0].amount
+                  membership_card_data.find((data) => data.type === selectedPlan.type)?.amount || 0
                 )}`
                 : "0")
             }

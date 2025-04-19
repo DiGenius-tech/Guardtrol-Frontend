@@ -34,7 +34,7 @@ import { api } from "../../../redux/services/api";
 import { useGetInvoicesQuery } from "../../../redux/services/invoice";
 import { useGetUserQuery } from "../../../redux/services/user";
 import { debounceFunc } from "../../../utils/assetHelper";
-
+import { useCurrency } from "../../../constants/static";
 const PaymentOption = {
   FIRST: "flutterwave",
   SECOND: "paystack",
@@ -44,6 +44,7 @@ const Checkout = (props) => {
   const user = useSelector(selectUser);
   const psConfig = useSelector(selectPsConfig);
   const fwConfig = useSelector(selectFwConfig);
+  const { getCurrencyCode, currency } = useCurrency();
   const location = useLocation();
 
   const queryParams = new URLSearchParams(location.search);
@@ -87,7 +88,7 @@ const Checkout = (props) => {
   const { isLoading, error, responseData, sendRequest } = useHttpRequest();
   const [selectedPlan, setSelectedPlan] = useState(null);
 
-  const [paymentMethod, setPaymentMethod] = useState("flutterwave");
+  const [paymentMethod, setPaymentMethod] = useState(currency === 'USD' ? PaymentOption.FIRST : PaymentOption.FIRST);
   const navigate = useNavigate();
 
   const verifyPayment = async () => {
@@ -276,34 +277,36 @@ const Checkout = (props) => {
                   name="payment_option"
                   id="flutterwave"
                   value={paymentMethod}
+                  checked={paymentMethod === PaymentOption.FIRST}
                 />
                 <label htmlFor="flutterwave" className="cursor-pointer block">
-                  {/* Flutterwave */}
                   <div className="max-w-32" aria-label="Flutterwave">
                     <img src={flutterwave_seeklogo} alt="flutterwave" />
                   </div>
                 </label>
               </li>
 
-              <li onClick={() => handleCheck(PaymentOption.SECOND)}>
-                <input
-                  type="radio"
-                  name="payment_option"
-                  id="paystack"
-                  value={paymentMethod}
-                />
-                <label htmlFor="paystack" className="cursor-pointer block">
-                  {/* Paystack */}
-                  <div className="max-w-32" aria-label="Paystack">
-                    <img src={paystack_seeklogo} alt="paystack" />
-                  </div>
-                </label>
-              </li>
+              {currency !== 'USD' && (
+                <li onClick={() => handleCheck(PaymentOption.SECOND)}>
+                  <input
+                    type="radio"
+                    name="payment_option"
+                    id="paystack"
+                    value={paymentMethod}
+                    checked={paymentMethod === PaymentOption.SECOND}
+                  />
+                  <label htmlFor="paystack" className="cursor-pointer block">
+                    <div className="max-w-32" aria-label="Paystack">
+                      <img src={paystack_seeklogo} alt="paystack" />
+                    </div>
+                  </label>
+                </li>
+              )}
             </ul>
           </fieldset>
 
           <RegularButton
-            text={`Pay ₦${
+            text={`Pay ${getCurrencyCode()}${
               selectedPlan ? formatNumberWithCommas(selectedPlan.amount) : 0
             } Now`}
             backgroundColor="#FB9129"

@@ -19,4 +19,8 @@ export type TUser = {
   subscriptions: TSubscription["_id"][];
   beats: TBeat["_id"][];
   guards: TGuard["_id"][];
+  privacyPolicyAccepted?: boolean;
+  termsOfUseAccepted?: boolean;
+  dataPrivacyAccepted?: boolean;
+  currency: "NGN" | "USD";
 };

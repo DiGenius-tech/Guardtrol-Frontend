@@ -11,7 +11,7 @@ import {
   selectToken,
   selectUser,
 } from "../../redux/selectors/auth";
-import { BEAT_PRICE, GUARD_PRICE, POOLING_TIME } from "../../constants/static";
+import { getBeatPrice, getGuardPrice, POOLING_TIME } from "../../constants/static";
 import { Label, Select } from "flowbite-react";
 import {
   selectFwConfig,
@@ -135,10 +135,10 @@ const UpdateSubscription = () => {
     let newAdditionTototal =
       Math.round(
         (Math.floor(
-          additionalBeats * (subDurationDays * Math.round(BEAT_PRICE / 30))
+          additionalBeats * (subDurationDays * Math.round(getBeatPrice() / 30))
         ) +
           Math.floor(
-            additionalGuards * (subDurationDays * Math.round(GUARD_PRICE / 30))
+            additionalGuards * (subDurationDays * Math.round(getGuardPrice() / 30))
           )) /
           1000
       ) * 1000;
@@ -217,8 +217,8 @@ const UpdateSubscription = () => {
   }, [currentSubscription?.expirationDate]);
 
   useEffect(() => {
-    const beatCost = additionalBeats * BEAT_PRICE * (remainingDays / 30);
-    const guardCost = additionalGuards * GUARD_PRICE * (remainingDays / 30);
+    const beatCost = additionalBeats * getBeatPrice() * (remainingDays / 30);
+    const guardCost = additionalGuards * getGuardPrice() * (remainingDays / 30);
 
     setTotalCost(Math.ceil(beatCost + guardCost));
   }, [

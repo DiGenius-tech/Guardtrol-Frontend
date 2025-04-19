@@ -1,24 +1,34 @@
 import React, { useEffect, useRef } from "react";
 import brandLogo from "../images/brand-logo.svg";
 import { Table } from "flowbite-react";
-
-import { BEAT_PRICE, GUARD_PRICE } from "../constants/static";
+import { useCurrency } from "../constants/static";
 import { useReactToPrint } from "react-to-print";
-import { formatCurrency } from "../utils/dateUtils";
+import { formatNumberWithCommas } from "../shared/functions/random-hex-color";
 
 const Invoice = ({ invoice, componentRef }) => {
+  const { getBeatPrice, getGuardPrice, getCurrencyCode } = useCurrency();
   console.log(invoice);
+
+  const formatCurrency = (amount) => {
+    // Remove any existing currency symbols and convert to number
+    const numericAmount = typeof amount === 'string' 
+      ? parseFloat(amount.replace(/[^0-9.-]+/g, '')) 
+      : amount;
+    
+    return `${getCurrencyCode()}${formatNumberWithCommas(numericAmount)}`;
+  };
+
   const invoiceItems = [
     "",
     {
       item: "Beats",
       quantity: invoice?.maxbeats,
-      rate: BEAT_PRICE,
+      rate: getBeatPrice(),
     },
     {
       item: "Extra Guards",
       quantity: invoice?.extraguards,
-      rate: GUARD_PRICE,
+      rate: getGuardPrice(),
     },
   ];
 
@@ -116,7 +126,7 @@ const Invoice = ({ invoice, componentRef }) => {
                   <div className="grid grid-cols-2">
                     <h6>Total</h6>
                     <h4 className="font-bold text-xl text-center ml-36">
-                      {invoice.amount}
+                      {formatCurrency(invoice.amount)}
                     </h4>
                   </div>
                 </div>
@@ -137,9 +147,9 @@ const Invoice = ({ invoice, componentRef }) => {
                           {invoice.paymentgateway}
                         </span>
                       </Table.Cell>
-                      <Table.Cell> {invoice.amount}</Table.Cell>
+                      <Table.Cell>{formatCurrency(invoice.amount)}</Table.Cell>
                       <Table.Cell>{invoice?.trxref}</Table.Cell>
-                      <Table.Cell> {invoice?.transactionid} </Table.Cell>
+                      <Table.Cell>{invoice?.transactionid}</Table.Cell>
                       <Table.Cell>
                         <span className=" capitalize">{invoice?.status}</span>
                       </Table.Cell>

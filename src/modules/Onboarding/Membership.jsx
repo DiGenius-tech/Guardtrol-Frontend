@@ -4,17 +4,18 @@ import RegularButton from "../Sandbox/Buttons/RegularButton";
 import { toast } from "react-toastify";
 import useHttpRequest from "../../shared/Hooks/HttpRequestHook";
 import { useNavigate } from "react-router-dom";
-
 import { FlutterWaveButton, closePaymentModal } from "flutterwave-react-v3";
 import { useDispatch, useSelector } from "react-redux";
 import { selectUser } from "../../redux/selectors/auth";
 import { suspenseHide } from "../../redux/slice/suspenseSlice";
 import { selectSuspenseShow } from "../../redux/selectors/suspense";
 import { setOnboardingLevel } from "../../redux/slice/onboardingSlice";
+import { useCurrency } from "../../constants/static";
 
 const Membership = () => {
   const auth = useSelector(selectUser);
   const dispatch = useDispatch();
+  const { getBeatPrice, getGuardPrice, getCurrencyCode } = useCurrency();
 
   const suspenseState = useSelector(selectSuspenseShow);
   const navigate = useNavigate();
@@ -26,7 +27,7 @@ const Membership = () => {
     numberofbeats: 1,
     extraguards: 0,
   });
-  const [isModalOpen, setIsModalOpen] = useState(false); // State variable to control modal visibility
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     const selectedPlan = JSON.parse(localStorage.getItem("selectedPlan"));
@@ -52,7 +53,6 @@ const Membership = () => {
     const form = e.currentTarget;
     const newErrors = {};
 
-    // Check each input field's validity and set errors accordingly
     for (const el of form.elements) {
       if (el.nodeName === "INPUT" && !el.validity.valid) {
         newErrors[el.name] = el.validationMessage;
@@ -66,7 +66,6 @@ const Membership = () => {
     }
 
     if (Object.keys(newErrors).length > 0) {
-      // If there are validation errors, update state and stop submission
       setValidationErrors(newErrors);
       e.stopPropagation();
     } else {
@@ -91,40 +90,28 @@ const Membership = () => {
 
   const membership_card_data = [
     {
-      title: `₦${planFormData.numberofbeats * 10000 + planFormData.extraguards * 2000
-        }`,
+      title: `${getCurrencyCode()}${planFormData.numberofbeats * getBeatPrice() + planFormData.extraguards * getGuardPrice()}`,
       body_list: [
-        `₦${planFormData.numberofbeats * 10000} P/M`,
-        `${planFormData.extraguards} Extraguards x ₦2000`,
+        `${getCurrencyCode()}${planFormData.numberofbeats * getBeatPrice()} P/M`,
+        `${planFormData.extraguards} Extraguards x ${getCurrencyCode()}${getGuardPrice()}`,
       ],
       footer: "This should just give a summary of the benefits",
       type: "monthly",
-      amount:
-        planFormData.numberofbeats * 10000 + planFormData.extraguards * 2000,
-      readable: `₦${planFormData.numberofbeats * 10000 + planFormData.extraguards * 2000
-        } per month`,
+      amount: planFormData.numberofbeats * getBeatPrice() + planFormData.extraguards * getGuardPrice(),
+      readable: `${getCurrencyCode()}${planFormData.numberofbeats * getBeatPrice() + planFormData.extraguards * getGuardPrice()} per month`,
       numberofbeats: planFormData.numberofbeats,
       extraguards: planFormData.extraguards,
     },
     {
-      title: `₦${(planFormData.numberofbeats * 10000 + planFormData.extraguards * 2000) *
-        12 *
-        0.8
-        }`,
+      title: `${getCurrencyCode()}${(planFormData.numberofbeats * getBeatPrice() + planFormData.extraguards * getGuardPrice()) * 12 * 0.8}`,
       body_list: [
-        `₦${planFormData.numberofbeats * 10000 * 12 * 0.8} P/Y`,
-        `${planFormData.extraguards} Extraguards x ₦20000`,
+        `${getCurrencyCode()}${planFormData.numberofbeats * getBeatPrice() * 12 * 0.8} P/Y`,
+        `${planFormData.extraguards} Extraguards x ${getCurrencyCode()}${getGuardPrice() * 12 * 0.8}`,
       ],
       footer: "This should just give a summary of the benefits",
       type: "yearly",
-      amount:
-        (planFormData.numberofbeats * 10000 + planFormData.extraguards * 2000) *
-        12 *
-        0.8,
-      readable: `₦${(planFormData.numberofbeats * 10000 + planFormData.extraguards * 2000) *
-        12 *
-        0.8
-        } per year`,
+      amount: (planFormData.numberofbeats * getBeatPrice() + planFormData.extraguards * getGuardPrice()) * 12 * 0.8,
+      readable: `${getCurrencyCode()}${(planFormData.numberofbeats * getBeatPrice() + planFormData.extraguards * getGuardPrice()) * 12 * 0.8} per year`,
       numberofbeats: planFormData.numberofbeats,
       extraguards: planFormData.extraguards,
     },
@@ -138,7 +125,7 @@ const Membership = () => {
     setIsModalOpen(false);
   };
 
-  const handleModalButtonClick = () => { };
+  const handleModalButtonClick = () => {};
 
   const config = {
     public_key: "FLWPUBK-a1be03107079ab0523984695c59cbbed-X",
@@ -162,9 +149,9 @@ const Membership = () => {
     ...config,
     text: "Pay with Flutterwave!",
     callback: (response) => {
-      closePaymentModal(); // this will close the modal programmatically
+      closePaymentModal();
     },
-    onClose: () => { },
+    onClose: () => {},
   };
 
   return (
@@ -180,48 +167,46 @@ const Membership = () => {
       <div className="mx-auto max-w-[500px] my-16">
         <form onSubmit={handleSubmit} method="post">
           <div className="mb-6">
-          <TextInputField
-  label={
-    <span>
-      How many Beat(s)?
-      {/* Tooltip Icon */}
-      <span className="ml-2 relative group">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-4 w-4 inline-block text-gray-500 cursor-pointer hover:text-gray-700"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-          />
-        </svg>
-        {/* Tooltip Text */}
-        <span className="absolute left-0 bottom-6 w-48 bg-gray-700 text-white text-sm rounded p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-          A beat is a designated patrol area consisting of multiple patrol points where guards ensure security coverage.
-        </span>
-      </span>
-    </span>
-  }
-  semibold_label={true}
-  type="text"
-  id="numberofbeats"
-  required="required"
-  muted_aside_text="Maximum of 5 Guard(s) per Beat"
-  name="numberofbeats"
-  value={planFormData.numberofbeats}
-  onChange={handleChange}
-  error={validationErrors["numberofbeats"]}
-/>
+            <TextInputField
+              label={
+                <span>
+                  How many Beat(s)?
+                  <span className="ml-2 relative group">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-4 w-4 inline-block text-gray-500 cursor-pointer hover:text-gray-700"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                    <span className="absolute left-0 bottom-6 w-48 bg-gray-700 text-white text-sm rounded p-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                      A beat is a designated patrol area consisting of multiple patrol points where guards ensure security coverage.
+                    </span>
+                  </span>
+                </span>
+              }
+              semibold_label={true}
+              type="text"
+              id="numberofbeats"
+              required="required"
+              muted_aside_text="Maximum of 5 Guard(s) per Beat"
+              name="numberofbeats"
+              value={planFormData.numberofbeats}
+              onChange={handleChange}
+              error={validationErrors["numberofbeats"]}
+            />
           </div>
           <div className="mb-6">
             <TextInputField
               label="How many Extra Guard(s)?"
-              placeholder="₦2,000 per Guard"
+              placeholder={`${getCurrencyCode()}${getGuardPrice()} per Guard`}
               semibold_label={true}
               type="text"
               id="number-of-extra-guard"
@@ -285,7 +270,6 @@ const Membership = () => {
         </form>
       </div>
 
-      {/* Render the modal */}
       {isModalOpen && (
         <div className="fixed z-10 inset-0 overflow-y-auto">
           <div className="flex items-center justify-center min-h-screen">
@@ -312,13 +296,10 @@ const Membership = () => {
                 Select a payment option
               </h2>
               <div>
-                {/* Display selected plan and other form data */}
                 <p>Selected Plan: {selectedPlan?.title}</p>
                 <p>Number of Beats: {planFormData.numberofbeats}</p>
                 <p>Number of Extra Guards: {planFormData.extraguards}</p>
-                {/* Add more summary details as needed */}
               </div>
-              {/* Button inside the modal */}
               <button
                 className="mt-4 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 focus:outline-none focus:ring focus:ring-blue-200"
                 onClick={handleModalButtonClick}

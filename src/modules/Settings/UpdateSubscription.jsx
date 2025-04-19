@@ -11,12 +11,12 @@ import {
   selectToken,
   selectUser,
 } from "../../redux/selectors/auth";
-import { BEAT_PRICE, GUARD_PRICE, POOLING_TIME } from "../../constants/static";
-import { Label, Select } from "flowbite-react";
+import { useCurrency, POOLING_TIME } from "../../constants/static";
+import { Label as FlowbiteLabel, Select } from "flowbite-react";
 import {
   selectFwConfig,
   selectPsConfig,
-} from "../../redux/selectors/selectedPlan";
+} from "../../redux/selectors/onboarding";
 import Swal from "sweetalert2";
 import { suspenseHide, suspenseShow } from "../../redux/slice/suspenseSlice";
 import { toast } from "react-toastify";
@@ -28,13 +28,14 @@ const UpdateSubscription = () => {
   const token = useSelector(selectToken);
   const user = useSelector(selectUser);
   const organization = useSelector(selectOrganization);
+  const { getBeatPrice, getGuardPrice, getCurrencyCode, currency } = useCurrency();
 
   const { data: userRole } = useGetUserOrganizationRoleQuery(organization, {
     skip: organization ? false : true,
   });
 
-  const USED_BEAT_PRICE = userRole?.organization?.BEAT_PRICE || BEAT_PRICE;
-  const USED_GUARD_PRICE = userRole?.organization?.GUARD_PRICE || GUARD_PRICE;
+  const USED_BEAT_PRICE = userRole?.organization?.BEAT_PRICE || getBeatPrice();
+  const USED_GUARD_PRICE = userRole?.organization?.GUARD_PRICE || getGuardPrice();
 
   const dispatch = useDispatch();
   const {
@@ -57,8 +58,8 @@ const UpdateSubscription = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const paymentOptions = [
-    { value: "paystack", label: "Paystack" },
-    { value: "flutterwave", label: "Flutter wave" },
+    { value: "flutterwave", label: "Flutterwave" },
+    ...(currency !== 'USD' ? [{ value: "paystack", label: "Paystack" }] : []),
   ];
 
   const handleUpdateSubscription = async () => {
@@ -254,7 +255,7 @@ const UpdateSubscription = () => {
         </div>
 
         <div className="mb-3">
-          <Label htmlFor="paymentOption" value="Payment Option" />
+          <FlowbiteLabel htmlFor="paymentOption" value="Payment Option" />
           <Select
             id="paymentOption"
             value={paymentOption}
@@ -276,7 +277,7 @@ const UpdateSubscription = () => {
         >
           Continue to pay{" "}
           <span className="text-lg font-semibold">
-            ₦{totalCost ? totalCost?.toFixed(2) : 0}
+            {getCurrencyCode()}{totalCost ? totalCost?.toFixed(2) : 0}
           </span>
         </button>
       </form>
