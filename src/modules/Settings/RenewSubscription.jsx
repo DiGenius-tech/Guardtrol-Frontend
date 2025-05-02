@@ -621,11 +621,11 @@ const RenewSubscription = ({
                 <div className="flex flex-col items-end">
                   {originalAmount > newSubscriptionTotalAmount && (
                     <span className="text-gray-500 line-through text-sm">
-                      {getCurrencyCode()} {originalAmount.toLocaleString()}
+                      {getCurrencyCode()} {originalAmount ? originalAmount.toLocaleString() : '0'}
                     </span>
                   )}
                   <span className="text-lg font-semibold">
-                    {getCurrencyCode()} {newSubscriptionTotalAmount.toLocaleString()}
+                    {getCurrencyCode()} {newSubscriptionTotalAmount ? newSubscriptionTotalAmount.toLocaleString() : '0'}
                   </span>
                 </div>
               </div>
