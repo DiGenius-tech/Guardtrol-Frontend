@@ -659,6 +659,14 @@ const Register = () => {
           <RegularButton isLoading={isLoading} text="Create an Account" />
         </form>
       </div>
+      <div className="justify-center text-center mt-3">
+  <span className="text-sm">
+    Already have an account?{" "}
+    <Link to="/auth" className="text-primary-500 font-medium">
+      Login
+    </Link>
+  </span>
+</div>
 
       <p className="horizontal-line-title fw-medium my-8 text-center">
         Or you can

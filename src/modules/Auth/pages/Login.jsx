@@ -220,6 +220,18 @@ const Login = () => {
           </span>
         </div>
       </Link>
+
+      <div className="justify-center text-center mt-3">
+  <span className="text-sm">
+    Don’t have an account?{" "}
+    <Link
+      to="/auth/register" // Or /auth/register if that's your route
+      className="text-primary-500 font-medium"
+    >
+      Sign up
+    </Link>
+  </span>
+</div>
       <p className="horizontal-line-title fw-medium my-8 text-center">
         Or you can
       </p>
