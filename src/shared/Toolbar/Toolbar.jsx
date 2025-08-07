@@ -179,18 +179,22 @@ const Toolbar = () => {
                     Settings
                   </a>
                   <a
-                    href="/"
-                    className="block px-4 py-2 text-sm text-gray-700"
-                    role="menuitem"
-                    tabindex="-1"
-                    id="user-menu-item-2"
-                    onClick={() => {
-                      dispatch(logout());
-                      navigate("/auth");
-                    }}
-                  >
-                    Sign out
-                  </a>
+  href="/"
+  className="block px-4 py-2 text-sm text-gray-700"
+  role="menuitem"
+  tabIndex="-1"
+  id="user-menu-item-2"
+  onClick={() => {
+    const confirmLogout = window.confirm("Are you sure you want to sign out?");
+    if (confirmLogout) {
+      dispatch(logout());
+      navigate("/auth");
+    }
+  }}
+>
+  Sign out
+</a>
+
                 </div>
               </div>
             </div>
