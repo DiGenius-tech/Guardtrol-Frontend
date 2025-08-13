@@ -87,12 +87,16 @@ const ClientToolbar = (props) => {
   }, [location]);
 
   const handleLogout = () => {
-    persistor.purge();
-    dispatch(api.util.resetApiState());
-    dispatch(logout());
-    dispatch(clearNotifications());
-    navigate("/auth");
-  };
+  const confirmLogout = window.confirm("Are you sure you want to sign out?");
+  if (!confirmLogout) return;
+
+  persistor.purge();
+  dispatch(api.util.resetApiState());
+  dispatch(logout());
+  dispatch(clearNotifications());
+  navigate("/auth");
+};
+
 
   const pendingCount = modifications?.filter(
     (mod) => mod.status === "pending"

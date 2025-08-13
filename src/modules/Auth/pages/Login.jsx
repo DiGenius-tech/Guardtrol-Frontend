@@ -225,7 +225,7 @@ const Login = () => {
   <span className="text-sm">
     Don’t have an account?{" "}
     <Link
-      to="/auth/register" // Or /auth/register if that's your route
+      to="/auth/register" // Added a link to register
       className="text-primary-500 font-medium"
     >
       Sign up
