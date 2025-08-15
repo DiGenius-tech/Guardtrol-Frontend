@@ -255,11 +255,12 @@ const SettingPersonalInformation = () => {
               </div>
             </div>
 
-          {/* Phone */}
+{/* Phone */}
 <div className="hidden sm:block col-span-12 sm:col-span-6">
   <h3 className="font-bold">Phone Number</h3>
   <p>Your phone number can be used as a security measure to validate some actions on the account. (Optional)</p>
 </div>
+
 <div className="col-span-12 sm:col-span-6">
   <label htmlFor="phone" className="block mb-2 text-sm font-semibold text-gray-900 dark:text-white">
     Phone Number
@@ -273,14 +274,14 @@ const SettingPersonalInformation = () => {
       value={formik.values.countryCode}
       onChange={formik.handleChange}
       className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
-      focus:ring-blue-500 focus:border-blue-500 h-[42px] px-2
+      focus:ring-blue-500 focus:border-blue-500 h-[42px] px-2 w-1/3
       dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white 
       dark:focus:ring-blue-500 dark:focus:border-blue-500"
     >
-      <option value="" disabled>Code</option>
+      <option value="" disabled>Select</option>
       {countryCodes.map((country) => (
         <option key={country.code} value={country.code}>
-          {country.code}
+          {country.flag} {country.name} ({country.code})
         </option>
       ))}
     </select>
@@ -292,7 +293,7 @@ const SettingPersonalInformation = () => {
       id="phone"
       {...formik.getFieldProps("phone")}
       className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
-      focus:ring-blue-500 focus:border-blue-500 h-[42px] px-2 w-full
+      focus:ring-blue-500 focus:border-blue-500 h-[42px] px-2 w-2/3
       dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white 
       dark:focus:ring-blue-500 dark:focus:border-blue-500"
     />
@@ -304,6 +305,8 @@ const SettingPersonalInformation = () => {
     )}
   </div>
 </div>
+
+
 
 
 
