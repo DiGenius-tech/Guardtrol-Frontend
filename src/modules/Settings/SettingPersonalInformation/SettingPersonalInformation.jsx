@@ -255,52 +255,57 @@ const SettingPersonalInformation = () => {
               </div>
             </div>
 
-            {/* Phone */}
-            <div className="hidden sm:block col-span-12 sm:col-span-6">
-              <h3 className="font-bold">Phone Number</h3>
-              <p>Your phone number can be used as a security measure to validate some actions on the account. (Optional)</p>
-            </div>
-            <div className="col-span-12 sm:col-span-6">
-              <label htmlFor="phone" className="block mb-2 text-sm font-semibold text-gray-900 dark:text-white">
-                Phone Number
-              </label>
-              <div className="flex gap-2">
-                <div className="w-1/3 relative">
-                  <select
-                    id="countryCode"
-                    name="countryCode"
-                    value={formik.values.countryCode}
-                    onChange={formik.handleChange}
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
-                    focus:ring-blue-500 focus:border-blue-500 block w-full h-[42px] px-2
-                    dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white 
-                    dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    style={{ position: "relative" }}
-                  >
-                    <option value="" disabled>Code</option>
-                    {countryCodes.map((country) => (
-                      <option key={country.code} value={country.code}>
-                        {country.code}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="w-2/3">
-                  <TextInputField
-                    placeholder="e.g., 8012345678"
-                    type="tel"
-                    id="phone"
-                    {...formik.getFieldProps("phone")}
-                    className="h-[42px]"
-                  />
-                </div>
-              </div>
-              <div className="mb-3">
-                {formik.touched.phone && formik.errors.phone && (
-                  <div className="text-red-500">{formik.errors.phone}</div>
-                )}
-              </div>
-            </div>
+          {/* Phone */}
+<div className="hidden sm:block col-span-12 sm:col-span-6">
+  <h3 className="font-bold">Phone Number</h3>
+  <p>Your phone number can be used as a security measure to validate some actions on the account. (Optional)</p>
+</div>
+<div className="col-span-12 sm:col-span-6">
+  <label htmlFor="phone" className="block mb-2 text-sm font-semibold text-gray-900 dark:text-white">
+    Phone Number
+  </label>
+
+  <div className="flex gap-2 items-center">
+    {/* Country Code */}
+    <select
+      id="countryCode"
+      name="countryCode"
+      value={formik.values.countryCode}
+      onChange={formik.handleChange}
+      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
+      focus:ring-blue-500 focus:border-blue-500 h-[42px] px-2
+      dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white 
+      dark:focus:ring-blue-500 dark:focus:border-blue-500"
+    >
+      <option value="" disabled>Code</option>
+      {countryCodes.map((country) => (
+        <option key={country.code} value={country.code}>
+          {country.code}
+        </option>
+      ))}
+    </select>
+
+    {/* Phone Input */}
+    <input
+      placeholder="e.g., 8012345678"
+      type="tel"
+      id="phone"
+      {...formik.getFieldProps("phone")}
+      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg 
+      focus:ring-blue-500 focus:border-blue-500 h-[42px] px-2 w-full
+      dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white 
+      dark:focus:ring-blue-500 dark:focus:border-blue-500"
+    />
+  </div>
+
+  <div className="mb-3">
+    {formik.touched.phone && formik.errors.phone && (
+      <div className="text-red-500">{formik.errors.phone}</div>
+    )}
+  </div>
+</div>
+
+
 
             {/* Address */}
             <div className="hidden sm:block col-span-12 sm:col-span-6">
