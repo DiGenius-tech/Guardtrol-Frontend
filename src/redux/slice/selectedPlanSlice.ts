@@ -67,7 +67,7 @@ const initialState: SelectedPlan = {
       consumer_mac: undefined,
     },
     customizations: {
-      title: "Guardtrol Lite Subscription",
+      title: "Stafftrol Lite Subscription",
       description: undefined,
       logo: "https://guardtrol.alphatrol.com/logo192.png",
     },

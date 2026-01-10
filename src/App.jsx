@@ -31,6 +31,9 @@ import OnboardingProgressBar from "./modules/Onboarding/components/OnboardingPro
 import LogOut from "./modules/Auth/pages/LogOut";
 import { suspenseHide, suspenseShow } from "./redux/slice/suspenseSlice";
 import PolicyAcceptancePopup from "./components/PolicyAcceptancePopup";
+import { logout } from "./redux/slice/authSlice";
+// NEW: Import Organization module
+import Organization from "./modules/Organization/Organization";
 
 function App() {
   const user = useSelector(selectUser);
@@ -39,7 +42,41 @@ function App() {
   const dispatch = useDispatch();
   const token = useSelector(selectToken);
   useInactivityTimeout();
+  
   console.log(suspense);
+
+  // Token validation for Guardtrol to Stafftrol conversion
+  useEffect(() => {
+    // Check token validity on app startup
+    const storedToken = localStorage.getItem('token') || sessionStorage.getItem('token');
+    
+    if (storedToken && user) {
+      try {
+        // Try to decode the token
+        const payload = JSON.parse(atob(storedToken.split('.')[1]));
+        
+        // Check if token is expired
+        if (payload.exp && payload.exp * 1000 < Date.now()) {
+          console.log('Token expired during app conversion, clearing storage');
+          localStorage.clear();
+          sessionStorage.clear();
+          dispatch(logout());
+          toast.info('Please log in again after the app update');
+        }
+        
+        // Additional check: If the token doesn't have expected structure for Stafftrol
+        // You can add more validation here if needed
+        
+      } catch (error) {
+        console.log('Invalid token format during app conversion, clearing storage');
+        localStorage.clear();
+        sessionStorage.clear();
+        dispatch(logout());
+        toast.info('Please log in again after the app update');
+      }
+    }
+  }, [dispatch, user]);
+
   useEffect(() => {
     if (error) {
       toast.error(error);
@@ -72,7 +109,8 @@ function App() {
                     <>
                       <Route path="/logout" element={<LogOut />} />
                       <Route path="/client/*" element={<ClientRouter />} />
-
+                      {/* NEW: Add organization management routes for authenticated users */}
+                      <Route path="/organization/*" element={<Organization />} />
                       <Route path="*" element={<Navigate to="/client" />} />
                     </>
                   ) : (
@@ -105,7 +143,15 @@ function App() {
                 </>
               ) : (
                 <>
+                  {/* Existing auth routes */}
                   <Route path="/auth/*" element={<AuthRouter />} />
+                  
+                  {/* NEW: Public organization registration - accessible without login */}
+                  <Route path="/organization/register" element={<Organization />} />
+                  
+                  {/* NEW: Add a landing page route that includes org registration option */}
+                  <Route path="/register-organization" element={<Navigate to="/organization/register" />} />
+                  
                   <Route path="*" element={<Navigate to="/auth" />} />
                 </>
               )}
@@ -127,4 +173,5 @@ const OnboardingCompleteLayout = () => (
     </div>
   </>
 );
+
 export default App;

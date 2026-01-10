@@ -170,7 +170,7 @@ const Login = () => {
     <>
       <div className="mt-16"></div>
       <h1 className="font-bold text-2xl tracking-wide text-center">
-        Login to Guardtrol
+        Login to Stafftrol
       </h1>
       <div className="mt-8"></div>
       <div className="block px-4 py-8 sm:p-8 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">

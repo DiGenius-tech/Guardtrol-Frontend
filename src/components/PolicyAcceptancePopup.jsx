@@ -30,38 +30,46 @@ const PolicyAcceptancePopup = () => {
   }
 
   const handleAcceptPolicies = async () => {
-    if (!privacyPolicyAccepted || !termsOfUseAccepted || !dataPrivacyAccepted) {
-      setError('Please accept all policies to continue');
-      return;
-    }
+  if (!privacyPolicyAccepted || !termsOfUseAccepted || !dataPrivacyAccepted) {
+    setError('Please accept all policies to continue');
+    return;
+  }
 
-    try {
-      dispatch(suspenseShow());
-      const data = await put(
-        "users/privacy-policy",
-        {
-          privacyPolicyAccepted,
-          termsOfUseAccepted,
-          dataPrivacyAccepted
-        },
-        token,
-        true,
-        "Privacy policy acceptance updated"
-      );
+  try {
+    dispatch(suspenseShow());
+    const data = await put(
+      "users/privacy-policy",
+      {
+        privacyPolicyAccepted,
+        termsOfUseAccepted,
+        dataPrivacyAccepted
+      },
+      token,
+      true,
+      "Privacy policy acceptance updated"
+    );
 
-      if (data) {
-        await refetch();
-        if (userData) {
-          dispatch(updateUser(userData));
-        }
-        setShowModal(false);
-      }
-    } catch (error) {
-      setError('Failed to update policy acceptance. Please try again.');
-    } finally {
-      dispatch(suspenseHide());
+    if (data) {
+      // Update Redux with the response data immediately
+      dispatch(updateUser({
+        ...user,
+        privacyPolicyAccepted: true,
+        termsOfUseAccepted: true,
+        dataPrivacyAccepted: true
+      }));
+      
+      // Refetch in background for consistency
+      refetch();
+      
+      // Close modal
+      setShowModal(false);
     }
-  };
+  } catch (error) {
+    setError('Failed to update policy acceptance. Please try again.');
+  } finally {
+    dispatch(suspenseHide());
+  }
+};
 
   // Don't show modal if user has already accepted all policies
   if (userData?.privacyPolicyAccepted && userData?.termsOfUseAccepted && userData?.dataPrivacyAccepted) {

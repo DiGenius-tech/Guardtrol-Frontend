@@ -200,7 +200,7 @@ const RenewSubscription = ({
       consumer_mac: undefined,
     },
     customizations: {
-      title: "Guardtrol Lite Subscription",
+      title: "Stafftrol Lite Subscription",
       description: undefined,
       logo: "https://guardtrol.alphatrol.com/logo192.png",
     },
@@ -489,7 +489,7 @@ const RenewSubscription = ({
           {isExpired && (
             <div className=" flex flex-row justify-between items-center">
               <span className=" text-gray-500 ">
-                Your subscription is expired to access Guardtrol, you are
+                Your subscription is expired to access Stafftrol, you are
                 required to renew your subscription.
               </span>
             </div>

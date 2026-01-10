@@ -37,7 +37,7 @@ const OnboardingToolbar = () => {
             <div className="flex flex-col justify-center sm:items-stretch sm:justify-start py-4">
               <h1 className="text-[#F9FAFA] font-semibold">Onboarding</h1>
               <p className="text-[#9BA2A7] text-xs sm:text-sm">
-                Complete this onboarding process to start using Guardtrol
+                Complete this onboarding process to start using Stafftrol
               </p>
             </div>
             <div className="absolute inset-y-0 right-0 items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0 hidden sm:flex">
